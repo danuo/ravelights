@@ -46,8 +46,9 @@ source .env/bin/activate   // Unix
 To install, run
 
 ```
-pip install .[gui]     // normal installation with visualizer support
-pip install .          // normal installation without visualizer support
+pip install .[gui]         // normal installation with visualizer support
+pip install .              // normal installation without visualizer support
+pip install .[serial]      // normal installation without visualizer support but artnet-over-serial support
 pip install -e .[gui,dev]  // editable installation with dev packages and visualizer support
 ```
 

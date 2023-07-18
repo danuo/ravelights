@@ -4,7 +4,7 @@ import logging
 import pstats
 from pathlib import Path
 
-from ravelights.app import RaveLightsApp
+from ravelights.app import RaveLightsApp, ArtnetMode
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -13,15 +13,20 @@ logging.basicConfig(level=logging.DEBUG)
 def parse_args():
     parser = argparse.ArgumentParser(description="Ravelights")
     parser.add_argument("--fps", type=int, default=20, help="Frames per second (default: 20)")
-    parser.add_argument("--artnet", default=False, action=argparse.BooleanOptionalAction)
+    artnet_group = parser.add_mutually_exclusive_group()
+    artnet_group.add_argument("--artnet-wifi", default=False, action=argparse.BooleanOptionalAction)
+    artnet_group.add_argument("--artnet-serial", default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument("--artnet-address", type=str, default=None)
+    parser.add_argument("--artnet-serial-port", type=str, default="/dev/ttyAMA0")
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--profiling", default=False, action=argparse.BooleanOptionalAction)
 
     args = parser.parse_args()
-    if args.artnet and not args.artnet_address:
-        parser.error("--artnet-address is required when --artnet is set")
+    if args.artnet_wifi and not args.artnet_address:
+        parser.error("--artnet-address is required when --artnet-wifi is set")
+    if args.artnet_serial and not args.artnet_serial_port:
+        parser.error("--artnet-serial-port is required when --artnet-serial is set")
 
     parser.print_usage()
     return args
@@ -52,12 +57,22 @@ if __name__ == "__main__":
     webserver_port = 80
     if not args.webui:
         webserver_port = 5000
-        logger.info("Running flask on port 5000, such that the web interface can be served by flask or nginx on port 80")
+        logger.info(
+            "Running flask on port 5000, such that the web interface can be served by flask or nginx on port 80"
+        )
+
+    if args.artnet_wifi:
+        artnet_mode = ArtnetMode.WIFI_UDP
+    elif args.artnet_serial:
+        artnet_mode = ArtnetMode.SERIAL
+    else:
+        artnet_mode = ArtnetMode.NONE
 
     app = RaveLightsApp(
         fps=args.fps,
-        artnet=args.artnet,
+        artnet_mode=artnet_mode,
         artnet_address=args.artnet_address,
+        artnet_serial_port=args.artnet_serial_port,
         webserver_port=webserver_port,
         visualizer=args.visualizer,
         serve_webinterface=args.webui,

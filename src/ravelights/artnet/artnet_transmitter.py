@@ -1,19 +1,19 @@
-import socket
-
 import numpy as np
 import numpy.typing as npt
+from abc import ABCMeta, abstractmethod
 
 from ravelights.artnet.art_dmx_packet import ArtDmxPacket
 
 
-class ArtnetTransmitter:
-    def __init__(self, ip_address: str, start_universe: int = 0, debug: bool = False):
-        self._PORT = 6454
+class ArtnetTransmitter(metaclass=ABCMeta):
+    def __init__(
+        self,
+        start_universe: int = 0,
+        debug: bool = False,
+    ):
         self._UNIVERSE_SIZE = 512
-        self._ip_address = ip_address
         self._start_universe = start_universe
         self._debug = debug
-        self._udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def transmit_matrix(self, matrix: npt.NDArray[np.uint8]) -> None:
         """Transmit the pixel data in the provided matrix to the receiving Artnet node
@@ -40,7 +40,13 @@ class ArtnetTransmitter:
 
     def _send_universe(self, universe: int, data: npt.NDArray[np.uint8]):
         data_bytes = data.tobytes()
-        artnet_packet_new = ArtDmxPacket(universe=universe, data=data_bytes, length=len(data_bytes))
+        artnet_packet = ArtDmxPacket(universe=universe, data=data_bytes, length=len(data_bytes))
+
         if self._debug:
-            artnet_packet_new.output_data()
-        self._udp_socket.sendto(artnet_packet_new.get_bytes(), (self._ip_address, self._PORT))
+            artnet_packet.output_data()
+
+        self._send_bytes(data=artnet_packet.get_bytes())
+
+    @abstractmethod
+    def _send_bytes(self, data: bytes) -> None:
+        pass
