@@ -1,0 +1,4 @@
+# Make flake8 compatible with black
+[flake8]
+max-line-length = 120
+extend-ignore = E203

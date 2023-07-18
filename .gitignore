@@ -1,0 +1,6 @@
+*.pyc
+/log
+/prototyping
+launch.json
+*egg-info
+/build

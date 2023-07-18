@@ -1,0 +1,4 @@
+[submodule "src/ravelights_ui"]
+	path = src/ravelights_ui
+	url = https://github.com/danuo/ravelights-ui-builds.git
+	branch = master

@@ -1,0 +1,250 @@
+import logging
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
+
+import numpy as np
+
+from ravelights.core.bpmhandler import BeatStatePattern
+from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import Array, ArrayNx1, ArrayNx3
+from ravelights.core.pixelmatrix import PixelMatrix
+from ravelights.core.timehandler import TimeHandler
+
+if TYPE_CHECKING:
+    from ravelights.app import RaveLightsApp
+    from ravelights.core.device import Device
+    from ravelights.core.settings import Settings
+
+logger = logging.getLogger(__name__)
+
+
+class Generator(ABC):
+    def __init__(
+        self,
+        root: "RaveLightsApp",
+        device: "Device",
+        name: str = "undefined",
+        is_prim: bool = True,
+        version: int = 0,
+        p_add_vfilter: float = 0.5,
+        p_add_dimmer: float = 0.5,
+        p_add_thinner: float = 0.5,
+        **kwargs: Optional[dict[str, str | int | float]],  # typing: ignore
+    ):
+        self.root = root
+        self.settings: "Settings" = self.root.settings
+        self.timehandler: "TimeHandler" = self.settings.timehandler
+        self.device = device
+        self.pixelmatrix: "PixelMatrix" = self.device.pixelmatrix
+        self.init_pixelmatrix(self.pixelmatrix)
+        self.name = name
+        self.is_prim = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
+        self.version = version
+        self.p_add_vfilter = p_add_vfilter
+        self.p_add_dimmer = p_add_dimmer
+        self.p_add_thinner = p_add_thinner
+
+        self.kwargs = kwargs
+        self.force_trigger_overwrite = False
+        if not hasattr(self, "possible_triggers"):
+            self.possible_triggers: list[BeatStatePattern] = [BeatStatePattern()]
+
+        self.init()
+        self.alternate()
+        self.reset()
+
+    @abstractmethod
+    def init(self):
+        """put custom init code in this function instead of overwriting __init__()"""
+        ...
+
+    @abstractmethod
+    def alternate(self):
+        ...
+
+    @abstractmethod
+    def reset(self):
+        """this function should cause the pattern to output a black image"""
+        ...
+
+    @abstractmethod
+    def on_trigger(self):
+        """called, when trigger is satisfied"""
+        ...
+
+    @abstractmethod
+    def render(self, in_matrix: Array, color: Color) -> Array:
+        return in_matrix
+
+    def sync_send(self) -> dict:
+        ...
+
+    def sync_load(self, in_dict: dict):
+        # after set_kwargs is called
+        ...
+
+    def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
+        self.pixelmatrix = pixelmatrix
+        self.n_lights: int = pixelmatrix.n_lights
+        self.n_leds: int = pixelmatrix.n_leds
+        self.n: int = pixelmatrix.n_leds * pixelmatrix.n_lights
+
+    def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayNx3:
+        """
+        shape: (n_leds, n_lights, 3)
+        Returns empty 3-channel color matrix in correct size and dtype float.
+        """
+
+        matrix = np.full(shape=(self.n_leds, self.n_lights, 3), fill_value=fill_value, dtype=float)
+        return matrix
+
+    def get_float_matrix_1d_mono(self, fill_value: float = 0.0) -> ArrayNx1:
+        """
+        shape: (n_leds * n_lights)
+        Returns empty 1-channel monochrome matrix in correct size and dtype float.
+        shape is (self.n)
+        """
+
+        matrix = np.full(shape=(self.n), fill_value=fill_value, dtype=float)
+        return matrix
+
+    def get_float_matrix_2d_mono(self, fill_value: float = 0.0) -> ArrayNx1:
+        """
+        shape: (self.n_leds, self.n_lights)
+        Returns empty 1-channel monochrome matrix in correct size and dtype float.
+        shape is (self.n_leds, self.n_lights)
+        """
+
+        matrix = np.full(shape=(self.n_leds, self.n_lights), fill_value=fill_value, dtype=float)
+        return matrix
+
+    def colorize_matrix(self, matrix_mono: ArrayNx1, color: Optional[Color] = None) -> ArrayNx3:
+        # todo: move this to pixelmatrix?
+        if matrix_mono.shape == (self.n,):
+            matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
+        assert matrix_mono.shape == (self.n_leds, self.n_lights)
+
+        """Colorizes 1-channel monochrome matrix with given color or according to settings."""
+        if color is None:
+            color = self.settings.color[0]
+        matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
+        for channel in range(3):
+            matrix_rgb[:, :, channel] = matrix_mono * color[channel]
+        return matrix_rgb
+
+    @classmethod
+    def add_matrices(cls, matrix_1: Array, matrix_2: Array) -> Array:
+        """Adds two matrices together and caps the brightness (max value) to 1."""
+        return np.fmin(1.0, matrix_1 + matrix_2)
+
+    @classmethod
+    def apply_mask(cls, in_matrix: ArrayNx3, mask: ArrayNx1) -> ArrayNx3:
+        """Applies a mask 1-channel mask array to a 3-channel color matrix by multiplication."""
+        mask = np.repeat(mask[:, :, None], 3, axis=2)
+        return np.multiply(in_matrix, mask)
+
+    def __repr__(self):
+        return self.name
+
+    @classmethod
+    def get_identifier(cls) -> str:
+        """returns str identifier of generator type, for example 'pattern' for pattern objects"""
+        if cls.__bases__[0] is Generator:
+            return cls.__name__.lower()
+        else:
+            return cls.__bases__[0].__name__.lower()
+
+
+class Pattern(Generator):
+    def render(self, color: Color) -> ArrayNx3:
+        ...
+
+
+class PatternNone(Pattern):
+    """Default pattern with blank output"""
+
+    def init(self):
+        ...
+
+    def alternate(self):
+        ...
+
+    def reset(self):
+        ...
+
+    def on_trigger(self):
+        ...
+
+    def render(self, color: Color) -> ArrayNx3:
+        return self.get_float_matrix_rgb()
+
+
+class Vfilter(Generator):
+    """Default vfilter with blank output"""
+
+    ...
+
+
+class VfilterNone(Vfilter):
+    def init(self):
+        ...
+
+    def alternate(self):
+        ...
+
+    def reset(self):
+        ...
+
+    def on_trigger(self):
+        ...
+
+    def render(self, in_matrix: Array, color: Color) -> Array:
+        return in_matrix
+
+
+class Thinner(Generator):
+    """Default thinner with blank output"""
+
+    ...
+
+
+class ThinnerNone(Thinner):
+    """"""
+
+    def init(self):
+        ...
+
+    def alternate(self):
+        ...
+
+    def reset(self):
+        ...
+
+    def on_trigger(self):
+        ...
+
+    def render(self, in_matrix: Array, color: Color) -> Array:
+        return in_matrix
+
+
+class Dimmer(Generator):
+    """Default dimmer with blank output"""
+
+    ...
+
+
+class DimmerNone(Dimmer):
+    def init(self):
+        ...
+
+    def alternate(self):
+        ...
+
+    def reset(self):
+        ...
+
+    def on_trigger(self):
+        ...
+
+    def render(self, in_matrix: Array, color: Color) -> Array:
+        return in_matrix
