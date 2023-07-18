@@ -2,19 +2,16 @@ from enum import Enum
 from typing import NamedTuple, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
-from ravelights.core.generator_super import (Dimmer, DimmerNone, Generator,
-                                             Pattern, PatternNone, Thinner,
-                                             ThinnerNone, Vfilter, VfilterNone)
-from ravelights.core.templateobjects import (EffectSelectorPlacing, GenPlacing,
-                                             GenSelector)
+from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
+from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.dimmers.dimmer_decay import DimmerDecay
 from ravelights.dimmers.dimmer_peak import DimmerPeak
 from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
 from ravelights.dimmers.dimmer_sine import DimmerSine
+from ravelights.effects.effect_bw import EffectBW
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
-from ravelights.effects.effect_color_strobe_rainbow import \
-    EffectColorStrobeRainbow
+from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
 from ravelights.effects.effect_color_swap import EffectColorSwap
 from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_debug import PatternDebug
@@ -120,6 +117,7 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorStrobeRainbow, dict(name="e_color_strobe_rainbow")),
     BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
     BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
+    BlueprintEffect(EffectBW, dict(name="e_bw")),
 ]
 
 # todo: effects need length, patterns do not
