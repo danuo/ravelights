@@ -21,7 +21,6 @@ class EffectColorStrobeRainbow(Effect):
         """Called each render cycle"""
         bw_matrix_rgb = self.bw_filter.render(in_matrix=in_matrix, color=color)
         bw_matrix_mono = bw_matrix_rgb[..., 0]
-        print("bw shape", bw_matrix_mono.shape)
 
         matrix_out = self.bw_filter.get_float_matrix_rgb()
 
