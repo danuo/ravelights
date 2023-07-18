@@ -31,8 +31,8 @@ from ravelights.thinners.thinner_random import ThinnerRandom
 from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
-from ravelights.vfilters.vfilter_flipver import VfilterFlipver
-from ravelights.vfilters.vfilter_mirror import VfilterMirror
+from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
+from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
 
 
@@ -102,8 +102,8 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[])),
-    BlueprintGen(VfilterFlipver, dict(name="v_flipver")),
-    BlueprintGen(VfilterMirror, dict(name="v_mirror")),
+    BlueprintGen(VfilterFlipVer, dict(name="v_flip_ver")),
+    BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
