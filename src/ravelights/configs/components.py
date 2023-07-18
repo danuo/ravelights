@@ -2,19 +2,16 @@ from enum import Enum
 from typing import NamedTuple, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
-from ravelights.core.generator_super import (Dimmer, DimmerNone, Generator,
-                                             Pattern, PatternNone, Thinner,
-                                             ThinnerNone, Vfilter, VfilterNone)
-from ravelights.core.templateobjects import (EffectSelectorPlacing, GenPlacing,
-                                             GenSelector)
+from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
+from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.dimmers.dimmer_decay import DimmerDecay
 from ravelights.dimmers.dimmer_peak import DimmerPeak
 from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
 from ravelights.dimmers.dimmer_sine import DimmerSine
+from ravelights.effects.effect_bw import EffectBW
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
-from ravelights.effects.effect_color_strobe_rainbow import \
-    EffectColorStrobeRainbow
+from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
 from ravelights.effects.effect_color_swap import EffectColorSwap
 from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_debug import PatternDebug
@@ -32,9 +29,12 @@ from ravelights.patterns.pattern_swiper import PatternSwiper
 from ravelights.thinners.thinner_equidistant import ThinnerEquidistant
 from ravelights.thinners.thinner_random import ThinnerRandom
 from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
+from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
-from ravelights.vfilters.vfilter_flipver import VfilterFlipver
-from ravelights.vfilters.vfilter_mirror import VfilterMirror
+from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
+from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
+from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
+from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
 
 
 class Keywords(Enum):
@@ -103,9 +103,12 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[])),
-    BlueprintGen(VfilterFlipver, dict(name="v_flipver")),
-    BlueprintGen(VfilterMirror, dict(name="v_mirror")),
+    BlueprintGen(VfilterFlipVer, dict(name="v_flip_ver")),
+    BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
+    BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
+    BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
+    BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
@@ -120,6 +123,7 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorStrobeRainbow, dict(name="e_color_strobe_rainbow")),
     BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
     BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
+    BlueprintEffect(EffectBW, dict(name="e_bw")),
 ]
 
 # todo: effects need length, patterns do not

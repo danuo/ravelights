@@ -35,8 +35,7 @@ class Generator(ABC):
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
         self.device = device
-        self.pixelmatrix: "PixelMatrix" = self.device.pixelmatrix
-        self.init_pixelmatrix(self.pixelmatrix)
+        self.init_pixelmatrix(self.device.pixelmatrix)
         self.name = name
         self.is_prim = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
         self.version = version
@@ -118,18 +117,29 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n_leds, self.n_lights), fill_value=fill_value, dtype=float)
         return matrix
 
-    def colorize_matrix(self, matrix_mono: ArrayNx1, color: Optional[Color] = None) -> ArrayNx3:
-        # todo: move this to pixelmatrix?
-        if matrix_mono.shape == (self.n,):
-            matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
-        assert matrix_mono.shape == (self.n_leds, self.n_lights)
+    def colorize_matrix(self, matrix_mono: ArrayNx1, color: Color) -> ArrayNx3:
+        """
+        function to colorize a matrix with a given color
+        for colorization, another dimension is added
+        special case: input matrix is 1d of size n:
+        (n) -> (n_leds, n_lights, 3)  /special case
+        (x) -> (x,3)
+        (x,y) -> (x,y,3)
+        """
 
-        """Colorizes 1-channel monochrome matrix with given color or according to settings."""
-        if color is None:
-            color = self.settings.color[0]
-        matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
+        # prepare output matrix of correct size
+        if matrix_mono.ndim == 1:
+            if matrix_mono.shape == (self.n,):
+                matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
+                matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
+            else:
+                matrix_rgb = np.zeros((matrix_mono.size, 3))
+        elif matrix_mono.ndim == 2:
+            matrix_rgb = np.zeros((*matrix_mono.shape, 3))
+
+        # colorize
         for channel in range(3):
-            matrix_rgb[:, :, channel] = matrix_mono * color[channel]
+            matrix_rgb[..., channel] = matrix_mono * color[channel]
         return matrix_rgb
 
     @classmethod

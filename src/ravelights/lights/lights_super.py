@@ -9,7 +9,7 @@ from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import T_ALL, ArrayNx1
 from ravelights.core.utils import cos_mapper, p, sign
 from ravelights.vfilters.filter_flimmering import VfilterFlimmering
-from ravelights.vfilters.vfilter_mirror import VfilterMirror
+from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 
 if TYPE_CHECKING:
     from ravelights.app import RaveLightsApp
@@ -162,7 +162,7 @@ class SymmetricalStrobe(Slideblock):
     # todo: do not have this class, have vfilters for pattern sec instead
     def init(self, **kwargs: T_ALL):
         super().init(**kwargs)
-        self.mirror = VfilterMirror(**self.gen_args)
+        self.mirror = VfilterMirrorVer(**self.gen_args)
 
     def render(self, color: Color):
         matrix = super().render(color)

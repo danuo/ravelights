@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import Array, ArrayNx3
+from ravelights.core.pixelmatrix import PixelMatrix
 
 if TYPE_CHECKING:
     from ravelights.app import RaveLightsApp
@@ -79,6 +80,7 @@ class Effect(ABC):
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.settings.timehandler
         self.device = device
+        self.init_pixelmatrix(self.device.pixelmatrix)
         self.name = name
 
         self.init()
@@ -108,6 +110,12 @@ class Effect(ABC):
     @staticmethod
     def get_identifier():
         return "effect"
+
+    def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
+        self.pixelmatrix = pixelmatrix
+        self.n_lights: int = pixelmatrix.n_lights
+        self.n_leds: int = pixelmatrix.n_leds
+        self.n: int = pixelmatrix.n_leds * pixelmatrix.n_lights
 
     def __repr__(self):
         return self.name

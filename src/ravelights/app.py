@@ -27,7 +27,7 @@ def create_devices(root: "RaveLightsApp") -> list[Device]:
         n_leds = settings.devices_n_leds[device_id]
         n_lights = settings.devices_n_lights[device_id]
         prim = True if device_id == 0 else False
-        devices.append(Device(root=root, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
+        devices.append(Device(root=root, device_id=device_id, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
     return devices
 
 
@@ -44,28 +44,31 @@ class RaveLightsApp:
         visualizer=True,
     ):
         self.settings = Settings(device_config=device_configs[0], bpm_base=80.0, fps=fps)
-        self.effecthandler = EffectHandler(root=self)
         self.devices = create_devices(root=self)
+        self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
         self.eventhandler = EventHandler(root=self)
         self.controls = Controls(root=self)
 
         if visualizer:
             # move import here to make pygame optional
-            from ravelights.pygame_visualizer.visualizer import Visualizer  # fmt: skip
+            from ravelights.pygame_visualizer.visualizer import \
+                Visualizer  # fmt: skip
             self.visualizer = Visualizer(root=self)
 
         match artnet_mode:
             case ArtnetMode.WIFI_UDP:
                 if not artnet_address:
                     raise ValueError("Artnet address must be provided when artnet wifi output is enabled")
-                from ravelights.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter  # fmt: skip
+                from ravelights.artnet.artnet_udp_transmitter import \
+                    ArtnetUdpTransmitter  # fmt: skip
                 self.artnet = ArtnetUdpTransmitter(ip_address=artnet_address)
 
             case ArtnetMode.SERIAL:
                 if not artnet_serial_port:
                     raise ValueError("Artnet serial port address must be provided when artnet serial output is enabled")
-                from ravelights.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter  # fmt: skip
+                from ravelights.artnet.artnet_serial_transmitter import \
+                    ArtnetSerialTransmitter  # fmt: skip
                 self.artnet = ArtnetSerialTransmitter(serial_port_address=artnet_serial_port)
 
         self.rest_api = RestAPI(
@@ -109,7 +112,5 @@ class RaveLightsApp:
             self.visualizer.render()
             # todo: transmit to all devices, not just one
         if hasattr(self, "artnet"):
-            self.artnet.transmit_matrix(
-                self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness)
-            )
+            self.artnet.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
         self.settings.after()

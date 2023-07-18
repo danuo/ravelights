@@ -5,7 +5,7 @@ from ravelights.core.custom_typing import Array, ArrayMxKx3, ArrayNx1, ArrayNx3
 from ravelights.core.generator_super import Vfilter
 
 
-class VfilterFlipver(Vfilter):
+class VfilterFlipVer(Vfilter):
     def init(self):
         ...
 
