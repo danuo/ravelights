@@ -19,9 +19,20 @@ class EffectColorStrobeRainbow(Effect):
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""
-        bw_matrix = self.bw_filter.render(in_matrix=in_matrix, color=color)
-        print(bw_matrix.shape)
-        return bw_matrix
+        bw_matrix_rgb = self.bw_filter.render(in_matrix=in_matrix, color=color)
+        bw_matrix_mono = bw_matrix_rgb[..., 0]
+        print("bw shape", bw_matrix_mono.shape)
+
+        matrix_out = self.bw_filter.get_float_matrix_rgb()
+
+        for light_id in range(self.n_lights):
+            matrix_view = bw_matrix_mono[:, light_id]
+            random_hue = random.random()
+            random_color = ColorHandler.get_color_from_hue(random_hue)
+            colored_matrix = self.bw_filter.colorize_matrix(matrix_mono=matrix_view, color=random_color)
+            matrix_out[:, light_id, :] = colored_matrix
+
+        return matrix_out
 
     def on_delete(self):
         pass
