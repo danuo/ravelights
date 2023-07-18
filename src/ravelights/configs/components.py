@@ -32,6 +32,7 @@ from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_bw import VfilterBW
 from ravelights.vfilters.vfilter_flipver import VfilterFlipver
 from ravelights.vfilters.vfilter_mirror import VfilterMirror
+from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
 
 
 class Keywords(Enum):
@@ -103,6 +104,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterFlipver, dict(name="v_flipver")),
     BlueprintGen(VfilterMirror, dict(name="v_mirror")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
+    BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
