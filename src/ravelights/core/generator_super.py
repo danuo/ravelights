@@ -117,15 +117,13 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n_leds, self.n_lights), fill_value=fill_value, dtype=float)
         return matrix
 
-    def colorize_matrix(self, matrix_mono: ArrayNx1, color: Optional[Color] = None) -> ArrayNx3:
+    def colorize_matrix(self, matrix_mono: ArrayNx1, color: Color) -> ArrayNx3:
         # todo: move this to pixelmatrix?
         if matrix_mono.shape == (self.n,):
             matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
         assert matrix_mono.shape == (self.n_leds, self.n_lights)
 
         """Colorizes 1-channel monochrome matrix with given color or according to settings."""
-        if color is None:
-            color = self.settings.color[0]
         matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
         for channel in range(3):
             matrix_rgb[:, :, channel] = matrix_mono * color[channel]
