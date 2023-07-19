@@ -98,7 +98,7 @@ class RenderModule:
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
         matrix_sec = pattern_sec.render(color=color_sec)
-        matrix = Generator.add_matrices(matrix, matrix_sec)
+        matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
         matrix = vfilter.render(matrix, color=color_prim)
