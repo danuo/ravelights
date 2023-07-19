@@ -36,6 +36,7 @@ class SecondaryColorModes(Enum):
 def get_default_selected_dict() -> dict[str, list[str]]:
     return {
         Pattern.get_identifier(): ["p_none" for _ in range(5)],
+        Pattern.get_identifier() + "_sec": ["p_none" for _ in range(5)],
         Vfilter.get_identifier(): ["v_none" for _ in range(5)],
         Thinner.get_identifier(): ["t_none" for _ in range(5)],
         Dimmer.get_identifier(): ["d_none" for _ in range(5)],
@@ -87,6 +88,10 @@ class Settings:
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
     global_skip_trigger: int = 2
+
+    global_vfilter: bool = False
+    global_thinner: bool = False
+    global_dimmer: bool = False
     music_style: str = MusicStyles.TECHNO.value  # todo: use
 
     # ─── Time Settings ────────────────────────────────────────────────────
@@ -112,6 +117,7 @@ class Settings:
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
         self.generator_classes_identifiers = [c.get_identifier() for c in self.generator_classes]
+        self.generator_classes_identifiers.insert(1, self.generator_classes[0].get_identifier() + "_sec")
 
         self.timehandler = TimeHandler(settings=self)
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
