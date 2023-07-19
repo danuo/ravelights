@@ -46,6 +46,7 @@ class RenderModule:
 
     def render(self):
         pattern: Pattern = self.get_selected_generator(gen_type=Pattern)
+        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec")
         vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter)
         thinner: Thinner = self.get_selected_generator(gen_type=Thinner)
         dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer)
@@ -53,6 +54,8 @@ class RenderModule:
         # ─── Check Trigger ────────────────────────────────────────────
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Pattern):
             pattern.on_trigger()
+        if self.settings.beat_state == self.get_selected_trigger(gen_type="pattern_sec"):
+            pattern_sec.on_trigger()
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Vfilter):
             vfilter.on_trigger()
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Thinner):
@@ -94,8 +97,8 @@ class RenderModule:
         self.assert_dims(matrix)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
-        # matrix_sec = self.pattern_sec.render(color=color_sec)
-        # matrix = Generator.add_matrices(matrix, matrix_sec)
+        matrix_sec = pattern_sec.render(color=color_sec)
+        matrix = Generator.add_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
         matrix = vfilter.render(matrix, color=color_prim)
