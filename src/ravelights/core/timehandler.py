@@ -79,7 +79,6 @@ class TimeHandler:
             time.sleep(self.dynamic_sleep_time)
         else:
             self.stats["delayed_frame_counter"] += 1
-            logger.warning("warning, delayed frame")
 
     def get_stats(self, precision: int = 2):
         return {k: round(v, precision) for k, v in self.stats.items()}
