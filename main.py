@@ -4,7 +4,7 @@ import logging
 import pstats
 from pathlib import Path
 
-from ravelights.app import RaveLightsApp, ArtnetMode
+from ravelights.app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -18,6 +18,7 @@ def parse_args():
     artnet_group.add_argument("--artnet-serial", default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument("--artnet-address", type=str, default=None)
     parser.add_argument("--artnet-serial-port", type=str, default="/dev/ttyAMA0")
+    parser.add_argument("--artnet-serial-baudrate", type=int, default=3_000_000)
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--profiling", default=False, action=argparse.BooleanOptionalAction)
@@ -58,21 +59,22 @@ if __name__ == "__main__":
     if not args.webui:
         webserver_port = 5000
         logger.info(
-            "Running flask on port 5000, such that the web interface can be served by flask or nginx on port 80"
+            "Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80"
         )
 
+    artnet = None
     if args.artnet_wifi:
-        artnet_mode = ArtnetMode.WIFI_UDP
+        from ravelights.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter  # fmt: skip
+        artnet = ArtnetUdpTransmitter(ip_address=args.artnet_address)
     elif args.artnet_serial:
-        artnet_mode = ArtnetMode.SERIAL
-    else:
-        artnet_mode = ArtnetMode.NONE
+        from ravelights.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter  # fmt: skip
+        artnet = ArtnetSerialTransmitter(
+            serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
+        )
 
     app = RaveLightsApp(
         fps=args.fps,
-        artnet_mode=artnet_mode,
-        artnet_address=args.artnet_address,
-        artnet_serial_port=args.artnet_serial_port,
+        artnet_transmitter=artnet,
         webserver_port=webserver_port,
         visualizer=args.visualizer,
         serve_webinterface=args.webui,
