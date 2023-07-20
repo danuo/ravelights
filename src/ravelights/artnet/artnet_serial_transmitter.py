@@ -7,7 +7,7 @@ class ArtnetSerialTransmitter(ArtnetTransmitter):
     def __init__(
         self,
         serial_port_address: str = "/dev/ttyAMA0",
-        baud_rate: int = 460800,
+        baud_rate: int = 3_000_000,
         start_universe: int = 0,
         debug: bool = False,
     ):
