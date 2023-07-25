@@ -12,7 +12,7 @@ class ArtnetSerialTransmitter(ArtnetTransmitter):
         debug: bool = False,
     ):
         super().__init__(start_universe=start_universe, debug=debug)
-        self._serial_port = serial.Serial(port=serial_port_address, baudrate=baud_rate)
+        self._serial_port = serial.Serial(port=serial_port_address, baudrate=baud_rate, write_timeout=0)
 
     def _send_bytes(self, data: bytes) -> None:
         self._serial_port.write(data)
