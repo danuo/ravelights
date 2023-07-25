@@ -19,16 +19,17 @@ class ArtnetTransmitter(metaclass=ABCMeta):
         """Transmit the pixel data in the provided matrix to the receiving Artnet node
 
         Args:
-            matrix (np.typing.NDArray): An Nx3 ndarray containing r,g,b values for each of the N to
+            matrix (np.typing.NDArray): An MxNx3 ndarray containing r,g,b values for each of the M * N to
             be addressed pixels. Each color value must be an integer in {0, ..., 255}
-            (dtype=np.uint8), e.g. matrix[0] = [255, 0, 0] sets the first pix>el to red.
+            (dtype=np.uint8), e.g. matrix[0, 0] = [255, 0, 0] sets the first pixel to red.
         """
         assert matrix.dtype == np.uint8
         assert matrix.ndim == 3
         assert matrix.shape[2] == 3
 
-        matrix_2d = matrix.reshape((-1, 3), order="F")
-        channels = matrix.flatten()
+        # Reshape 3D matrix into 1D array corresponding to the Art-Net DMX data format
+        channels = matrix.reshape((-1, 3), order="F").flatten()
+
         self._transmit_channels(channels)
 
     def _transmit_channels(self, channels: npt.NDArray[np.uint8]):
