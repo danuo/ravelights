@@ -12,6 +12,7 @@ class ArtnetTransmitter(metaclass=ABCMeta):
         debug: bool = False,
     ):
         self._UNIVERSE_SIZE = 512
+        self._CONFIG_UNIVERSE_INDEX = 0xFF
         self._start_universe = start_universe
         self._debug = debug
 
@@ -31,6 +32,13 @@ class ArtnetTransmitter(metaclass=ABCMeta):
         channels = matrix.reshape((-1, 3), order="F").flatten()
 
         self._transmit_channels(channels)
+
+    def transmit_output_config(self, lights_per_output: list[int]) -> None:
+        assert len(lights_per_output) == 4
+
+        checksum = sum(lights_per_output)
+        channels = np.array([*lights_per_output, checksum], dtype=np.uint8)
+        self._send_universe(universe=self._CONFIG_UNIVERSE_INDEX, data=channels)
 
     def _transmit_channels(self, channels: npt.NDArray[np.uint8]):
         for i, universe_data in enumerate(self._split_universes(channels), start=self._start_universe):
