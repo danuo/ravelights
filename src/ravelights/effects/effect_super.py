@@ -44,7 +44,7 @@ class EffectWrapper:
         effect = self.effect_dict[device_id]
         return effect.render_settings_overwrite(selected_level=selected_level)
 
-    def reset(self, mode: str, limit_frames: int, loop_length_beats: int, limit_quarters_loop: int):
+    def reset(self, mode: str, limit_frames: int, limit_quarters: int, loop_length_beats: int, limit_quarters_loop: int):
         """
         reset effects in effectwrapper
         """
@@ -96,14 +96,15 @@ class EffectWrapper:
         limit_frames = 20  # int, match, inf
         """
         frames_pattern = [0, 3, 14, 17]
+        frames_pattern = None
 
         """
         mode = "quarters"
         limit_frames = 5
         loop_length_beats = 4
         limit_quarters_loop = 2
-        """
         limit_quarters = 2  # do not use this at the beginning
+        """
         frames_pattern = [0, 1, 3, 4]
         quarters_pattern = ["0A", "1A", "2A"]
 
