@@ -75,7 +75,6 @@ class EffectWrapper:
             assert frames_pattern[0][0] == "L"
             pattern_length = int(frames_pattern[0][1:])
             pattern = frames_pattern[1:]
-
             frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
             return frames_pattern_binary
 
@@ -88,7 +87,6 @@ class EffectWrapper:
             -> [True, False, True, False, True, False, False, False]
             """
 
-            print("A", quarters_pattern, loop_length_beats)
             loop_length_quarters = loop_length_beats * 4
             quarters_pattern_binary = [False] * loop_length_quarters
 
@@ -100,13 +98,8 @@ class EffectWrapper:
                 index = num * 4 + letter_num
                 if index < loop_length_quarters:
                     quarters_pattern_binary[index] = True
-            print(quarters_pattern_binary)
             return quarters_pattern_binary
 
-        print(
-            "reset effect with",
-            f"{mode=} {multi=} {limit_frames=} {limit_quarters=} {limit_loopquarters=} {loop_length_beats=} {limit_quarters_loop=}",
-        )
         assert isinstance(multi, int) and multi >= 1
         self.multi = multi
         self.mode = mode
@@ -117,14 +110,12 @@ class EffectWrapper:
             self.counter_frames = 0
             self.limit_frames = limit_frames
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
-            print(self.frames_pattern_binary)
 
         if self.mode == "quarters":
             self.has_started = True
             self.counter_frames = 0
             self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.settings.fps)
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
-            print(self.frames_pattern_binary)
 
         if self.mode == "loopquarters":
             # reset counter erst später
@@ -169,7 +160,7 @@ class EffectWrapper:
         execute this once per frame before rendering
         """
 
-        if self.has_started:
+        if self.has_started and self.mode == "loopquarters":
             if self.settings.beat_state.is_quarterbeat:
                 if self.quarters_pattern_binary[self.counter_quarters]:
                     self.counter_frames = 0
@@ -190,12 +181,8 @@ class EffectWrapper:
                     self.counter_frames = 0
 
     def render_matrix_loopquarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
-        print("x", self.counter_frames, self.counter_quarters, self.counter_quarters_loop, device_id)
-
-        # search first beat
+        # search first beat before start
         if not self.has_started:
-            # first quarter has not been found yet
-            # start effect on next full beat:
             if self.settings.beat_state.is_beat:
                 self.has_started = True  # do i need this?
             else:
@@ -206,7 +193,6 @@ class EffectWrapper:
             index = self.counter_frames % len(self.frames_pattern_binary)
             if self.frames_pattern_binary[index]:
                 effect = self.effect_dict[device_id]
-                print("rendering this frame")
                 in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         return in_matrix
 
@@ -221,7 +207,6 @@ class EffectWrapper:
                 return True
         elif self.mode == "loopquarters":
             if self.counter_quarters_loop >= self.limit_loopquarters_loop:
-                print("quarters_done")
                 return True
         return False
 
