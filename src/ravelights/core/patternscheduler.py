@@ -207,7 +207,11 @@ class PatternScheduler:
     def generate_instructions(self):
         pass
 
-    def load_effect(self, effect_name: str, length_frames: int) -> None:
+    def load_effect(self, effect_name: str, **kwargs) -> None:
+        # ! delete this
+        assert False
+        # length_frames
+        length_frames = 0
         if length_frames == "inf":
             length_frames = 100_000_000
         assert isinstance(length_frames, int)

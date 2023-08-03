@@ -68,11 +68,10 @@ class EffectHandler:
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
-    def load_effect(self, effect_name: str, length_frames: int):
+    def load_effect(self, effect_name: str, **kwargs):
+        print("in EffectHandler", effect_name, kwargs)
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
-        # todo: have two ways to load effect
-        # effect_wrapper.reset(limit_frames=length_frames)
-        effect_wrapper.reset(limit_quarters=length_frames)
+        effect_wrapper.reset(**kwargs)
         self.add_item(effect_wrapper)
 
     def add_item(self, item: EffectWrapper):
