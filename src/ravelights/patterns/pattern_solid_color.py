@@ -6,7 +6,7 @@ class PatternSolidColor(Pattern):
     """pattern name: p_solid_color"""
 
     def init(self):
-        self.p_add_vfilter = 1.0
+        self.p_add_thinner = 1.0
         self.p_add_dimmer = 1.0
 
     def alternate(self):

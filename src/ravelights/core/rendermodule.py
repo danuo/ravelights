@@ -63,7 +63,18 @@ class RenderModule:
         thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level)
         dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level)
 
-        # ─── Check Trigger ────────────────────────────────────────────
+        # ------------------------ validate thinner and dimmer ----------------------- #
+        if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
+            thinner = self.get_generator_by_name("t_random")
+            if self.settings.beat_state.is_beat:
+                thinner.on_trigger()
+
+        if pattern.p_add_dimmer == 1.0 and dimmer.name == "d_none":
+            dimmer = self.get_generator_by_name("d_decay_fast")
+            if self.settings.beat_state.is_beat:
+                dimmer.on_trigger()
+
+        # ------------------------------- check trigger ------------------------------ #
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Pattern):
             pattern.on_trigger()
         if self.settings.beat_state == self.get_selected_trigger(gen_type="pattern_sec"):

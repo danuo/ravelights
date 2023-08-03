@@ -23,7 +23,7 @@ class InstructionQueue:
         if self.just_initialized is True:
             self.out = self._get_instructions_till(self.settings.n_quarters_long)
             self.just_initialized = False
-        elif self.settings.beat_state.is_quarterbeat:
+        elif self.settings.beat_state.is_quarter:
             self.out = self._instruction_queue[self.settings.n_quarters_long]
         return self.out
 

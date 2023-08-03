@@ -12,7 +12,6 @@ class PatternMeteor(Pattern):
     """pattern name: p_meteor"""
 
     def init(self):
-        self.p_add_vfilter = 0.0
         self.p_add_dimmer = 0.0
         self.matrix = self.get_float_matrix_2d_mono()
         self.kwargs = dict()

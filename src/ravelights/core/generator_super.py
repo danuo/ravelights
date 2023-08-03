@@ -26,7 +26,6 @@ class Generator(ABC):
         name: str = "undefined",
         is_prim: bool = True,
         version: int = 0,
-        p_add_vfilter: float = 0.5,
         p_add_dimmer: float = 0.5,
         p_add_thinner: float = 0.5,
         **kwargs: Optional[dict[str, str | int | float]],  # typing: ignore
@@ -39,7 +38,6 @@ class Generator(ABC):
         self.name = name
         self.is_prim = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
         self.version = version
-        self.p_add_vfilter = p_add_vfilter
         self.p_add_dimmer = p_add_dimmer
         self.p_add_thinner = p_add_thinner
 

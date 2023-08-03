@@ -161,7 +161,7 @@ class EffectWrapper:
         """
 
         if self.has_started and self.mode == "loopquarters":
-            if self.settings.beat_state.is_quarterbeat:
+            if self.settings.beat_state.is_quarter:
                 if self.quarters_pattern_binary[self.counter_quarters]:
                     self.counter_frames = 0
 
@@ -172,7 +172,7 @@ class EffectWrapper:
 
         if self.has_started:
             self.counter_frames += 1
-            if self.settings.beat_state.is_quarterbeat:
+            if self.settings.beat_state.is_quarter:
                 self.counter_quarters += 1
                 counter_beats = self.counter_quarters // 4
                 if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
