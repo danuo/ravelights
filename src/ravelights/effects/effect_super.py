@@ -74,12 +74,7 @@ class EffectWrapper:
             pattern_length = int(frames_pattern[0][1:])
             pattern = frames_pattern[1:]
 
-            if frames_pattern is None:
-                if length_target == "inf":
-                    # todo: test this
-                    return [True]
-                else:
-                    return [True] * length_target
+            assert frames_pattern is not None
 
             frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
 
