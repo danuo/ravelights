@@ -98,7 +98,6 @@ class PatternScheduler:
             ]
         }"""
 
-        # keys = self.generator_classes_identifiers
         keys = self.settings.generator_classes_identifiers
         meta_available_generators: dict[str, list[dict[str, str | list[str] | float]]] = {key: [] for key in keys}
         for item in blueprint_generators + blueprint_effects:
@@ -116,12 +115,12 @@ class PatternScheduler:
             meta_available_generators[class_identifier].append(new_dict)
         return meta_available_generators
 
-    def load_timeline_from_index(self, index: int) -> None:
+    def load_timeline_from_index(self, index: int):
         self.settings.active_timeline_index = index
         self.load_timeline(self.blueprint_timelines[index])
 
     def load_timeline(self, timeline: dict[str, dict[str, str] | list[BlueprintSel] | list[BlueprintPlace]]):
-        self.clear_queues()
+        self.clear_all_queues()
 
         blueprints_selectors: list[BlueprintSel] = cast(list[BlueprintSel], timeline["selectors"])
         self.process_timeline_selectors(blueprints_selectors)
@@ -151,7 +150,7 @@ class PatternScheduler:
             if isinstance(placement, EffectSelectorPlacing):
                 self.process_effect_placement_object(placement)
 
-    def clear_queues(self):
+    def clear_all_queues(self):
         """Clears queues for global effects, device effects and instructions"""
         for device in self.devices:
             device.instructionhandler.instruction_queue.clear()
@@ -206,13 +205,3 @@ class PatternScheduler:
 
     def generate_instructions(self):
         pass
-
-    def load_effect(self, effect_name: str, **kwargs) -> None:
-        # ! delete this
-        assert False
-        # length_frames
-        length_frames = 0
-        if length_frames == "inf":
-            length_frames = 100_000_000
-        assert isinstance(length_frames, int)
-        self.effecthandler.load_effect(effect_name=effect_name, length_frames=length_frames)
