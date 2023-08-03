@@ -109,7 +109,7 @@ class Effect(ABC):
     effects can modify settings parameters, for example color attribute
     """
 
-    def __init__(self, root: "RaveLightsApp,", device: "Device", name: str, **kwargs: dict[str, str | int | float]):
+    def __init__(self, root: "RaveLightsApp", device: "Device", name: str, **kwargs: dict[str, str | int | float]):
         self.root = root
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.settings.timehandler
