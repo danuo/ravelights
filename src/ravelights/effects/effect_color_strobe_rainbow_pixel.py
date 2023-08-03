@@ -31,9 +31,10 @@ class EffectColorStrobeRainbowPixel(Effect):
             rng.shuffle(color_matrix, axis=-1)  # same shuffle for each row
             color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3), order="F")
             self.randi = color_matrix
+        else:
+            self.randi = np.roll(self.randi, shift=1, axis=0)
 
         bw_matrix_mono = Generator.bw_matrix(in_matrix)
-        print(bw_matrix_mono.shape)
         matrix_out = bw_matrix_mono[..., None] * self.randi
 
         return matrix_out
