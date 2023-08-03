@@ -45,14 +45,12 @@ def get_default_selected_dict() -> dict[str, list[str]]:
 
 def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     return {
-        Pattern.get_identifier(): [
-            BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8, p=round(random.random(), 2)) for _ in range(5)
-        ],
-        Pattern.get_identifier() + "_sec": [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        Vfilter.get_identifier(): [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        Thinner.get_identifier(): [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        Dimmer.get_identifier(): [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        "effect": [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
+        Pattern.get_identifier(): [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(5)],
+        Pattern.get_identifier() + "_sec": [BeatStatePattern() for _ in range(5)],
+        Vfilter.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        Thinner.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        Dimmer.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        "effect": [BeatStatePattern(p=1.0) for _ in range(5)],
     }
 
 
