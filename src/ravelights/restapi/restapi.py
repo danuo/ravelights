@@ -53,7 +53,7 @@ class RestAPI:
         self._api = Api(self._flask_app)
         self._setup_resource_routing()
 
-    def check_static_files_dir(self, static_files_dir: Optional[Path] = None):
+    def check_static_files_dir(self, static_files_dir: Optional[Path] = None) -> Path:
         """Hacky way to obtain an actual str/path object of the directory. Methods such as str() do not work."""
         if not static_files_dir:
             lib_path = importlib.resources.files("ravelights_ui")
