@@ -66,14 +66,21 @@ class EffectWrapper:
             multi = 2
             -> [True, True, False, False, True, True]
             """
-            print(frames_pattern)
+
             if frames_pattern is None:
-                return [True] * length_target
+                if length_target == "inf":
+                    # todo: test this
+                    return [True]
+                else:
+                    return [True] * length_target
 
             assert isinstance(multi, int) and multi >= 1
 
             current_length = max(frames_pattern) + 1
             frames_pattern_binary = [y in frames_pattern for x in range(current_length) for y in multi * [x]]
+
+            if length_target == "inf":
+                return frames_pattern_binary
 
             n = (length_target // len(frames_pattern_binary)) + 1
             frames_pattern_binary = (n * frames_pattern_binary)[:length_target]
@@ -169,8 +176,8 @@ class EffectWrapper:
 
     def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         effect = self.effect_dict[device_id]
-        print(self.counter_frames, self.frames_pattern_binary)
-        if self.frames_pattern_binary[self.counter_frames]:
+        index = self.counter_frames % len(self.frames_pattern_binary)
+        if self.frames_pattern_binary[index]:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         return in_matrix
 
@@ -212,7 +219,7 @@ class EffectWrapper:
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
         if self.mode == "frames":
-            if self.counter_frames >= self.limit_frames:
+            if self.limit_frames != "inf" and self.counter_frames >= self.limit_frames:
                 return True
         elif self.mode == "quarters":
             if self.counter_quarters_loop >= self.limit_quarters_loop:
