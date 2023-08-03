@@ -137,9 +137,9 @@ class Generator(ABC):
         elif matrix_mono.ndim == 2:
             matrix_rgb = np.zeros((*matrix_mono.shape, 3))
 
-        # colorize
-        for channel in range(3):
-            matrix_rgb[..., channel] = matrix_mono * color[channel]
+        shape = [1] * matrix_mono.ndim + [3]
+        color = np.array(color).reshape(shape)
+        matrix_rgb = matrix_mono[..., None] * color
         return matrix_rgb
 
     @classmethod
