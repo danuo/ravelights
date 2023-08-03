@@ -4,7 +4,11 @@ from typing import NamedTuple, Type, overload
 from ravelights.core.custom_typing import T_BLUEPRINTS
 from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
-from ravelights.dimmers.dimmer_decay import DimmerDecay
+from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
+from ravelights.dimmers.dimmer_decay_medium import DimmerDecayMedium
+from ravelights.dimmers.dimmer_decay_slow import DimmerDecaySlow
+from ravelights.dimmers.dimmer_decay_very_fast import DimmerDecayVeryFast
+from ravelights.dimmers.dimmer_decay_very_slow import DimmerDecayVerySlow
 from ravelights.dimmers.dimmer_peak import DimmerPeak
 from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
 from ravelights.dimmers.dimmer_sine import DimmerSine
@@ -115,7 +119,11 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
     BlueprintGen(DimmerRandomRemove, dict(name="d_random_remove")),
-    BlueprintGen(DimmerDecay, dict(name="d_decay", weight=1)),
+    BlueprintGen(DimmerDecayVeryFast, dict(name="d_decay_veryfast", weight=1)),
+    BlueprintGen(DimmerDecayFast, dict(name="d_decay_fast", weight=1)),
+    BlueprintGen(DimmerDecayMedium, dict(name="d_decay_medium", weight=1)),
+    BlueprintGen(DimmerDecaySlow, dict(name="d_decay_slow", weight=1)),
+    BlueprintGen(DimmerDecayVerySlow, dict(name="d_decay_very_slow", weight=1)),
     BlueprintGen(DimmerSine, dict(name="d_sine", weight=1)),
     BlueprintGen(DimmerPeak, dict(name="d_peak", weight=1)),
 ]
