@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING
 
 from ravelights.configs.components import blueprint_effects, create_from_blueprint
 from ravelights.core.instruction import InstructionEffect
@@ -63,7 +63,7 @@ class EffectHandler:
     def apply_effect_instruction(self, instruction: InstructionEffect):
         effect_name = instruction.effect_name
         if effect_name is None:
-            assert False
+            print("todo: implement")
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
@@ -84,6 +84,10 @@ class EffectHandler:
     def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
 
-    def do_counting(self):
+    def perform_counting_per_frame(self):
+        """
+        execute this once per frame after rendering
+        """
+
         for effect_wrapper in self.effect_queue:
-            effect_wrapper.perform_counting_per_frame()
+            effect_wrapper._perform_counting_per_frame()

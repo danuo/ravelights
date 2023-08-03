@@ -146,7 +146,7 @@ class EffectWrapper:
         for effect in self.effect_dict.values():
             effect.reset()
 
-    def perform_counting_per_frame(self):
+    def _perform_counting_per_frame(self):
         """
         execute this once per frame after rendering
         """

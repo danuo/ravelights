@@ -88,7 +88,7 @@ class RaveLightsApp:
         for i, device in enumerate(self.devices):
             device.render()
         # aftermath
-        self.effecthandler.do_counting()
+        self.effecthandler.perform_counting_per_frame()
         # ─── OUTPUT ──────────────────────────────────────────────────────
         if self.visualizer:
             self.visualizer.render()
