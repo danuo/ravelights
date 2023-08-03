@@ -61,7 +61,7 @@ class EventHandler:
                 case {"action": "generator_beat"}:
                     pass
                 case {"action": "clear_effect_queue"}:
-                    self.root.effecthandler.clear_qeueues()
+                    self.effecthandler.clear_qeueues()
                     print("cleared all effect queues")
                 case {"action": "set_effect", **other_kwargs}:
                     print("in EventHandler", other_kwargs)
