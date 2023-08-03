@@ -61,7 +61,7 @@ class EffectWrapper:
         reset effects in effectwrapper
         """
 
-        def get_frames_pattern_binary(frames_pattern: list[str | int], length_target: int, multi: int = 1):
+        def get_frames_pattern_binary(frames_pattern: list[str | int], multi: int = 1):
             """
             frames_pattern = ["L10", 0, 2, 6, 8]
             length_target = 6
@@ -107,14 +107,14 @@ class EffectWrapper:
         if self.mode == "frames":
             self.counter_frames = 0
             self.limit_frames = limit_frames
-            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
             print(self.frames_pattern_binary)
 
         if self.mode == "quarters":
             # reset counter erst später
             self.counter_frames = 0
             self.limit_frames = limit_frames
-            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
