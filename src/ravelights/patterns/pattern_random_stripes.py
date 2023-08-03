@@ -9,7 +9,6 @@ class PatternRandomStripes(Pattern):
     """pattern name: p_random_stripes"""
 
     def init(self):
-        self.p_add_vfilter = 0.5
         self.p_add_dimmer = 0.5
 
     def alternate(self):
