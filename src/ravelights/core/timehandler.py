@@ -2,6 +2,7 @@ import logging
 import time
 from collections import deque
 from typing import TYPE_CHECKING
+
 from ravelights.core.performancelogger import PerformanceLogger
 
 if TYPE_CHECKING:
@@ -80,7 +81,7 @@ class TimeHandler:
         else:
             self.stats["delayed_frame_counter"] += 1
 
-    def get_stats(self, precision: int = 2):
+    def get_stats(self, precision: int = 2) -> dict[str, float]:
         return {k: round(v, precision) for k, v in self.stats.items()}
 
     def _calculate_stats(self) -> None:
