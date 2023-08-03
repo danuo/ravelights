@@ -13,6 +13,7 @@ from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
 from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
 from ravelights.effects.effect_color_swap import EffectColorSwap
+from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_debug import PatternDebug
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
@@ -124,6 +125,7 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
     BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
     BlueprintEffect(EffectBW, dict(name="e_bw")),
+    BlueprintEffect(EffectColorize, dict(name="e_colorize")),
 ]
 
 # todo: effects need length, patterns do not
