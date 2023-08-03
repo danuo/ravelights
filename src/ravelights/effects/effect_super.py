@@ -110,14 +110,17 @@ class EffectWrapper:
         assert isinstance(multi, int) and multi >= 1
         self.multi = multi
         self.mode = mode
+        self.has_started = False
 
         if self.mode == "frames":
+            self.has_started = True
             self.counter_frames = 0
             self.limit_frames = limit_frames
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
             print(self.frames_pattern_binary)
 
         if self.mode == "quarters":
+            self.has_started = True
             self.counter_frames = 0
             self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.settings.fps)
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
@@ -125,13 +128,13 @@ class EffectWrapper:
 
         if self.mode == "loopquarters":
             # reset counter erst später
+            self.has_started = False
             self.counter_frames = 0
             self.limit_frames = limit_frames
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
-            self.has_started = False
             self.quarters_pattern_binary = get_quarters_pattern_binary(
                 quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats
             )
@@ -161,6 +164,16 @@ class EffectWrapper:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         return in_matrix
 
+    def _perform_counting_before(self):
+        """
+        execute this once per frame before rendering
+        """
+
+        if self.has_started:
+            if self.settings.beat_state.is_quarterbeat:
+                if self.quarters_pattern_binary[self.counter_quarters]:
+                    self.counter_frames = 0
+
     def _perform_counting_after(self):
         """
         execute this once per frame after rendering
@@ -169,9 +182,6 @@ class EffectWrapper:
         if self.has_started:
             self.counter_frames += 1
             if self.settings.beat_state.is_quarterbeat:
-                if self.quarters_pattern_binary[self.counter_quarters]:
-                    self.counter_frames = 0
-
                 self.counter_quarters += 1
                 counter_beats = self.counter_quarters // 4
                 if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:

@@ -56,9 +56,10 @@ class EffectHandler:
         instructions_for_frame = self.instruction_queue.get_instructions()
         for ins in instructions_for_frame:
             self.apply_effect_instruction(ins)
-        for item in self.effect_queue:
-            if item.is_finished():
-                self.effect_queue.remove(item)
+        for effect_wrapper in self.effect_queue:
+            effect_wrapper._perform_counting_before()
+            if effect_wrapper.is_finished():
+                self.effect_queue.remove(effect_wrapper)
 
     def apply_effect_instruction(self, instruction: InstructionEffect):
         effect_name = instruction.effect_name
