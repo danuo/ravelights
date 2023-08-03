@@ -57,6 +57,9 @@ class EffectWrapper:
             -> [True, True, False, False, True, True]
             """
 
+            if frames_pattern is None:
+                return [True] * length_target
+
             assert isinstance(multi, int) and multi >= 1
 
             current_length = max(frames_pattern) + 1
