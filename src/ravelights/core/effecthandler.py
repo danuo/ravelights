@@ -35,6 +35,7 @@ class EffectHandler:
         self.timehandler = self.root.settings.timehandler
         self.devices: list[Device] = self.root.devices
         self.instruction_queue = InstructionQueue(settings=self.settings)
+        self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
         device_ids = []
         effects_per_device: list[list[Effect]] = []
         for device in self.devices:
@@ -42,11 +43,9 @@ class EffectHandler:
             kwargs = dict(root=self.root, device=device)
             effects: list[Effect] = create_from_blueprint(blueprints=blueprint_effects, kwargs=kwargs)
             effects_per_device.append(effects)
-        effect_wrappers: list[EffectWrapper] = []
         for effect_objects in zip(*effects_per_device):
-            wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects, device_ids=device_ids)
-            effect_wrappers.append(wrapper)
-        self.register_effects(effect_wrappers=effect_wrappers)
+            effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects, device_ids=device_ids)
+            self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
     def clear_qeueues(self):
         self.effect_queue.clear()
@@ -59,7 +58,7 @@ class EffectHandler:
             self.apply_effect_instruction(ins)
         for item in self.effect_queue:
             if item.is_finished():
-                self.remove_item(item)
+                self.effect_queue.remove(item)
 
     def apply_effect_instruction(self, instruction: InstructionEffect):
         effect_name = instruction.effect_name
@@ -72,24 +71,15 @@ class EffectHandler:
         print("in EffectHandler", effect_name, kwargs)
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         effect_wrapper.reset(**kwargs)
-        self.add_item(effect_wrapper)
+        self.effect_queue.append(effect_wrapper)
 
-    def remove_effect(self, effect_name: str):
-        effect_wrapper = self.find_effect(name=effect_name)
-        if effect_wrapper in self.effect_queue:
-            self.effect_queue.remove(effect_wrapper)
-
-    def add_item(self, item: EffectWrapper):
-        self.effect_queue.append(item)
-
-    def remove_item(self, item: EffectWrapper):
-        item.on_delete()
-        self.effect_queue.remove(item)
-
-    def register_effects(self, effect_wrappers: list[EffectWrapper]):
-        self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
-        for effect_wrapper in effect_wrappers:
-            self.effect_wrappers_dict.update({effect_wrapper.name: effect_wrapper})
+    def remove_effect(self, effect: str | EffectWrapper):
+        if isinstance(effect, str):
+            effect = self.find_effect(name=effect)
+        assert isinstance(effect, EffectWrapper)
+        if effect in self.effect_queue:
+            effect.on_delete()
+            self.effect_queue.remove(effect)
 
     def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
