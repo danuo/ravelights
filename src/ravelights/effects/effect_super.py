@@ -31,12 +31,13 @@ class EffectWrapper:
         self.mode = None
 
         # mode == "frames"
-        self.counter_frames = 0
-        self.limit_frames = 0
+        self.counter_frames: int = 0
+        self.limit_frames: int = 0
+        self.frames_pattern_binary: list[bool] = [True]
 
         # mode == "quarters"
-        self.counter_quarters = 0
-        self.limit_quarters = 0
+        self.counter_quarters: int = 0
+        self.limit_quarters: int = 0
 
     def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
         effect = self.effect_dict[device_id]
@@ -53,8 +54,8 @@ class EffectWrapper:
 
     def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         effect = self.effect_dict[device_id]
-        print(self.counter_frames, self.frames_pattern)
-        if self.counter_frames in self.frames_pattern:
+        print(self.counter_frames, self.frames_pattern_binary)
+        if self.frames_pattern_binary[self.counter_frames]:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         self.counter_frames += 1
         return in_matrix
@@ -96,16 +97,39 @@ class EffectWrapper:
             effect.on_delete()
 
     def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
-        mode = "frames"
-        limit_frames = 12  # int, match, inf
-        frames_pattern = [0, 2, 6, 8]
+        """
+        reset effects in effectwrapper
+        """
 
+        def get_frames_pattern_binary(frames_pattern: list[int], length_target: int, multi: int = 1):
+            """
+            frames_pattern = [0, 2, 6, 8]
+            length_target = 6
+            multi = 2
+            -> [True, True, False, False, True, True]
+            """
+
+            assert isinstance(multi, int) and multi >= 1
+
+            current_length = max(frames_pattern) + 1
+            frames_pattern_binary = [y in frames_pattern for x in range(current_length) for y in multi * [x]]
+
+            n = (length_target // len(frames_pattern_binary)) + 1
+            frames_pattern_binary = (n * frames_pattern_binary)[:length_target]
+            return frames_pattern_binary
+
+        mode = "frames"
+        limit_frames = 20  # int, match, inf
+        frames_pattern = [0, 3, 14, 17]
+
+        """
         mode = "quarters"
         limit_frames = 2
         quarters_pattern = ["0a", "1a", "2a"]
         limit_quarters = 2
         quarters_loop_length = 4
         limit_quarters_loop = 2
+        """
         print("add effect: ", mode, limit_frames, limit_quarters)
         # assert limit_frames is None or limit_quarters is None
 
@@ -113,8 +137,9 @@ class EffectWrapper:
             assert limit_frames is not None
             self.mode = "frames"
             self.counter_frames = 0
-            self.frames_pattern = frames_pattern
+            # self.frames_pattern = frames_pattern
             self.limit_frames = limit_frames
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=1)
             # todo: match limit_frames with frames_pattern. shorten or loop?
 
         if mode == "quarters":
