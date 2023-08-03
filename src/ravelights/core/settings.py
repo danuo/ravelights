@@ -177,7 +177,7 @@ class Settings:
         secondary_color = self.get_secondary_color(primary_color)
         self.color[1] = secondary_color
 
-    def get_secondary_color(self, in_color: Color) -> Optional[None]:
+    def get_secondary_color(self, in_color: Color) -> Optional[Color]:
         # todo: move this to colorhandler
         """returns a color that matches in input color, according to the secondary
         color rule currently selected in settings"""
