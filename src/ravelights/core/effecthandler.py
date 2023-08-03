@@ -2,8 +2,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Type
 
-from ravelights.configs.components import (blueprint_effects,
-                                           create_from_blueprint)
+from ravelights.configs.components import blueprint_effects, create_from_blueprint
 from ravelights.core.instruction import InstructionEffect
 from ravelights.core.instructionqueue import InstructionQueue
 from ravelights.core.settings import Settings
@@ -64,20 +63,22 @@ class EffectHandler:
 
     def apply_effect_instruction(self, instruction: InstructionEffect):
         effect_name = instruction.effect_name
+        if effect_name is None:
+            assert False
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
     def load_effect(self, effect_name: str, length_frames: int):
-        effect: Effect = self.find_effect(name=effect_name)
+        effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         # todo: have two ways to load effect
-        # effect.reset(limit_frames=length_frames)
-        effect.reset(limit_quarters=length_frames)
-        self.add_item(effect)
+        # effect_wrapper.reset(limit_frames=length_frames)
+        effect_wrapper.reset(limit_quarters=length_frames)
+        self.add_item(effect_wrapper)
 
-    def add_item(self, item: Effect):
+    def add_item(self, item: EffectWrapper):
         self.effect_queue.append(item)
 
-    def remove_item(self, item: Effect):
+    def remove_item(self, item: EffectWrapper):
         item.on_delete()
         self.effect_queue.remove(item)
 
@@ -86,5 +87,5 @@ class EffectHandler:
         for effect_wrapper in effect_wrappers:
             self.effect_wrappers_dict.update({effect_wrapper.name: effect_wrapper})
 
-    def find_effect(self, name: str) -> Effect:
+    def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
