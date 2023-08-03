@@ -142,6 +142,13 @@ class Generator(ABC):
         matrix_rgb = matrix_mono[..., None] * color
         return matrix_rgb
 
+    def bw_matrix(self, matrix_rgb: ArrayNx3) -> ArrayNx1:
+        """
+        turns a matrix with shape (..., 3) into a black and white matrix of shape (...)
+        """
+
+        return np.amax(matrix_rgb, axis=-1)
+
     @classmethod
     def add_matrices(cls, matrix_1: Array, matrix_2: Array) -> Array:
         """Adds two matrices together and caps the brightness (max value) to 1."""
