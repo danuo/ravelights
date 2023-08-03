@@ -39,6 +39,9 @@ class RestAPI:
         self._flask_app = Flask(__name__)
 
         if serve_static_files:
+            if len(list(static_files_dir.iterdir())) < 5:
+                logger.warning(f"Could not find static files for webui in {static_files_dir=}")
+
             # serve index.html
             @self._flask_app.route("/")
             def serve_index():
