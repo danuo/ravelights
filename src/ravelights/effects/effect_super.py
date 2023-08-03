@@ -52,7 +52,6 @@ class EffectWrapper:
         return in_matrix
 
     def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
-        # todo first
         effect = self.effect_dict[device_id]
         print(self.counter_frames, self.frames_list)
         if self.counter_frames in self.frames_list:
@@ -61,6 +60,19 @@ class EffectWrapper:
         return in_matrix
 
     def render_matrix_quarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
+        if self.quarters_time is None:
+            # first quarter has not been found yet
+            # start effect on next full beat:
+            if self.settings.beat_state.is_beat:
+                self.quarters_time = self.settings.timehandler.time_0
+                self.counter_frames = 0  # double
+                self.counter_quarters = 0  # double
+            else:
+                return in_matrix
+
+        if self.settings.beat_state.is_quarterbeat:
+            pass
+
         # todo second
         effect = self.effect_dict[device_id]
         if self.settings.beat_state.is_quarterbeat:
@@ -73,7 +85,15 @@ class EffectWrapper:
 
     def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
         mode = "frames"
-        limit_frames = 12
+        limit_frames = 12  # int, match, inf
+        frames_pattern = [0, 2, 6, 8]
+
+        mode = "quarters"
+        limit_frames = 2
+        quarters_pattern = ["0a", "1a", "2a"]
+        limit_quarters = 2
+        quarters_loop_length = 4
+        quarters_loop_count = 4
         print("add effect: ", mode, limit_frames, limit_quarters)
         # assert limit_frames is None or limit_quarters is None
 
@@ -81,13 +101,20 @@ class EffectWrapper:
             assert limit_frames is not None
             self.mode = "frames"
             self.counter_frames = 0
-            self.frames_list = [0, 2, 6, 8]
+            self.frames_pattern = frames_pattern
             self.limit_frames = limit_frames
-            # todo: match limit_frames with frames_list. shorten or loop?
+            # todo: match limit_frames with frames_pattern. shorten or loop?
 
         if mode == "quarters":
+            self.mode = "quaters"
+            self.quarters_time = None
+            self.counter_frames = 0
             self.counter_quarters = 0
+            self.counter_quarters_loop = 0
+            self.quarters_pattern = quarters_pattern
             self.limit_quarters = limit_quarters
+            self.quarters_loop_length = quarters_loop_length
+            self.quarters_loop_count = quarters_loop_count
 
         for effect in self.effect_dict.values():
             effect.reset()
