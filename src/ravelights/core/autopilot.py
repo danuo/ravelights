@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.colorhandler import ColorHandler
+from ravelights.core.colorhandler import Color, ColorHandler
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.utils import p
@@ -21,36 +21,26 @@ class AutoPilot:
         self.settings.settings_autopilot = dict(
             autopilot=False,
             loop_length=8,
-
             autoload_vfilter=True,
             autoload_dimmer=True,
             autoload_thinner=True,
             autoload_triggers=True,
-
             color_primary=True,
             p_color_primary=0.1,
-
             color_secondary=True,
             p_color_secondary=0.1,
-
             color_effect=True,
             p_color_effect=0.1,
-
             timeline=True,
             p_timeline=0.1,
-
             pattern=True,
             p_pattern=0.1,
-
             pattern_sec=True,
             p_pattern_sec=0.1,
-
             alternate_pattern=True,
             p_alternate_pattern=0.1,
-
             alternate_pattern_sec=True,
             p_alternate_pattern_sec=0.1,
-
             triggers=True,
             p_triggers=0.1,
         )
@@ -62,22 +52,76 @@ class AutoPilot:
             dict(type="toggle", name_toggle="autoload_dimmer"),
             dict(type="toggle", name_toggle="autoload_thinner"),
             dict(type="toggle", name_toggle="autoload_triggers"),
-            dict(type="toggle_slider", name_toggle="color_primary", name_slider="p_color_primary", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="color_secondary", name_slider="p_color_secondary", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="color_effect", name_slider="p_color_effect", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="timeline", name_slider="p_timeline", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="pattern", name_slider="p_pattern", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="pattern_sec", name_slider="p_pattern_sec", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="alternate_pattern", name_slider="p_alternate_pattern", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="alternate_pattern_sec", name_slider="p_alternate_pattern_sec", range_min=0., range_max=1., step=0.1, markers=True),
-            dict(type="toggle_slider", name_toggle="triggers", name_slider="p_triggers", range_min=0., range_max=1., step=0.1, markers=True),
+            dict(
+                type="toggle_slider",
+                name_toggle="color_primary",
+                name_slider="p_color_primary",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="color_secondary",
+                name_slider="p_color_secondary",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="color_effect",
+                name_slider="p_color_effect",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider", name_toggle="timeline", name_slider="p_timeline", range_min=0.0, range_max=1.0, step=0.1, markers=True
+            ),
+            dict(
+                type="toggle_slider", name_toggle="pattern", name_slider="p_pattern", range_min=0.0, range_max=1.0, step=0.1, markers=True
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="pattern_sec",
+                name_slider="p_pattern_sec",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="alternate_pattern",
+                name_slider="p_alternate_pattern",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="alternate_pattern_sec",
+                name_slider="p_alternate_pattern_sec",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider", name_toggle="triggers", name_slider="p_triggers", range_min=0.0, range_max=1.0, step=0.1, markers=True
+            ),
             dict(type="slider", name_slider="loop_length", range_min=4, range_max=32, step=4, markers=True),
         ]
         self.settings.controls["controls_autopilot"] = controls_autopilot
 
         # ─── Add Controls Color Palette ───────────────────────────────
-        n_colors = 12
-        controls_color_palette = [ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors+1)[:-1]]
+        n_colors = 11
+        controls_color_palette = [ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]] + [Color(1, 1, 1)]
         controls_color_palette = [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
         self.settings.controls["controls_color_palette"] = controls_color_palette
 
