@@ -12,6 +12,7 @@ from ravelights.effects.effect_bw import EffectBW
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
 from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
+from ravelights.effects.effect_color_strobe_rainbow_pixel import EffectColorStrobeRainbowPixel
 from ravelights.effects.effect_color_swap import EffectColorSwap
 from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_super import Effect
@@ -122,6 +123,7 @@ blueprint_generators: list[BlueprintGen] = [
 blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorStrobe, dict(name="e_color_strobe")),
     BlueprintEffect(EffectColorStrobeRainbow, dict(name="e_color_strobe_rainbow")),
+    BlueprintEffect(EffectColorStrobeRainbowPixel, dict(name="e_color_strobe_rainbow_pixel")),
     BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
     BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
     BlueprintEffect(EffectBW, dict(name="e_bw")),
@@ -154,7 +156,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
            "name": "simple p1 only",
        },
        "selectors": [
-           BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_pid", set_all=False)),
+           BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_solid_color", set_all=False)),
            # BlueprintSel(GenSelector, dict(gen_type=Vfilter, name="v_mirror")),
         #    BlueprintSel(GenSelector, dict(gen_type=Dimmer, name="d_peak")),
        ],
