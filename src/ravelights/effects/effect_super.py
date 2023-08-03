@@ -32,11 +32,11 @@ class EffectWrapper:
 
         # mode == "frames"
         self.counter_frames = 0
-        self.limit_frames = None
+        self.limit_frames = 0
 
         # mode == "quarters"
         self.counter_quarters = 0
-        self.limit_quarters = None
+        self.limit_quarters = 0
 
     def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
         effect = self.effect_dict[device_id]
@@ -53,8 +53,8 @@ class EffectWrapper:
 
     def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         effect = self.effect_dict[device_id]
-        print(self.counter_frames, self.frames_list)
-        if self.counter_frames in self.frames_list:
+        print(self.counter_frames, self.frames_pattern)
+        if self.counter_frames in self.frames_pattern:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         self.counter_frames += 1
         return in_matrix
@@ -64,14 +64,26 @@ class EffectWrapper:
             # first quarter has not been found yet
             # start effect on next full beat:
             if self.settings.beat_state.is_beat:
-                self.quarters_time = self.settings.timehandler.time_0
+                self.quarters_time = self.settings.timehandler.time_0  # do i need this?
                 self.counter_frames = 0  # double
                 self.counter_quarters = 0  # double
             else:
                 return in_matrix
 
         if self.settings.beat_state.is_quarterbeat:
-            pass
+            # get beat string of current frame
+            current_beat, current_quarter = divmod(self.counter_quarters, 4)
+            beat_string = str(current_beat) + "abcd"[current_quarter]
+            print(beat_string)
+
+            # see if beat string is in pattern
+
+            # count quarters, calculate loop stats
+            self.counter_quarters += 1
+            counter_beats = self.counter_quarters // 4
+            if counter_beats // self.quarters_loop_length == 1:
+                self.counter_quarters_loop += 1
+                self.counter_quarters = 0
 
         # todo second
         effect = self.effect_dict[device_id]
@@ -93,7 +105,7 @@ class EffectWrapper:
         quarters_pattern = ["0a", "1a", "2a"]
         limit_quarters = 2
         quarters_loop_length = 4
-        quarters_loop_count = 4
+        limit_quarters_loop = 2
         print("add effect: ", mode, limit_frames, limit_quarters)
         # assert limit_frames is None or limit_quarters is None
 
@@ -106,7 +118,7 @@ class EffectWrapper:
             # todo: match limit_frames with frames_pattern. shorten or loop?
 
         if mode == "quarters":
-            self.mode = "quaters"
+            self.mode = "quarters"
             self.quarters_time = None
             self.counter_frames = 0
             self.counter_quarters = 0
@@ -114,18 +126,18 @@ class EffectWrapper:
             self.quarters_pattern = quarters_pattern
             self.limit_quarters = limit_quarters
             self.quarters_loop_length = quarters_loop_length
-            self.quarters_loop_count = quarters_loop_count
+            self.limit_quarters_loop = limit_quarters_loop
 
         for effect in self.effect_dict.values():
             effect.reset()
 
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
-        if self.limit_frames is not None:
+        if self.mode == "frames":
             if self.counter_frames >= self.limit_frames:
                 return True
-        elif self.limit_quarters is not None:
-            if self.counter_quarters > self.limit_quarters:
+        elif self.mode == "quarters":
+            if self.counter_quarters_loop > self.limit_quarters_loop:
                 return True
         return False
 
