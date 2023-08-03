@@ -43,7 +43,6 @@ class RaveLightsApp:
         self.eventhandler = EventHandler(root=self)
         self.controls = Controls(root=self)
 
-        visualizer = False
         self.visualizer = None
         if visualizer:
             from ravelights.pygame_visualizer.visualizer import Visualizer
