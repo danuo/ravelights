@@ -33,14 +33,14 @@ class EffectColorize(Effect):
                     i += number
                 # self.color_matrix = self.color_matrix.reshape((self.n_leds, self.n_lights))
 
-    def render_settings_overwrite(self, selected_level: int) -> dict[str, Color]:
+    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
         return dict()
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         # bw filter
         in_matrix_bw = np.max(in_matrix, axis=-1)
 
-        color_1, color_2, color_effect = self.settings.color_engine.get_colors_rgb(selected_level=1)
+        color_1, color_2, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=1)
         in_matrix_color1 = self.colorize_matrix(in_matrix_bw, color=color_1)
         in_matrix_color2 = self.colorize_matrix(in_matrix_bw, color=color_2)
         out_matrix_rgb = np.where(self.color_matrix[..., None].repeat(3, axis=2) == 1, in_matrix_color1, in_matrix_color2)

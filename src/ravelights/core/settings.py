@@ -1,5 +1,4 @@
 import logging
-import random
 from dataclasses import InitVar, dataclass, field
 from enum import Enum
 from typing import Optional, Type
@@ -103,8 +102,8 @@ class Settings:
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
     triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
     active_timeline_index: int = 1  # default timeline index
-    use_timeline: bool = True
-    manual_timeline_index: int = 1
+    use_manual_timeline: bool = True
+    manual_timeline_level: int = 1
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict = field(init=False)

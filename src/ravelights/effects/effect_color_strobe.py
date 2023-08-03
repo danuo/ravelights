@@ -18,7 +18,7 @@ class EffectColorStrobe(Effect):
         self.hue_range = hue_range if hue_range else random.choice([1.0, 0.3, 0.1, 0.05])
         self.hue_range = 0.1
 
-    def render_settings_overwrite(self, selected_level: int) -> dict[str, Color]:
+    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
         settings_overwrite = dict()
         for key in ["color_prim", "color_sec"]:
             random_hue_shift = random.uniform(0, self.hue_range)

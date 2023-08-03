@@ -20,7 +20,7 @@ class RenderModule:
         self.settings: Settings = self.root.settings
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
-        self.selected_level = 0  # should be per device. different devices can have different levels
+        self.timeline_level = 0  # should be per device. different devices can have different levels
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.get_matrix_float().copy()
 
@@ -31,25 +31,37 @@ class RenderModule:
     def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if level is None:
-            level = self.selected_level
+            level = self.timeline_level
         return self.settings.triggers[identifier][level]
 
-    def get_selected_generator(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> Generator:
+    def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
+        if timeline_level is None:
+            timeline_level = self.get_timeline_level()
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        if level is None:
-            level = self.selected_level
-        gen_name = self.settings.selected[identifier][level]
+        gen_name = self.settings.selected[identifier][timeline_level]
         return self.get_generator_by_name(gen_name)
 
     def get_generator_by_name(self, gen_name: str) -> Generator:
         return self.generators_dict[gen_name]
 
+    def get_timeline_level(self) -> int:
+        """
+        return manual level or level from timeline, accoridng to setting
+        """
+
+        if self.settings.use_manual_timeline:
+            return self.settings.manual_timeline_level
+        else:
+            return self.timeline_level
+
     def render(self):
-        pattern: Pattern = self.get_selected_generator(gen_type=Pattern)
-        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec")
-        vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter)
-        thinner: Thinner = self.get_selected_generator(gen_type=Thinner)
-        dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer)
+        timeline_level = self.get_timeline_level()
+
+        pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
+        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level)
+        vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level)
+        thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level)
+        dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level)
 
         # ─── Check Trigger ────────────────────────────────────────────
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Pattern):
@@ -63,17 +75,13 @@ class RenderModule:
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Dimmer):
             dimmer.on_trigger()
 
-        if BeatStatePattern(beats=[0], loop_length=16) == self.settings.beat_state:
-            # triggers every 16 beats
-            print("BeatStatePattern with loop_length=16 triggered in rendermodule")
-
         # ---------------------------------- colors ---------------------------------- #
         # color is a tuple of 3 colors
         # primary color: for every Generator, except secondary Pattern
         # secondary color: for secondary Pattern
         # effect color: for every Effect
         #
-        color_prim, color_sec, color_effect = self.settings.color_engine.get_colors_rgb(selected_level=self.selected_level)
+        color_prim, color_sec, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
 
         # ----------------------- settings overwrite by effect ----------------------- #
         # todo: design choice
@@ -84,7 +92,7 @@ class RenderModule:
         settings_overwrite = dict()
         for effect_wrapper in self.root.effecthandler.effect_queue:
             settings_overwrite.update(
-                effect_wrapper.render_settings_overwrite(device_id=self.device.device_id, selected_level=self.selected_level)
+                effect_wrapper.render_settings_overwrite(device_id=self.device.device_id, timeline_level=timeline_level)
             )
         if settings_overwrite:
             if "color_prim" in settings_overwrite:

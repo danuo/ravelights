@@ -28,7 +28,7 @@ class InstructionHandler:
         """Apply_instruction() is called when new instruction is loaded"""
 
         # ─── APPLY GENERATORS ────────────────────────────────────────────
-        self.rendermodule.selected_level = instruction.level
+        self.rendermodule.timeline_level = instruction.level
 
     def load_and_apply_instructions(self):
         instructions_for_frame = cast(list[InstructionDevice], self.instruction_queue.get_instructions())

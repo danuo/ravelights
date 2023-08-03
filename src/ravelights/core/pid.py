@@ -21,19 +21,19 @@ class PIDController:
     run perform_pid_step() each frame to simulate one step
     """
 
-    def __init__(self, start_val=0, kp=0.2, kd=0.1, ki=0.0, dt=1 / 20, instant=False):
-        self.target = start_val
-        self._x = start_val  # read value property instead
-        self._dx = 0
-        self._ddx = 0
-        self._previous_error = 0
-        self._integral = 0
-        self.m = 0.01
+    def __init__(self, start_val=0.0, kp=0.2, kd=0.1, ki=0.0, dt=1 / 20, instant=False):
+        self.target: float = start_val
+        self._x: float = start_val  # read value property instead
+        self._dx: float = 0.0
+        self._ddx: float = 0.0
+        self._previous_error: float = 0.0
+        self._integral: float = 0.0
+        self.m: float = 0.01
 
-        self.kp = kp
-        self.kd = kd
-        self.ki = ki
-        self.dt = dt
+        self.kp: float = kp
+        self.kd: float = kd
+        self.ki: float = ki
+        self.dt: float = dt
 
         self.instant: bool = instant
 

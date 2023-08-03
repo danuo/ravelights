@@ -45,9 +45,9 @@ class EffectWrapper:
         self.counter_quarters_loop: int = 0
         self.loop_length_beats: int = 1
 
-    def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
+    def render_settings_overwrite(self, device_id: int, timeline_level: int) -> dict:
         effect = self.effect_dict[device_id]
-        return effect.render_settings_overwrite(selected_level=selected_level)
+        return effect.render_settings_overwrite(timeline_level=timeline_level)
 
     def reset(
         self,
@@ -233,7 +233,7 @@ class Effect(ABC):
         ...
 
     @abstractmethod
-    def render_settings_overwrite(self, selected_level: int) -> dict:
+    def render_settings_overwrite(self, timeline_level: int) -> dict:
         """Called before each render cycle to overwrite settings for this
         specific frame, for example overwriting the colors"""
         ...
