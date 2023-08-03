@@ -123,7 +123,6 @@ class Settings:
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
 
     def clear_selected(self) -> None:
-        # todo: add secondary patterns here. generators need to exist 2nd itme for this!
         self.selected = get_default_selected_dict()
 
     def process_device_config(self, device_config: list[list[dict[str, float | int]]]) -> None:
