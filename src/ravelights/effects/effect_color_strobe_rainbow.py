@@ -2,6 +2,7 @@ import random
 
 from ravelights.core.colorhandler import Color, ColorHandler
 from ravelights.core.custom_typing import Array
+from ravelights.core.generator_super import Generator
 from ravelights.effects.effect_super import Effect
 from ravelights.vfilters.vfilter_bw import VfilterBW
 
@@ -19,8 +20,7 @@ class EffectColorStrobeRainbow(Effect):
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""
-        bw_matrix_rgb = self.bw_filter.render(in_matrix=in_matrix, color=color)
-        bw_matrix_mono = bw_matrix_rgb[..., 0]
+        bw_matrix_mono = Generator.bw_matrix(in_matrix)
 
         matrix_out = self.bw_filter.get_float_matrix_rgb()
 
