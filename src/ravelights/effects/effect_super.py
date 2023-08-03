@@ -71,14 +71,21 @@ class EffectWrapper:
         for effect in self.effect_dict.values():
             effect.on_delete()
 
-    def reset(self, limit_frames: int = None, limit_quarters: int = None):
-        print("add effect: ", limit_frames, limit_quarters)
+    def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
+        mode = "frames"
+        print("add effect: ", mode, limit_frames, limit_quarters)
         assert limit_frames is None or limit_quarters is None
-        self.counter_frames = 0
-        self.frames_list = [0, 2, 6, 8]
-        self.counter_quarters = 0
-        self.limit_frames = limit_frames
-        self.limit_quarters = limit_quarters
+
+        if mode == "frames":
+            self.mode = "frames"
+            self.counter_frames = 0
+            self.frames_list = [0, 2, 6, 8]
+
+        if mode == "quarters":
+            self.counter_quarters = 0
+            self.limit_frames = limit_frames
+            self.limit_quarters = limit_quarters
+
         for effect in self.effect_dict.values():
             effect.reset()
 
