@@ -28,22 +28,43 @@ class EffectWrapper:
             self.effect_dict[device_id] = effect
         self.name = effect_objects[0].name
 
-        self.counter_frames = 0
-        self.counter_quarters = 0
+        self.mode = None
 
+        # mode == "frames"
+        self.counter_frames = 0
         self.limit_frames = None
+
+        # mode == "quarters"
         self.limit_quarters = None
+        self.counter_quarters = 0
 
     def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
         effect = self.effect_dict[device_id]
         return effect.render_settings_overwrite(selected_level=selected_level)
 
-    def render_matrix(self, in_matrix: Array, color: Color, device_id: int) -> Array:
+    def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         """Invisible render class with effect logic"""
+
+        if self.mode == "frames":
+            self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
+        elif self.mode == "quarters":
+            self.render_matrix_quarters(in_matrix=in_matrix, color=color, device_id=device_id)
+        return in_matrix
+
+    def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
+        # todo first
         self.counter_frames += 1
+        effect = self.effect_dict[device_id]
+        if self.counter_frames in self.frames_list:
+            return effect.render_matrix(in_matrix=in_matrix, color=color)
+        else:
+            return in_matrix
+
+    def render_matrix_quarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
+        # todo second
+        effect = self.effect_dict[device_id]
         if self.settings.beat_state.is_quarterbeat:
             self.counter_quarters += 1
-        effect = self.effect_dict[device_id]
         return effect.render_matrix(in_matrix=in_matrix, color=color)
 
     def on_delete(self):
@@ -54,6 +75,7 @@ class EffectWrapper:
         print("add effect: ", limit_frames, limit_quarters)
         assert limit_frames is None or limit_quarters is None
         self.counter_frames = 0
+        self.frames_list = [0, 2, 6, 8]
         self.counter_quarters = 0
         self.limit_frames = limit_frames
         self.limit_quarters = limit_quarters
@@ -99,7 +121,7 @@ class Effect(ABC):
         ...
 
     @abstractmethod
-    def render_matrix(self, in_matrix: Array, color: Color) -> Array:
+    def render_matrix(self, in_matrix: ArrayNx3, color: Color) -> ArrayNx3:
         """Called inside each render cycle, between vfilter and dimmer"""
         ...
 
