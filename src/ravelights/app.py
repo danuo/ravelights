@@ -2,6 +2,7 @@ import logging
 from enum import Enum, auto
 from typing import Optional
 
+from ravelights.artnet.artnet_transmitter import ArtnetTransmitter
 from ravelights.configs.device_configs import device_configs
 from ravelights.core.controls import Controls
 from ravelights.core.device import Device
@@ -10,7 +11,6 @@ from ravelights.core.eventhandler import EventHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 from ravelights.restapi.restapi import RestAPI
-from ravelights.artnet.artnet_transmitter import ArtnetTransmitter
 
 logger = logging.getLogger(__name__)
 
@@ -43,9 +43,11 @@ class RaveLightsApp:
         self.eventhandler = EventHandler(root=self)
         self.controls = Controls(root=self)
 
+        visualizer = False
         self.visualizer = None
         if visualizer:
-            from ravelights.pygame_visualizer.visualizer import Visualizer  # fmt: skip
+            from ravelights.pygame_visualizer.visualizer import Visualizer
+
             self.visualizer = Visualizer(root=self)
 
         self.artnet = artnet_transmitter
@@ -87,11 +89,11 @@ class RaveLightsApp:
         for i, device in enumerate(self.devices):
             device.render()
         # ─── OUTPUT ──────────────────────────────────────────────────────
-        if self.visualizer is not None:
+        if self.visualizer:
             self.visualizer.render()
             # todo: transmit to all devices, not just one
+        else:
+            self.settings.timehandler.print_performance_stats()
         if self.artnet is not None:
-            self.artnet.transmit_matrix(
-                self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness)
-            )
+            self.artnet.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
         self.settings.after()

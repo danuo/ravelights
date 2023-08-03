@@ -89,6 +89,8 @@ class TimeHandler:
         self._calculate_sleep_stats()
         self._calculate_fps_stats()
         self._calculate_avg_render_time()
+
+    def print_performance_stats(self):
         self._performance_logger.notify(self.get_stats())
 
     def _calculate_sleep_stats(self) -> None:
