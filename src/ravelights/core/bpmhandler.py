@@ -149,11 +149,11 @@ class BPMhandler:
         if self.time_0_cache == self.timehandler.time_0:
             return self.beat_state_cache
         else:
-            self.beat_state_cache = self.get_beat_state()
+            self.beat_state_cache = self._get_beat_state()
             self.time_0_cache = self.timehandler.time_0
         return self.beat_state_cache
 
-    def get_beat_state(self):
+    def _get_beat_state(self):
         time_since_sync = self.timehandler.time_0 - self.timehandler.time_sync
         time_since_quarter = time_since_sync % self.settings.quarter_time
         n_quarters_long = int((time_since_sync // self.settings.quarter_time) % self.settings.queue_length)
