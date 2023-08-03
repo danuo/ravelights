@@ -93,25 +93,19 @@ class GenSelector:
 
     def set_vfilter_dimmer_thinner(self, pattern) -> None:
         # ─── Vfilter ──────────────────────────────────────────────────
-        if self.settings["autoload_vfilter"]:
-            if p(pattern.p_add_vfilter):
-                self.vfilter_name = self.get_random_generator(gen_type=Vfilter)
-            else:
-                self.vfilter_name = "v_none"
+        # * not related to pattern, add vfilter purely random
 
         # ─── Dimmer ───────────────────────────────────────────────────
-        if self.settings["autoload_dimmer"]:
-            if p(pattern.p_add_dimmer):
-                self.dimmer_name = self.get_random_generator(gen_type=Dimmer)
-            else:
-                self.dimmer_name = "d_none"
+        if p(pattern.p_add_dimmer):
+            self.dimmer_name = self.get_random_generator(gen_type=Dimmer)
+        else:
+            self.dimmer_name = "d_none"
 
         # ─── Thinner ──────────────────────────────────────────────────
-        if self.settings["autoload_thinner"]:
-            if p(pattern.p_add_thinner):
-                self.thinner_name = self.get_random_generator(gen_type=Thinner)
-            else:
-                self.thinner_name = "t_none"
+        if p(pattern.p_add_thinner):
+            self.thinner_name = self.get_random_generator(gen_type=Thinner)
+        else:
+            self.thinner_name = "t_none"
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
