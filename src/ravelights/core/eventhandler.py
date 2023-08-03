@@ -30,7 +30,7 @@ class EventHandler:
             match receive_data:
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": "new trigger"}:
                     if level == 0:  # level = 0 means auto
-                        level = self.patternscheduler.devices[0].rendermodule.selected_level
+                        level = self.patternscheduler.devices[0].rendermodule.timeline_level
                     generator = self.patternscheduler.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, level=level)
                     self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, level=level)
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": command}:

@@ -18,7 +18,7 @@ class EffectColorStrobeRainbowPixel(Effect):
         self.bw_filter = VfilterBW(root=self.root, device=self.device)
         self.randi = None
 
-    def render_settings_overwrite(self, selected_level: int) -> dict[str, Color]:
+    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
         return dict()
 
     def render_matrix(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:

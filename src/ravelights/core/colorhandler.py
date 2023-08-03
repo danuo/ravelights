@@ -50,14 +50,14 @@ class ColorEngine:
         for color_pid in self.color_pids:
             color_pid.run_pid_step()
 
-    def get_colors_rgb(self, selected_level: int) -> list[Color]:
+    def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
         gives the list of colors [color_1, color_2, color_effect] in the correct order.
         color_1 and color_2 may be interchanged depending on the level
         # todo: make this a setting
         """
 
-        if selected_level == 1:
+        if timeline_level == 1:
             return [c.get_rgb() for c in self.color_pids]
         else:
             return [self.color_pids[idx].get_rgb() for idx in [1, 0, 2]]
