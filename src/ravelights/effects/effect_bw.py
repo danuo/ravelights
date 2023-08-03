@@ -5,7 +5,7 @@ from ravelights.vfilters.vfilter_bw import VfilterBW
 
 
 class EffectBW(Effect):
-    def init(self):
+    def reset(self):
         """
         hue_range controls the color variation for each frame
         """

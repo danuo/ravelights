@@ -8,7 +8,7 @@ from ravelights.effects.effect_super import Effect
 
 
 class EffectColorize(Effect):
-    def init(self):
+    def reset(self):
         """
         hue_range controls the color variation for each frame
         """

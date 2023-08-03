@@ -58,7 +58,7 @@ class EffectWrapper:
         self.limit_frames = limit_frames
         self.limit_quarters = limit_quarters
         for effect in self.effect_dict.values():
-            effect.init()
+            effect.reset()
 
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
@@ -85,10 +85,10 @@ class Effect(ABC):
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name = name
 
-        self.init()
+        self.reset()
 
     @abstractmethod
-    def init(self):
+    def reset(self):
         """Called, when effect is added to the queue"""
         ...
 
