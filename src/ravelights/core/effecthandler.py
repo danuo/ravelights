@@ -90,4 +90,4 @@ class EffectHandler:
         """
 
         for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_per_frame()
+            effect_wrapper._perform_counting_after()

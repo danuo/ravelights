@@ -88,6 +88,7 @@ class EffectWrapper:
             -> [True, False, True, False, True, False, False, False]
             """
 
+            print("A", quarters_pattern, loop_length_beats)
             loop_length_quarters = loop_length_beats * 4
             quarters_pattern_binary = [False] * loop_length_quarters
 
@@ -99,6 +100,7 @@ class EffectWrapper:
                 index = num * 4 + letter_num
                 if index < loop_length_quarters:
                     quarters_pattern_binary[index] = True
+            print(quarters_pattern_binary)
             return quarters_pattern_binary
 
         print(
@@ -129,7 +131,7 @@ class EffectWrapper:
 
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
-            self.quarters_time = None
+            self.has_started = False
             self.quarters_pattern_binary = get_quarters_pattern_binary(
                 quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats
             )
@@ -139,19 +141,6 @@ class EffectWrapper:
 
         for effect in self.effect_dict.values():
             effect.reset()
-
-    def _perform_counting_per_frame(self):
-        """
-        execute this once per frame after rendering
-        """
-
-        self.counter_frames += 1
-        if self.settings.beat_state.is_quarterbeat:
-            self.counter_quarters += 1
-            counter_beats = self.counter_quarters // 4
-            if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
-                self.counter_quarters_loop += 1
-                self.counter_quarters = 0
 
     def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         # print("run with device_id ", device_id)
@@ -172,34 +161,42 @@ class EffectWrapper:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         return in_matrix
 
+    def _perform_counting_after(self):
+        """
+        execute this once per frame after rendering
+        """
+
+        if self.has_started:
+            self.counter_frames += 1
+            if self.settings.beat_state.is_quarterbeat:
+                if self.quarters_pattern_binary[self.counter_quarters]:
+                    self.counter_frames = 0
+
+                self.counter_quarters += 1
+                counter_beats = self.counter_quarters // 4
+                if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
+                    self.counter_quarters_loop += 1
+                    self.counter_quarters = 0
+                    self.counter_frames = 0
+
     def render_matrix_loopquarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         print("x", self.counter_frames, self.counter_quarters, self.counter_quarters_loop, device_id)
 
-        # * before first quarter, do nothing
-        if self.quarters_time is None:
+        # search first beat
+        if not self.has_started:
             # first quarter has not been found yet
             # start effect on next full beat:
             if self.settings.beat_state.is_beat:
-                self.quarters_time = self.settings.timehandler.time_0  # do i need this?
+                self.has_started = True  # do i need this?
             else:
                 return in_matrix
 
-        # * on quarter beat
-        if self.settings.beat_state.is_quarterbeat:
-            # * quarter beat is in pattern
-            if self.quarters_pattern_binary[self.counter_quarters]:
-                self.counter_frames = 0
-
-            # * do counting stuff
-            self.counter_quarters += 1
-            counter_beats = self.counter_quarters // 4
-            if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
-                self.counter_quarters_loop += 1
-                self.counter_quarters = 0
-
+        # do rendering
         if self.counter_frames < self.limit_frames:
-            if self.frames_pattern_binary[self.counter_frames]:
+            index = self.counter_frames % len(self.frames_pattern_binary)
+            if self.frames_pattern_binary[index]:
                 effect = self.effect_dict[device_id]
+                print("rendering this frame")
                 in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         return in_matrix
 
