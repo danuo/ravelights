@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 @dataclass
 class BeatState:
     settings: "Settings"
-    is_quarterbeat: bool = False
+    is_quarter: bool = False
     beat_progress: float = 0.0
     n_quarters_long: int = 0
 
@@ -22,11 +22,11 @@ class BeatState:
 
     @property
     def is_beat(self) -> bool:
-        return self.is_quarterbeat and (self.n_quarters_long % 4 == 0)
+        return self.is_quarter and (self.n_quarters_long % 4 == 0)
 
     def __repr__(self):
         string_beats = f"beats: {self.n_beats}"
-        string_quarters = "ABCD"[self.n_quarters_long % 4] if self.is_quarterbeat else ""
+        string_quarters = "ABCD"[self.n_quarters_long % 4] if self.is_quarter else ""
         return string_beats + " | " + string_quarters
 
 
@@ -79,7 +79,7 @@ class BeatStatePattern:
         current_beat, current_quarter = divmod(other.n_quarters_long % (self.loop_length * 4), 4)
         is_triggered = all(
             [
-                other.is_quarterbeat,
+                other.is_quarter,
                 self.beats_array[current_beat],
                 self.quarters_array[current_quarter],
             ]
