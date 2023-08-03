@@ -35,8 +35,8 @@ class EffectWrapper:
         self.limit_frames = None
 
         # mode == "quarters"
-        self.limit_quarters = None
         self.counter_quarters = 0
+        self.limit_quarters = None
 
     def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
         effect = self.effect_dict[device_id]
@@ -46,19 +46,19 @@ class EffectWrapper:
         """Invisible render class with effect logic"""
 
         if self.mode == "frames":
-            self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
+            return self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
         elif self.mode == "quarters":
-            self.render_matrix_quarters(in_matrix=in_matrix, color=color, device_id=device_id)
+            return self.render_matrix_quarters(in_matrix=in_matrix, color=color, device_id=device_id)
         return in_matrix
 
     def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         # todo first
-        self.counter_frames += 1
         effect = self.effect_dict[device_id]
+        print(self.counter_frames, self.frames_list)
         if self.counter_frames in self.frames_list:
-            return effect.render_matrix(in_matrix=in_matrix, color=color)
-        else:
-            return in_matrix
+            in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
+        self.counter_frames += 1
+        return in_matrix
 
     def render_matrix_quarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         # todo second
@@ -73,17 +73,20 @@ class EffectWrapper:
 
     def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
         mode = "frames"
+        limit_frames = 12
         print("add effect: ", mode, limit_frames, limit_quarters)
-        assert limit_frames is None or limit_quarters is None
+        # assert limit_frames is None or limit_quarters is None
 
         if mode == "frames":
+            assert limit_frames is not None
             self.mode = "frames"
             self.counter_frames = 0
             self.frames_list = [0, 2, 6, 8]
+            self.limit_frames = limit_frames
+            # todo: match limit_frames with frames_list. shorten or loop?
 
         if mode == "quarters":
             self.counter_quarters = 0
-            self.limit_frames = limit_frames
             self.limit_quarters = limit_quarters
 
         for effect in self.effect_dict.values():
@@ -92,7 +95,7 @@ class EffectWrapper:
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
         if self.limit_frames is not None:
-            if self.counter_frames > self.limit_frames:
+            if self.counter_frames >= self.limit_frames:
                 return True
         elif self.limit_quarters is not None:
             if self.counter_quarters > self.limit_quarters:
