@@ -74,7 +74,7 @@ class EffectWrapper:
             # get beat string of current frame
             current_beat, current_quarter = divmod(self.counter_quarters, 4)
             beat_string = str(current_beat) + "abcd"[current_quarter]
-            print(beat_string)
+            print(beat_string, self.counter_quarters, self.counter_quarters_loop)
 
             # see if beat string is in pattern
 
