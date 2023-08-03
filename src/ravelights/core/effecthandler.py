@@ -74,6 +74,11 @@ class EffectHandler:
         effect_wrapper.reset(**kwargs)
         self.add_item(effect_wrapper)
 
+    def remove_effect(self, effect_name: str):
+        effect_wrapper = self.find_effect(name=effect_name)
+        if effect_wrapper in self.effect_queue:
+            self.effect_queue.remove(effect_wrapper)
+
     def add_item(self, item: EffectWrapper):
         self.effect_queue.append(item)
 

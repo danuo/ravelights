@@ -66,6 +66,9 @@ class EventHandler:
                 case {"action": "set_effect", **other_kwargs}:
                     print("in EventHandler", other_kwargs)
                     self.effecthandler.load_effect(**other_kwargs)
+                case {"action": "remove_effect", "effect_name": effect_name}:
+                    print("remove_effect: ", effect_name)
+                    self.effecthandler.remove_effect(effect_name=effect_name)
                 case other:
                     logger.warning(other)
                     logger.warning("API instruction not understood")
