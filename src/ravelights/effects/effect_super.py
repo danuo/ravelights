@@ -44,7 +44,7 @@ class EffectWrapper:
         effect = self.effect_dict[device_id]
         return effect.render_settings_overwrite(selected_level=selected_level)
 
-    def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
+    def reset(self, mode: str, limit_frames: int, loop_length_beats: int, limit_quarters_loop: int):
         """
         reset effects in effectwrapper
         """
@@ -66,22 +66,47 @@ class EffectWrapper:
             frames_pattern_binary = (n * frames_pattern_binary)[:length_target]
             return frames_pattern_binary
 
+        def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int):
+            """
+            Turns quarters_pattern into a binary array. Each value represents a quarter
+            loop_length_beats: loop length in beats
+            quarters_pattern = ["0A", "0C", "1A", "2A"]
+            loop_length_beats = 2
+            -> [True, False, True, False, True, False, False, False]
+            """
+
+            loop_length_quarters = loop_length_beats * 4
+            quarters_pattern_binary = [False] * loop_length_quarters
+
+            for item in quarters_pattern:
+                num = int(item[:-1])
+                letter = item[-1]
+                assert letter in "ABCD"
+                letter_num = ord(letter) - 65  # A->0, B->1 etc.
+                index = num * 4 + letter_num
+                if index < loop_length_quarters:
+                    quarters_pattern_binary[index] = True
+            return quarters_pattern_binary
+
+        """
         mode = "frames"
         limit_frames = 20  # int, match, inf
+        """
         frames_pattern = [0, 3, 14, 17]
 
+        """
         mode = "quarters"
         limit_frames = 5
+        loop_length_beats = 4
+        limit_quarters_loop = 2
+        """
+        limit_quarters = 2  # do not use this at the beginning
         frames_pattern = [0, 1, 3, 4]
         quarters_pattern = ["0A", "1A", "2A"]
-        limit_quarters = 2  # do not use this at the beginning
-        quarters_loop_length = 4
-        limit_quarters_loop = 2
 
         print("add effect: ", mode, limit_frames, limit_quarters)
 
         if mode == "frames":
-            assert limit_frames is not None
             self.mode = "frames"
             self.counter_frames = 0
             self.limit_frames = limit_frames
@@ -97,9 +122,11 @@ class EffectWrapper:
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
             self.quarters_time = None
-            self.quarters_pattern = quarters_pattern
+            self.quarters_pattern_binary = get_quarters_pattern_binary(
+                quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats
+            )
             self.limit_quarters = limit_quarters  # in quarters
-            self.quarters_loop_length = quarters_loop_length  # in beats
+            self.loop_length_beats = loop_length_beats  # in beats
             self.limit_quarters_loop = limit_quarters_loop
 
         for effect in self.effect_dict.values():
@@ -136,20 +163,14 @@ class EffectWrapper:
 
         # * on quarter beat
         if self.settings.beat_state.is_quarterbeat:
-            # get beat string of current frame
-            current_beat, current_quarter = divmod(self.counter_quarters, 4)
-            beat_string = str(current_beat) + "ABCD"[current_quarter]
-            print("in_quarterbeat_loop", beat_string, self.counter_quarters, self.counter_quarters_loop)
-
             # * quarter beat is in pattern
-            if beat_string in self.quarters_pattern:
+            if self.quarters_pattern_binary[self.counter_quarters]:
                 self.counter_frames = 0
 
             # * do counting stuff
-            # count quarters, calculate loop stats
             self.counter_quarters += 1
             counter_beats = self.counter_quarters // 4
-            if counter_beats > 0 and counter_beats // self.quarters_loop_length == 0:
+            if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
                 self.counter_quarters_loop += 1
                 self.counter_quarters = 0
 
