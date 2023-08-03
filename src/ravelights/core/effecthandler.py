@@ -96,4 +96,4 @@ class EffectHandler:
 
     def do_counting(self):
         for effect_wrapper in self.effect_queue:
-            effect_wrapper.do_counting()
+            effect_wrapper.perform_counting_per_frame()

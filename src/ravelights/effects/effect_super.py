@@ -53,11 +53,15 @@ class EffectWrapper:
 
         def get_frames_pattern_binary(frames_pattern: list[int], length_target: int, multi: int = 1):
             """
-            frames_pattern = [0, 2, 6, 8]
+            frames_pattern = ["L10", 0, 2, 6, 8]
             length_target = 6
             multi = 2
             -> [True, True, False, False, True, True]
             """
+
+            frames_pattern = ["L10", 0, 2, 6, 8]
+            pattern_length = int(frames_pattern[0][1:])
+            pattern = frames_pattern[1:]
 
             if frames_pattern is None:
                 if length_target == "inf":
@@ -66,10 +70,7 @@ class EffectWrapper:
                 else:
                     return [True] * length_target
 
-            assert isinstance(multi, int) and multi >= 1
-
-            current_length = max(frames_pattern) + 1
-            frames_pattern_binary = [y in frames_pattern for x in range(current_length) for y in multi * [x]]
+            frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
 
             if length_target == "inf":
                 return frames_pattern_binary
@@ -104,7 +105,6 @@ class EffectWrapper:
         mode = "frames"
         limit_frames = 20  # int, match, inf
         """
-        frames_pattern = [0, 3, 14, 17]
 
         """
         mode = "quarters"
@@ -114,23 +114,24 @@ class EffectWrapper:
         limit_quarters = 2  # do not use this at the beginning
         """
         frames_pattern = None
-        frames_pattern = [0, 1, 4]
         quarters_pattern = ["0A", "1A", "2A"]
 
         print("add effect: ", mode, limit_frames, limit_quarters)
 
-        if mode == "frames":
-            self.mode = "frames"
+        assert isinstance(multi, int) and multi >= 1
+        self.multi = multi
+        self.mode = mode
+
+        if self.mode == "frames":
             self.counter_frames = 0
             self.limit_frames = limit_frames
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
 
-        if mode == "quarters":
+        if self.mode == "quarters":
             # reset counter erst später
             self.limit_frames = limit_frames
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
 
-            self.mode = "quarters"
             self.counter_frames = 0
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
@@ -145,7 +146,11 @@ class EffectWrapper:
         for effect in self.effect_dict.values():
             effect.reset()
 
-    def do_counting(self):
+    def perform_counting_per_frame(self):
+        """
+        execute this once per frame after rendering
+        """
+
         self.counter_frames += 1
         if self.settings.beat_state.is_quarterbeat:
             self.counter_quarters += 1
@@ -155,7 +160,7 @@ class EffectWrapper:
                 self.counter_quarters = 0
 
     def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
-        print("run with device_id ", device_id)
+        # print("run with device_id ", device_id)
         """Invisible render class with effect logic"""
 
         out_matrix = in_matrix
@@ -174,7 +179,7 @@ class EffectWrapper:
         return in_matrix
 
     def render_matrix_quarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
-        print("x", self.counter_frames, self.counter_quarters, self.counter_quarters_loop)
+        print("x", self.counter_frames, self.counter_quarters, self.counter_quarters_loop, device_id)
 
         # * before first quarter, do nothing
         if self.quarters_time is None:
