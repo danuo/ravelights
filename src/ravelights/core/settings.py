@@ -45,14 +45,12 @@ def get_default_selected_dict() -> dict[str, list[str]]:
 
 def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     return {
-        Pattern.get_identifier(): [
-            BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8, p=round(random.random(), 2)) for _ in range(5)
-        ],
-        Pattern.get_identifier() + "_sec": [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        Vfilter.get_identifier(): [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        Thinner.get_identifier(): [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        Dimmer.get_identifier(): [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
-        "effect": [BeatStatePattern(p=round(random.random(), 2)) for _ in range(5)],
+        Pattern.get_identifier(): [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(5)],
+        Pattern.get_identifier() + "_sec": [BeatStatePattern() for _ in range(5)],
+        Vfilter.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        Thinner.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        Dimmer.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        "effect": [BeatStatePattern(p=1.0) for _ in range(5)],
     }
 
 
@@ -105,6 +103,8 @@ class Settings:
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
     triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
     active_timeline_index: int = 1  # default timeline index
+    use_timeline: bool = True
+    manual_timeline_index: int = 1
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict = field(init=False)
@@ -123,7 +123,6 @@ class Settings:
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
 
     def clear_selected(self) -> None:
-        # todo: add secondary patterns here. generators need to exist 2nd itme for this!
         self.selected = get_default_selected_dict()
 
     def process_device_config(self, device_config: list[list[dict[str, float | int]]]) -> None:
@@ -173,11 +172,13 @@ class Settings:
 
     def apply_secondary_color_rule(self):
         """call this when secondary rule changes"""
+        # todo
+        assert False
         primary_color = self.color[0]
         secondary_color = self.get_secondary_color(primary_color)
         self.color[1] = secondary_color
 
-    def get_secondary_color(self, in_color: Color) -> Optional[None]:
+    def get_secondary_color(self, in_color: Color) -> Optional[Color]:
         # todo: move this to colorhandler
         """returns a color that matches in input color, according to the secondary
         color rule currently selected in settings"""
@@ -193,9 +194,6 @@ class Settings:
                 return ColorHandler.get_complementary_66(in_color)
             case SecondaryColorModes.RANDOM:
                 return ColorHandler.get_random_color()
-
-    def swap_color(self, prim: bool = True) -> None:
-        assert False
 
     @property
     def frame_time(self) -> float:

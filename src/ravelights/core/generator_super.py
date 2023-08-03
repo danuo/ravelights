@@ -137,18 +137,26 @@ class Generator(ABC):
         elif matrix_mono.ndim == 2:
             matrix_rgb = np.zeros((*matrix_mono.shape, 3))
 
-        # colorize
-        for channel in range(3):
-            matrix_rgb[..., channel] = matrix_mono * color[channel]
+        shape = [1] * matrix_mono.ndim + [3]
+        color = np.array(color).reshape(shape)
+        matrix_rgb = matrix_mono[..., None] * color
         return matrix_rgb
 
-    @classmethod
-    def add_matrices(cls, matrix_1: Array, matrix_2: Array) -> Array:
+    @staticmethod
+    def bw_matrix(matrix_rgb: ArrayNx3) -> ArrayNx1:
+        """
+        turns a matrix with shape (..., 3) into a black and white matrix of shape (...)
+        """
+
+        return np.amax(matrix_rgb, axis=-1)
+
+    @staticmethod
+    def add_matrices(matrix_1: Array, matrix_2: Array) -> Array:
         """Adds two matrices together and caps the brightness (max value) to 1."""
         return np.fmin(1.0, matrix_1 + matrix_2)
 
-    @classmethod
-    def merge_matrices(cls, matrix_1: Array, matrix_2: Array) -> Array:
+    @staticmethod
+    def merge_matrices(matrix_1: Array, matrix_2: Array) -> Array:
         """
         Combines two matrices similar to add_matrices. Every pixel with brightness > 0 from matrix 2
         will overwrite matrix 1 at that location. This is superior than add_matrices, as different
@@ -158,8 +166,8 @@ class Generator(ABC):
         matrix_2_max_repeated = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
         return np.where(matrix_2_max_repeated > 0, matrix_2, matrix_1)
 
-    @classmethod
-    def apply_mask(cls, in_matrix: ArrayNx3, mask: ArrayNx1) -> ArrayNx3:
+    @staticmethod
+    def apply_mask(in_matrix: ArrayNx3, mask: ArrayNx1) -> ArrayNx3:
         """Applies a mask 1-channel mask array to a 3-channel color matrix by multiplication."""
         mask = np.repeat(mask[:, :, None], 3, axis=2)
         return np.multiply(in_matrix, mask)

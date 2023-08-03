@@ -2,6 +2,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from ravelights.core.custom_typing import T_JSON
+from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 
@@ -16,6 +17,7 @@ class EventHandler:
         self.root = root
         self.settings: Settings = self.root.settings
         self.patternscheduler: PatternScheduler = self.root.patternscheduler
+        self.effecthandler: EffectHandler = self.root.effecthandler
         self.modification_queue: list[T_JSON] = []
 
     def add_to_modification_queue(self, receive_data: T_JSON) -> None:
@@ -59,10 +61,14 @@ class EventHandler:
                 case {"action": "generator_beat"}:
                     pass
                 case {"action": "clear_effect_queue"}:
-                    self.root.effecthandler.clear_qeueues()
+                    self.effecthandler.clear_qeueues()
                     print("cleared all effect queues")
-                case {"action": "set_effect", "effect_name": effect_name, "length_frames": length_frames}:
-                    self.patternscheduler.load_effect(effect_name=effect_name, length_frames=length_frames)
+                case {"action": "set_effect", **other_kwargs}:
+                    print("in EventHandler", other_kwargs)
+                    self.effecthandler.load_effect(**other_kwargs)
+                case {"action": "remove_effect", "effect_name": effect_name}:
+                    print("remove_effect: ", effect_name)
+                    self.effecthandler.remove_effect(effect=effect_name)
                 case other:
                     logger.warning(other)
                     logger.warning("API instruction not understood")

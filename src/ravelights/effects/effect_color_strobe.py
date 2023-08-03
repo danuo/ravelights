@@ -6,7 +6,7 @@ from ravelights.effects.effect_super import Effect
 
 
 class EffectColorStrobe(Effect):
-    def init(self, hue_range=None):
+    def reset(self, hue_range=None):
         # todo: many versions, rainbow, strobe, random, etc pp
         """
         hue_range in (0,1]

@@ -76,6 +76,11 @@ class RenderModule:
         color_prim, color_sec, color_effect = self.settings.color_engine.get_colors_rgb(selected_level=self.selected_level)
 
         # ----------------------- settings overwrite by effect ----------------------- #
+        # todo: design choice
+        # * settings_overwrite should not return anything
+        # * this requires that all arguments are passed into render functions as arguments, instead of being taken from settings
+        # * better to overwrite settings and reverse them to original value later on with on_delete()
+        # * this mus stay here, must happen before render of patterns
         settings_overwrite = dict()
         for effect_wrapper in self.root.effecthandler.effect_queue:
             settings_overwrite.update(

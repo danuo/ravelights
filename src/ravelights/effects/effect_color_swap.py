@@ -4,7 +4,7 @@ from ravelights.effects.effect_super import Effect
 
 
 class EffectColorSwap(Effect):
-    def init(self):
+    def reset(self):
         self.counter = 0
 
     def on_delete(self):

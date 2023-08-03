@@ -11,6 +11,9 @@ flask, e.g.
 
 ```
 git clone --recurse-submodules git@github.com:niliha/ravelights.git
+
+If you already have cloned a repository and now want to load it’s submodules you have to use submodule update.
+git submodule update --init
 ```
 
 Furthermore, Python 3.10 must be installed.

@@ -2,6 +2,7 @@ import logging
 import time
 from collections import deque
 from typing import TYPE_CHECKING
+
 from ravelights.core.performancelogger import PerformanceLogger
 
 if TYPE_CHECKING:
@@ -26,7 +27,7 @@ class TimeHandler:
         self.bpm_sync()
         self.dynamic_sleep_time = 0
         self.dynamic_sleep_time_correction = 0
-        self.stats = dict(delayed_frame_counter=0)
+        self.stats: dict[str, float | int] = dict(delayed_frame_counter=0)
         self._performance_logger = PerformanceLogger(log_interval_seconds=10)
         self._calculate_stats()
 
@@ -80,7 +81,7 @@ class TimeHandler:
         else:
             self.stats["delayed_frame_counter"] += 1
 
-    def get_stats(self, precision: int = 2):
+    def get_stats(self, precision: int = 2) -> dict[str, float | int]:
         return {k: round(v, precision) for k, v in self.stats.items()}
 
     def _calculate_stats(self) -> None:
@@ -88,6 +89,8 @@ class TimeHandler:
         self._calculate_sleep_stats()
         self._calculate_fps_stats()
         self._calculate_avg_render_time()
+
+    def print_performance_stats(self):
         self._performance_logger.notify(self.get_stats())
 
     def _calculate_sleep_stats(self) -> None:

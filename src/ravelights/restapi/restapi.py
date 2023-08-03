@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from flask import Flask, jsonify, make_response, request, send_from_directory
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, fields, marshal_with
 
 from ravelights.core.custom_typing import T_JSON
 from ravelights.core.eventhandler import EventHandler
@@ -39,6 +39,9 @@ class RestAPI:
         self._flask_app = Flask(__name__)
 
         if serve_static_files:
+            if len(list(static_files_dir.iterdir())) < 5:
+                logger.warning(f"Could not find static files for webui in {static_files_dir=}")
+
             # serve index.html
             @self._flask_app.route("/")
             def serve_index():
@@ -53,7 +56,7 @@ class RestAPI:
         self._api = Api(self._flask_app)
         self._setup_resource_routing()
 
-    def check_static_files_dir(self, static_files_dir: Optional[Path] = None):
+    def check_static_files_dir(self, static_files_dir: Optional[Path] = None) -> Path:
         """Hacky way to obtain an actual str/path object of the directory. Methods such as str() do not work."""
         if not static_files_dir:
             lib_path = importlib.resources.files("ravelights_ui")
@@ -72,6 +75,7 @@ class RestAPI:
     def _setup_resource_routing(self):
         self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.eventhandler,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.eventhandler,))
+        self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.eventhandler,))
 
     def start_threaded(self, debug: bool = False):
         logger.info("Starting REST API thread...")
@@ -120,3 +124,30 @@ class ColorAPIResource(Resource):
             self.settings.set_color_fade(color=color_rgb, level=level)
         colors = self.settings.color_engine.get_colors_rgb_target()
         return make_response(jsonify(colors), 201)
+
+
+resource_fields = {
+    "name": fields.String,
+    "mode": fields.String,
+    "limit_frames": fields.String,
+    "loop_length": fields.String,
+}
+
+
+class EffectAPIResource(Resource):
+    def __init__(self, eventhandler: EventHandler):
+        super().__init__()
+        self.eventhandler = eventhandler
+        self.settings: Settings = self.eventhandler.settings
+        self.effecthandler = self.eventhandler.effecthandler
+
+    @marshal_with(resource_fields)
+    def get(self):
+        return self.effecthandler.effect_queue, 200
+
+    def put(self):
+        receive_data: T_JSON = request.get_json()
+        print(receive_data)
+        if isinstance(receive_data, dict):
+            self.eventhandler.add_to_modification_queue(receive_data=receive_data)
+        return "", 204

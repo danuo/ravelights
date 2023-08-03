@@ -4,7 +4,11 @@ from typing import NamedTuple, Type, overload
 from ravelights.core.custom_typing import T_BLUEPRINTS
 from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
-from ravelights.dimmers.dimmer_decay import DimmerDecay
+from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
+from ravelights.dimmers.dimmer_decay_medium import DimmerDecayMedium
+from ravelights.dimmers.dimmer_decay_slow import DimmerDecaySlow
+from ravelights.dimmers.dimmer_decay_very_fast import DimmerDecayVeryFast
+from ravelights.dimmers.dimmer_decay_very_slow import DimmerDecayVerySlow
 from ravelights.dimmers.dimmer_peak import DimmerPeak
 from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
 from ravelights.dimmers.dimmer_sine import DimmerSine
@@ -12,7 +16,10 @@ from ravelights.effects.effect_bw import EffectBW
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
 from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
+from ravelights.effects.effect_color_strobe_rainbow_pixel import EffectColorStrobeRainbowPixel
 from ravelights.effects.effect_color_swap import EffectColorSwap
+from ravelights.effects.effect_colorize import EffectColorize
+from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_debug import PatternDebug
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
@@ -113,7 +120,11 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
     BlueprintGen(DimmerRandomRemove, dict(name="d_random_remove")),
-    BlueprintGen(DimmerDecay, dict(name="d_decay", weight=1)),
+    BlueprintGen(DimmerDecayVeryFast, dict(name="d_decay_veryfast", weight=1)),
+    BlueprintGen(DimmerDecayFast, dict(name="d_decay_fast", weight=1)),
+    BlueprintGen(DimmerDecayMedium, dict(name="d_decay_medium", weight=1)),
+    BlueprintGen(DimmerDecaySlow, dict(name="d_decay_slow", weight=1)),
+    BlueprintGen(DimmerDecayVerySlow, dict(name="d_decay_very_slow", weight=1)),
     BlueprintGen(DimmerSine, dict(name="d_sine", weight=1)),
     BlueprintGen(DimmerPeak, dict(name="d_peak", weight=1)),
 ]
@@ -121,9 +132,12 @@ blueprint_generators: list[BlueprintGen] = [
 blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorStrobe, dict(name="e_color_strobe")),
     BlueprintEffect(EffectColorStrobeRainbow, dict(name="e_color_strobe_rainbow")),
+    BlueprintEffect(EffectColorStrobeRainbowPixel, dict(name="e_color_strobe_rainbow_pixel")),
     BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
     BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
     BlueprintEffect(EffectBW, dict(name="e_bw")),
+    BlueprintEffect(EffectColorize, dict(name="e_colorize")),
+    BlueprintEffect(EffectFlicker, dict(name="e_flicker")),
 ]
 
 # todo: effects need length, patterns do not
@@ -152,7 +166,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
            "name": "simple p1 only",
        },
        "selectors": [
-           BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_pid", set_all=False)),
+           BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_solid_color", set_all=False)),
            # BlueprintSel(GenSelector, dict(gen_type=Vfilter, name="v_mirror")),
         #    BlueprintSel(GenSelector, dict(gen_type=Dimmer, name="d_peak")),
        ],

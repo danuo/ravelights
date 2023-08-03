@@ -4,7 +4,7 @@ import logging
 import pstats
 from pathlib import Path
 
-from ravelights.app import RaveLightsApp
+from ravelights import RaveLightsApp
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -58,19 +58,17 @@ if __name__ == "__main__":
     webserver_port = 80
     if not args.webui:
         webserver_port = 5000
-        logger.info(
-            "Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80"
-        )
+        logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
 
     artnet = None
     if args.artnet_wifi:
-        from ravelights.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter  # fmt: skip
+        from ravelights.artnet.artnet_udp_transmitter import \
+            ArtnetUdpTransmitter  # fmt: skip
         artnet = ArtnetUdpTransmitter(ip_address=args.artnet_address)
     elif args.artnet_serial:
-        from ravelights.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter  # fmt: skip
-        artnet = ArtnetSerialTransmitter(
-            serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
-        )
+        from ravelights.artnet.artnet_serial_transmitter import \
+            ArtnetSerialTransmitter  # fmt: skip
+        artnet = ArtnetSerialTransmitter(serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate)
 
     app = RaveLightsApp(
         fps=args.fps,
