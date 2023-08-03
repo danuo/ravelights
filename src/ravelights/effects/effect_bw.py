@@ -18,7 +18,6 @@ class EffectBW(Effect):
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""
         bw_matrix = self.bw_filter.render(in_matrix=in_matrix, color=color)
-        print(bw_matrix.shape)
         return bw_matrix
 
     def on_delete(self):
