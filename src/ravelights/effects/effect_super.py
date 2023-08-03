@@ -43,6 +43,63 @@ class EffectWrapper:
         effect = self.effect_dict[device_id]
         return effect.render_settings_overwrite(selected_level=selected_level)
 
+    def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
+        """
+        reset effects in effectwrapper
+        """
+
+        def get_frames_pattern_binary(frames_pattern: list[int], length_target: int, multi: int = 1):
+            """
+            frames_pattern = [0, 2, 6, 8]
+            length_target = 6
+            multi = 2
+            -> [True, True, False, False, True, True]
+            """
+
+            assert isinstance(multi, int) and multi >= 1
+
+            current_length = max(frames_pattern) + 1
+            frames_pattern_binary = [y in frames_pattern for x in range(current_length) for y in multi * [x]]
+
+            n = (length_target // len(frames_pattern_binary)) + 1
+            frames_pattern_binary = (n * frames_pattern_binary)[:length_target]
+            return frames_pattern_binary
+
+        mode = "frames"
+        limit_frames = 20  # int, match, inf
+        frames_pattern = [0, 3, 14, 17]
+
+        """
+        mode = "quarters"
+        limit_frames = 2
+        quarters_pattern = ["0a", "1a", "2a"]
+        limit_quarters = 2
+        quarters_loop_length = 4
+        limit_quarters_loop = 2
+        """
+        print("add effect: ", mode, limit_frames, limit_quarters)
+
+        if mode == "frames":
+            assert limit_frames is not None
+            self.mode = "frames"
+            self.counter_frames = 0
+            self.limit_frames = limit_frames
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=1)
+
+        if mode == "quarters":
+            self.mode = "quarters"
+            self.quarters_time = None
+            self.counter_frames = 0
+            self.counter_quarters = 0
+            self.counter_quarters_loop = 0
+            self.quarters_pattern = quarters_pattern
+            self.limit_quarters = limit_quarters
+            self.quarters_loop_length = quarters_loop_length
+            self.limit_quarters_loop = limit_quarters_loop
+
+        for effect in self.effect_dict.values():
+            effect.reset()
+
     def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         """Invisible render class with effect logic"""
 
@@ -95,66 +152,6 @@ class EffectWrapper:
     def on_delete(self):
         for effect in self.effect_dict.values():
             effect.on_delete()
-
-    def reset(self, mode: str = None, limit_frames: int = None, limit_quarters: int = None):
-        """
-        reset effects in effectwrapper
-        """
-
-        def get_frames_pattern_binary(frames_pattern: list[int], length_target: int, multi: int = 1):
-            """
-            frames_pattern = [0, 2, 6, 8]
-            length_target = 6
-            multi = 2
-            -> [True, True, False, False, True, True]
-            """
-
-            assert isinstance(multi, int) and multi >= 1
-
-            current_length = max(frames_pattern) + 1
-            frames_pattern_binary = [y in frames_pattern for x in range(current_length) for y in multi * [x]]
-
-            n = (length_target // len(frames_pattern_binary)) + 1
-            frames_pattern_binary = (n * frames_pattern_binary)[:length_target]
-            return frames_pattern_binary
-
-        mode = "frames"
-        limit_frames = 20  # int, match, inf
-        frames_pattern = [0, 3, 14, 17]
-
-        """
-        mode = "quarters"
-        limit_frames = 2
-        quarters_pattern = ["0a", "1a", "2a"]
-        limit_quarters = 2
-        quarters_loop_length = 4
-        limit_quarters_loop = 2
-        """
-        print("add effect: ", mode, limit_frames, limit_quarters)
-        # assert limit_frames is None or limit_quarters is None
-
-        if mode == "frames":
-            assert limit_frames is not None
-            self.mode = "frames"
-            self.counter_frames = 0
-            # self.frames_pattern = frames_pattern
-            self.limit_frames = limit_frames
-            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=1)
-            # todo: match limit_frames with frames_pattern. shorten or loop?
-
-        if mode == "quarters":
-            self.mode = "quarters"
-            self.quarters_time = None
-            self.counter_frames = 0
-            self.counter_quarters = 0
-            self.counter_quarters_loop = 0
-            self.quarters_pattern = quarters_pattern
-            self.limit_quarters = limit_quarters
-            self.quarters_loop_length = quarters_loop_length
-            self.limit_quarters_loop = limit_quarters_loop
-
-        for effect in self.effect_dict.values():
-            effect.reset()
 
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
