@@ -75,6 +75,7 @@ class RestAPI:
     def _setup_resource_routing(self):
         self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.eventhandler,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.eventhandler,))
+        self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.eventhandler,))
 
     def start_threaded(self, debug: bool = False):
         logger.info("Starting REST API thread...")
@@ -123,3 +124,22 @@ class ColorAPIResource(Resource):
             self.settings.set_color_fade(color=color_rgb, level=level)
         colors = self.settings.color_engine.get_colors_rgb_target()
         return make_response(jsonify(colors), 201)
+
+
+class EffectAPIResource(Resource):
+    def __init__(self, eventhandler: EventHandler):
+        super().__init__()
+        self.eventhandler = eventhandler
+        self.settings: Settings = self.eventhandler.settings
+        self.effecthandler = self.eventhandler.effecthandler
+
+    def get(self):
+        data = [item.get_meta() for item in self.effecthandler.effect_queue]
+        return make_response(jsonify(data), 200)
+
+    def put(self):
+        receive_data: T_JSON = request.get_json()
+        print(receive_data)
+        # if isinstance(receive_data, dict):
+        # self.eventhandler.add_to_modification_queue(receive_data=receive_data)
+        return "", 204
