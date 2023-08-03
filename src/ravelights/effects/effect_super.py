@@ -38,7 +38,9 @@ class EffectWrapper:
         # mode == "quarters"
         self.counter_quarters: int = 0
         self.limit_quarters: int = 0
+        self.limit_quarters_loop: int = 0
         self.counter_quarters_loop: int = 0
+        self.loop_length_beats: int = 1
 
     def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
         effect = self.effect_dict[device_id]
@@ -56,7 +58,7 @@ class EffectWrapper:
             multi = 2
             -> [True, True, False, False, True, True]
             """
-
+            print(frames_pattern)
             if frames_pattern is None:
                 return [True] * length_target
 
@@ -96,7 +98,6 @@ class EffectWrapper:
         limit_frames = 20  # int, match, inf
         """
         frames_pattern = [0, 3, 14, 17]
-        frames_pattern = None
 
         """
         mode = "quarters"
@@ -107,6 +108,7 @@ class EffectWrapper:
         """
         frames_pattern = [0, 1, 3, 4]
         quarters_pattern = ["0A", "1A", "2A"]
+        frames_pattern = None
 
         print("add effect: ", mode, limit_frames, limit_quarters)
 
@@ -136,21 +138,32 @@ class EffectWrapper:
         for effect in self.effect_dict.values():
             effect.reset()
 
+    def do_counting(self):
+        self.counter_frames += 1
+        if self.settings.beat_state.is_quarterbeat:
+            self.counter_quarters += 1
+            counter_beats = self.counter_quarters // 4
+            if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
+                self.counter_quarters_loop += 1
+                self.counter_quarters = 0
+
     def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
+        print("run with device_id ", device_id)
         """Invisible render class with effect logic"""
 
+        out_matrix = in_matrix
         if self.mode == "frames":
-            return self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
+            out_matrix = self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
         elif self.mode == "quarters":
-            return self.render_matrix_quarters(in_matrix=in_matrix, color=color, device_id=device_id)
-        return in_matrix
+            out_matrix = self.render_matrix_quarters(in_matrix=in_matrix, color=color, device_id=device_id)
+
+        return out_matrix
 
     def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         effect = self.effect_dict[device_id]
         print(self.counter_frames, self.frames_pattern_binary)
         if self.frames_pattern_binary[self.counter_frames]:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
-        self.counter_frames += 1
         return in_matrix
 
     def render_matrix_quarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
@@ -182,7 +195,6 @@ class EffectWrapper:
             if self.frames_pattern_binary[self.counter_frames]:
                 effect = self.effect_dict[device_id]
                 in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
-        self.counter_frames += 1
         return in_matrix
 
     def on_delete(self):

@@ -76,7 +76,7 @@ class RaveLightsApp:
         self.patternscheduler.autopilot.randomize()
         for device in self.devices:
             device.instructionhandler.load_and_apply_instructions()
-        self.patternscheduler.effecthandler.load_and_apply_instructions()
+        self.effecthandler.load_and_apply_instructions()
         # ─── RENDER ──────────────────────────────────────────────────────
         # sync
         for i, device in enumerate(self.devices):
@@ -87,6 +87,8 @@ class RaveLightsApp:
         # render
         for i, device in enumerate(self.devices):
             device.render()
+        # aftermath
+        self.effecthandler.do_counting()
         # ─── OUTPUT ──────────────────────────────────────────────────────
         if self.visualizer:
             self.visualizer.render()

@@ -88,3 +88,7 @@ class EffectHandler:
 
     def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
+
+    def do_counting(self):
+        for effect_wrapper in self.effect_queue:
+            effect_wrapper.do_counting()
