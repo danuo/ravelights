@@ -69,18 +69,12 @@ class EffectWrapper:
             -> [True, True, False, False, True, True]
             """
 
-            frames_pattern = ["L10", 0, 2, 6, 8]
             assert frames_pattern[0][0] == "L"
             pattern_length = int(frames_pattern[0][1:])
             pattern = frames_pattern[1:]
 
             frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
 
-            if length_target == "inf":
-                return frames_pattern_binary
-
-            n = (length_target // len(frames_pattern_binary)) + 1
-            frames_pattern_binary = (n * frames_pattern_binary)[:length_target]
             return frames_pattern_binary
 
         def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int):
@@ -114,6 +108,7 @@ class EffectWrapper:
             self.counter_frames = 0
             self.limit_frames = limit_frames
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
+            print(self.frames_pattern_binary)
 
         if self.mode == "quarters":
             # reset counter erst später
