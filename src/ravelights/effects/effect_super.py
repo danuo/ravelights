@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import numpy as np
 
@@ -36,9 +36,12 @@ class EffectWrapper:
         self.frames_pattern_binary: list[bool] = [True]
 
         # mode == "quarters"
+        # -> use frames infrastructure
+
+        # mode == "loopquarters"
         self.counter_quarters: int = 0
-        self.limit_quarters: int = 0
-        self.limit_quarters_loop: int = 0
+        self.limit_loopquarters: int = 0
+        self.limit_loopquarters_loop: int = 0
         self.counter_quarters_loop: int = 0
         self.loop_length_beats: int = 1
 
@@ -52,6 +55,7 @@ class EffectWrapper:
         multi: int,
         limit_frames: int,
         limit_quarters: int,
+        limit_loopquarters: int,
         loop_length_beats: int,
         limit_quarters_loop: int,
         frames_pattern: list[str | int],
@@ -63,10 +67,9 @@ class EffectWrapper:
 
         def get_frames_pattern_binary(frames_pattern: list[str | int], multi: int = 1):
             """
-            frames_pattern = ["L10", 0, 2, 6, 8]
-            length_target = 6
+            frames_pattern = ["L4", 0]
             multi = 2
-            -> [True, True, False, False, True, True]
+            -> [True, True, False, False, False, False, False, False]
             """
 
             assert frames_pattern[0][0] == "L"
@@ -74,7 +77,6 @@ class EffectWrapper:
             pattern = frames_pattern[1:]
 
             frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
-
             return frames_pattern_binary
 
         def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int):
@@ -99,7 +101,10 @@ class EffectWrapper:
                     quarters_pattern_binary[index] = True
             return quarters_pattern_binary
 
-        print("reset effect with", f"{mode=} {multi=} {limit_frames=} {limit_quarters=} {loop_length_beats=} {limit_quarters_loop=}")
+        print(
+            "reset effect with",
+            f"{mode=} {multi=} {limit_frames=} {limit_quarters=} {limit_loopquarters=} {loop_length_beats=} {limit_quarters_loop=}",
+        )
         assert isinstance(multi, int) and multi >= 1
         self.multi = multi
         self.mode = mode
@@ -111,6 +116,12 @@ class EffectWrapper:
             print(self.frames_pattern_binary)
 
         if self.mode == "quarters":
+            self.counter_frames = 0
+            self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.settings.fps)
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
+            print(self.frames_pattern_binary)
+
+        if self.mode == "loopquarters":
             # reset counter erst später
             self.counter_frames = 0
             self.limit_frames = limit_frames
@@ -122,9 +133,9 @@ class EffectWrapper:
             self.quarters_pattern_binary = get_quarters_pattern_binary(
                 quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats
             )
-            self.limit_quarters = limit_quarters  # in quarters
+            self.limit_loopquarters = limit_quarters  # in quarters
             self.loop_length_beats = loop_length_beats  # in beats
-            self.limit_quarters_loop = limit_quarters_loop
+            self.limit_loopquarters_loop = limit_quarters_loop
 
         for effect in self.effect_dict.values():
             effect.reset()
@@ -147,10 +158,10 @@ class EffectWrapper:
         """Invisible render class with effect logic"""
 
         out_matrix = in_matrix
-        if self.mode == "frames":
+        if self.mode == "frames" or self.mode == "quarters":
             out_matrix = self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
-        elif self.mode == "quarters":
-            out_matrix = self.render_matrix_quarters(in_matrix=in_matrix, color=color, device_id=device_id)
+        elif self.mode == "loopquarters":
+            out_matrix = self.render_matrix_loopquarters(in_matrix=in_matrix, color=color, device_id=device_id)
 
         return out_matrix
 
@@ -161,7 +172,7 @@ class EffectWrapper:
             in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
         return in_matrix
 
-    def render_matrix_quarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
+    def render_matrix_loopquarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
         print("x", self.counter_frames, self.counter_quarters, self.counter_quarters_loop, device_id)
 
         # * before first quarter, do nothing
@@ -198,11 +209,11 @@ class EffectWrapper:
 
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
-        if self.mode == "frames":
+        if self.mode == "frames" or self.mode == "quarters":
             if self.limit_frames != "inf" and self.counter_frames >= self.limit_frames:
                 return True
-        elif self.mode == "quarters":
-            if self.counter_quarters_loop >= self.limit_quarters_loop:
+        elif self.mode == "loopquarters":
+            if self.counter_quarters_loop >= self.limit_loopquarters_loop:
                 print("quarters_done")
                 return True
         return False
