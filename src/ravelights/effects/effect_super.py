@@ -28,7 +28,7 @@ class EffectWrapper:
             self.effect_dict[device_id] = effect
         self.name = effect_objects[0].name
 
-        self.mode = None
+        self.mode = "frames"
 
         # mode == "frames"
         self.counter_frames: int = 0
@@ -46,7 +46,7 @@ class EffectWrapper:
         effect = self.effect_dict[device_id]
         return effect.render_settings_overwrite(selected_level=selected_level)
 
-    def reset(self, mode: str, limit_frames: int, limit_quarters: int, loop_length_beats: int, limit_quarters_loop: int):
+    def reset(self, mode: str, multi: int, limit_frames: int, limit_quarters: int, loop_length_beats: int, limit_quarters_loop: int):
         """
         reset effects in effectwrapper
         """
@@ -106,9 +106,9 @@ class EffectWrapper:
         limit_quarters_loop = 2
         limit_quarters = 2  # do not use this at the beginning
         """
-        frames_pattern = [0, 1, 3, 4]
-        quarters_pattern = ["0A", "1A", "2A"]
         frames_pattern = None
+        frames_pattern = [0, 1, 4]
+        quarters_pattern = ["0A", "1A", "2A"]
 
         print("add effect: ", mode, limit_frames, limit_quarters)
 
@@ -116,12 +116,12 @@ class EffectWrapper:
             self.mode = "frames"
             self.counter_frames = 0
             self.limit_frames = limit_frames
-            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=1)
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
 
         if mode == "quarters":
             # reset counter erst später
             self.limit_frames = limit_frames
-            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=1)
+            self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, length_target=limit_frames, multi=multi)
 
             self.mode = "quarters"
             self.counter_frames = 0
