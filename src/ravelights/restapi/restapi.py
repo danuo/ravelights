@@ -140,6 +140,6 @@ class EffectAPIResource(Resource):
     def put(self):
         receive_data: T_JSON = request.get_json()
         print(receive_data)
-        # if isinstance(receive_data, dict):
-        # self.eventhandler.add_to_modification_queue(receive_data=receive_data)
+        if isinstance(receive_data, dict):
+            self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
