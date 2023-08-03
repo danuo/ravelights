@@ -3,14 +3,14 @@ import random
 import numpy as np
 
 from ravelights.core.colorhandler import Color, ColorHandler
-from ravelights.core.custom_typing import Array, ArrayMxKx3
+from ravelights.core.custom_typing import ArrayMxKx3
 from ravelights.core.generator_super import Generator
 from ravelights.effects.effect_super import Effect
 from ravelights.vfilters.vfilter_bw import VfilterBW
 
 
 class EffectColorStrobeRainbowPixel(Effect):
-    def init(self):
+    def reset(self):
         """
         hue_range controls the color variation for each frame
         """
