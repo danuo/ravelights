@@ -128,18 +128,17 @@ class RenderModule:
         matrix = vfilter.render(matrix, color=color_prim)
         self.assert_dims(matrix)
 
-        # ─── Render Effects ───────────────────────────────────────────
-        for effect_wrapper in self.root.effecthandler.effect_queue:
-            # effect = effect_wrapper.effect_dict[self.device.device_id]
-            matrix = effect_wrapper.render_matrix(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
-        self.assert_dims(matrix)
-
         # ─── RENDER THINNER ──────────────────────────────────────────────
         matrix = thinner.render(matrix, color=color_prim)
         self.assert_dims(matrix)
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
         matrix = dimmer.render(matrix, color=color_prim)
+        self.assert_dims(matrix)
+
+        # ─── Render Effects ───────────────────────────────────────────
+        for effect_wrapper in self.root.effecthandler.effect_queue:
+            matrix = effect_wrapper.render_matrix(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
         self.assert_dims(matrix)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────
