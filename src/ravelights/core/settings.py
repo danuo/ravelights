@@ -194,9 +194,6 @@ class Settings:
             case SecondaryColorModes.RANDOM:
                 return ColorHandler.get_random_color()
 
-    def swap_color(self, prim: bool = True) -> None:
-        assert False
-
     @property
     def frame_time(self) -> float:
         return 1 / self.fps
