@@ -28,8 +28,8 @@ class EffectColorStrobeRainbowPixel(Effect):
             color_matrix[:, 0] = np.random.rand(self.n)
             color_matrix[:, 1] = 1.0
             rng = np.random.default_rng()
-            rng.shuffle(color_matrix, axis=-1)
-            color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3))
+            rng.shuffle(color_matrix, axis=-1)  # same shuffle for each row
+            color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3), order="F")
             self.randi = color_matrix
 
         bw_matrix_mono = Generator.bw_matrix(in_matrix)
