@@ -172,6 +172,8 @@ class Settings:
 
     def apply_secondary_color_rule(self):
         """call this when secondary rule changes"""
+        # todo
+        assert False
         primary_color = self.color[0]
         secondary_color = self.get_secondary_color(primary_color)
         self.color[1] = secondary_color
