@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
+import numpy as np
+
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import Array, ArrayNx3
 from ravelights.core.pixelmatrix import PixelMatrix
@@ -110,6 +112,31 @@ class Effect(ABC):
     @staticmethod
     def get_identifier():
         return "effect"
+
+    def colorize_matrix(self, matrix_mono: Array, color: Color) -> ArrayNx3:
+        """
+        function to colorize a matrix with a given color
+        for colorization, another dimension is added
+        special case: input matrix is 1d of size n:
+        (n) -> (n_leds, n_lights, 3)  /special case
+        (x) -> (x,3)
+        (x,y) -> (x,y,3)
+        """
+
+        # prepare output matrix of correct size
+        if matrix_mono.ndim == 1:
+            if matrix_mono.shape == (self.n,):
+                matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
+                matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
+            else:
+                matrix_rgb = np.zeros((matrix_mono.size, 3))
+        elif matrix_mono.ndim == 2:
+            matrix_rgb = np.zeros((*matrix_mono.shape, 3))
+
+        shape = [1] * matrix_mono.ndim + [3]
+        color = np.array(color).reshape(shape)
+        matrix_rgb = matrix_mono[..., None] * color
+        return matrix_rgb
 
     def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
         self.pixelmatrix = pixelmatrix
