@@ -42,14 +42,6 @@ class EffectWrapper:
         self.counter_quarters_loop: int = 0
         self.loop_length_beats: int = 1
 
-    def get_meta(self):
-        return {
-            "name": self.name,
-            "mode": self.mode,
-            "limit_frames": self.limit_frames,
-            "loop_length": self.loop_length_beats,
-        }
-
     def render_settings_overwrite(self, device_id: int, selected_level: int) -> dict:
         effect = self.effect_dict[device_id]
         return effect.render_settings_overwrite(selected_level=selected_level)

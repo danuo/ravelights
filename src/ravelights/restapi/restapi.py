@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from flask import Flask, jsonify, make_response, request, send_from_directory
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, fields, marshal_with
 
 from ravelights.core.custom_typing import T_JSON
 from ravelights.core.eventhandler import EventHandler
@@ -126,6 +126,14 @@ class ColorAPIResource(Resource):
         return make_response(jsonify(colors), 201)
 
 
+resource_fields = {
+    "name": fields.String,
+    "mode": fields.String,
+    "limit_frames": fields.String,
+    "loop_length": fields.String,
+}
+
+
 class EffectAPIResource(Resource):
     def __init__(self, eventhandler: EventHandler):
         super().__init__()
@@ -133,9 +141,9 @@ class EffectAPIResource(Resource):
         self.settings: Settings = self.eventhandler.settings
         self.effecthandler = self.eventhandler.effecthandler
 
+    @marshal_with(resource_fields)
     def get(self):
-        data = [item.get_meta() for item in self.effecthandler.effect_queue]
-        return make_response(jsonify(data), 200)
+        return self.effecthandler.effect_queue, 200
 
     def put(self):
         receive_data: T_JSON = request.get_json()
