@@ -12,7 +12,6 @@ from ravelights.configs.components import (
     blueprint_timelines,
     create_from_blueprint,
 )
-from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -30,6 +29,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# todo: this should not be dataclass
 @dataclass
 class PatternScheduler:
     root: "RaveLightsApp"
@@ -37,7 +37,6 @@ class PatternScheduler:
     timehandler: TimeHandler = field(init=False)
     effecthandler: EffectHandler = field(init=False)
     devices: list[Device] = field(init=False)
-    autopilot: AutoPilot = field(init=False)
 
     def __post_init__(self) -> None:
         self.settings = self.root.settings
@@ -45,8 +44,7 @@ class PatternScheduler:
         self.effecthandler = self.root.effecthandler
         self.devices: list[Device] = self.root.devices
 
-        # ─── Autopilot ────────────────────────────────────────────────
-        self.autopilot = AutoPilot(settings=self.settings, devices=self.devices)
+        self.timeline_selectors: list[GenSelector] = []
 
         # ─── GENERATORS ──────────────────────────────────────────────────
         self.blueprint_timelines = blueprint_timelines
@@ -123,26 +121,26 @@ class PatternScheduler:
         self.clear_instruction_queues()
 
         blueprints_selectors: list[BlueprintSel] = cast(list[BlueprintSel], timeline["selectors"])
-        self.process_timeline_selectors(blueprints_selectors)
+        kwargs = dict(patternscheduler=self)
+        self.timeline_selectors: list[GenSelector] = create_from_blueprint(blueprints=blueprints_selectors, kwargs=kwargs)
+        self.process_timeline_selectors()
 
         blueprints_placements: list[BlueprintPlace] = cast(list[BlueprintPlace], timeline["placements"])
         self.process_timeline_placements(blueprints_placements)
 
-    def process_timeline_selectors(self, blueprints_selectors: list[BlueprintSel]):
-        kwargs = dict(patternscheduler=self)
-        selectors: list[GenSelector] = create_from_blueprint(blueprints=blueprints_selectors, kwargs=kwargs)
-
-        self.settings.clear_selected()
-        for obj in selectors:
-            self.process_selector_object(obj)
+    def process_timeline_selectors(self):
+        self.settings.clear_selected()  # todo: should this happen?
+        for selector in self.timeline_selectors:
+            if not p(selector.p):
+                continue
+            self.process_selector_object(selector)
 
     def process_timeline_placements(self, blueprints_placements: list[BlueprintPlace]):
         kwargs = dict(patternscheduler=self)
         placements = create_from_blueprint(blueprints=blueprints_placements, kwargs=kwargs)
         for placement in placements:
-            # do not execute if chance not met
             if not p(placement.p):
-                continue  # skip this instruction
+                continue
 
             if isinstance(placement, GenPlacing):
                 self.process_generator_placement_object(placement)
@@ -182,8 +180,6 @@ class PatternScheduler:
         generator = self.devices[0].rendermodule.get_generator_by_name(gen_name)
         trigger = random.choice(generator.possible_triggers)
         kwargs = asdict(trigger)
-        print("loaded new trigger")
-        print(kwargs)
         self.settings.set_trigger(gen_type=generator.get_identifier(), level_index=level, **kwargs)
 
     def process_generator_placement_object(self, obj: GenPlacing):
