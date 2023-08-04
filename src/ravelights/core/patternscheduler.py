@@ -36,8 +36,8 @@ class PatternScheduler:
         self.timehandler: TimeHandler = self.root.settings.timehandler
         self.effecthandler: EffectHandler = self.root.effecthandler
         self.devices: list[Device] = self.root.devices
-
         self.timeline_selectors: list[GenSelector] = []
+        self.timeline_placements: list[BlueprintPlace] = []
 
         # ─── GENERATORS ──────────────────────────────────────────────────
         self.blueprint_timelines = blueprint_timelines
@@ -119,7 +119,9 @@ class PatternScheduler:
         self.process_timeline_selectors()
 
         blueprints_placements: list[BlueprintPlace] = cast(list[BlueprintPlace], timeline["placements"])
-        self.process_timeline_placements(blueprints_placements)
+        kwargs = dict(patternscheduler=self)
+        self.timeline_placements = create_from_blueprint(blueprints=blueprints_placements, kwargs=kwargs)
+        self.process_timeline_placements()
 
     def process_timeline_selectors(self):
         self.settings.clear_selected()  # todo: should this happen?
@@ -128,16 +130,12 @@ class PatternScheduler:
                 continue
             self.process_selector_object(selector)
 
-    def process_timeline_placements(self, blueprints_placements: list[BlueprintPlace]):
-        kwargs = dict(patternscheduler=self)
-        placements = create_from_blueprint(blueprints=blueprints_placements, kwargs=kwargs)
-        for placement in placements:
+    def process_timeline_placements(self):
+        for placement in self.timeline_placements:
             if not p(placement.p):
                 continue
-
             if isinstance(placement, GenPlacing):
                 self.process_generator_placement_object(placement)
-
             if isinstance(placement, EffectSelectorPlacing):
                 self.process_effect_placement_object(placement)
 
@@ -185,11 +183,11 @@ class PatternScheduler:
         for timing in obj.timings:
             self.send_to_effect(instruction, timing=timing)
 
-    def send_to_devices(self, ins: InstructionDevice, timing: int) -> None:
+    def send_to_devices(self, ins: InstructionDevice, timing: int):
         for device in self.devices:
             device.instructionhandler.instruction_queue.add_instruction(ins, n_quarter=timing)
 
-    def send_to_effect(self, ins: InstructionEffect, timing: int) -> None:
+    def send_to_effect(self, ins: InstructionEffect, timing: int):
         self.effecthandler.instruction_queue.add_instruction(ins, n_quarter=timing)
 
     def generate_instructions(self):
