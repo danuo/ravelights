@@ -61,8 +61,8 @@ class Settings:
     """
 
     device_config: InitVar = None
-    # timehandler: TimeHandler = None
-    # bpmhandler: BPMhandler = None
+    timehandler: TimeHandler = field(init=False)
+    bpmhandler: BPMhandler = field(init=False)
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
