@@ -1,5 +1,4 @@
 import logging
-import random
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Type, cast
 
@@ -34,9 +33,18 @@ def get_names_and_weights(generators: list[str], keywords: Optional[list[str]] =
 
 @dataclass
 class GenSelector:
-    """This class is created for every BlueprintSel object in the components configuration. It contains
+    """
+    This class is created for every BlueprintSel object in the components configuration. It contains
     functions to select random generators to be placed in the timeline. Various aspects such as keywords
-    and current settings are respected when selecting"""
+    and current settings are respected when selecting
+
+    most important are the name attributes
+    every attribute that is not None will later be applied to settings.selected:
+    pattern_name
+    vfilter_name
+    dimmer_name
+    thinner_name
+    """
 
     gen_type: Type[Generator]
     patternscheduler: "PatternScheduler"
@@ -45,8 +53,6 @@ class GenSelector:
     vfilter_name: Optional[str] = None
     dimmer_name: Optional[str] = None
     thinner_name: Optional[str] = None
-
-    set_all: bool = True
 
     name: Optional[str] = None
     keywords: list["Keywords"] = field(default_factory=list)
@@ -65,10 +71,11 @@ class GenSelector:
                 self.pattern_name = self.name
             else:
                 self.pattern_name = self.get_random_generator(gen_type=Pattern)
-            if self.set_all:
-                pattern = self.patternscheduler.devices[0].rendermodule.find_generator(name=self.pattern_name)
-                assert isinstance(pattern, Generator)
-                self.set_dimmer_thinner(pattern)
+            pattern = self.patternscheduler.devices[0].rendermodule.find_generator(name=self.pattern_name)
+            assert isinstance(pattern, Generator)
+
+            # todo:
+            self.set_dimmer_thinner(pattern)
 
         # ─── Vfilter ──────────────────────────────────────────────────
         elif self.gen_type is Vfilter:
@@ -104,15 +111,22 @@ class GenSelector:
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
-        # todo: add global keywords to keywords
-        # keywords = self.keywords + self.patternscheduler.settings.global_keywords
-        names, weights = get_names_and_weights(generators=generators, keywords=self.keywords)
+        keywords = self.keywords + self.settings.global_keywords + [self.settings.music_style]
+
+        # first try
+        names, weights = get_names_and_weights(generators=generators, keywords=keywords)
         if len(names) > 0:
-            gen_name = get_random_from_weights(names=names, weights=weights)
-        else:
-            logger.warning("get_random_generator with len(names) == 0")
-            gen_name = gen_type.get_identifier()[0] + "_none"
-        return gen_name
+            return get_random_from_weights(names=names, weights=weights)
+
+        # second try
+        logger.warning(f"no generators found with keywords {keywords}")
+        names, weights = get_names_and_weights(generators=generators)
+        if len(names) > 0:
+            return get_random_from_weights(names=names, weights=weights)
+        logger.warning(f"no generators of type {gen_type} found")
+
+        # backup
+        return gen_type.get_identifier()[0] + "_none"
 
     def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[dict[str, str | list[str] | float]]:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
@@ -150,8 +164,8 @@ class EffectSelectorPlacing:
             self.effect_name = self.name
         else:
             self.effect_name = self.get_random_generator(gen_type=Effect)
-        settings = self.patternscheduler.settings
-        self.effect_length_frames = int(settings.fps * settings.quarter_time * self.length_q)
+        self.settings = self.patternscheduler.settings
+        self.effect_length_frames = int(self.settings.fps * self.settings.quarter_time * self.length_q)
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
@@ -164,7 +178,7 @@ class EffectSelectorPlacing:
 
     def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[dict[str, str | list[str] | float]]:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        generators = self.patternscheduler.settings.meta["available_generators"][identifier]
+        generators = self.settings.meta["available_generators"][identifier]
         return generators
 
 
