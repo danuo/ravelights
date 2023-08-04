@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional, Type, cast
 
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
-from ravelights.core.utils import p
+from ravelights.core.utils import get_random_from_weights, p
 from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
@@ -30,14 +30,6 @@ def get_names_and_weights(generators: list[str], keywords: Optional[list[str]] =
             names.append(cast(str, gen["generator_name"]))
             weights.append(cast(float, gen["generator_weight"]))
     return names, weights
-
-
-def get_random_from_weights(names: list[str], weights: list[float]) -> str:
-    """Return a random generator name from the list names with respect to the random weights"""
-    print(names)
-    print(weights)
-    random_generator = random.choices(names, weights)[0]
-    return random_generator
 
 
 @dataclass
