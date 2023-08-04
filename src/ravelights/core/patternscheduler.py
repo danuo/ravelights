@@ -120,7 +120,7 @@ class PatternScheduler:
         self.load_timeline(self.blueprint_timelines[index])
 
     def load_timeline(self, timeline: dict[str, dict[str, str] | list[BlueprintSel] | list[BlueprintPlace]]):
-        self.clear_all_queues()
+        self.clear_instruction_queues()
 
         blueprints_selectors: list[BlueprintSel] = cast(list[BlueprintSel], timeline["selectors"])
         self.process_timeline_selectors(blueprints_selectors)
@@ -150,11 +150,11 @@ class PatternScheduler:
             if isinstance(placement, EffectSelectorPlacing):
                 self.process_effect_placement_object(placement)
 
-    def clear_all_queues(self):
+    def clear_instruction_queues(self):
         """Clears queues for global effects, device effects and instructions"""
         for device in self.devices:
             device.instructionhandler.instruction_queue.clear()
-        self.effecthandler.clear_qeueues()
+        self.effecthandler.instruction_queue.clear()
 
     def process_selector_object(self, obj: GenSelector):
         # load each generator that is defined inside of the GenSelector Object
