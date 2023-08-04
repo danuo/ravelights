@@ -153,7 +153,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)], dur="long")),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], dur="short", trigger_on_change=True)),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], dur="short", trigger_on_change=True, apply_on_all=True)),
         ],
     },
     {
