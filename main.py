@@ -10,6 +10,34 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
+output_config = {
+    0: [
+        dict(device=0, light=0),
+        dict(device=0, light=1),
+        dict(device=0, light=2, flip=True),
+    ],
+    1: [
+        dict(device=0, light=5),
+        dict(device=0, light=4),
+        dict(device=0, light=3),
+    ],
+    2: [
+        dict(device=1, light=1),
+        dict(device=1, light=3),
+    ],
+    3: [
+        dict(device=1, light=0, flip=True),
+        dict(device=1, light=2),
+    ],
+}
+
+
+class DataRouter:
+    def __init__(self, devices, output_config):
+        self.devices = devices  # list[Device]
+        self.output_config = output_config
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Ravelights")
     parser.add_argument("--fps", type=int, default=20, help="Frames per second (default: 20)")
