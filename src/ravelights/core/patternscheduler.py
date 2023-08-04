@@ -1,6 +1,6 @@
 import logging
 import random
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict
 from typing import TYPE_CHECKING, Iterable, Type, cast
 
 from ravelights.configs.components import (
@@ -29,19 +29,12 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-# todo: this should not be dataclass
-@dataclass
 class PatternScheduler:
-    root: "RaveLightsApp"
-    settings: Settings = field(init=False)
-    timehandler: TimeHandler = field(init=False)
-    effecthandler: EffectHandler = field(init=False)
-    devices: list[Device] = field(init=False)
-
-    def __post_init__(self) -> None:
-        self.settings = self.root.settings
-        self.timehandler = self.root.settings.timehandler
-        self.effecthandler = self.root.effecthandler
+    def __init__(self, root: "RaveLightsApp"):
+        self.root = root
+        self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.settings.timehandler
+        self.effecthandler: EffectHandler = self.root.effecthandler
         self.devices: list[Device] = self.root.devices
 
         self.timeline_selectors: list[GenSelector] = []
