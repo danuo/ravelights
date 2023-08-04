@@ -146,8 +146,8 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)], keywords=[K.LONG])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], keywords=[K.SHORT], trigger_on_change=True, apply_on_all=True)),
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], keywords=[K.SHORT], apply_on_all=True)),
         ],
     },
     {
@@ -155,10 +155,13 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "8beat 2level",
         },
         "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, keywords=[K.LONG])),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.SHORT])),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
         ],
     },
     {
@@ -170,7 +173,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
             BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)])),
+            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)]), p=),
         ],
     },
 ]

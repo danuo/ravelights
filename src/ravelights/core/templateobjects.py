@@ -48,11 +48,11 @@ class GenSelector:
 
     set_all: bool = True
 
-    name: str = None
+    name: Optional[str] = None
     keywords: list["Keywords"] = field(default_factory=list)
     level: int = 1
-    trigger: str = None
-    p: float = 1.0
+    p: float = 1.0  # if chance is not met, set pattern to p_none (black)
+    trigger_on_change: bool = True
 
     def __post_init__(self):
         self.settings: Settings = self.patternscheduler.settings
@@ -60,6 +60,7 @@ class GenSelector:
 
         # ─── Pattern ──────────────────────────────────────────────────
         if self.gen_type is Pattern:
+            # set pattern, thinner, dimmer
             if self.name is not None:
                 self.pattern_name = self.name
             else:
@@ -67,10 +68,11 @@ class GenSelector:
             if self.set_all:
                 pattern = self.patternscheduler.devices[0].rendermodule.find_generator(name=self.pattern_name)
                 assert isinstance(pattern, Generator)
-                self.set_vfilter_dimmer_thinner(pattern)
+                self.set_dimmer_thinner(pattern)
 
         # ─── Vfilter ──────────────────────────────────────────────────
         elif self.gen_type is Vfilter:
+            # set vfilter
             if self.name is not None:
                 self.vfilter_name = self.name
             else:
@@ -78,12 +80,13 @@ class GenSelector:
 
         # ─── Dimmer ───────────────────────────────────────────────────
         elif self.gen_type is Dimmer:
+            # set dimmer
             if self.name is not None:
                 self.dimmer_name = self.name
             else:
                 self.dimmer_name = self.get_random_generator(gen_type=Dimmer)
 
-    def set_vfilter_dimmer_thinner(self, pattern) -> None:
+    def set_dimmer_thinner(self, pattern) -> None:
         # ─── Vfilter ──────────────────────────────────────────────────
         # * not related to pattern, add vfilter purely random
 
@@ -126,6 +129,7 @@ class GenPlacing:
     level: int  # 1, for action="load", only one level makes sense
     timings: list[int]
     p: float = 1.0
+    trigger_on_change: bool = True
 
 
 @dataclass
