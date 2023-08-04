@@ -1,6 +1,6 @@
 import logging
 import random
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict
 from typing import TYPE_CHECKING, Iterable, Type, cast
 
 from ravelights.configs.components import (
@@ -12,7 +12,6 @@ from ravelights.configs.components import (
     blueprint_timelines,
     create_from_blueprint,
 )
-from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -30,23 +29,15 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@dataclass
 class PatternScheduler:
-    root: "RaveLightsApp"
-    settings: Settings = field(init=False)
-    timehandler: TimeHandler = field(init=False)
-    effecthandler: EffectHandler = field(init=False)
-    devices: list[Device] = field(init=False)
-    autopilot: AutoPilot = field(init=False)
-
-    def __post_init__(self) -> None:
-        self.settings = self.root.settings
-        self.timehandler = self.root.settings.timehandler
-        self.effecthandler = self.root.effecthandler
+    def __init__(self, root: "RaveLightsApp"):
+        self.root = root
+        self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.settings.timehandler
+        self.effecthandler: EffectHandler = self.root.effecthandler
         self.devices: list[Device] = self.root.devices
-
-        # ─── Autopilot ────────────────────────────────────────────────
-        self.autopilot = AutoPilot(settings=self.settings, devices=self.devices)
+        self.timeline_selectors: list[GenSelector] = []
+        self.timeline_placements: list[BlueprintPlace] = []
 
         # ─── GENERATORS ──────────────────────────────────────────────────
         self.blueprint_timelines = blueprint_timelines
@@ -120,41 +111,39 @@ class PatternScheduler:
         self.load_timeline(self.blueprint_timelines[index])
 
     def load_timeline(self, timeline: dict[str, dict[str, str] | list[BlueprintSel] | list[BlueprintPlace]]):
-        self.clear_all_queues()
+        self.clear_instruction_queues()
 
         blueprints_selectors: list[BlueprintSel] = cast(list[BlueprintSel], timeline["selectors"])
-        self.process_timeline_selectors(blueprints_selectors)
+        kwargs = dict(patternscheduler=self)
+        self.timeline_selectors: list[GenSelector] = create_from_blueprint(blueprints=blueprints_selectors, kwargs=kwargs)
+        self.process_timeline_selectors()
 
         blueprints_placements: list[BlueprintPlace] = cast(list[BlueprintPlace], timeline["placements"])
-        self.process_timeline_placements(blueprints_placements)
-
-    def process_timeline_selectors(self, blueprints_selectors: list[BlueprintSel]):
         kwargs = dict(patternscheduler=self)
-        selectors: list[GenSelector] = create_from_blueprint(blueprints=blueprints_selectors, kwargs=kwargs)
+        self.timeline_placements = create_from_blueprint(blueprints=blueprints_placements, kwargs=kwargs)
+        self.process_timeline_placements()
 
-        self.settings.clear_selected()
-        for obj in selectors:
-            self.process_selector_object(obj)
+    def process_timeline_selectors(self):
+        self.settings.clear_selected()  # todo: should this happen?
+        for selector in self.timeline_selectors:
+            if not p(selector.p):
+                continue
+            self.process_selector_object(selector)
 
-    def process_timeline_placements(self, blueprints_placements: list[BlueprintPlace]):
-        kwargs = dict(patternscheduler=self)
-        placements = create_from_blueprint(blueprints=blueprints_placements, kwargs=kwargs)
-        for placement in placements:
-            # do not execute if chance not met
+    def process_timeline_placements(self):
+        for placement in self.timeline_placements:
             if not p(placement.p):
-                continue  # skip this instruction
-
+                continue
             if isinstance(placement, GenPlacing):
                 self.process_generator_placement_object(placement)
-
             if isinstance(placement, EffectSelectorPlacing):
                 self.process_effect_placement_object(placement)
 
-    def clear_all_queues(self):
+    def clear_instruction_queues(self):
         """Clears queues for global effects, device effects and instructions"""
         for device in self.devices:
             device.instructionhandler.instruction_queue.clear()
-        self.effecthandler.clear_qeueues()
+        self.effecthandler.instruction_queue.clear()
 
     def process_selector_object(self, obj: GenSelector):
         # load each generator that is defined inside of the GenSelector Object
@@ -166,24 +155,22 @@ class PatternScheduler:
         if obj.vfilter_name:
             self.settings.set_generator(gen_type=Vfilter, level_index=obj.level, gen_name=obj.vfilter_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.pattern_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.vfilter_name, level=obj.level)
 
         if obj.dimmer_name:
             self.settings.set_generator(gen_type=Dimmer, level_index=obj.level, gen_name=obj.dimmer_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.pattern_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.dimmer_name, level=obj.level)
 
         if obj.thinner_name:
             self.settings.set_generator(gen_type=Thinner, level_index=obj.level, gen_name=obj.thinner_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.pattern_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.thinner_name, level=obj.level)
 
     def load_generator_specific_trigger(self, gen_name: str, level: int):
         generator = self.devices[0].rendermodule.get_generator_by_name(gen_name)
         trigger = random.choice(generator.possible_triggers)
         kwargs = asdict(trigger)
-        print("loaded new trigger")
-        print(kwargs)
         self.settings.set_trigger(gen_type=generator.get_identifier(), level_index=level, **kwargs)
 
     def process_generator_placement_object(self, obj: GenPlacing):
@@ -196,11 +183,11 @@ class PatternScheduler:
         for timing in obj.timings:
             self.send_to_effect(instruction, timing=timing)
 
-    def send_to_devices(self, ins: InstructionDevice, timing: int) -> None:
+    def send_to_devices(self, ins: InstructionDevice, timing: int):
         for device in self.devices:
             device.instructionhandler.instruction_queue.add_instruction(ins, n_quarter=timing)
 
-    def send_to_effect(self, ins: InstructionEffect, timing: int) -> None:
+    def send_to_effect(self, ins: InstructionEffect, timing: int):
         self.effecthandler.instruction_queue.add_instruction(ins, n_quarter=timing)
 
     def generate_instructions(self):
