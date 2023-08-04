@@ -1,5 +1,5 @@
 import logging
-from dataclasses import dataclass
+from dataclasses import InitVar, dataclass
 
 import numpy as np
 
@@ -14,17 +14,28 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class AutoPilot:
+    """
+    autopilot_loop_length [in beats]: randomized is called every n beats
+    """
+
     settings: Settings
     devices: list[Device]
+    autopilot_loop_length: InitVar[int]
 
-    def __post_init__(self):
+    def __post_init__(self, autopilot_loop_length):
         self.settings.settings_autopilot = dict(
             autopilot=False,
-            loop_length=8,
-            autoload_vfilter=True,
-            autoload_dimmer=True,
-            autoload_thinner=True,
-            autoload_triggers=True,
+            autopilot_loop_length=autopilot_loop_length,
+            renew_pattern=True,
+            p_renew_pattern=0.1,  # use in timeline genselector
+            renew_pattern_sec=True,
+            p_renew_pattern_sec=0.1,  # use in timeline genselector
+            renew_vfilter=True,
+            p_renew_vfilter=0.1,  # use in timeline genselector
+            renew_thinner=True,
+            p_renew_thinner=0.1,  # use in timeline genselector
+            renew_dimmer=True,
+            p_renew_dimmer=0.1,  # use in timeline genselector
             color_primary=True,
             p_color_primary=0.1,
             color_secondary=True,
@@ -33,25 +44,63 @@ class AutoPilot:
             p_color_effect=0.1,
             timeline=True,
             p_timeline=0.1,
-            pattern=True,
-            p_pattern=0.1,
-            pattern_sec=True,
-            p_pattern_sec=0.1,
             alternate_pattern=True,
-            p_alternate_pattern=0.1,
+            p_alternate_pattern=0.1,  # run on every item in selected seperately
             alternate_pattern_sec=True,
-            p_alternate_pattern_sec=0.1,
+            p_alternate_pattern_sec=0.1,  # run on every item in selected seperately
             triggers=True,
-            p_triggers=0.1,
+            p_triggers=0.1,  # run on every item in selected seperately
+            autoload_triggers=True,
         )
 
         # ─── Add Controls Autopilot ───────────────────────────────────
         controls_autopilot = [
             dict(type="toggle", name_toggle="autopilot"),
-            dict(type="toggle", name_toggle="autoload_vfilter"),
-            dict(type="toggle", name_toggle="autoload_dimmer"),
-            dict(type="toggle", name_toggle="autoload_thinner"),
-            dict(type="toggle", name_toggle="autoload_triggers"),
+            dict(
+                type="toggle_slider",
+                name_toggle="renew_pattern",
+                name_slider="p_renew_pattern",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="renew_pattern_sec",
+                name_slider="p_renew_pattern_sec",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="renew_vfilter",
+                name_slider="p_renew_vfilter",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="renew_dimmer",
+                name_slider="p_renew_dimmer",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
+            dict(
+                type="toggle_slider",
+                name_toggle="renew_thinner",
+                name_slider="p_renew_thinner",
+                range_min=0.0,
+                range_max=1.0,
+                step=0.1,
+                markers=True,
+            ),
             dict(
                 type="toggle_slider",
                 name_toggle="color_primary",
@@ -81,18 +130,6 @@ class AutoPilot:
             ),
             dict(
                 type="toggle_slider", name_toggle="timeline", name_slider="p_timeline", range_min=0.0, range_max=1.0, step=0.1, markers=True
-            ),
-            dict(
-                type="toggle_slider", name_toggle="pattern", name_slider="p_pattern", range_min=0.0, range_max=1.0, step=0.1, markers=True
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="pattern_sec",
-                name_slider="p_pattern_sec",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
             ),
             dict(
                 type="toggle_slider",
@@ -131,7 +168,7 @@ class AutoPilot:
         if not self.settings.settings_autopilot["autopilot"]:
             return None
 
-        is_triggerd = self.settings.beat_state == BeatStatePattern(loop_length=self.settings.settings_autopilot["loop_length"])
+        is_triggerd = self.settings.beat_state == BeatStatePattern(loop_length=self.settings.settings_autopilot["autopilot_loop_length"])
         if not is_triggerd:
             return None
 

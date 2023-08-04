@@ -1,9 +1,9 @@
 import logging
-from enum import Enum, auto
 from typing import Optional
 
 from ravelights.artnet.artnet_transmitter import ArtnetTransmitter
 from ravelights.configs.device_configs import device_configs
+from ravelights.core.autopilot import AutoPilot
 from ravelights.core.controls import Controls
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
@@ -38,11 +38,11 @@ class RaveLightsApp:
     ):
         self.settings = Settings(device_config=device_configs[0], bpm_base=80.0, fps=fps)
         self.devices = create_devices(root=self)
+        self.autopilot = AutoPilot(settings=self.settings, devices=self.devices, autopilot_loop_length=16)
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
         self.eventhandler = EventHandler(root=self)
         self.controls = Controls(root=self)
-
         self.visualizer = None
         if visualizer:
             from ravelights.pygame_visualizer.visualizer import Visualizer
@@ -73,7 +73,7 @@ class RaveLightsApp:
         # ─── Apply Inputs ─────────────────────────────────────────────
         self.eventhandler.apply_settings_modifications_queue()
         # ─── PREPARE ─────────────────────────────────────────────────────
-        self.patternscheduler.autopilot.randomize()
+        self.autopilot.randomize()
         for device in self.devices:
             device.instructionhandler.load_and_apply_instructions()
         self.effecthandler.load_and_apply_instructions()
