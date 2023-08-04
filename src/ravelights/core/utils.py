@@ -1,7 +1,7 @@
 import logging
 import math
 import random
-from typing import Sequence
+from typing import Sequence, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -13,6 +13,18 @@ logger = logging.getLogger(__name__)
 
 def p(chance: float) -> bool:
     return random.random() < chance
+
+
+T = TypeVar("T")
+
+
+def get_random_from_weights(names: list[T], weights: list[float]) -> T:
+    """Return a random item from the list with respect to the weights"""
+    if not len(names) > 0:
+        logger.warning("called get_random_from_weights() with empty list")
+        return None
+    random_generator = random.choices(names, weights)[0]
+    return random_generator
 
 
 def i_to_rgb(matrix: npt.NDArray[np.int_ | np.float_], color: Color) -> npt.NDArray[np.int_ | np.float_]:
