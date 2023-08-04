@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 from typing import NamedTuple, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
@@ -45,16 +45,16 @@ from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
 
 
 class Keywords(Enum):
-    TECHNO = "techno"
-    DISCO = "disco"
-    AMBIENT = "ambient"
-    CHORUS = "chorus"
-    BUILDUP = "buildup"
-    BREAK = "break"
-    DROP = "drop"
-    STROBE = "strobe"
-    ONEBEAT = "one_beat"  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
-    FOURBEAT = "four_beat"  # patterns that only work when showed for 4 beats or longer
+    TECHNO = auto()
+    DISCO = auto()
+    AMBIENT = auto()
+    CHORUS = auto()
+    BUILDUP = auto()
+    BREAK = auto()
+    DROP = auto()
+    STROBE = auto()
+    SHORT = auto()  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
+    LONG = auto()  # patterns that only work when showed for 4 beats or longer
 
 
 class Blueprint(NamedTuple):
@@ -78,12 +78,6 @@ class BlueprintPlace(Blueprint):
     ...
 
 
-# pattern DOES NOT NEED need_thinner or need_vfilter tag
-# pattern which require this can go to debug category, have pattern with vfilter there
-# strobe is not a pattern but rather a special effect that will go away!
-# have strobe for techno, disco and ambient?
-
-
 # ─── Blueprint Section ────────────────────────────────────────────────────────
 # flake8: noqa E501
 # fmt: off
@@ -96,20 +90,20 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(ThinnerNone, dict(name="t_none", weight=0)),
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
     BlueprintGen(PatternDebug, dict(name="p_debug", weight=0)),
-    BlueprintGen(PatternRandomStripes, dict(name="p_random_stripes", keywords=[K.CHORUS, K.BUILDUP, K.DROP], weight=2)),
-    BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
-    BlueprintGen(PatternMeteor, dict(version=0, name="p_meteor_fast05", keywords=[K.CHORUS], weight=0.2)),
-    BlueprintGen(PatternMeteor, dict(version=1, name="p_meteor_fast10", keywords=[K.CHORUS], weight=0.2)),
-    BlueprintGen(PatternMeteor, dict(version=2, name="p_meteor_slow30", keywords=[K.CHORUS], weight=0.2)),
-    BlueprintGen(PatternMeteor, dict(version=3, name="p_meteor_slow40", keywords=[K.CHORUS], weight=0.2)),
-    BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.STROBE])),
-    BlueprintGen(PatternMovingBlocks, dict(name="p_moving_blocks", keywords=[K.CHORUS])),
-    BlueprintGen(PatternMovingStrobe, dict(name="p_moving_strobe", keywords=[K.CHORUS, K.STROBE])),
-    BlueprintGen(PatternMovingStrobeV2, dict(name="p_moving_strobe_v2", keywords=[K.CHORUS, K.STROBE])),
-    BlueprintGen(PatternStrobeSpawner, dict(name="p_strobe_spawner", keywords=[K.CHORUS, K.STROBE])),
-    BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.CHORUS])),
-    BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.AMBIENT, K.CHORUS])),
-    BlueprintGen(PatternPID, dict(name="p_pid", keywords=[])),
+    BlueprintGen(PatternRandomStripes, dict(name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2)),
+    BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
+    BlueprintGen(PatternMeteor, dict(version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2)),
+    BlueprintGen(PatternMeteor, dict(version=1, name="p_meteor_fast10", keywords=[K.LONG, K.CHORUS], weight=0.2)),
+    BlueprintGen(PatternMeteor, dict(version=2, name="p_meteor_slow30", keywords=[K.LONG, K.CHORUS], weight=0.2)),
+    BlueprintGen(PatternMeteor, dict(version=3, name="p_meteor_slow40", keywords=[K.LONG, K.CHORUS], weight=0.2)),
+    BlueprintGen(PatternMovingBlocks, dict(name="p_moving_blocks", keywords=[K.SHORT, K.LONG, K.CHORUS])),
+    BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS])),
+    BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
+    BlueprintGen(PatternPID, dict(name="p_pid", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
+    BlueprintGen(PatternMovingStrobe, dict(name="p_moving_strobe", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
+    BlueprintGen(PatternMovingStrobeV2, dict(name="p_moving_strobe_v2", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
+    BlueprintGen(PatternStrobeSpawner, dict(name="p_strobe_spawner", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(VfilterFlipVer, dict(name="v_flip_ver")),
     BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
@@ -152,8 +146,8 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)], dur="long")),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], dur="short", trigger_on_change=True, apply_on_all=True)),
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)], keywords=[K.LONG])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], keywords=[K.SHORT], trigger_on_change=True, apply_on_all=True)),
         ],
     },
     {
