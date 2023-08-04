@@ -142,81 +142,41 @@ blueprint_effects: list[BlueprintEffect] = [
 
 # todo: effects need length, patterns do not
 blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list[BlueprintSel]]] = [
-    {  # 0
+    {
         "meta": {
-            "name": "pattern1",
+            "name": "4beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_meteor_fast05", p=0.5)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
+            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_meteor_fast05", p=0.5)),
+            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(4)])),  # have this for sure
-            # BlueprintPlace(GenPlacing, dict(level=1, timings=[16*4, 20*4, 24*4, 28*4], p=0.1)),  # maybe have this
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[0+12, 4*4+12, 8*4+12, 12*4+12, 16*4+12])),  # have this for sure
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*4+12, 20*4+12, 24*4+12, 28*4+12])),  # have this for sure
-            # BlueprintPlace(GenPlacing, dict(level=3, timings=[0])),
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[int(128//2)])),
-            BlueprintPlace(EffectSelectorPlacing, dict(length_q=8, timings=[0, 32, 64, 96], p=0.9)),
-        ],
-    },
-    {  # 1
-       "meta": {
-           "name": "simple p1 only",
-       },
-       "selectors": [
-           BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_solid_color", set_all=False)),
-           # BlueprintSel(GenSelector, dict(gen_type=Vfilter, name="v_mirror")),
-        #    BlueprintSel(GenSelector, dict(gen_type=Dimmer, name="d_peak")),
-       ],
-       "placements": [
-           BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
-           # BlueprintPlace(EffectSelectorPlacing, dict(length_q=8, timings=[0, 32, 64, 96], p=0.9)),
-       ],
-    },
-    {  # 1
-        "meta": {
-            "name": "single_pattern",
-        },
-        "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_debug", set_all=False)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, name="v_mirror")),
-            # BlueprintSel(GenSelector, dict(gen_type=Dimmer, name="d_sine")),
-        ],
-        "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
-            # BlueprintPlace(EffectSelectorPlacing, dict(length_q=8, timings=[0, 32, 64, 96], p=0.9)),
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)], dur="long")),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], dur="short", trigger_on_change=True)),
         ],
     },
     {
         "meta": {
-            "name": "debug",
-            "description": "debug pattern to test filters etc.",
-            "weight": 0
+            "name": "8beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, name="p_debug", set_all=False)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, name="v_mirror")),
-            # BlueprintSel(GenSelector, dict(gen_type=Dimmer, name="d_sine")),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
-            # BlueprintPlace(EffectSelectorPlacing, dict(length_q=8, timings=[0, 32, 64, 96], p=0.9)),
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
         ],
     },
-    {  # this is a special timeline, it will not be loaded automatically because of weight = 0
+    {
         "meta": {
-            "name": "special_rainbow_pattern",
-            "description": "visualize 1 pattern with permament rainbow effect",
-            "weight": 0,
+            "name": "8beat 3level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
-            BlueprintPlace(EffectSelectorPlacing, dict(name="e_color_strobe", length_q="inf", timings=[0])),  # todo: implement inf timing
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
+            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)])),
         ],
     },
 ]
