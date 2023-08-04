@@ -41,6 +41,17 @@ class PIDController:
     def value(self) -> float:
         return self.target if self.instant else self._x
 
+    def perform_pid_step(self):
+        self.error = self.target - self._x
+        self.derivative = (self.error - self._previous_error) / self.dt
+        self._previous_error = self.error
+        self._integral += self.error * self.dt
+        self.force = self.kp * self.error + self.ki * self._integral + self.kd * self.derivative
+
+        self._x = self._x + self._dx * self.dt + 0.5 * self._ddx * (self.dt**2)
+        self._dx = (self._dx + self._ddx * self.dt) * 0.7
+        self._ddx = self.force / self.m
+
     def load_parameter_preset(self, preset):
         match preset:
             case PIDSpeeds.INSTANT.value:
@@ -95,14 +106,3 @@ class PIDController:
                 self.kd = 0.1
                 self.ki = 0.0
                 self.dt = 1 / 100
-
-    def perform_pid_step(self):
-        self.error = self.target - self._x
-        self.derivative = (self.error - self._previous_error) / self.dt
-        self._previous_error = self.error
-        self._integral += self.error * self.dt
-        self.force = self.kp * self.error + self.ki * self._integral + self.kd * self.derivative
-
-        self._x = self._x + self._dx * self.dt + 0.5 * self._ddx * (self.dt**2)
-        self._dx = (self._dx + self._ddx * self.dt) * 0.7
-        self._ddx = self.force / self.m
