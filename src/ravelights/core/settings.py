@@ -60,7 +60,7 @@ class Settings:
     Public attributes can be modified at any time.
     """
 
-    device_config: InitVar[list[list[dict[str, float | int]]]] = None
+    device_config: InitVar = None
     # timehandler: TimeHandler = None
     # bpmhandler: BPMhandler = None
 
@@ -109,9 +109,11 @@ class Settings:
     settings_autopilot: dict = field(init=False)
 
     def __post_init__(self, device_config):
-        if device_config:
-            self.device_config = device_config
-            self.process_device_config(device_config)
+        # assert device_config
+        if device_config:  # why is this optional?
+            # self.device_config = device_config
+            self.light_setup: list[dict] = device_config["light_setup"]
+            self.calc_lights_per_output(device_config)
 
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
@@ -121,13 +123,12 @@ class Settings:
         self.timehandler = TimeHandler(settings=self)
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
 
-    def clear_selected(self) -> None:
-        self.selected = get_default_selected_dict()
+    def calc_lights_per_output(self, device_config):
+        self.lights_per_output = [d["n_leds"] * d["n_lights"] for d in self.light_setup] + [0 for _ in range(4 - len(self.light_setup))]
 
-    def process_device_config(self, device_config: list[list[dict[str, float | int]]]) -> None:
-        self.n_devices = len(device_config)
-        self.devices_n_lights = [len(device) - 1 for device in device_config]
-        self.devices_n_leds = [int(device[-1]["n_lights"]) for device in device_config]
+    def clear_selected(self):
+        """resets selected generators to default state"""
+        self.selected = get_default_selected_dict()
 
     @property
     def bpm(self) -> float:
