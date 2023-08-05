@@ -1,16 +1,18 @@
-from enum import Enum
+from enum import auto
+
+from ravelights.core.utils import StrEnum
 
 
-class PIDSpeeds(Enum):
+class PIDSpeeds(StrEnum):
     """available speeds for pid controler"""
 
-    INSTANT = "instant"
-    FAST = "fast"
-    FAST_BOUNCY = "fast"
-    MEDIUM = "medium"
-    MEDIUM_BOUNCY = "medium_bouncy"
-    SLOW = "slow"
-    SLOW_BOUNCY = "slow"
+    INSTANT = auto()
+    FAST = auto()
+    FAST_BOUNCY = auto()
+    MEDIUM = auto()
+    MEDIUM_BOUNCY = auto()
+    SLOW = auto()
+    SLOW_BOUNCY = auto()
 
 
 class PIDController:

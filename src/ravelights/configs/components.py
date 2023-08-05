@@ -1,9 +1,10 @@
-from enum import Enum, auto
+from enum import auto
 from typing import NamedTuple, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
 from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
+from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
 from ravelights.dimmers.dimmer_decay_medium import DimmerDecayMedium
 from ravelights.dimmers.dimmer_decay_slow import DimmerDecaySlow
@@ -45,17 +46,17 @@ from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
 from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
 
 
-class Keywords(Enum):
-    TECHNO = "techno"
-    DISCO = "disco"
-    AMBIENT = "ambient"
-    CHORUS = "chorus"
-    BUILDUP = "buildup"
-    BREAK = "break"
-    DROP = "drop"
-    STROBE = "strobe"
-    SHORT = "short"  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
-    LONG = "long"  # patterns that only work when showed for 4 beats or longer
+class Keywords(StrEnum):
+    TECHNO = auto()
+    DISCO = auto()
+    AMBIENT = auto()
+    CHORUS = auto()
+    BUILDUP = auto()
+    BREAK = auto()
+    DROP = auto()
+    STROBE = auto()
+    SHORT = auto()  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
+    LONG = auto()  # patterns that only work when showed for 4 beats or longer
 
 
 class Blueprint(NamedTuple):
