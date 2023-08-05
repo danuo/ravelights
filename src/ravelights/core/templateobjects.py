@@ -169,8 +169,8 @@ class EffectSelectorPlacing:
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
-        # todo: add music style
-        names, weights = get_names_and_weights(generators=generators, keywords=self.keywords)
+        keywords = self.keywords + [self.settings.music_style]
+        names, weights = get_names_and_weights(generators=generators, keywords=keywords)
         assert len(names) > 0
         gen_name = get_random_from_weights(names=names, weights=weights)
         return gen_name
