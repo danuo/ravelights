@@ -47,7 +47,7 @@ class RaveLightsApp:
         self.controls = Controls(root=self)
         self.visualizer = None
         if visualizer:
-            from ravelights.pygame_visualizer.visualizer import Visualizer
+            from ravelights.interface.visualizer import Visualizer
 
             self.visualizer = Visualizer(root=self, device_config=device_config)
 
