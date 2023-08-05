@@ -8,8 +8,8 @@ from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.settings import Settings
 
 if TYPE_CHECKING:
-    from ravelights.app import RaveLightsApp
     from ravelights.core.device import Device
+    from ravelights.ravelights_app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
 

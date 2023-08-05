@@ -11,7 +11,7 @@ from ravelights.core.settings import Settings
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
-    from ravelights.app import RaveLightsApp
+    from ravelights.ravelights_app import RaveLightsApp
 
 C_BLACK = (0, 0, 0)
 SCREENWIDTH = 1200

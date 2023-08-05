@@ -14,7 +14,7 @@ from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 
 if TYPE_CHECKING:
-    from ravelights.app import RaveLightsApp
+    from ravelights.ravelights_app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
 

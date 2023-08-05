@@ -8,10 +8,10 @@ from ravelights.core.custom_typing import Array, ArrayNx3
 from ravelights.core.pixelmatrix import PixelMatrix
 
 if TYPE_CHECKING:
-    from ravelights.app import RaveLightsApp
     from ravelights.core.device import Device
     from ravelights.core.settings import Settings
     from ravelights.core.timehandler import TimeHandler
+    from ravelights.ravelights_app import RaveLightsApp
 
 
 class EffectWrapper:

@@ -12,10 +12,10 @@ from ravelights.vfilters.filter_flimmering import VfilterFlimmering
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 
 if TYPE_CHECKING:
-    from ravelights.app import RaveLightsApp
     from ravelights.core.device import Device
     from ravelights.core.pixelmatrix import PixelMatrix
     from ravelights.core.settings import Settings
+    from ravelights.ravelights_app import RaveLightsApp
 
 
 class LightObject(ABC):
