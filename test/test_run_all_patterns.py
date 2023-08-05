@@ -1,7 +1,7 @@
 import random
 
-from ravelights.app import RaveLightsApp
 from ravelights.core.bpmhandler import BeatStatePattern
+from ravelights.core.ravelights_app import RaveLightsApp
 
 FPS = 20
 
@@ -16,8 +16,8 @@ def test_all_patterns():
     def increase_globaltime():
         nonlocal global_time
         norm = random.normalvariate(0, 0.004)
-        assert abs(norm) < 1/FPS
-        random_frame_time = 1/FPS + norm
+        assert abs(norm) < 1 / FPS
+        random_frame_time = 1 / FPS + norm
         global_time += random_frame_time
 
     app = RaveLightsApp(fps=FPS, visualizer=False, restapi=False)

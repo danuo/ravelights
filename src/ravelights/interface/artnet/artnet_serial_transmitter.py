@@ -1,7 +1,8 @@
-import serial
 import logging
 
-from ravelights.artnet.artnet_transmitter import ArtnetTransmitter
+import serial
+
+from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 logger = logging.getLogger(__name__)
 

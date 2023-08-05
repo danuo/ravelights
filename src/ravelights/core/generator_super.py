@@ -11,8 +11,8 @@ from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
-    from ravelights.app import RaveLightsApp
     from ravelights.core.device import Device
+    from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
 
 logger = logging.getLogger(__name__)

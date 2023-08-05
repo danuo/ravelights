@@ -89,11 +89,11 @@ if not args.webui:
 
 artnet = None
 if args.artnet_wifi:
-    from ravelights.artnet.artnet_udp_transmitter import \
+    from ravelights.interface.artnet.artnet_udp_transmitter import \
         ArtnetUdpTransmitter  # fmt: skip
     artnet = ArtnetUdpTransmitter(ip_address=args.artnet_address)
 elif args.artnet_serial:
-    from ravelights.artnet.artnet_serial_transmitter import \
+    from ravelights.interface.artnet.artnet_serial_transmitter import \
         ArtnetSerialTransmitter  # fmt: skip
     artnet = ArtnetSerialTransmitter(serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate)
 
