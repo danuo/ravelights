@@ -10,7 +10,7 @@ from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.restapi.restapi import RestAPI
+from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
 
