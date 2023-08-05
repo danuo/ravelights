@@ -61,8 +61,6 @@ class Settings:
     """
 
     device_config: InitVar = None
-    timehandler: TimeHandler = field(init=False)
-    bpmhandler: BPMhandler = field(init=False)
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
@@ -70,9 +68,8 @@ class Settings:
     meta: dict = field(default_factory=dict)
 
     # ─── Device Configuration ─────────────────────────────────────────────
-    n_devices: int = field(init=False)
-    devices_n_lights: list[int] = field(init=False)
-    devices_n_leds: list[int] = field(init=False)
+    light_setup: list[dict] = field(init=False)
+    lights_per_output: list[int] = field(init=False)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
