@@ -1,6 +1,6 @@
 import socket
 
-from ravelights.artnet.artnet_transmitter import ArtnetTransmitter
+from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 
 class ArtnetUdpTransmitter(ArtnetTransmitter):

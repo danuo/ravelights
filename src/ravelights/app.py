@@ -1,7 +1,6 @@
 import logging
 from typing import Optional
 
-from ravelights.artnet.artnet_transmitter import ArtnetTransmitter
 from ravelights.configs.device_configs import device_configs
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.controls import Controls
@@ -10,6 +9,7 @@ from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
+from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)

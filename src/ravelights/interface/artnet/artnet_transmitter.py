@@ -1,8 +1,9 @@
-import numpy as np
-import numpy.typing as npt
 from abc import ABCMeta, abstractmethod
 
-from ravelights.artnet.art_dmx_packet import ArtDmxPacket
+import numpy as np
+import numpy.typing as npt
+
+from ravelights.interface.artnet.art_dmx_packet import ArtDmxPacket
 
 
 class ArtnetTransmitter(metaclass=ABCMeta):
