@@ -22,6 +22,7 @@ from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_debug import PatternDebug
+from ravelights.patterns.pattern_debug_solid_color import PatternDebugSolidColor
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
 from ravelights.patterns.pattern_meteor import PatternMeteor
 from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
@@ -45,16 +46,16 @@ from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
 
 
 class Keywords(Enum):
-    TECHNO = auto()
-    DISCO = auto()
-    AMBIENT = auto()
-    CHORUS = auto()
-    BUILDUP = auto()
-    BREAK = auto()
-    DROP = auto()
-    STROBE = auto()
-    SHORT = auto()  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
-    LONG = auto()  # patterns that only work when showed for 4 beats or longer
+    TECHNO = "techno"
+    DISCO = "disco"
+    AMBIENT = "ambient"
+    CHORUS = "chorus"
+    BUILDUP = "buildup"
+    BREAK = "break"
+    DROP = "drop"
+    STROBE = "strobe"
+    SHORT = "short"  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
+    LONG = "long"  # patterns that only work when showed for 4 beats or longer
 
 
 class Blueprint(NamedTuple):
@@ -90,6 +91,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(ThinnerNone, dict(name="t_none", weight=0)),
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
     BlueprintGen(PatternDebug, dict(name="p_debug", weight=0)),
+    BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
     BlueprintGen(PatternRandomStripes, dict(name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2)),
     BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
     BlueprintGen(PatternMeteor, dict(version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2)),

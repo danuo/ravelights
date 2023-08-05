@@ -18,9 +18,10 @@ logger = logging.getLogger(__name__)
 def create_devices(root: "RaveLightsApp") -> list[Device]:
     settings: Settings = root.settings
     devices: list[Device] = []
-    for device_id in range(settings.n_devices):
-        n_leds = settings.devices_n_leds[device_id]
-        n_lights = settings.devices_n_lights[device_id]
+    for device_id, device_light_setup in enumerate(settings.light_setup):
+        n_leds = device_light_setup["n_leds"]
+        n_lights = device_light_setup["n_lights"]
+        print("AAA", n_leds, n_lights)
         prim = True if device_id == 0 else False
         devices.append(Device(root=root, device_id=device_id, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
     return devices
@@ -31,12 +32,13 @@ class RaveLightsApp:
         self,
         *,
         fps=20,
-        artnet_transmitter: Optional[ArtnetTransmitter] = None,
+        artnet_transmitter: Optional[type[ArtnetTransmitter]] = None,
         webserver_port=80,
         serve_webinterface=True,
         visualizer=True,
     ):
-        self.settings = Settings(device_config=device_configs[0], bpm_base=80.0, fps=fps)
+        device_config = device_configs[0]
+        self.settings = Settings(device_config=device_config, bpm_base=80.0, fps=fps)
         self.devices = create_devices(root=self)
         self.autopilot = AutoPilot(settings=self.settings, devices=self.devices, autopilot_loop_length=16)
         self.effecthandler = EffectHandler(root=self)
@@ -47,9 +49,9 @@ class RaveLightsApp:
         if visualizer:
             from ravelights.pygame_visualizer.visualizer import Visualizer
 
-            self.visualizer = Visualizer(root=self)
+            self.visualizer = Visualizer(root=self, device_config=device_config)
 
-        self.artnet = artnet_transmitter
+        self.artnet_transmitter = artnet_transmitter() if artnet_transmitter else None
 
         self.rest_api = RestAPI(
             root=self,
@@ -95,6 +97,6 @@ class RaveLightsApp:
             # todo: transmit to all devices, not just one
         else:
             self.settings.timehandler.print_performance_stats()
-        if self.artnet is not None:
-            self.artnet.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
+        if self.artnet_transmitter:
+            self.artnet_transmitter.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
         self.settings.after()

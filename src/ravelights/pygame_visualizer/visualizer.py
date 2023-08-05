@@ -22,14 +22,14 @@ GUISCALE = 1.5
 
 
 class Visualizer:
-    def __init__(self, root: "RaveLightsApp"):
+    def __init__(self, root: "RaveLightsApp", device_config):
         self.root = root
+        self.visualizer_setup = device_config["visualizer_setup"]
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
         self.eventhandler: EventHandler = self.root.eventhandler
         self.bpmhandler: BPMhandler = self.settings.bpmhandler
         self.timehandler: TimeHandler = self.settings.timehandler
-        self.device_config = self.settings.device_config
         pygame.init()
         pygame.display.set_caption("ravelights")
         self.surface = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
@@ -76,10 +76,10 @@ class Visualizer:
                 pygame.transform.scale(surf_small, surf_big.get_size(), surf_big)
 
                 # GET POSITIONS FROM CONFIG
-                x_pos_rel = self.device_config[device_id][light_id]["x"]
-                y_pos_rel = self.device_config[device_id][light_id]["y"]
-                rot = self.device_config[device_id][light_id]["rot"]
-                scale = self.device_config[device_id][light_id]["scale"]
+                x_pos_rel = self.visualizer_setup[device_id][light_id]["x"]
+                y_pos_rel = self.visualizer_setup[device_id][light_id]["y"]
+                rot = self.visualizer_setup[device_id][light_id]["rot"]
+                scale = self.visualizer_setup[device_id][light_id]["scale"]
 
                 # ROTATE AND PLACE
                 new_surface = pygame.transform.rotozoom(surf_big, rot, scale * GUISCALE)

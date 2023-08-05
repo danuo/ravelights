@@ -60,9 +60,7 @@ class Settings:
     Public attributes can be modified at any time.
     """
 
-    device_config: InitVar[list[list[dict[str, float | int]]]] = None
-    # timehandler: TimeHandler = None
-    # bpmhandler: BPMhandler = None
+    device_config: InitVar = None
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
@@ -70,9 +68,8 @@ class Settings:
     meta: dict = field(default_factory=dict)
 
     # ─── Device Configuration ─────────────────────────────────────────────
-    n_devices: int = field(init=False)
-    devices_n_lights: list[int] = field(init=False)
-    devices_n_leds: list[int] = field(init=False)
+    light_setup: list[dict] = field(init=False)
+    lights_per_output: list[int] = field(init=False)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
@@ -80,15 +77,18 @@ class Settings:
     color_sec_mode: str = SecondaryColorModes.COMPLEMENTARY.value
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
     color_names: list[str] = field(default_factory=lambda: ["primary", "secondary", "effect"])
-    global_keywords: list[str] = field(default_factory=list)  # todo: use
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
     global_skip_trigger: int = 2
 
+    global_pattern_sec: bool = False
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
+    load_thinner_with_pat: bool = False
+    load_dimmer_with_pat: bool = False
+    load_triggers_with_gen: bool = False
     music_style: str = MusicStyles.TECHNO.value
 
     # ─── Time Settings ────────────────────────────────────────────────────
@@ -109,9 +109,11 @@ class Settings:
     settings_autopilot: dict = field(init=False)
 
     def __post_init__(self, device_config):
-        if device_config:
-            self.device_config = device_config
-            self.process_device_config(device_config)
+        # assert device_config
+        if device_config:  # why is this optional?
+            # self.device_config = device_config
+            self.light_setup: list[dict] = device_config["light_setup"]
+            self.calc_lights_per_output(device_config)
 
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
@@ -121,13 +123,12 @@ class Settings:
         self.timehandler = TimeHandler(settings=self)
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
 
-    def clear_selected(self) -> None:
-        self.selected = get_default_selected_dict()
+    def calc_lights_per_output(self, device_config):
+        self.lights_per_output = [d["n_leds"] * d["n_lights"] for d in self.light_setup] + [0 for _ in range(4 - len(self.light_setup))]
 
-    def process_device_config(self, device_config: list[list[dict[str, float | int]]]) -> None:
-        self.n_devices = len(device_config)
-        self.devices_n_lights = [len(device) - 1 for device in device_config]
-        self.devices_n_leds = [int(device[-1]["n_lights"]) for device in device_config]
+    def clear_selected(self):
+        """resets selected generators to default state"""
+        self.selected = get_default_selected_dict()
 
     @property
     def bpm(self) -> float:
