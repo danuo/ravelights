@@ -87,6 +87,9 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
+    load_thinner_with_pat: bool = False
+    load_dimmer_with_pat: bool = False
+    load_triggers_with_gen: bool = False
     music_style: str = MusicStyles.TECHNO.value
 
     # ─── Time Settings ────────────────────────────────────────────────────
