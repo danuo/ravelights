@@ -1,7 +1,7 @@
 import random
 
 from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.ravelights_app import RaveLightsApp
+from ravelights.core.ravelights_app import RaveLightsApp
 
 FPS = 20
 

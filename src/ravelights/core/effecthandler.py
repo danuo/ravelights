@@ -11,7 +11,7 @@ from ravelights.effects.effect_super import Effect, EffectWrapper
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
-    from ravelights.ravelights_app import RaveLightsApp
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
 

@@ -1,1 +1,1 @@
-from ravelights.ravelights_app import RaveLightsApp
+from ravelights.core.ravelights_app import RaveLightsApp

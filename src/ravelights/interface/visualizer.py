@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, cast
 
 import numpy as np
 import numpy.typing as npt
-import pygame  # import inside init, so that pygame is an optional install
+import pygame
 
 from ravelights.core.bpmhandler import BeatStatePattern, BPMhandler
 from ravelights.core.device import Device
@@ -11,7 +11,7 @@ from ravelights.core.settings import Settings
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
-    from ravelights.ravelights_app import RaveLightsApp
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 C_BLACK = (0, 0, 0)
 SCREENWIDTH = 1200

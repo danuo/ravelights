@@ -6,7 +6,7 @@ from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS
 from ravelights.core.templateobjects import GenPlacing
 
 if TYPE_CHECKING:
-    from ravelights.ravelights_app import RaveLightsApp
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 
 Item = namedtuple("Item", field_names="timing level")

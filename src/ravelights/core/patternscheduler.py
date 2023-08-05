@@ -23,7 +23,7 @@ from ravelights.core.utils import p
 from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
-    from ravelights.ravelights_app import RaveLightsApp
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 
 logger = logging.getLogger(__name__)

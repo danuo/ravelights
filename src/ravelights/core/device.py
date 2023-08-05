@@ -7,7 +7,7 @@ from ravelights.core.settings import Settings
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
-    from ravelights.ravelights_app import RaveLightsApp
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 
 class Device:
