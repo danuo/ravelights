@@ -19,7 +19,7 @@ TIMELINE_COLORS = {
 }
 
 
-class Controls:
+class MetaControls:
     """
     This creates objects/resources that are available via api to create elements of the UI
     """

@@ -3,13 +3,13 @@ from typing import Optional
 
 from ravelights.configs.device_configs import device_configs
 from ravelights.core.autopilot import AutoPilot
-from ravelights.core.controls import Controls
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
+from ravelights.interface.meta import MetaControls
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ class RaveLightsApp:
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
         self.eventhandler = EventHandler(root=self)
-        self.controls = Controls(root=self)
+        self.controls = MetaControls(root=self)
         self.visualizer = None
         if visualizer:
             from ravelights.interface.visualizer import Visualizer
