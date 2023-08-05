@@ -55,13 +55,19 @@ class RenderModule:
             return self.timeline_level
 
     def render(self):
+        # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.get_timeline_level()
+        timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
+        timeline_level_vfilter = 1 if self.settings.global_vfilter else timeline_level
+        timeline_level_thinner = 1 if self.settings.global_thinner else timeline_level
+        timeline_level_dimmer = 1 if self.settings.global_dimmer else timeline_level
 
+        # ------------------------------ get generators ------------------------------ #
         pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
-        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level)
-        vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level)
-        thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level)
-        dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level)
+        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
+        vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level_vfilter)
+        thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level_thinner)
+        dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level_dimmer)
 
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
