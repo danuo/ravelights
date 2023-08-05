@@ -45,16 +45,16 @@ from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
 
 
 class Keywords(Enum):
-    TECHNO = auto()
-    DISCO = auto()
-    AMBIENT = auto()
-    CHORUS = auto()
-    BUILDUP = auto()
-    BREAK = auto()
-    DROP = auto()
-    STROBE = auto()
-    SHORT = auto()  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
-    LONG = auto()  # patterns that only work when showed for 4 beats or longer
+    TECHNO = "techno"
+    DISCO = "disco"
+    AMBIENT = "ambient"
+    CHORUS = "chorus"
+    BUILDUP = "buildup"
+    BREAK = "break"
+    DROP = "drop"
+    STROBE = "strobe"
+    SHORT = "short"  # patterns that work when showed for one beat only. maybe only use four_beat als blacklist?
+    LONG = "long"  # patterns that only work when showed for 4 beats or longer
 
 
 class Blueprint(NamedTuple):
