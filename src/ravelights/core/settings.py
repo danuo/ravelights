@@ -77,7 +77,6 @@ class Settings:
     color_sec_mode: str = SecondaryColorModes.COMPLEMENTARY.value
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
     color_names: list[str] = field(default_factory=lambda: ["primary", "secondary", "effect"])
-    global_keywords: list[str] = field(default_factory=list)  # todo: use
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5

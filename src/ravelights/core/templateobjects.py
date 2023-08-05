@@ -111,7 +111,7 @@ class GenSelector:
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
-        keywords = self.keywords + self.settings.global_keywords + [self.settings.music_style]
+        keywords = self.keywords + [self.settings.music_style]
 
         # first try
         names, weights = get_names_and_weights(generators=generators, keywords=keywords)
@@ -169,8 +169,7 @@ class EffectSelectorPlacing:
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
-        # todo: add global keywords to keywords
-        # keywords = self.keywords + self.patternscheduler.settings.global_keywords
+        # todo: add music style
         names, weights = get_names_and_weights(generators=generators, keywords=self.keywords)
         assert len(names) > 0
         gen_name = get_random_from_weights(names=names, weights=weights)
