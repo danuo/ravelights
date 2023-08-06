@@ -1,8 +1,16 @@
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
     from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
+
+
+@dataclass
+class DataLight:
+    device: int
+    light: int
+    flip: bool = False
 
 
 class DataRouter:
