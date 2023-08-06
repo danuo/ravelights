@@ -17,21 +17,21 @@ device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)]
 # one output_config for each transmitter, defines which lights are broadcasted on which output
 L = DataLight
 output_config: list[list[DataLight]] = [
-    [
+    [  # output 0
         L(device=0, light=0),
         L(device=0, light=1),
         L(device=0, light=2, flip=True),
     ],
-    [
+    [  # output 1
         L(device=0, light=5),
         L(device=0, light=4),
         L(device=0, light=3),
     ],
-    [
+    [  # output 2
         L(device=1, light=1),
         L(device=1, light=3),
     ],
-    [
+    [  # output 3
         L(device=1, light=0, flip=True),
         L(device=1, light=2),
     ],
