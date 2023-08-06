@@ -18,25 +18,22 @@ class ArtnetTransmitter(metaclass=ABCMeta):
         self._debug = debug
 
     def transmit_matrix(self, matrix: npt.NDArray[np.uint8]) -> None:
-        """Transmit the pixel data in the provided matrix to the receiving Artnet node
+        """
+        Transmit the pixel data in the provided matrix to the receiving Artnet node
 
         Args:
-            matrix (np.typing.NDArray): An MxNx3 ndarray containing r,g,b values for each of the M * N to
+            matrix (np.typing.NDArray): An Nx3 ndarray containing r,g,b values for each of the N to
             be addressed pixels. Each color value must be an integer in {0, ..., 255}
-            (dtype=np.uint8), e.g. matrix[0, 0] = [255, 0, 0] sets the first pixel to red.
+            (dtype=np.uint8), e.g. matrix[0, 0] = 255 sets the first pixel to red.
         """
+
         assert matrix.dtype == np.uint8
-        assert matrix.ndim == 3
-        assert matrix.shape[2] == 3
-
-        # Reshape 3D matrix into 1D array corresponding to the Art-Net DMX data format
-        channels = matrix.reshape((-1, 3), order="F").flatten()
-
-        self._transmit_channels(channels)
+        assert matrix.ndim == 2
+        assert matrix.shape[-1] == 3
+        self._transmit_channels(matrix)
 
     def transmit_output_config(self, lights_per_output: list[int]) -> None:
         assert len(lights_per_output) == 4
-
         checksum = sum(lights_per_output)
         channels = np.array([*lights_per_output, checksum], dtype=np.uint8)
         self._send_universe(universe=self._CONFIG_UNIVERSE_INDEX, data=channels)
