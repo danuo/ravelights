@@ -2,12 +2,13 @@ import logging
 import math
 import random
 from enum import Enum
-from typing import Any, Sequence, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Sequence, Type, TypeVar
 
 import numpy as np
 import numpy.typing as npt
 
-from ravelights.core.colorhandler import Color
+if TYPE_CHECKING:
+    from ravelights.core.colorhandler import Color
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T")
@@ -48,7 +49,7 @@ def get_random_from_weights(names: list[T], weights: list[float]) -> T:
     return random_generator
 
 
-def i_to_rgb(matrix: npt.NDArray[np.int_ | np.float_], color: Color) -> npt.NDArray[np.int_ | np.float_]:
+def i_to_rgb(matrix: npt.NDArray[np.int_ | np.float_], color: "Color") -> npt.NDArray[np.int_ | np.float_]:
     assert matrix.dtype == int
     # matrix [n*1] with 0-1 float value
     # or

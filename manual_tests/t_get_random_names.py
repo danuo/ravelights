@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from main import create_devices
 from ravelights.configs.components import Keywords as K
-from ravelights.configs.device_configs import device_configs
+from ravelights.configs.visualizer_configurations import device_configs
 from ravelights.core.device import Device
 from ravelights.core.generator_super import Pattern
 from ravelights.core.patternscheduler import PatternScheduler
@@ -25,7 +25,7 @@ for _ in range(10000):
 
 c1 = Counter(names)
 
-test = (tuple(c1.items()))
+test = tuple(c1.items())
 names, counts = zip(*tuple(c1.items()))
 
 plt.bar(names, counts)
