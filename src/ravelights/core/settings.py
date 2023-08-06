@@ -1,35 +1,36 @@
 import logging
 from dataclasses import InitVar, dataclass, field
-from enum import Enum
+from enum import auto
 from typing import Optional, Type
 
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, Color, ColorEngine, ColorHandler
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.timehandler import TimeHandler
+from ravelights.core.utils import StrEnum
 from ravelights.effects.effect_super import Effect
 
 T_JSON = dict[str, str | float | int | bool]
 logger = logging.getLogger(__name__)
 
 
-class MusicStyles(Enum):
+class MusicStyles(StrEnum):
     """available music styles for settings"""
 
-    TECHNO = "techno"
-    DISCO = "disco"
-    AMBIENT = "ambient"
+    TECHNO = auto()
+    DISCO = auto()
+    AMBIENT = auto()
 
 
-class SecondaryColorModes(Enum):
+class SecondaryColorModes(StrEnum):
     """available modes to generate secondary color for settings"""
 
     # todo. replace with StrEnum and auto() with python 11
-    RANDOM = "random"
-    COMPLEMENTARY = "complementary"
-    COMPLEMENTARY33 = "complementary33"
-    COMPLEMENTARY50 = "complementary50"
-    COMPLEMENTARY66 = "complementary66"
+    RANDOM = auto()
+    COMPLEMENTARY = auto()
+    COMPLEMENTARY33 = auto()
+    COMPLEMENTARY50 = auto()
+    COMPLEMENTARY66 = auto()
 
 
 def get_default_selected_dict() -> dict[str, list[str]]:

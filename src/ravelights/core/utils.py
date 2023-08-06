@@ -1,7 +1,8 @@
 import logging
 import math
 import random
-from typing import Sequence, TypeVar
+from enum import Enum
+from typing import Any, Sequence, Type, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -9,13 +10,33 @@ import numpy.typing as npt
 from ravelights.core.colorhandler import Color
 
 logger = logging.getLogger(__name__)
+T = TypeVar("T")
+_S = TypeVar("_S", bound="StrEnum")
+
+
+class StrEnum(str, Enum):
+    """
+    Enum where members are also (and must be) strings
+    """
+
+    def __new__(cls: Type[_S], *values: str) -> _S:
+        value = str(*values)
+        member = str.__new__(cls, value)
+        member._value_ = value
+        return member
+
+    __str__ = str.__str__
+
+    @staticmethod
+    def _generate_next_value_(name: str, start: int, count: int, last_values: list[Any]) -> str:
+        """
+        Return the lower-cased version of the member name.
+        """
+        return name.lower()
 
 
 def p(chance: float) -> bool:
     return random.random() < chance
-
-
-T = TypeVar("T")
 
 
 def get_random_from_weights(names: list[T], weights: list[float]) -> T:
