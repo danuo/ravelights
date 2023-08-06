@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
@@ -7,7 +6,7 @@ from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
+from ravelights.interface.datarouter import DataRouter
 from ravelights.interface.meta import MetaControls
 from ravelights.interface.restapi import RestAPI
 
@@ -31,8 +30,8 @@ class RaveLightsApp:
         self,
         *,
         fps=20,
-        device_config=list[dict],
-        artnet_transmitters: list[ArtnetTransmitter],
+        device_config=list[dict[str, int]],
+        data_routers_config: list[dict],
         webserver_port=80,
         serve_webinterface=True,
         visualizer=True,
@@ -50,7 +49,7 @@ class RaveLightsApp:
 
             self.visualizer = Visualizer(root=self)
 
-        self.artnet_transmitters = artnet_transmitters
+        self.data_routers = self.initiate_data_routers(data_routers_config)
 
         self.rest_api = RestAPI(
             root=self,
@@ -58,6 +57,13 @@ class RaveLightsApp:
             port=webserver_port,
         )
         self.rest_api.start_threaded(debug=True)
+
+    def initiate_data_routers(self, data_routers_configs: list[dict]):
+        data_routers = []
+        for config in data_routers_configs:
+            data_routers.append(DataRouter(root=self, **config))
+
+        return data_routers
 
     def run(self):
         logger.info("Starting main loop...")
@@ -96,6 +102,6 @@ class RaveLightsApp:
             # todo: transmit to all devices, not just one
         else:
             self.settings.timehandler.print_performance_stats()
-        if self.artnet_transmitters:
-            self.artnet_transmitters.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
+        for datarouter in self.data_routers:
+            datarouter.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
         self.settings.after()
