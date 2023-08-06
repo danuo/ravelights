@@ -29,7 +29,7 @@ class RaveLightsApp:
         self,
         *,
         fps=20,
-        device_config=list[dict[str, int]],
+        device_config: list[dict[str, int]],
         data_routers_config: list[dict],
         webserver_port=80,
         serve_webinterface=True,
