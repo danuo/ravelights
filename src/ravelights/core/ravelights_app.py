@@ -19,7 +19,6 @@ def create_devices(root: "RaveLightsApp") -> list[Device]:
     for device_id, config in enumerate(settings.device_config):
         n_leds = config["n_leds"]
         n_lights = config["n_lights"]
-        print("AAA", n_leds, n_lights)
         prim = True if device_id == 0 else False
         devices.append(Device(root=root, device_id=device_id, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
     return devices
@@ -77,14 +76,14 @@ class RaveLightsApp:
 
     def render_frame(self):
         self.settings.before()
-        # ─── Apply Inputs ─────────────────────────────────────────────
+        # ------------------------------- apply inputs ------------------------------- #
         self.eventhandler.apply_settings_modifications_queue()
-        # ─── PREPARE ─────────────────────────────────────────────────────
+        # ---------------------------------- prepare --------------------------------- #
         self.autopilot.randomize()
         for device in self.devices:
             device.instructionhandler.load_and_apply_instructions()
         self.effecthandler.load_and_apply_instructions()
-        # ─── RENDER ──────────────────────────────────────────────────────
+        # ---------------------------------- render ---------------------------------- #
         # sync
         for i, device in enumerate(self.devices):
             if i == 0:
@@ -96,12 +95,14 @@ class RaveLightsApp:
             device.render()
         # aftermath
         self.effecthandler.perform_counting_per_frame()
-        # ─── OUTPUT ──────────────────────────────────────────────────────
+        # ---------------------------------- output ---------------------------------- #
         if self.visualizer:
             self.visualizer.render()
-            # todo: transmit to all devices, not just one
         else:
             self.settings.timehandler.print_performance_stats()
+        # --------------------------------- send data -------------------------------- #
+        brightness = self.settings.global_brightness
+        int_matrices = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
         for datarouter in self.data_routers:
-            datarouter.transmit_matrix(self.devices[0].pixelmatrix.get_matrix_int(brightness=self.settings.global_brightness))
+            datarouter.transmit_matrix(int_matrices)
         self.settings.after()

@@ -21,20 +21,18 @@ output_config: list[list[DataLight]] = [
         L(device=0, light=0),
         L(device=0, light=1),
         L(device=0, light=2, flip=True),
+        L(device=0, light=3, flip=True),
+        L(device=0, light=4, flip=True),
     ],
     [  # output 1
-        L(device=0, light=5),
-        L(device=0, light=4),
-        L(device=0, light=3),
-    ],
-    [  # output 2
+        L(device=1, light=0),
         L(device=1, light=1),
-        L(device=1, light=3),
-    ],
-    [  # output 3
-        L(device=1, light=0, flip=True),
         L(device=1, light=2),
+        L(device=1, light=3),
+        L(device=1, light=4),
     ],
+    [],  # output 2
+    [],  # output 3
 ]
 
 
@@ -42,7 +40,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Ravelights")
     parser.add_argument("--fps", type=int, default=20, help="Frames per second (default: 20)")
     artnet_group = parser.add_mutually_exclusive_group()
-    artnet_group.add_argument("--artnet-wifi", default=False, action=argparse.BooleanOptionalAction)
+    artnet_group.add_argument("--artnet-wifi", default=True, action=argparse.BooleanOptionalAction)
     artnet_group.add_argument("--artnet-serial", default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument("--artnet-address", type=str, default=None)
     parser.add_argument("--artnet-serial-port", type=str, default="/dev/ttyAMA0")

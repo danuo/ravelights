@@ -70,7 +70,6 @@ class Settings:
 
     # ─── Device Configuration ─────────────────────────────────────────────
     light_setup: list[dict] = field(init=False)
-    lights_per_output: list[int] = field(init=False)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
@@ -112,7 +111,6 @@ class Settings:
     def __post_init__(self):
         if not self.device_config:
             self.device_config = [dict(n_lights=1, n_leds=1)]
-        self.calc_lights_per_output()
 
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
@@ -121,11 +119,6 @@ class Settings:
 
         self.timehandler = TimeHandler(settings=self)
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
-
-    def calc_lights_per_output(self):
-        lights_per_output = [d["n_leds"] * d["n_lights"] for d in self.device_config]
-        list_fillup = [0 for _ in range(4 - len(self.device_config))]
-        self.lights_per_output = lights_per_output + list_fillup
 
     def clear_selected(self):
         """resets selected generators to default state"""
