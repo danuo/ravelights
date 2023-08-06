@@ -21,7 +21,6 @@ class PixelMatrix:
         self.n_lights: int = n_lights
         self.n = n_leds * n_lights
         self.is_prim: bool = is_prim
-        self.prerendered_matrices = dict()  # todo: is this needed?
         self.reset()
 
     def reset(self):
@@ -49,9 +48,10 @@ class PixelMatrix:
         input:  index=233 will result in the
         output: led_id=2 and light_id 33"""
 
-        led_id = index % self.n_leds
-        light_id = index // self.n_leds
-        return led_id, light_id
+        # led_id = index % self.n_leds
+        # light_id = index // self.n_leds
+        # return led_id, light_id
+        return divmod(index, self.n_leds)
 
     @staticmethod
     def clip_matrix_to_1(matrix: ArrayNx1) -> ArrayNx1:
