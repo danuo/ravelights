@@ -1,7 +1,7 @@
 import numpy as np
 
 X_SPACINGS_1 = np.linspace(0.2, 0.8, 5)
-device_configs = [
+configurations = [
     # ─── CONFIGURATION 1 ─────────────────────────────────────────────────
     # this is the default configuration with 2 devices n_leds=144 and
     # n_lights=5 each. All lights are vertically oriented.
@@ -11,8 +11,8 @@ device_configs = [
     #
     dict(
         name="5 top, 5 bottom",
-        light_setup=[dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)],
-        visualizer_setup=[
+        device_config=[dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)],
+        visualizer_config=[
             # ─── DEVICE 1 ────────────────────────────────────────────────────
             [
                 dict(x=X_SPACINGS_1[0], y=0.3, rot=0.0, scale=1.0),

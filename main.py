@@ -5,37 +5,35 @@ import pstats
 from pathlib import Path
 
 from ravelights import RaveLightsApp
+from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+# for devices in ravelights app
+device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)]
 
-output_config = {
-    0: [
+# one output_config for each transmitter, defines which lights are broadcasted on which output
+output_config: list[list[dict]] = [
+    [
         dict(device=0, light=0),
         dict(device=0, light=1),
         dict(device=0, light=2, flip=True),
     ],
-    1: [
+    [
         dict(device=0, light=5),
         dict(device=0, light=4),
         dict(device=0, light=3),
     ],
-    2: [
+    [
         dict(device=1, light=1),
         dict(device=1, light=3),
     ],
-    3: [
+    [
         dict(device=1, light=0, flip=True),
         dict(device=1, light=2),
     ],
-}
-
-
-class DataRouter:
-    def __init__(self, devices, output_config):
-        self.devices = devices  # list[Device]
-        self.output_config = output_config
+]
 
 
 def parse_args():
@@ -50,13 +48,7 @@ def parse_args():
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--profiling", default=False, action=argparse.BooleanOptionalAction)
-
     args = parser.parse_args()
-    if args.artnet_wifi and not args.artnet_address:
-        parser.error("--artnet-address is required when --artnet-wifi is set")
-    if args.artnet_serial and not args.artnet_serial_port:
-        parser.error("--artnet-serial-port is required when --artnet-serial is set")
-
     parser.print_usage()
     return args
 
@@ -87,21 +79,30 @@ if not args.webui:
     webserver_port = 5000
     logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
 
-artnet = None
+# -------------------------- construct transmitters -------------------------- #
+# idea:
+# keep transmitters simple
+# construct them here, with datarouter config
+# inside of app, they are wrapped into datawrapper object
+
+
+data_routers_config = []
 if args.artnet_wifi:
-    from ravelights.interface.artnet.artnet_udp_transmitter import \
-        ArtnetUdpTransmitter  # fmt: skip
-    artnet = ArtnetUdpTransmitter(ip_address=args.artnet_address)
-elif args.artnet_serial:
-    from ravelights.interface.artnet.artnet_serial_transmitter import \
-        ArtnetSerialTransmitter  # fmt: skip
-    artnet = ArtnetSerialTransmitter(serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate)
+    transmitter = ArtnetUdpTransmitter(ip_address=args.artnet_address)
+    data_routers_config.append(dict(transmitter=transmitter, output_config=output_config))
+if args.artnet_serial:
+    # import here because of serial dependency
+    from ravelights.interface.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter
+
+    transmitter = ArtnetSerialTransmitter(serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate)
+    data_routers_config.append(dict(transmitter=transmitter, output_config=output_config))
 
 app = RaveLightsApp(
     fps=args.fps,
-    artnet_transmitter=artnet,
-    webserver_port=webserver_port,
+    device_config=device_config,
+    data_routers_config=data_routers_config,
     visualizer=args.visualizer,
+    webserver_port=webserver_port,
     serve_webinterface=args.webui,
 )
 
