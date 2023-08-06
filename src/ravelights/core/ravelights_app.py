@@ -57,7 +57,7 @@ class RaveLightsApp:
         )
         self.rest_api.start_threaded(debug=True)
 
-    def initiate_data_routers(self, data_routers_configs: list[dict]):
+    def initiate_data_routers(self, data_routers_configs: list[dict]) -> list[DataRouter]:
         data_routers = []
         for config in data_routers_configs:
             data_routers.append(DataRouter(root=self, **config))
