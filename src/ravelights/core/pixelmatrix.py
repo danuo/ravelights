@@ -28,14 +28,18 @@ class PixelMatrix:
         self.matrix_float: ArrayMxKx3 = np.zeros(shape=(self.n_lights, self.n_leds, 3))
 
     def set_matrix_float(self, matrix: ArrayMxKx3):
+        """
+        matrix with:
+        shape: (self.n_leds, self.n_lights, 3)
+        value range: [0, 1]
+        dtype: float
+
+        """
+        assert np.max(matrix) <= 1.0
         assert matrix.shape == (self.n_leds, self.n_lights, 3)
         self.matrix_float = matrix
 
-    def get_matrix_float(self) -> ArrayNx3:
-        return self.matrix_float
-
     def get_matrix_int(self, brightness: float = 1.0) -> npt.NDArray[np.uint8]:
-        assert np.max(self.matrix_float) <= 1.0  # todo: allow brightness > 1
         return (self.matrix_float * 255 * brightness).astype(np.uint8)
 
     def get_ledid_lightid_from_index(self, index: int):

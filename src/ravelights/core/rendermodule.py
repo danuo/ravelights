@@ -22,7 +22,7 @@ class RenderModule:
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
         self.timeline_level = 0  # should be per device. different devices can have different levels
         self.counter_frame = 0  # for frameskip
-        self.matrix_memory = self.pixelmatrix.get_matrix_float().copy()
+        self.matrix_memory = self.pixelmatrix.matrix_float.copy()
 
     def assert_dims(self, in_matrix):
         """checks if shape is (n_leds, n_lights, 3). this is a debug function"""
