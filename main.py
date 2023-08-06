@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG)
 device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)]
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
-output_config: list[list[dict]] = [
+transmitter_config: list[list[dict]] = [
     [  # output 0
         dict(device=0, light=0),
         dict(device=0, light=1),
@@ -84,21 +84,21 @@ if not args.webui:
 # inside of app, they are wrapped into datawrapper object
 
 
-data_routers_config = []
+data_routers_configs = []
 if args.artnet_wifi:
     transmitter = ArtnetUdpTransmitter(ip_address=args.artnet_address)
-    data_routers_config.append(dict(transmitter=transmitter, output_config=output_config))
+    data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config))
 if args.artnet_serial:
     # import here because of serial dependency
     from ravelights.interface.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter
 
     transmitter = ArtnetSerialTransmitter(serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate)
-    data_routers_config.append(dict(transmitter=transmitter, output_config=output_config))
+    data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config))
 
 app = RaveLightsApp(
     fps=args.fps,
     device_config=device_config,
-    data_routers_config=data_routers_config,
+    data_routers_configs=data_routers_configs,
     visualizer=args.visualizer,
     webserver_port=webserver_port,
     serve_webinterface=args.webui,

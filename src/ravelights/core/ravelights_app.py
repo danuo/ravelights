@@ -30,7 +30,7 @@ class RaveLightsApp:
         *,
         fps=20,
         device_config: list[dict[str, int]],
-        data_routers_config: list[dict],
+        data_routers_configs: list[dict],
         webserver_port=80,
         serve_webinterface=True,
         visualizer=True,
@@ -48,7 +48,7 @@ class RaveLightsApp:
 
             self.visualizer = Visualizer(root=self)
 
-        self.data_routers = self.initiate_data_routers(data_routers_config)
+        self.data_routers = self.initiate_data_routers(data_routers_configs)
 
         self.rest_api = RestAPI(
             root=self,
