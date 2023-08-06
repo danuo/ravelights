@@ -6,7 +6,6 @@ from pathlib import Path
 
 from ravelights import RaveLightsApp
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
-from ravelights.interface.datarouter import DataLight
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -15,21 +14,20 @@ logging.basicConfig(level=logging.DEBUG)
 device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)]
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
-L = DataLight
-output_config: list[list[DataLight]] = [
+output_config: list[list[dict]] = [
     [  # output 0
-        L(device=0, light=0),
-        L(device=0, light=1),
-        L(device=0, light=2, flip=True),
-        L(device=0, light=3, flip=True),
-        L(device=0, light=4, flip=True),
+        dict(device=0, light=0),
+        dict(device=0, light=1),
+        dict(device=0, light=2, flip=True),
+        dict(device=0, light=3, flip=True),
+        dict(device=0, light=4, flip=True),
     ],
     [  # output 1
-        L(device=1, light=0),
-        L(device=1, light=1),
-        L(device=1, light=2),
-        L(device=1, light=3),
-        L(device=1, light=4),
+        dict(device=1, light=0),
+        dict(device=1, light=1),
+        dict(device=1, light=2),
+        dict(device=1, light=3),
+        dict(device=1, light=4),
     ],
     [],  # output 2
     [],  # output 3
