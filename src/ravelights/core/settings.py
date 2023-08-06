@@ -61,15 +61,13 @@ class Settings:
     Public attributes can be modified at any time.
     """
 
+    # ─── Device Configuration ─────────────────────────────────────────────
     device_config: list[dict]
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
     controls: dict = field(default_factory=dict)  # holds meta data to create controls in ui dynamically
     meta: dict = field(default_factory=dict)
-
-    # ─── Device Configuration ─────────────────────────────────────────────
-    light_setup: list[dict] = field(init=False)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast

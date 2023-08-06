@@ -8,12 +8,12 @@ if TYPE_CHECKING:
 
 
 class DataRouter:
-    def __init__(self, root: "RaveLightsApp", transmitter: "ArtnetTransmitter", output_config: list[list[dict]]):
+    def __init__(self, root: "RaveLightsApp", transmitter: "ArtnetTransmitter", transmitter_config: list[list[dict]]):
         self.root = root
         self.settings = self.root.settings
         self.devices = self.root.devices
         self.transmitter = transmitter
-        self.process_output_config(output_config)
+        self.process_output_config(transmitter_config)
 
         # --------------------------------- todo nick -------------------------------- #
         # todo: nick
