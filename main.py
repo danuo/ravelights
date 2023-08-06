@@ -38,7 +38,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Ravelights")
     parser.add_argument("--fps", type=int, default=20, help="Frames per second (default: 20)")
     artnet_group = parser.add_mutually_exclusive_group()
-    artnet_group.add_argument("--artnet-wifi", default=True, action=argparse.BooleanOptionalAction)
+    artnet_group.add_argument("--artnet-wifi", default=False, action=argparse.BooleanOptionalAction)
     artnet_group.add_argument("--artnet-serial", default=False, action=argparse.BooleanOptionalAction)
     parser.add_argument("--artnet-address", type=str, default=None)
     parser.add_argument("--artnet-serial-port", type=str, default="/dev/ttyAMA0")
