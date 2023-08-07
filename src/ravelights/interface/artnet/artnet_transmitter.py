@@ -30,7 +30,7 @@ class ArtnetTransmitter(metaclass=ABCMeta):
         assert matrix.dtype == np.uint8
         assert matrix.ndim == 2
         assert matrix.shape[-1] == 3
-        self._transmit_channels(matrix)
+        self._transmit_channels(matrix.flatten())
 
     def transmit_output_config(self, lights_per_output: list[int]) -> None:
         assert len(lights_per_output) == 4
