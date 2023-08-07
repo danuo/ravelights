@@ -102,7 +102,7 @@ class RaveLightsApp:
             self.settings.timehandler.print_performance_stats()
         # --------------------------------- send data -------------------------------- #
         brightness = self.settings.global_brightness
-        int_matrices = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
+        matrices_int = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
         for datarouter in self.data_routers:
-            datarouter.transmit_matrix(int_matrices)
+            datarouter.transmit_matrix(matrices_int)
         self.settings.after()
