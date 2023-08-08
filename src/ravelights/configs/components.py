@@ -22,14 +22,17 @@ from ravelights.effects.effect_color_swap import EffectColorSwap
 from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_super import Effect
-from ravelights.patterns.pattern_debug import PatternDebug
+from ravelights.patterns.pattern_debug_gradient import PatternDebugGradient
+from ravelights.patterns.pattern_debug_linear_block import PatternDebugLinearBlock
 from ravelights.patterns.pattern_debug_solid_color import PatternDebugSolidColor
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
+from ravelights.patterns.pattern_gradient import PatternGradient
 from ravelights.patterns.pattern_meteor import PatternMeteor
 from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
 from ravelights.patterns.pattern_movingstrobe import PatternMovingStrobe
 from ravelights.patterns.pattern_movingstrobev2 import PatternMovingStrobeV2
 from ravelights.patterns.pattern_pid import PatternPID
+from ravelights.patterns.pattern_pid2 import PatternPID2
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
 from ravelights.patterns.pattern_solid_color import PatternSolidColor
@@ -40,6 +43,7 @@ from ravelights.thinners.thinner_random import ThinnerRandom
 from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
+from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
@@ -91,8 +95,10 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterNone, dict(name="v_none", weight=0)),
     BlueprintGen(ThinnerNone, dict(name="t_none", weight=0)),
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
-    BlueprintGen(PatternDebug, dict(name="p_debug", weight=0)),
+    BlueprintGen(PatternDebugGradient, dict(name="p_debug_graident", weight=0)),
     BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
+    BlueprintGen(PatternDebugLinearBlock, dict(name="p_debug_linear_block", weight=0)),
+    BlueprintGen(PatternGradient, dict(name="p_graident", weight=0)),
     BlueprintGen(PatternRandomStripes, dict(name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2)),
     BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
     BlueprintGen(PatternMeteor, dict(version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2)),
@@ -113,6 +119,9 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
     BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
+    BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_1", version=0)),
+    BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_3", version=1)),
+    BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_5", version=2)),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
