@@ -23,6 +23,7 @@ from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_debug import PatternDebug
+from ravelights.patterns.pattern_debug_linear_block import PatternDebugLinearBlock
 from ravelights.patterns.pattern_debug_solid_color import PatternDebugSolidColor
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
 from ravelights.patterns.pattern_meteor import PatternMeteor
@@ -94,6 +95,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
     BlueprintGen(PatternDebug, dict(name="p_debug", weight=0)),
     BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
+    BlueprintGen(PatternDebugLinearBlock, dict(name="p_debug_linear_block", weight=0)),
     BlueprintGen(PatternRandomStripes, dict(name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2)),
     BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
     BlueprintGen(PatternMeteor, dict(version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2)),
