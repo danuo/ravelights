@@ -14,6 +14,8 @@ class Device:
     def __init__(self, root: "RaveLightsApp", device_id: int, n_leds: int, n_lights: int, is_prim: bool = False):
         self.root = root
         self.device_id = device_id
+        self.n_leds = n_leds
+        self.n_lights = n_lights
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
         self.pixelmatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=is_prim)

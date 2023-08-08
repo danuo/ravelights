@@ -1,4 +1,5 @@
-from dataclasses import InitVar, dataclass, field
+import logging
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional
 
 from ravelights.core.custom_typing import T_JSON
@@ -7,6 +8,9 @@ from ravelights.core.utils import p
 if TYPE_CHECKING:
     from ravelights.core.settings import Settings
     from ravelights.core.timehandler import TimeHandler
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -114,7 +118,7 @@ class BeatStatePattern:
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):
-                print(f"successfully set {key}")
+                logger.info(f"successfully set {key}")
                 setattr(self, key, value)
 
 

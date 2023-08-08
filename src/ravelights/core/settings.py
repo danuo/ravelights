@@ -1,5 +1,5 @@
 import logging
-from dataclasses import InitVar, dataclass, field
+from dataclasses import dataclass, field
 from enum import auto
 from typing import Optional, Type
 
@@ -61,16 +61,13 @@ class Settings:
     Public attributes can be modified at any time.
     """
 
-    device_config: list[dict] = field(default_factory=list)
+    # ─── Device Configuration ─────────────────────────────────────────────
+    device_config: list[dict]
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
     controls: dict = field(default_factory=dict)  # holds meta data to create controls in ui dynamically
     meta: dict = field(default_factory=dict)
-
-    # ─── Device Configuration ─────────────────────────────────────────────
-    light_setup: list[dict] = field(init=False)
-    lights_per_output: list[int] = field(init=False)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
@@ -110,10 +107,6 @@ class Settings:
     settings_autopilot: dict = field(init=False)
 
     def __post_init__(self):
-        if not self.device_config:
-            self.device_config = [dict(n_lights=1, n_leds=1)]
-        self.calc_lights_per_output()
-
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
         self.generator_classes_identifiers = [c.get_identifier() for c in self.generator_classes]
@@ -121,11 +114,6 @@ class Settings:
 
         self.timehandler = TimeHandler(settings=self)
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
-
-    def calc_lights_per_output(self):
-        lights_per_output = [d["n_leds"] * d["n_lights"] for d in self.device_config]
-        list_fillup = [0 for _ in range(4 - len(self.device_config))]
-        self.lights_per_output = lights_per_output + list_fillup
 
     def clear_selected(self):
         """resets selected generators to default state"""
