@@ -74,11 +74,15 @@ class RenderModule:
             thinner = self.get_generator_by_name("t_random")
             if self.settings.beat_state.is_beat:
                 thinner.on_trigger()
+        if pattern.p_add_thinner == 0.0:
+            thinner = self.get_generator_by_name("t_none")
 
         if pattern.p_add_dimmer == 1.0 and dimmer.name == "d_none":
             dimmer = self.get_generator_by_name("d_decay_fast")
             if self.settings.beat_state.is_beat:
                 dimmer.on_trigger()
+        if pattern.p_add_dimmer == 0.0:
+            dimmer = self.get_generator_by_name("d_none")
 
         # ------------------------------- check trigger ------------------------------ #
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Pattern):
