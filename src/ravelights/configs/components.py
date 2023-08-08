@@ -30,6 +30,7 @@ from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
 from ravelights.patterns.pattern_movingstrobe import PatternMovingStrobe
 from ravelights.patterns.pattern_movingstrobev2 import PatternMovingStrobeV2
 from ravelights.patterns.pattern_pid import PatternPID
+from ravelights.patterns.pattern_pid2 import PatternPID2
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
 from ravelights.patterns.pattern_solid_color import PatternSolidColor
