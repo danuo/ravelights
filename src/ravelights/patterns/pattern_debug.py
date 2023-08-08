@@ -8,6 +8,8 @@ from ravelights.core.generator_super import Pattern
 
 class PatternDebug(Pattern):
     def init(self):
+        self.p_add_thinner = 0.0
+        self.p_add_dimmer = 0.0
         variants = list(product([True, False], repeat=3))
         gradient = np.linspace(0.0, 1.0, self.n_leds)
         matrix = self.get_float_matrix_rgb()
