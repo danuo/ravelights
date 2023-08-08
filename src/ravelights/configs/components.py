@@ -42,6 +42,7 @@ from ravelights.thinners.thinner_random import ThinnerRandom
 from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
+from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
@@ -116,6 +117,9 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
     BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
+    BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_1", version=0)),
+    BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_3", version=1)),
+    BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_5", version=2)),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
