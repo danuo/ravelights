@@ -11,10 +11,10 @@ class EffectFlicker(Effect):
         hue_range controls the color variation for each frame
         """
 
-    def run_before(self, timeline_level: int):
+    def run_before(self):
         ...
 
-    def run_after(self, timeline_level: int):
+    def run_after(self):
         ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:

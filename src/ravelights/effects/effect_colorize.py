@@ -33,10 +33,10 @@ class EffectColorize(Effect):
                     i += number
                 # self.color_matrix = self.color_matrix.reshape((self.n_leds, self.n_lights))
 
-    def run_before(self, timeline_level: int):
+    def run_before(self):
         ...
 
-    def run_after(self, timeline_level: int):
+    def run_after(self):
         ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:

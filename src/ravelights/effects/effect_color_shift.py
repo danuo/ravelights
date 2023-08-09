@@ -20,7 +20,7 @@ class EffectColorShift(Effect):
         self.hue_slide_speed = random.choice([0.05, 0.02, 0.01, 0.005])
         self.hue_slide_speed = 0.01  # todo
 
-    def run_before(self, timeline_level: int):
+    def run_before(self):
         for index, base_hue in enumerate(self.base_hue):
             if base_hue is None:
                 curent_color = self.settings.color_engine.get_colors_rgb(timeline_level=0)[index]
@@ -32,7 +32,7 @@ class EffectColorShift(Effect):
             new_color = ColorHandler.get_color_from_hue(new_hue)
             self.settings.color_engine.color_overwrite[index] = new_color
 
-    def run_after(self, timeline_level: int):
+    def run_after(self):
         for index in range(2):
             self.settings.color_engine.color_overwrite[index] = None
 

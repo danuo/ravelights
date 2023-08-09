@@ -47,11 +47,23 @@ class EffectHandler:
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects, device_ids=device_ids)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
+    def run_before(self):
+        self._load_and_apply_instructions()
+        for effect_wrapper in self.effect_queue:
+            effect_wrapper.run_before()
+
+    def run_after(self):
+        self._perform_counting_per_frame()
+        for effect_wrapper in self.effect_queue:
+            # if this is not called, madening effect for e color swap
+            # effect_wrapper.run_after()
+            pass
+
     def clear_qeueues(self):
         self.effect_queue.clear()
         self.instruction_queue.clear()
 
-    def load_and_apply_instructions(self):  # before
+    def _load_and_apply_instructions(self):  # before
         # ─── LOAD INSTRUCTIONS ───────────────────────────────────────────
         instructions_for_frame = self.instruction_queue.get_instructions()
         for ins in instructions_for_frame:
@@ -85,7 +97,7 @@ class EffectHandler:
     def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
 
-    def perform_counting_per_frame(self):
+    def _perform_counting_per_frame(self):
         """
         execute this once per frame after rendering
         """

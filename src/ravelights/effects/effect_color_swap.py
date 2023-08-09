@@ -10,12 +10,12 @@ class EffectColorSwap(Effect):
     def on_delete(self):
         ...
 
-    def run_before(self, timeline_level: int):
-        curent_colors = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
+    def run_before(self):
+        curent_colors = self.settings.color_engine.get_colors_rgb(timeline_level=0)
         self.settings.color_engine.color_overwrite[0] = curent_colors[1]
         self.settings.color_engine.color_overwrite[1] = curent_colors[0]
 
-    def run_after(self, timeline_level: int):
+    def run_after(self):
         for i in range(2):
             self.settings.color_engine.color_overwrite[i] = None
 

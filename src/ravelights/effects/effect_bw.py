@@ -12,10 +12,10 @@ class EffectBW(Effect):
 
         self.bw_filter = VfilterBW(root=self.root, device=self.device)
 
-    def run_before(self, timeline_level: int):
+    def run_before(self):
         ...
 
-    def run_after(self, timeline_level: int):
+    def run_after(self):
         ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:

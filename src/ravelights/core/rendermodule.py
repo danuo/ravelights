@@ -20,7 +20,7 @@ class RenderModule:
         self.settings: Settings = self.root.settings
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
-        self.timeline_level = 0  # should be per device. different devices can have different levels
+        self.device_timeline_level = 0
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
 
@@ -31,7 +31,7 @@ class RenderModule:
     def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if level is None:
-            level = self.timeline_level
+            level = self.device_timeline_level
         return self.settings.triggers[identifier][level]
 
     def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
@@ -50,9 +50,9 @@ class RenderModule:
         """
 
         if self.settings.use_manual_timeline:
-            return self.settings.manual_timeline_level
+            return self.settings.manual_global_timeline_level
         else:
-            return self.timeline_level
+            return self.device_timeline_level
 
     def render(self):
         # ---------------------------- get timeline_level ---------------------------- #
@@ -96,10 +96,6 @@ class RenderModule:
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Dimmer):
             dimmer.on_trigger()
 
-        # ----------------------------- effect run before ---------------------------- #
-        for effect_wrapper in self.root.effecthandler.effect_queue:
-            effect_wrapper.run_before(device_id=self.device.device_id, timeline_level=timeline_level)
-
         # ---------------------------------- colors ---------------------------------- #
         # color is a tuple of 3 colors
         # primary color: for every Generator, except secondary Pattern
@@ -135,7 +131,6 @@ class RenderModule:
         # ─── Render Effects ───────────────────────────────────────────
         for effect_wrapper in self.root.effecthandler.effect_queue:
             matrix = effect_wrapper.render_matrix(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
-            effect_wrapper.run_after(device_id=self.device.device_id, timeline_level=timeline_level)
         self.assert_dims(matrix)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────

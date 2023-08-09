@@ -18,10 +18,10 @@ class EffectColorStrobeRainbowPixel(Effect):
         self.bw_filter = VfilterBW(root=self.root, device=self.device)
         self.randi = None
 
-    def run_before(self, timeline_level: int):
+    def run_before(self):
         ...
 
-    def run_after(self, timeline_level: int):
+    def run_after(self):
         ...
 
     def render_matrix(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
