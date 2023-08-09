@@ -33,8 +33,11 @@ class EffectColorize(Effect):
                     i += number
                 # self.color_matrix = self.color_matrix.reshape((self.n_leds, self.n_lights))
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
-        return dict()
+    def run_before(self, timeline_level: int):
+        ...
+
+    def run_after(self, timeline_level: int):
+        ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         # bw filter

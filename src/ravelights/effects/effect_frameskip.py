@@ -12,8 +12,12 @@ class EffectFrameskip(Effect):
     """
     def reset(self):
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
-        return dict()
+    def run_before(self, timeline_level: int):
+        # todo
+        ...
+
+    def run_after(self, timeline_level: int):
+        ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""

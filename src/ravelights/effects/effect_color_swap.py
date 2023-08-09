@@ -10,14 +10,14 @@ class EffectColorSwap(Effect):
     def on_delete(self):
         ...
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict:
-        self.counter += 1
-        if self.counter % 1 == 0:
-            colors = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
-            settings_overwrite = dict(prim_color=colors[1], sec_color=colors[0])
-            return settings_overwrite
-        else:
-            return dict()
+    def run_before(self, timeline_level: int):
+        curent_colors = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
+        self.settings.color_engine.color_overwrite[0] = curent_colors[1]
+        self.settings.color_engine.color_overwrite[1] = curent_colors[0]
+
+    def run_after(self, timeline_level: int):
+        for i in range(2):
+            self.settings.color_engine.color_overwrite[i] = None
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         return in_matrix

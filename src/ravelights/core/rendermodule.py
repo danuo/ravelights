@@ -96,6 +96,10 @@ class RenderModule:
         if self.settings.beat_state == self.get_selected_trigger(gen_type=Dimmer):
             dimmer.on_trigger()
 
+        # ----------------------------- effect run before ---------------------------- #
+        for effect_wrapper in self.root.effecthandler.effect_queue:
+            effect_wrapper.run_before(device_id=self.device.device_id, timeline_level=timeline_level)
+
         # ---------------------------------- colors ---------------------------------- #
         # color is a tuple of 3 colors
         # primary color: for every Generator, except secondary Pattern
@@ -103,24 +107,6 @@ class RenderModule:
         # effect color: for every Effect
         #
         color_prim, color_sec, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
-
-        # ----------------------- settings overwrite by effect ----------------------- #
-        # todo: design choice
-        # * settings_overwrite should not return anything
-        # * this requires that all arguments are passed into render functions as arguments, instead of being taken from settings
-        # * better to overwrite settings and reverse them to original value later on with on_delete()
-        # * this mus stay here, must happen before render of patterns
-        settings_overwrite = dict()
-        for effect_wrapper in self.root.effecthandler.effect_queue:
-            settings_overwrite.update(
-                effect_wrapper.render_settings_overwrite(device_id=self.device.device_id, timeline_level=timeline_level)
-            )
-        if settings_overwrite:
-            if "color_prim" in settings_overwrite:
-                color_prim = settings_overwrite["color_prim"]
-                print("overwritten color_prim")
-
-        # todo: apply settings overwrite
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern.render(color=color_prim)
@@ -149,6 +135,7 @@ class RenderModule:
         # ─── Render Effects ───────────────────────────────────────────
         for effect_wrapper in self.root.effecthandler.effect_queue:
             matrix = effect_wrapper.render_matrix(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
+            effect_wrapper.run_after(device_id=self.device.device_id, timeline_level=timeline_level)
         self.assert_dims(matrix)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────

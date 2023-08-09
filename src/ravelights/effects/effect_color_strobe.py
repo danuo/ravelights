@@ -18,14 +18,16 @@ class EffectColorStrobe(Effect):
         self.hue_range = hue_range if hue_range else random.choice([1.0, 0.3, 0.1, 0.05])
         self.hue_range = 0.1
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
-        settings_overwrite = dict()
-        for key in ["color_prim", "color_sec"]:
+    def run_before(self, timeline_level: int):
+        for index in range(0, 2):  # 1, 2
             random_hue_shift = random.uniform(0, self.hue_range)
             new_hue = (self.base_hue + self.sign * random_hue_shift) % 1
             random_color = ColorHandler.get_color_from_hue(new_hue)
-            settings_overwrite[key] = random_color
-        return settings_overwrite
+            self.settings.color_engine.color_overwrite[index] = random_color
+
+    def run_after(self, timeline_level):
+        for index in range(0, 2):  # 1, 2
+            self.settings.color_engine.color_overwrite[index] = None
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""

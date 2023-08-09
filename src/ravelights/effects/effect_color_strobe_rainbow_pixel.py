@@ -18,8 +18,11 @@ class EffectColorStrobeRainbowPixel(Effect):
         self.bw_filter = VfilterBW(root=self.root, device=self.device)
         self.randi = None
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
-        return dict()
+    def run_before(self, timeline_level: int):
+        ...
+
+    def run_after(self, timeline_level: int):
+        ...
 
     def render_matrix(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
         """Called each render cycle"""

@@ -12,8 +12,11 @@ class EffectBW(Effect):
 
         self.bw_filter = VfilterBW(root=self.root, device=self.device)
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
-        return dict()
+    def run_before(self, timeline_level: int):
+        ...
+
+    def run_after(self, timeline_level: int):
+        ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""
@@ -21,4 +24,4 @@ class EffectBW(Effect):
         return bw_matrix
 
     def on_delete(self):
-        pass
+        ...
