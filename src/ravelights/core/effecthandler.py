@@ -55,6 +55,7 @@ class EffectHandler:
     def run_after(self):
         self._perform_counting_per_frame()
         for effect_wrapper in self.effect_queue:
+            # todo: why does this look good?
             # if this is not called, madening effect for e color swap
             # effect_wrapper.run_after()
             pass
