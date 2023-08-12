@@ -1,4 +1,5 @@
 import colorsys
+import logging
 import random
 from enum import Enum
 from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
@@ -9,6 +10,8 @@ from ravelights.core.pid import PIDController, PIDSpeeds
 
 if TYPE_CHECKING:
     from ravelights.core.settings import Settings
+
+logger = logging.getLogger(__name__)
 
 
 COLOR_TRANSITION_SPEEDS = (PIDSpeeds.INSTANT, PIDSpeeds.FAST, PIDSpeeds.MEDIUM, PIDSpeeds.SLOW)
@@ -79,9 +82,12 @@ class ColorEngine:
         self.color_pids[level].set_rgb_target(color)
 
     def set_color_speed(self, speed_str: str):
-        for color_pid in self.color_pids:
-            for pid in color_pid.pids:
-                pid.load_parameter_preset(speed_str)
+        if speed_str in COLOR_TRANSITION_SPEEDS:
+            for color_pid in self.color_pids:
+                for pid in color_pid.pids:
+                    pid.load_parameter_preset(speed_str)
+        else:
+            logger.warning("set_color_speed() called with invalid speed")
 
 
 class ColorPID:
