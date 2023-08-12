@@ -118,7 +118,7 @@ class BeatStatePattern:
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):
-                logger.info(f"successfully set {key}")
+                # logger.debug(f"successfully set {key}")
                 setattr(self, key, value)
 
 
