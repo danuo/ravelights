@@ -48,30 +48,26 @@ class EffectHandler:
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
     def run_before(self):
-        self._load_and_apply_instructions()
+        self.load_and_apply_instructions()
 
-        # ------------------------------ counting before ----------------------------- #
-
-        # counting_before needs to be here. if newbeat is found, effect should be removed before rendering
         for effect_wrapper in self.effect_queue:
-            effect_wrapper.counting_before_check()
+            # ---------------------------------- remove ---------------------------------- #
             if effect_wrapper.is_finished():
                 self.effect_queue.remove(effect_wrapper)
 
-        # ------------------------------- check active ------------------------------- #
-        for effect_wrapper in self.effect_queue:
+            # ------------------------------ counting before ----------------------------- #
+            effect_wrapper.counting_before_check()
+
+            # ------------------------------- check active ------------------------------- #
             effect_wrapper.active = effect_wrapper.check_active()
 
-        # ------------------------------ counting after ------------------------------ #
-        for effect_wrapper in self.effect_queue:
+            # ------------------------------ counting after ------------------------------ #
             effect_wrapper.counting_after_check()
 
-        # -------------------------------- run before -------------------------------- #
-        for effect_wrapper in self.effect_queue:
+            # -------------------------------- run before -------------------------------- #
             effect_wrapper.run_before()
 
     def run_after(self):
-        # self._perform_counting_per_frame()
         for effect_wrapper in self.effect_queue:
             effect_wrapper.run_after()
 
@@ -79,8 +75,7 @@ class EffectHandler:
         self.effect_queue.clear()
         self.instruction_queue.clear()
 
-    def _load_and_apply_instructions(self):  # before
-        # ─── LOAD INSTRUCTIONS ───────────────────────────────────────────
+    def load_and_apply_instructions(self):  # before
         instructions_for_frame = self.instruction_queue.get_instructions()
         for ins in instructions_for_frame:
             self.apply_effect_instruction(ins)
