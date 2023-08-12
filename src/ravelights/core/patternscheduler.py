@@ -148,30 +148,30 @@ class PatternScheduler:
     def process_selector_object(self, obj: GenSelector):
         # load each generator that is defined inside of the GenSelector Object
         if obj.pattern_name:
-            self.settings.set_generator(gen_type=Pattern, level_index=obj.level, gen_name=obj.pattern_name)
+            self.settings.set_generator(gen_type=Pattern, timeline_level=obj.level, gen_name=obj.pattern_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.pattern_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.pattern_name, timeline_level=obj.level)
 
         if obj.vfilter_name:
-            self.settings.set_generator(gen_type=Vfilter, level_index=obj.level, gen_name=obj.vfilter_name)
+            self.settings.set_generator(gen_type=Vfilter, timeline_level=obj.level, gen_name=obj.vfilter_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.vfilter_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.vfilter_name, timeline_level=obj.level)
 
         if obj.dimmer_name:
-            self.settings.set_generator(gen_type=Dimmer, level_index=obj.level, gen_name=obj.dimmer_name)
+            self.settings.set_generator(gen_type=Dimmer, timeline_level=obj.level, gen_name=obj.dimmer_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.dimmer_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.dimmer_name, timeline_level=obj.level)
 
         if obj.thinner_name:
-            self.settings.set_generator(gen_type=Thinner, level_index=obj.level, gen_name=obj.thinner_name)
+            self.settings.set_generator(gen_type=Thinner, timeline_level=obj.level, gen_name=obj.thinner_name)
             if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.thinner_name, level=obj.level)
+                self.load_generator_specific_trigger(gen_name=obj.thinner_name, timeline_level=obj.level)
 
-    def load_generator_specific_trigger(self, gen_name: str, level: int):
+    def load_generator_specific_trigger(self, gen_name: str, timeline_level: int):
         generator = self.devices[0].rendermodule.get_generator_by_name(gen_name)
         trigger = random.choice(generator.possible_triggers)
         kwargs = asdict(trigger)
-        self.settings.set_trigger(gen_type=generator.get_identifier(), level_index=level, **kwargs)
+        self.settings.set_trigger(gen_type=generator.get_identifier(), timeline_level=timeline_level, **kwargs)
 
     def process_generator_placement_object(self, obj: GenPlacing):
         instruction = InstructionDevice(level=obj.level)

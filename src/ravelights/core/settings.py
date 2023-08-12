@@ -194,15 +194,15 @@ class Settings:
             if hasattr(self, key):
                 setattr(self, key, value)
 
-    def set_generator(self, gen_type: str | Type["Generator"], level_index: int, gen_name: str):
+    def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str):
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        logger.debug(f"set_generator with {gen_type} {level_index} {gen_name}")
-        self.selected[gen_type][level_index] = gen_name
+        logger.debug(f"set_generator with {gen_type} {timeline_level} {gen_name}")
+        self.selected[gen_type][timeline_level] = gen_name
 
-    def set_trigger(self, gen_type: str | Type["Generator"], level_index: int, **kwargs) -> None:
+    def set_trigger(self, gen_type: str | Type["Generator"], timeline_level: int, **kwargs) -> None:
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        logger.debug(f"set_trigger with {gen_type} {level_index} {kwargs}")
-        self.triggers[gen_type][level_index].update_from_dict(kwargs)
+        logger.debug(f"set_trigger with {gen_type} {timeline_level} {kwargs}")
+        self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
 
     def before(self):
         self.timehandler.before()

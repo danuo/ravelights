@@ -29,15 +29,16 @@ class EventHandler:
             receive_data: T_JSON = self.modification_queue.pop()
             match receive_data:
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": "new trigger"}:
+                    device = self.patternscheduler.devices[0]
                     if level == 0:  # level = 0 means auto
-                        level = self.patternscheduler.devices[0].rendermodule.device_timeline_level
-                    generator = self.patternscheduler.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, level=level)
-                    self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, level=level)
+                        level = device.rendermodule.device_timeline_level
+                    generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
+                    self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, timeline_level=level)
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": command}:
                     if level == 0:
                         level = None  # auto mode
-                    for dev in self.patternscheduler.devices:
-                        generator = dev.rendermodule.get_selected_generator(gen_type=gen_type, level=level)
+                    for device in self.patternscheduler.devices:
+                        generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
                         function = getattr(generator, command)
                         function()
                 case {"action": "change_settings", "selectedColorSpeed": speed_str}:
