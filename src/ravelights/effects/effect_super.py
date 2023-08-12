@@ -152,24 +152,9 @@ class EffectWrapper:
         else:
             return in_matrix
 
-    def checkactive(self) -> bool:
-        """Invisible render class with effect logic"""
-
-        if self.mode == "frames" or self.mode == "quarters":
-            return self.checkactive_matrix_frames()
-        elif self.mode == "loopquarters":
-            return self.checkactive_matrix_loopquarters()
-        assert False
-
-    def checkactive_matrix_frames(self) -> bool:
-        index = self.counter_frames % len(self.frames_pattern_binary)
-        if self.frames_pattern_binary[index]:
-            return True
-        return False
-
-    def _perform_counting_before(self):
+    def counting_before_check(self):
         """
-        execute this once per frame before rendering
+        execute this once per frame before check_active
         """
 
         if self.has_started and self.mode == "loopquarters":
@@ -177,20 +162,20 @@ class EffectWrapper:
                 if self.quarters_pattern_binary[self.counter_quarters]:
                     self.counter_frames = 0
 
-    def _perform_counting_after(self):
-        """
-        execute this once per frame after rendering
-        """
+    def check_active(self) -> bool:
+        """Invisible render class with effect logic"""
 
-        if self.has_started:
-            self.counter_frames += 1
-            if self.settings.beat_state.is_quarter:
-                self.counter_quarters += 1
-                counter_beats = self.counter_quarters // 4
-                if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
-                    self.counter_quarters_loop += 1
-                    self.counter_quarters = 0
-                    self.counter_frames = 0
+        if self.mode == "frames" or self.mode == "quarters":
+            return self.check_active_matrix_frames()
+        elif self.mode == "loopquarters":
+            return self.checkactive_matrix_loopquarters()
+        assert False
+
+    def check_active_matrix_frames(self) -> bool:
+        index = self.counter_frames % len(self.frames_pattern_binary)
+        if self.frames_pattern_binary[index]:
+            return True
+        return False
 
     def checkactive_matrix_loopquarters(self) -> bool:
         # search first beat before start
@@ -206,6 +191,21 @@ class EffectWrapper:
             if self.frames_pattern_binary[index]:
                 return True
         return False
+
+    def counting_after_check(self):
+        """
+        execute this once per frame after check_active
+        """
+
+        if self.has_started:
+            self.counter_frames += 1
+            if self.settings.beat_state.is_quarter:
+                self.counter_quarters += 1
+                counter_beats = self.counter_quarters // 4
+                if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
+                    self.counter_quarters_loop += 1
+                    self.counter_quarters = 0
+                    self.counter_frames = 0
 
     def on_delete(self):
         for effect in self.effect_dict.values():

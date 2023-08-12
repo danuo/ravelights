@@ -54,17 +54,17 @@ class EffectHandler:
 
         # counting_before needs to be here. if newbeat is found, effect should be removed before rendering
         for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_before()
+            effect_wrapper.counting_before_check()
             if effect_wrapper.is_finished():
                 self.effect_queue.remove(effect_wrapper)
 
         # ------------------------------- check active ------------------------------- #
         for effect_wrapper in self.effect_queue:
-            effect_wrapper.active = effect_wrapper.checkactive()
+            effect_wrapper.active = effect_wrapper.check_active()
 
         # ------------------------------ counting after ------------------------------ #
         for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_after()
+            effect_wrapper.counting_after_check()
 
         # -------------------------------- run before -------------------------------- #
         for effect_wrapper in self.effect_queue:
