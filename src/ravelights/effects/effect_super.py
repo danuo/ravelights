@@ -29,6 +29,7 @@ class EffectWrapper:
         self.name = effect_objects[0].name
 
         self.mode = "frames"
+        self.active = False
 
         # mode == "frames"
         self.counter_frames: int = 0
@@ -47,13 +48,15 @@ class EffectWrapper:
 
     def run_before(self):
         """Called once before each render cycle"""
-        effect = self.effect_dict[0]
-        effect.run_before()
+        if self.active:
+            effect = self.effect_dict[0]
+            effect.run_before()
 
     def run_after(self):
         """Called once after each render cycle"""
-        effect = self.effect_dict[0]
-        effect.run_before()
+        if self.active:
+            effect = self.effect_dict[0]
+            effect.run_before()
 
     def reset(
         self,
@@ -142,24 +145,27 @@ class EffectWrapper:
         for effect in self.effect_dict.values():
             effect.reset()
 
-    def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
-        # print("run with device_id ", device_id)
+    def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int):
+        if self.active:
+            effect = self.effect_dict[device_id]
+            return effect.render_matrix(in_matrix=in_matrix, color=color)
+        else:
+            return in_matrix
+
+    def checkactive(self) -> bool:
         """Invisible render class with effect logic"""
 
-        out_matrix = in_matrix
         if self.mode == "frames" or self.mode == "quarters":
-            out_matrix = self.render_matrix_frames(in_matrix=in_matrix, color=color, device_id=device_id)
+            return self.checkactive_matrix_frames()
         elif self.mode == "loopquarters":
-            out_matrix = self.render_matrix_loopquarters(in_matrix=in_matrix, color=color, device_id=device_id)
+            return self.checkactive_matrix_loopquarters()
+        assert False
 
-        return out_matrix
-
-    def render_matrix_frames(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
-        effect = self.effect_dict[device_id]
+    def checkactive_matrix_frames(self) -> bool:
         index = self.counter_frames % len(self.frames_pattern_binary)
         if self.frames_pattern_binary[index]:
-            in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
-        return in_matrix
+            return True
+        return False
 
     def _perform_counting_before(self):
         """
@@ -186,21 +192,20 @@ class EffectWrapper:
                     self.counter_quarters = 0
                     self.counter_frames = 0
 
-    def render_matrix_loopquarters(self, in_matrix: ArrayNx3, color: Color, device_id: int) -> ArrayNx3:
+    def checkactive_matrix_loopquarters(self) -> bool:
         # search first beat before start
         if not self.has_started:
             if self.settings.beat_state.is_beat:
-                self.has_started = True  # do i need this?
+                self.has_started = True
             else:
-                return in_matrix
+                return False
 
-        # do rendering
+        # after start, effect is potentially active
         if self.counter_frames < self.limit_frames:
             index = self.counter_frames % len(self.frames_pattern_binary)
             if self.frames_pattern_binary[index]:
-                effect = self.effect_dict[device_id]
-                in_matrix = effect.render_matrix(in_matrix=in_matrix, color=color)
-        return in_matrix
+                return True
+        return False
 
     def on_delete(self):
         for effect in self.effect_dict.values():

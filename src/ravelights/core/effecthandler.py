@@ -49,15 +49,29 @@ class EffectHandler:
 
     def run_before(self):
         self._load_and_apply_instructions()
+
+        # ------------------------------ counting before ----------------------------- #
+
+        # counting_before needs to be here. if newbeat is found, effect should be removed before rendering
         for effect_wrapper in self.effect_queue:
             effect_wrapper._perform_counting_before()
             if effect_wrapper.is_finished():
                 self.effect_queue.remove(effect_wrapper)
+
+        # ------------------------------- check active ------------------------------- #
+        for effect_wrapper in self.effect_queue:
+            effect_wrapper.active = effect_wrapper.checkactive()
+
+        # ------------------------------ counting after ------------------------------ #
+        for effect_wrapper in self.effect_queue:
+            effect_wrapper._perform_counting_after()
+
+        # -------------------------------- run before -------------------------------- #
         for effect_wrapper in self.effect_queue:
             effect_wrapper.run_before()
 
     def run_after(self):
-        self._perform_counting_per_frame()
+        # self._perform_counting_per_frame()
         for effect_wrapper in self.effect_queue:
             effect_wrapper.run_after()
 
@@ -99,6 +113,6 @@ class EffectHandler:
         """
         execute this once per frame after rendering
         """
-
-        for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_after()
+        pass
+        # for effect_wrapper in self.effect_queue:
+        #     effect_wrapper._perform_counting_after()
