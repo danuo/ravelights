@@ -1,7 +1,7 @@
 import colorsys
 import random
 from enum import Enum
-from typing import TYPE_CHECKING, NamedTuple, Sequence
+from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
 
 import numpy as np
 
@@ -36,6 +36,7 @@ class DefaultColors(Enum):
 
 class ColorEngine:
     def __init__(self, settings: "Settings"):
+        self.color_overwrite: list[Optional[Color]] = [None] * 3
         self.settings = settings
         self._internal_color_transition_speed: str = ""
         default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
@@ -54,13 +55,22 @@ class ColorEngine:
         """
         gives the list of colors [color_1, color_2, color_effect] in the correct order.
         color_1 and color_2 may be interchanged depending on the level
-        # todo: make this a setting
         """
 
-        if timeline_level == 1:
-            return [c.get_rgb() for c in self.color_pids]
-        else:
-            return [self.color_pids[idx].get_rgb() for idx in [1, 0, 2]]
+        # get colors
+        out_colors = [color_pid.get_rgb() for color_pid in self.color_pids]
+
+        # check if there is overwrite
+        overwritten_colors = []
+        for index in range(3):
+            if self.color_overwrite[index] is None:
+                overwritten_colors.append(out_colors[index])
+            else:
+                overwritten_colors.append(self.color_overwrite[index])
+
+        # do ordering for timeline_level 2
+        out_colors = [overwritten_colors[index] for index in [1, 0, 2]] if timeline_level == 2 else overwritten_colors
+        return out_colors
 
     def get_colors_rgb_target(self) -> list[Color]:
         return [c.get_rgb_target() for c in self.color_pids]

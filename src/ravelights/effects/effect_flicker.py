@@ -11,8 +11,11 @@ class EffectFlicker(Effect):
         hue_range controls the color variation for each frame
         """
 
-    def render_settings_overwrite(self, timeline_level: int) -> dict[str, Color]:
-        return dict()
+    def run_before(self):
+        ...
+
+    def run_after(self):
+        ...
 
     def render_matrix(self, in_matrix: Array, color: Color) -> Array:
         """Called each render cycle"""

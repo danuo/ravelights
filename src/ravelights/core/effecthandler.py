@@ -47,19 +47,38 @@ class EffectHandler:
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects, device_ids=device_ids)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
+    def run_before(self):
+        self.load_and_apply_instructions()
+
+        for effect_wrapper in self.effect_queue:
+            # ---------------------------------- remove ---------------------------------- #
+            if effect_wrapper.is_finished():
+                self.effect_queue.remove(effect_wrapper)
+
+            # ------------------------------ counting before ----------------------------- #
+            effect_wrapper.counting_before_check()
+
+            # ------------------------------- check active ------------------------------- #
+            effect_wrapper.active = effect_wrapper.check_active()
+
+            # ------------------------------ counting after ------------------------------ #
+            effect_wrapper.counting_after_check()
+
+            # -------------------------------- run before -------------------------------- #
+            effect_wrapper.run_before()
+
+    def run_after(self):
+        for effect_wrapper in self.effect_queue:
+            effect_wrapper.run_after()
+
     def clear_qeueues(self):
         self.effect_queue.clear()
         self.instruction_queue.clear()
 
     def load_and_apply_instructions(self):  # before
-        # ─── LOAD INSTRUCTIONS ───────────────────────────────────────────
         instructions_for_frame = self.instruction_queue.get_instructions()
         for ins in instructions_for_frame:
             self.apply_effect_instruction(ins)
-        for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_before()
-            if effect_wrapper.is_finished():
-                self.effect_queue.remove(effect_wrapper)
 
     def apply_effect_instruction(self, instruction: InstructionEffect):
         effect_name = instruction.effect_name
@@ -85,10 +104,10 @@ class EffectHandler:
     def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
 
-    def perform_counting_per_frame(self):
+    def _perform_counting_per_frame(self):
         """
         execute this once per frame after rendering
         """
-
-        for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_after()
+        pass
+        # for effect_wrapper in self.effect_queue:
+        #     effect_wrapper._perform_counting_after()
