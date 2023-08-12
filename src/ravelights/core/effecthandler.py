@@ -50,6 +50,10 @@ class EffectHandler:
     def run_before(self):
         self._load_and_apply_instructions()
         for effect_wrapper in self.effect_queue:
+            effect_wrapper._perform_counting_before()
+            if effect_wrapper.is_finished():
+                self.effect_queue.remove(effect_wrapper)
+        for effect_wrapper in self.effect_queue:
             effect_wrapper.run_before()
 
     def run_after(self):
@@ -66,10 +70,6 @@ class EffectHandler:
         instructions_for_frame = self.instruction_queue.get_instructions()
         for ins in instructions_for_frame:
             self.apply_effect_instruction(ins)
-        for effect_wrapper in self.effect_queue:
-            effect_wrapper._perform_counting_before()
-            if effect_wrapper.is_finished():
-                self.effect_queue.remove(effect_wrapper)
 
     def apply_effect_instruction(self, instruction: InstructionEffect):
         effect_name = instruction.effect_name
