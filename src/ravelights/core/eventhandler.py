@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import TYPE_CHECKING
 
 from ravelights.core.custom_typing import T_JSON
@@ -29,32 +30,46 @@ class EventHandler:
             receive_data: T_JSON = self.modification_queue.pop()
             match receive_data:
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": "new trigger"}:
+                    device = self.patternscheduler.devices[0]
                     if level == 0:  # level = 0 means auto
-                        level = self.patternscheduler.devices[0].rendermodule.device_timeline_level
-                    generator = self.patternscheduler.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, level=level)
-                    self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, level=level)
+                        level = device.rendermodule.device_timeline_level
+                    generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
+                    self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, timeline_level=level)
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": command}:
                     if level == 0:
                         level = None  # auto mode
-                    for dev in self.patternscheduler.devices:
-                        generator = dev.rendermodule.get_selected_generator(gen_type=gen_type, level=level)
+                    for device in self.patternscheduler.devices:
+                        generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
                         function = getattr(generator, command)
                         function()
-                case {"action": "change_settings", "selectedColorSpeed": speed_str}:
-                    assert False
+                case {"action": "set_sync"}:
+                    self.settings.bpmhandler.bpm_sync()
+                case {"action": "adjust_sync", "value": value}:
+                    assert isinstance(value, float)
+                    self.settings.timehandler.time_sync += value
+                case {"action": "set_settings", "color_transition_speed": speed_str}:
+                    logger.info(f"set_settings color_transition_speed {speed_str}")
+                    assert isinstance(speed_str, str)
+                    self.settings.color_transition_speed = speed_str
                     self.settings.color_engine.set_color_speed(speed_str)
-                case {"action": "change_settings", **other_kwargs}:
-                    print(other_kwargs)
+                case {"action": "set_settings", **other_kwargs}:
+                    logger.info(f"set_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
+                case {"action": "set_settings_autopilot", **other_kwargs}:
+                    logger.info("set_settings_autopilot (...)")
+                    self.settings.settings_autopilot.update(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
                     self.settings.set_generator(**other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
+                    # if set_full:     load generators, load timeline
+                    # if not set_full: load timeline
                     print(index, set_full)
                     # todo: implement set_full
                     self.patternscheduler.load_timeline_from_index(int(index))
                 case {"action": "generator_alternate"}:
+                    print("todo: implement")
                     # todo: implement
                     pass
                     # self.patternscheduler.alternate_timeline(**receive_data)

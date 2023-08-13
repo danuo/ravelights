@@ -1,17 +1,31 @@
 import colorsys
+import logging
 import random
-from enum import Enum
+from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
 
 import numpy as np
 
 from ravelights.core.pid import PIDController, PIDSpeeds
+from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:
     from ravelights.core.settings import Settings
 
+logger = logging.getLogger(__name__)
+
 
 COLOR_TRANSITION_SPEEDS = (PIDSpeeds.INSTANT, PIDSpeeds.FAST, PIDSpeeds.MEDIUM, PIDSpeeds.SLOW)
+
+
+class SecondaryColorModes(StrEnum):
+    """available modes to generate secondary color for settings"""
+
+    RANDOM = auto()
+    COMPLEMENTARY = auto()
+    COMPLEMENTARY33 = auto()
+    COMPLEMENTARY50 = auto()
+    COMPLEMENTARY66 = auto()
 
 
 class Color(NamedTuple):
@@ -51,6 +65,24 @@ class ColorEngine:
         for color_pid in self.color_pids:
             color_pid.run_pid_step()
 
+    def set_color_with_rule(self, color: list | Color, color_level):
+        # color_level = 0: primary
+        # color_level = 1: secondary
+        # color_level = 2: effect
+        print("set color with rule", self.settings.color_sec_mode)
+        assert len(color) == 3
+        print("level is ", color_level)
+        color = ColorHandler.convert_to_color(color)
+        self.set_single_color_rgb(color, color_level)
+        if color_level == 0 and self.settings.color_sec_active:
+            sec_color = self.get_secondary_color(color)
+            print("sec_color", sec_color)
+            self.set_single_color_rgb(sec_color, 1)
+        print(self.get_colors_rgb_target()[1])
+
+    def set_single_color_rgb(self, color: Color, level):
+        self.color_pids[level].set_rgb_target(color)
+
     def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
         gives the list of colors [color_1, color_2, color_effect] in the correct order.
@@ -75,13 +107,32 @@ class ColorEngine:
     def get_colors_rgb_target(self) -> list[Color]:
         return [c.get_rgb_target() for c in self.color_pids]
 
-    def set_color_rgb(self, color: Color, level):
-        self.color_pids[level].set_rgb_target(color)
+    def get_secondary_color(self, in_color: Color) -> Optional[Color]:
+        """returns a color that matches in input color, according to the secondary
+        color rule currently selected in settings"""
+
+        if not self.settings.color_sec_active:
+            # return old color if color_sec is not active
+            return self.get_colors_rgb(timeline_level=0)[1]
+        match SecondaryColorModes(self.settings.color_sec_mode):
+            case SecondaryColorModes.COMPLEMENTARY:
+                return ColorHandler.get_complementary_color(in_color)
+            case SecondaryColorModes.COMPLEMENTARY33:
+                return ColorHandler.get_complementary_33(in_color)
+            case SecondaryColorModes.COMPLEMENTARY50:
+                return ColorHandler.get_complementary_50(in_color)
+            case SecondaryColorModes.COMPLEMENTARY66:
+                return ColorHandler.get_complementary_66(in_color)
+            case SecondaryColorModes.RANDOM:
+                return ColorHandler.get_random_color()
 
     def set_color_speed(self, speed_str: str):
-        for color_pid in self.color_pids:
-            for pid in color_pid.pids:
-                pid.load_parameter_preset(speed_str)
+        if speed_str in COLOR_TRANSITION_SPEEDS:
+            for color_pid in self.color_pids:
+                for pid in color_pid.pids:
+                    pid.load_parameter_preset(speed_str)
+        else:
+            logger.warning("set_color_speed() called with invalid speed")
 
 
 class ColorPID:
