@@ -118,7 +118,13 @@ class GenSelector:
         if len(names) > 0:
             return get_random_from_weights(names=names, weights=weights)
 
-        # second try
+        # second try without music_style
+        logger.warning(f"no generators found with keywords {keywords}")
+        names, weights = get_names_and_weights(generators=generators, keywords=self.keywords)
+        if len(names) > 0:
+            return get_random_from_weights(names=names, weights=weights)
+
+        # third try without keywords
         logger.warning(f"no generators found with keywords {keywords}")
         names, weights = get_names_and_weights(generators=generators)
         if len(names) > 0:
