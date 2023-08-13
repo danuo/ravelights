@@ -114,7 +114,7 @@ class BeatStatePattern:
     def __repr__(self):
         return f"n_beats: {len(self.beats)}, quarters: {self.quarters}, loop_length: {self.loop_length}, p: {self.p}"
 
-    def update_from_dict(self, update_dict: T_JSON) -> None:
+    def update_from_dict(self, update_dict: T_JSON):
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):
