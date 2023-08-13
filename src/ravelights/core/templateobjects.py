@@ -56,7 +56,7 @@ class GenSelector:
     thinner_name: Optional[str] = None
 
     name: Optional[str] = None
-    keywords: list["Keywords"] = field(default_factory=list)
+    keywords: list[str] = field(default_factory=list)
     level: int = 1
     p: float = 1.0  # if chance is not met, set pattern to p_none (black)
     trigger_on_change: bool = True
