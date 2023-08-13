@@ -15,6 +15,7 @@ from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 
 if TYPE_CHECKING:
+    from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
@@ -75,6 +76,7 @@ class RestAPI:
 
     def _setup_resource_routing(self):
         self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.eventhandler,))
+        self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root.devices,))
         self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.metahandler,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.eventhandler,))
         self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.eventhandler,))
@@ -103,6 +105,16 @@ class RaveAPIResource(Resource):
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
+
+
+class DevicesAPIResource(Resource):
+    def __init__(self, devices: list["Device"]):
+        super().__init__()
+        self.devices = devices
+
+    def get(self):
+        out = jsonify("test")
+        return make_response(out, 200)
 
 
 class MetaAPIResource(Resource):
