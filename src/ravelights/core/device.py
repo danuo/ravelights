@@ -16,6 +16,7 @@ class Device:
         self.device_id = device_id
         self.n_leds = n_leds
         self.n_lights = n_lights
+        self.is_prim = is_prim
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
         self.pixelmatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=is_prim)
@@ -25,7 +26,6 @@ class Device:
             settings=self.settings,
             timehandler=self.timehandler,
             rendermodule=self.rendermodule,
-            prim=is_prim,
         )
 
     def render(self):
