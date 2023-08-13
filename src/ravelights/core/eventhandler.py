@@ -42,6 +42,7 @@ class EventHandler:
                         function = getattr(generator, command)
                         function()
                 case {"action": "change_settings", "color_transition_speed": speed_str}:
+                    logger.info(f"change_settings color_transition_speed {speed_str}")
                     self.settings.color_transition_speed = speed_str
                     self.settings.color_engine.set_color_speed(speed_str)
                 case {"action": "change_settings", **other_kwargs}:
