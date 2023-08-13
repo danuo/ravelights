@@ -1,5 +1,6 @@
 import logging
 from dataclasses import InitVar, dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -9,6 +10,9 @@ from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.utils import p
 
+if TYPE_CHECKING:
+    from ravelights.core.device import Device
+    from ravelights.core.ravelights_app import RaveLightsApp
 logger = logging.getLogger(__name__)
 
 
@@ -18,11 +22,13 @@ class AutoPilot:
     autopilot_loop_length [in beats]: randomized is called every n beats
     """
 
-    settings: Settings
-    devices: list[Device]
+    root: "RaveLightsApp"
     autopilot_loop_length: InitVar[int]
 
     def __post_init__(self, autopilot_loop_length):
+        self.settings: Settings = self.root.settings
+        self.devices: list[Device] = self.root.devices
+
         self.settings.settings_autopilot = dict(
             autopilot=False,
             autopilot_loop_length=autopilot_loop_length,
@@ -53,7 +59,7 @@ class AutoPilot:
             autoload_triggers=True,
         )
 
-        # ─── Add Controls Autopilot ───────────────────────────────────
+    def get_autopilot_controls(self):
         controls_autopilot = [
             dict(type="toggle", name_toggle="autopilot"),
             dict(
@@ -154,13 +160,13 @@ class AutoPilot:
             ),
             dict(type="slider", name_slider="loop_length", range_min=4, range_max=32, step=4, markers=True),
         ]
-        self.settings.controls["controls_autopilot"] = controls_autopilot
+        return controls_autopilot
 
+    def get_color_palette(self):
         # ─── Add Controls Color Palette ───────────────────────────────
         n_colors = 11
         controls_color_palette = [ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]] + [Color(1, 1, 1)]
-        controls_color_palette = [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
-        self.settings.controls["controls_color_palette"] = controls_color_palette
+        return [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
 
     def randomize(self) -> None:
         """Called every frame to randomize parameters within ravelights app."""

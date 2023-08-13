@@ -38,6 +38,8 @@ class MetaHandler:
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
+        self.api_content["controls_autopilot"] = self.root.autopilot.get_autopilot_controls()
+        self.api_content["controls_color_palette"] = self.root.autopilot.get_color_palette()
 
     def __getitem__(self, key):
         return self.api_content[key]
