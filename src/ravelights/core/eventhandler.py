@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import TYPE_CHECKING
 
 from ravelights.core.custom_typing import T_JSON
@@ -41,8 +42,14 @@ class EventHandler:
                         generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
                         function = getattr(generator, command)
                         function()
+                case {"action": "set_sync"}:
+                    self.settings.bpmhandler.bpm_sync()
+                case {"action": "adjust_sync", "value": value}:
+                    assert isinstance(value, float)
+                    self.settings.timehandler.time_sync += value
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
                     logger.info(f"set_settings color_transition_speed {speed_str}")
+                    assert isinstance(speed_str, str)
                     self.settings.color_transition_speed = speed_str
                     self.settings.color_engine.set_color_speed(speed_str)
                 case {"action": "set_settings", **other_kwargs}:
