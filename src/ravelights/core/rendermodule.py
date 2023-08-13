@@ -110,7 +110,7 @@ class RenderModule:
         self.assert_dims(matrix)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
-        matrix = self.apply_frame_skip(matrix)
+        matrix = self.apply_frameskip(matrix)
         self.assert_dims(matrix)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
@@ -144,9 +144,10 @@ class RenderModule:
     def find_generator(self, name: str) -> Generator:
         return self.generators_dict[name]
 
-    def apply_frame_skip(self, in_matrix: ArrayNx3) -> ArrayNx3:
+    def apply_frameskip(self, in_matrix: ArrayNx3) -> ArrayNx3:
         self.counter_frame += 1
-        if self.counter_frame % self.settings.frame_skip != 0:
+        frameskip = max(self.settings.global_frameskip, self.device.device_frameskip)
+        if self.counter_frame % frameskip != 0:
             return self.matrix_memory.copy()
         else:
             self.matrix_memory = in_matrix.copy()

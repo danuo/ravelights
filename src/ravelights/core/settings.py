@@ -83,7 +83,7 @@ class Settings:
     bpm_multiplier: float = 1.0
     fps: int = 20
     queue_length: int = 32 * 4
-    frame_skip: int = 1  # must be >= 1
+    global_frameskip: int = 1  # must be >= 1
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)

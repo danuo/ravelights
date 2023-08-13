@@ -12,11 +12,11 @@ class EffectFrameskip(Effect):
         self.frameskip_new = 2  # todo: alternate
 
     def run_before(self):
-        self.frameskip_before = self.device.device_frame_skip
+        self.frameskip_before = self.device.device_frameskip
         self.frameskip = self.frameskip_new
 
     def run_after(self):
-        self.device.device_frame_skip = self.frameskip_before
+        self.device.device_frameskip = self.frameskip_before
 
     def render_matrix(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
         return in_matrix

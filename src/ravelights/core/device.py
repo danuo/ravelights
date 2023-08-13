@@ -28,6 +28,10 @@ class Device:
             rendermodule=self.rendermodule,
         )
 
+        self.device_manual_timeline_level: int = 3  # 0: blackout, 1: level1, ... 4: undefined
+        self.device_frameskip: int = 1  # must be 1 or higher. Will select min(device_frameskip, global_frameskip)
+        self.device_brightness: float = 1.0  # will select min(device_brightness, global_brightness)
+
     def render(self):
         self.rendermodule.render()
 
