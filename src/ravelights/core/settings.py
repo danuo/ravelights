@@ -140,14 +140,6 @@ class Settings:
     def beat_progress(self) -> float:
         return self.beat_state.beat_progress
 
-    def apply_secondary_color_rule(self):
-        """call this when secondary rule changes"""
-        # todo
-        assert False
-        primary_color = self.color[0]
-        secondary_color = self.get_secondary_color(primary_color)
-        self.color[1] = secondary_color
-
     @property
     def frame_time(self) -> float:
         return 1 / self.fps
