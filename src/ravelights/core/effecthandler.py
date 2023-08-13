@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from ravelights.configs.components import blueprint_effects, blueprint_generators, create_from_blueprint
+from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect
 from ravelights.core.instructionqueue import InstructionQueue
 from ravelights.core.settings import Settings
@@ -38,6 +39,10 @@ class EffectHandler:
         self.devices: list[Device] = self.root.devices
         self.instruction_queue = InstructionQueue(settings=self.settings)
         self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
+        self.build_effectwrappers_from_blueprints()
+        self.build_effectwrappers_from_vfilters()
+
+    def build_effectwrappers_from_blueprints(self):
         device_ids = []
         effects_per_device: list[list[Effect]] = []
         for device in self.devices:
@@ -48,20 +53,20 @@ class EffectHandler:
         for effect_objects in zip(*effects_per_device):
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects, device_ids=device_ids)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
-        self.build_effectwrappers_from_vfilters()
 
     def build_effectwrappers_from_vfilters(self):
-        more_effect_wrappers = []
-        for bp in blueprint_generators:
+        for blueprint in blueprint_generators:
+            if not issubclass(blueprint.cls, Vfilter) or "none" in blueprint.args["name"]:
+                continue
+            vfilter_name: str = blueprint.args["name"]
+            effect_name = "e" + vfilter_name
             effects: list[Effect] = []
             device_ids = []
-            name = "anton" + str(random.randint(0, 1000))
             for device in self.devices:
-                effect = bp.cls(root=self.root, device=device, name=name)
+                effect = SpecialEffectVfilter(root=self.root, device=device, name=effect_name, vfilter=blueprint.cls)
                 effects.append(effect)
                 device_ids.append(device.device_id)
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effects, device_ids=device_ids)
-            # more_effect_wrappers.append(more_effect_wrappers)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
     def run_before(self):
