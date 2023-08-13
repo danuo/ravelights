@@ -41,12 +41,12 @@ class EventHandler:
                         generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
                         function = getattr(generator, command)
                         function()
-                case {"action": "change_settings", "color_transition_speed": speed_str}:
-                    logger.info(f"change_settings color_transition_speed {speed_str}")
+                case {"action": "set_settings", "color_transition_speed": speed_str}:
+                    logger.info(f"set_settings color_transition_speed {speed_str}")
                     self.settings.color_transition_speed = speed_str
                     self.settings.color_engine.set_color_speed(speed_str)
-                case {"action": "change_settings", **other_kwargs}:
-                    logger.info(f"change_settings {other_kwargs}")
+                case {"action": "set_settings", **other_kwargs}:
+                    logger.info(f"set_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
