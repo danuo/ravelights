@@ -40,7 +40,7 @@ class Generator(ABC):
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []
-        self.weight: float = weight
+        self.weight: float = float(weight)
         self.is_prim: bool = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
         self.version: int = version
         self.p_add_dimmer: float = p_add_dimmer
