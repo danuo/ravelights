@@ -176,7 +176,7 @@ class Generator(ABC):
         return np.multiply(in_matrix, mask)
 
     def __repr__(self):
-        return self.name
+        return f"<Generator {self.name}>"
 
     @classmethod
     def get_identifier(cls) -> str:
