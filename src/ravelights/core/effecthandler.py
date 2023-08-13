@@ -63,7 +63,6 @@ class EffectHandler:
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effects, device_ids=device_ids)
             # more_effect_wrappers.append(more_effect_wrappers)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
-        print("aaaa")
 
     def run_before(self):
         self.load_and_apply_instructions()

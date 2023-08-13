@@ -24,14 +24,11 @@ class EffectColorize(Effect):
             case "blocks":
                 i = 0
                 sign = False
-                # self.color_matrix = self.color_matrix.flatten()
-                print(self.color_matrix.shape)
                 while i < self.n:
                     number = random.randint(5, 50)
                     self.color_matrix[i : i + number] = sign
                     sign = not sign
                     i += number
-                # self.color_matrix = self.color_matrix.reshape((self.n_leds, self.n_lights))
 
     def run_before(self):
         ...
