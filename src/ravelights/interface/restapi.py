@@ -121,7 +121,7 @@ class ColorAPIResource(Resource):
         if receive_data.get("action") == "set_color":
             color_rgb = receive_data.get("color")
             level = receive_data.get("level")
-            self.settings.set_color_fade(color=color_rgb, level=level)
+            self.settings.color_engine.set_color_with_rule(color=color_rgb, color_level=level)
         colors = self.settings.color_engine.get_colors_rgb_target()
         return make_response(jsonify(colors), 201)
 
