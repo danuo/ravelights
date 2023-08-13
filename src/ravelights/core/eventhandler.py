@@ -45,17 +45,20 @@ class EventHandler:
                     self.settings.color_transition_speed = speed_str
                     self.settings.color_engine.set_color_speed(speed_str)
                 case {"action": "change_settings", **other_kwargs}:
-                    print(other_kwargs)
+                    logger.info(f"change_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
                     self.settings.set_generator(**other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
+                    # if set_full:     load generators, load timeline
+                    # if not set_full: load timeline
                     print(index, set_full)
                     # todo: implement set_full
                     self.patternscheduler.load_timeline_from_index(int(index))
                 case {"action": "generator_alternate"}:
+                    print("todo: implement")
                     # todo: implement
                     pass
                     # self.patternscheduler.alternate_timeline(**receive_data)

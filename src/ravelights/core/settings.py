@@ -4,7 +4,7 @@ from enum import auto
 from typing import Optional, Type
 
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, Color, ColorEngine, ColorHandler
+from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, Color, ColorEngine, ColorHandler, SecondaryColorModes
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import StrEnum
@@ -20,17 +20,6 @@ class MusicStyles(StrEnum):
     TECHNO = auto()
     DISCO = auto()
     AMBIENT = auto()
-
-
-class SecondaryColorModes(StrEnum):
-    """available modes to generate secondary color for settings"""
-
-    # todo. replace with StrEnum and auto() with python 11
-    RANDOM = auto()
-    COMPLEMENTARY = auto()
-    COMPLEMENTARY33 = auto()
-    COMPLEMENTARY50 = auto()
-    COMPLEMENTARY66 = auto()
 
 
 def get_default_selected_dict() -> dict[str, list[str]]:
@@ -151,14 +140,6 @@ class Settings:
     def beat_progress(self) -> float:
         return self.beat_state.beat_progress
 
-    def set_color_fade(self, color: list | Color, level):
-        assert len(color) == 3
-        color = ColorHandler.convert_to_color(color)
-        self.color_engine.set_color_rgb(color, level)
-        if level == 0 and self.color_sec_active:
-            sec_color = self.get_secondary_color(color)
-            self.color_engine.set_color_rgb(sec_color, 1)
-
     def apply_secondary_color_rule(self):
         """call this when secondary rule changes"""
         # todo
@@ -166,23 +147,6 @@ class Settings:
         primary_color = self.color[0]
         secondary_color = self.get_secondary_color(primary_color)
         self.color[1] = secondary_color
-
-    def get_secondary_color(self, in_color: Color) -> Optional[Color]:
-        # todo: move this to colorhandler
-        """returns a color that matches in input color, according to the secondary
-        color rule currently selected in settings"""
-
-        match SecondaryColorModes(self.color_sec_mode):
-            case SecondaryColorModes.COMPLEMENTARY:
-                return ColorHandler.get_complementary_color(in_color)
-            case SecondaryColorModes.COMPLEMENTARY33:
-                return ColorHandler.get_complementary_33(in_color)
-            case SecondaryColorModes.COMPLEMENTARY50:
-                return ColorHandler.get_complementary_50(in_color)
-            case SecondaryColorModes.COMPLEMENTARY66:
-                return ColorHandler.get_complementary_66(in_color)
-            case SecondaryColorModes.RANDOM:
-                return ColorHandler.get_random_color()
 
     @property
     def frame_time(self) -> float:
