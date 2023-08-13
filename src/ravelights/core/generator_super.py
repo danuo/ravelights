@@ -11,6 +11,7 @@ from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
+    from ravelights.configs.components import Keywords
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
@@ -24,6 +25,8 @@ class Generator(ABC):
         root: "RaveLightsApp",
         device: "Device",
         name: str = "undefined",
+        keywords: Optional[list["Keywords"]] = None,
+        weight=1.0,
         is_prim: bool = True,
         version: int = 0,
         p_add_dimmer: float = 0.5,
@@ -33,16 +36,18 @@ class Generator(ABC):
         self.root = root
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
-        self.device = device
+        self.device: "Device" = device
         self.init_pixelmatrix(self.device.pixelmatrix)
-        self.name = name
-        self.is_prim = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
-        self.version = version
-        self.p_add_dimmer = p_add_dimmer
-        self.p_add_thinner = p_add_thinner
+        self.name: str = name
+        self.keywords: list[str] = [k.value for k in keywords] if keywords else []
+        self.weight: float = float(weight)
+        self.is_prim: bool = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
+        self.version: int = version
+        self.p_add_dimmer: float = p_add_dimmer
+        self.p_add_thinner: float = p_add_thinner
 
-        self.kwargs = kwargs
-        self.force_trigger_overwrite = False
+        self.kwargs: dict = kwargs
+        self.force_trigger_overwrite: bool = False
         if not hasattr(self, "possible_triggers"):
             self.possible_triggers: list[BeatStatePattern] = [BeatStatePattern()]
 
@@ -171,7 +176,7 @@ class Generator(ABC):
         return np.multiply(in_matrix, mask)
 
     def __repr__(self):
-        return self.name
+        return f"<Generator {self.name}>"
 
     @classmethod
     def get_identifier(cls) -> str:

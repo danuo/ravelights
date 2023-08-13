@@ -2,7 +2,7 @@ from collections import namedtuple
 from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Iterable, Type, cast
 
-from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
+from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines, create_from_blueprint
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS
 from ravelights.core.generator_super import Generator
 from ravelights.core.templateobjects import GenPlacing
@@ -87,20 +87,19 @@ class MetaHandler:
 
         keys = self.settings.generator_classes_identifiers
         meta_available_generators: dict[str, list[dict[str, str | list[str] | float]]] = {key: [] for key in keys}
-        # todo: move this to meta, do not get this from blueprint directly
-        for item in blueprint_generators + blueprint_effects:
-            cls = cast(Type[Generator | Effect], item.cls)
-            class_identifier = cls.get_identifier()
-            generator_name: str = cast(str, item.args["name"])
-            generator_keywords_obj: list[Keywords] = cast(list[Keywords], item.args.get("keywords", []))
-            generator_keywords: list[str] = [p.value for p in generator_keywords_obj]
-            generator_weight: float = float(cast(float | int, item.args.get("weight", 1.0)))
-            new_dict: dict[str, str | list[str] | float] = {
-                "generator_name": generator_name,
-                "generator_keywords": generator_keywords,
-                "generator_weight": generator_weight,
-            }
-            meta_available_generators[class_identifier].append(new_dict)
+        generators_and_effects = self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
+        for generator_name, gen in generators_and_effects.items():
+            class_identifier = gen.get_identifier()
+            generator_keywords: list[str] = gen.keywords
+            generator_weight: float = gen.weight
+            meta_available_generators[class_identifier].append(
+                {
+                    "generator_name": generator_name,
+                    "generator_keywords": generator_keywords,
+                    "generator_weight": generator_weight,
+                }
+            )
+
         return meta_available_generators
 
     def get_controls_global_sliders(self):
