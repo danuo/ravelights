@@ -48,6 +48,9 @@ class EventHandler:
                 case {"action": "set_settings", **other_kwargs}:
                     logger.info(f"set_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
+                case {"action": "set_settings_autopilot", **other_kwargs}:
+                    logger.info("set_settings_autopilot (...)")
+                    self.settings.settings_autopilot.update(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
