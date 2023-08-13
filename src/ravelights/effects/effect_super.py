@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
@@ -8,6 +8,7 @@ from ravelights.core.custom_typing import Array, ArrayNx3
 from ravelights.core.pixelmatrix import PixelMatrix
 
 if TYPE_CHECKING:
+    from ravelights.configs.components import Keywords
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
@@ -27,6 +28,8 @@ class EffectWrapper:
         for device_id, effect in zip(device_ids, effect_objects):
             self.effect_dict[device_id] = effect
         self.name = effect_objects[0].name
+        self.keywords = effect_objects[0].keywords
+        self.weight = effect_objects[0].weight
 
         self.mode = "frames"
         self.active = False
@@ -231,13 +234,23 @@ class Effect(ABC):
     effects can modify settings parameters, for example color attribute
     """
 
-    def __init__(self, root: "RaveLightsApp", device: "Device", name: str, **kwargs: dict[str, str | int | float]):
+    def __init__(
+        self,
+        root: "RaveLightsApp",
+        device: "Device",
+        name: str,
+        keywords: Optional[list["Keywords"]] = None,
+        weight=1.0,
+        **kwargs: dict[str, str | int | float],
+    ):
         self.root = root
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.settings.timehandler
         self.device = device
         self.init_pixelmatrix(self.device.pixelmatrix)
-        self.name = name
+        self.name: str = name
+        self.keywords: list[str] = [k.value for k in keywords] if keywords else []
+        self.weight: float = float(weight)
 
         self.reset()
 
