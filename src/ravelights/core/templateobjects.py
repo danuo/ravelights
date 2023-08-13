@@ -63,8 +63,6 @@ class GenSelector:
 
     def __post_init__(self):
         self.settings: Settings = self.root.settings
-        self.metahandler = self.root.metahandler
-        # self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.keywords = [k.value for k in self.keywords]
 
         # ─── Pattern ──────────────────────────────────────────────────
@@ -139,8 +137,10 @@ class GenSelector:
 
     def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[dict[str, str | list[str] | float]]:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        generators = self.metahandler["available_generators"][identifier]
-        return generators
+        if hasattr(self.root, "metahandler"):
+            return self.root.metahandler["available_generators"][identifier]
+        else:
+            return []
 
 
 @dataclass
