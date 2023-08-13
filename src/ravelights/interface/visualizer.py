@@ -116,7 +116,7 @@ class Visualizer:
 
     def _draw_beat_state(self):
         """Draws blue rectangle on frames with beat."""
-        if self.settings.beat_state == BeatStatePattern(loop_length=1):
+        if BeatStatePattern(loop_length=1).is_match(self.settings.beat_state):
             color = (0, 255, 255)
             square_w = 50
             square_h = 60

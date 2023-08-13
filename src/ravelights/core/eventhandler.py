@@ -1,5 +1,4 @@
 import logging
-import time
 from typing import TYPE_CHECKING
 
 from ravelights.core.custom_typing import T_JSON
@@ -17,6 +16,7 @@ class EventHandler:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings: Settings = self.root.settings
+        self.devices = self.root.devices
         self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.effecthandler: EffectHandler = self.root.effecthandler
         self.modification_queue: list[T_JSON] = []
@@ -32,7 +32,7 @@ class EventHandler:
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": "new trigger"}:
                     device = self.patternscheduler.devices[0]
                     if level == 0:  # level = 0 means auto
-                        level = device.rendermodule.device_timeline_level
+                        level = device.rendermodule.device_automatic_timeline_level
                     generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
                     self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, timeline_level=level)
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": command}:
@@ -58,6 +58,9 @@ class EventHandler:
                 case {"action": "set_settings_autopilot", **other_kwargs}:
                     logger.info("set_settings_autopilot (...)")
                     self.settings.settings_autopilot.update(other_kwargs)
+                case {"action": "set_device_settings", "device_id": device_id, **other_kwargs}:
+                    assert isinstance(device_id, int)
+                    self.devices[device_id].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:

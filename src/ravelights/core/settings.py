@@ -67,7 +67,7 @@ class Settings:
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
-    global_skip_trigger: int = 1
+    global_triggerskip: int = 1
 
     global_pattern_sec: bool = False
     global_vfilter: bool = False
@@ -83,14 +83,14 @@ class Settings:
     bpm_multiplier: float = 1.0
     fps: int = 20
     queue_length: int = 32 * 4
-    frame_skip: int = 1  # must be >= 1
+    global_frameskip: int = 1  # must be >= 1
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
     triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
     active_timeline_index: int = 1  # default timeline index
     use_manual_timeline: bool = True
-    manual_global_timeline_level: int = 1
+    global_manual_timeline_level: int = 1
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict = field(init=False)
@@ -149,6 +149,7 @@ class Settings:
         for key, value in update_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+                logger.info(f"successfully set {key} with {value} in device")
             else:
                 logger.warning(f"key {key} does not exist in settings")
 

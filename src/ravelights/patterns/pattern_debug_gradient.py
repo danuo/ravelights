@@ -10,7 +10,8 @@ class PatternDebugGradient(Pattern):
     def init(self):
         self.p_add_thinner = 0.0
         self.p_add_dimmer = 0.0
-        variants = list(product([True, False], repeat=3))
+        variants = list(product([True, False], repeat=3))  # len = 8
+        variants = variants * (self.n_lights // len(variants) + 1)
         gradient = np.linspace(0.0, 1.0, self.n_leds)
         matrix = self.get_float_matrix_rgb()
         for light_id in range(self.n_lights):

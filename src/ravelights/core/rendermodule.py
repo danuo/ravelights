@@ -20,7 +20,7 @@ class RenderModule:
         self.settings: Settings = self.root.settings
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
-        self.device_timeline_level = 0
+        self.device_automatic_timeline_level = 0
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
         self.generators_dict: dict[str, Generator] = dict()
@@ -32,7 +32,7 @@ class RenderModule:
     def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if level is None:
-            level = self.device_timeline_level
+            level = self.device_automatic_timeline_level
         return self.settings.triggers[identifier][level]
 
     def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
@@ -51,9 +51,12 @@ class RenderModule:
         """
 
         if self.settings.use_manual_timeline:
-            return self.settings.manual_global_timeline_level
+            if self.device.device_manual_timeline_level != 4:
+                return self.device.device_manual_timeline_level
+            else:
+                return self.settings.global_manual_timeline_level
         else:
-            return self.device_timeline_level
+            return self.device_automatic_timeline_level
 
     def render(self):
         # ---------------------------- get timeline_level ---------------------------- #
@@ -86,15 +89,15 @@ class RenderModule:
             dimmer = self.get_generator_by_name("d_none")
 
         # ------------------------------- check trigger ------------------------------ #
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Pattern):
+        if self.get_selected_trigger(gen_type=Pattern).is_match(self.settings.beat_state, self.device):
             pattern.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type="pattern_sec"):
+        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.settings.beat_state, self.device):
             pattern_sec.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Vfilter):
+        if self.get_selected_trigger(gen_type=Vfilter).is_match(self.settings.beat_state, self.device):
             vfilter.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Thinner):
+        if self.get_selected_trigger(gen_type=Thinner).is_match(self.settings.beat_state, self.device):
             thinner.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Dimmer):
+        if self.get_selected_trigger(gen_type=Dimmer).is_match(self.settings.beat_state, self.device):
             dimmer.on_trigger()
 
         # ---------------------------------- colors ---------------------------------- #
@@ -110,7 +113,7 @@ class RenderModule:
         self.assert_dims(matrix)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
-        matrix = self.apply_frame_skip(matrix)
+        matrix = self.apply_frameskip(matrix)
         self.assert_dims(matrix)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
@@ -144,9 +147,10 @@ class RenderModule:
     def find_generator(self, name: str) -> Generator:
         return self.generators_dict[name]
 
-    def apply_frame_skip(self, in_matrix: ArrayNx3) -> ArrayNx3:
+    def apply_frameskip(self, in_matrix: ArrayNx3) -> ArrayNx3:
         self.counter_frame += 1
-        if self.counter_frame % self.settings.frame_skip != 0:
+        frameskip = max(self.settings.global_frameskip, self.device.device_frameskip)
+        if self.counter_frame % frameskip != 0:
             return self.matrix_memory.copy()
         else:
             self.matrix_memory = in_matrix.copy()

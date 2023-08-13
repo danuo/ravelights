@@ -15,6 +15,7 @@ from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 
 if TYPE_CHECKING:
+    from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
@@ -29,10 +30,6 @@ class RestAPI:
         static_files_dir: Optional[Path] = None,
     ):
         self.root = root
-        self.settings: Settings = self.root.settings
-        self.eventhandler: EventHandler = self.root.eventhandler
-        self.patternscheduler: PatternScheduler = self.root.patternscheduler
-        self.metahandler: MetaHandler = self.root.metahandler
         self.port = port
 
         static_files_dir = self.check_static_files_dir(static_files_dir)
@@ -74,10 +71,11 @@ class RestAPI:
         return static_files_dir
 
     def _setup_resource_routing(self):
-        self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.eventhandler,))
-        self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.metahandler,))
-        self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.eventhandler,))
-        self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.eventhandler,))
+        self._api.add_resource(RaveAPIResource, "/rest/settings", resource_class_args=(self.root,))
+        self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root,))
+        self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.root,))
+        self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.root,))
+        self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.root,))
 
     def start_threaded(self, debug: bool = False):
         logger.info("Starting REST API thread...")
@@ -88,11 +86,11 @@ class RestAPI:
 
 
 class RaveAPIResource(Resource):
-    def __init__(self, eventhandler: EventHandler):
+    def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.eventhandler = eventhandler
-        self.settings: Settings = self.eventhandler.settings
-        self.patternscheduler: PatternScheduler = self.eventhandler.patternscheduler
+        self.eventhandler = root.eventhandler
+        self.settings: Settings = root.settings
+        self.patternscheduler: PatternScheduler = root.patternscheduler
 
     def get(self):
         data = asdict(self.settings)
@@ -105,25 +103,46 @@ class RaveAPIResource(Resource):
         return "", 204
 
 
-class MetaAPIResource(Resource):
-    def __init__(self, metahandler: MetaHandler):
+resource_fields_devices = {
+    "device_id": fields.Integer,
+    "n_leds": fields.Integer,
+    "n_lights": fields.Integer,
+    "is_prim": fields.Boolean,
+    "device_manual_timeline_level": fields.Integer,
+    "device_triggerskip": fields.Integer,
+    "device_frameskip": fields.Integer,
+    "device_brightness": fields.Float,
+}
+
+
+class DevicesAPIResource(Resource):
+    def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.metahandler = metahandler
+        self.devices: list["Device"] = root.devices
+
+    @marshal_with(resource_fields_devices)
+    def get(self):
+        return self.devices, 200
+
+
+class MetaAPIResource(Resource):
+    def __init__(self, root: "RaveLightsApp"):
+        super().__init__()
+        self.metahandler: MetaHandler = root.metahandler
         self.data = None
 
     def get(self):
-        print("called this")
         if self.data is None:
             self.data = jsonify(self.metahandler.api_content)
         return make_response(self.data, 200)
 
 
 class ColorAPIResource(Resource):
-    def __init__(self, apiqueue: EventHandler):
+    def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.apiqueue = apiqueue
-        self.settings: Settings = self.apiqueue.settings
-        self.patternscheduler: PatternScheduler = self.apiqueue.patternscheduler
+        self.settings: Settings = root.settings
+        self.eventhandler: EventHandler = root.eventhandler
+        self.patternscheduler: PatternScheduler = root.patternscheduler
 
     def get(self):
         colors = self.settings.color_engine.get_colors_rgb_target()
@@ -141,7 +160,7 @@ class ColorAPIResource(Resource):
         return make_response(jsonify(colors), 201)
 
 
-resource_fields = {
+resource_fields_effect = {
     "name": fields.String,
     "mode": fields.String,
     "limit_frames": fields.String,
@@ -150,13 +169,13 @@ resource_fields = {
 
 
 class EffectAPIResource(Resource):
-    def __init__(self, eventhandler: EventHandler):
+    def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.eventhandler = eventhandler
-        self.settings: Settings = self.eventhandler.settings
-        self.effecthandler = self.eventhandler.effecthandler
+        self.settings: Settings = root.settings
+        self.effecthandler = root.effecthandler
+        self.eventhandler: EventHandler = root.eventhandler
 
-    @marshal_with(resource_fields)
+    @marshal_with(resource_fields_effect)
     def get(self):
         return self.effecthandler.effect_queue, 200
 

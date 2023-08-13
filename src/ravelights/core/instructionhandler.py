@@ -15,30 +15,20 @@ class InstructionHandler:
         settings: Settings,
         timehandler: TimeHandler,
         rendermodule: RenderModule,
-        prim: bool,
     ):
         self.pixelmatrix: PixelMatrix = pixelmatrix
         self.settings: Settings = settings
         self.timehandler: TimeHandler = timehandler
         self.rendermodule: RenderModule = rendermodule
         self.instruction_queue = InstructionQueue(settings=self.settings)
-        self.prim = prim
 
     def apply_instruction(self, instruction: InstructionDevice):
         """Apply_instruction() is called when new instruction is loaded"""
 
         # ─── APPLY GENERATORS ────────────────────────────────────────────
-        self.rendermodule.device_timeline_level = instruction.level
+        self.rendermodule.device_automatic_timeline_level = instruction.level
 
     def load_and_apply_instructions(self):
         instructions_for_frame = cast(list[InstructionDevice], self.instruction_queue.get_instructions())
         for ins in instructions_for_frame:
             self.apply_instruction(ins)
-
-    def trigger_satisfied(self, trigger: str):
-        assert False
-        triggers = trigger.split(",")
-        for string in triggers:
-            if string in self.settings.beat_state_str:
-                return True
-        return False
