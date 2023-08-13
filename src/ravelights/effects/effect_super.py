@@ -227,6 +227,9 @@ class EffectWrapper:
                 return True
         return False
 
+    def get_identifier(self):
+        return self.effect_dict[0].get_identifier()
+
 
 class Effect(ABC):
     """
