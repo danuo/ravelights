@@ -36,18 +36,18 @@ class Generator(ABC):
         self.root = root
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
-        self.device = device
+        self.device: "Device" = device
         self.init_pixelmatrix(self.device.pixelmatrix)
-        self.name = name
+        self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []
-        self.weight = weight
-        self.is_prim = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
-        self.version = version
-        self.p_add_dimmer = p_add_dimmer
-        self.p_add_thinner = p_add_thinner
+        self.weight: float = weight
+        self.is_prim: bool = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
+        self.version: int = version
+        self.p_add_dimmer: float = p_add_dimmer
+        self.p_add_thinner: float = p_add_thinner
 
-        self.kwargs = kwargs
-        self.force_trigger_overwrite = False
+        self.kwargs: dict = kwargs
+        self.force_trigger_overwrite: bool = False
         if not hasattr(self, "possible_triggers"):
             self.possible_triggers: list[BeatStatePattern] = [BeatStatePattern()]
 
