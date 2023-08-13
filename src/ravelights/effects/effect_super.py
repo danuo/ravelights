@@ -303,4 +303,4 @@ class Effect(ABC):
         self.n: int = pixelmatrix.n_leds * pixelmatrix.n_lights
 
     def __repr__(self):
-        return self.name
+        return f"<Effect {self.name}>"
