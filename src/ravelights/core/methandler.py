@@ -37,6 +37,7 @@ class MetaHandler:
         self.api_content["controls_live_generator"] = self.set_controls_generators_live()
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
+        self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
 
     def __getitem__(self, key):
         return self.api_content[key]
