@@ -23,6 +23,7 @@ class RenderModule:
         self.device_timeline_level = 0
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
+        self.generators_dict: dict[str, Generator] = dict()
 
     def assert_dims(self, in_matrix):
         """checks if shape is (n_leds, n_lights, 3). this is a debug function"""
@@ -137,7 +138,6 @@ class RenderModule:
         self.pixelmatrix.set_matrix_float(matrix)
 
     def register_generators(self, generators: list[Generator]):
-        self.generators_dict: dict[str, Generator] = dict()
         for g in generators:
             self.generators_dict.update({g.name: g})
 
