@@ -109,7 +109,7 @@ class MetaHandler:
             dict(type="slider", var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
             dict(type="slider", var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
             dict(type="slider", var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
-            dict(type="slider", var_name="global_skip_trigger", range_min=1, range_max=8, step=1, markers=True),
+            dict(type="slider", var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
         ]
         return controls_global_sliders
 

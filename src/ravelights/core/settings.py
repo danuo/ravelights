@@ -67,7 +67,7 @@ class Settings:
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
-    global_skip_trigger: int = 1
+    global_triggerskip: int = 1
 
     global_pattern_sec: bool = False
     global_vfilter: bool = False
@@ -149,6 +149,7 @@ class Settings:
         for key, value in update_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+                logger.info(f"successfully set {key} with {value} in device")
             else:
                 logger.warning(f"key {key} does not exist in settings")
 

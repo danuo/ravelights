@@ -1,5 +1,4 @@
 import logging
-import time
 from typing import TYPE_CHECKING
 
 from ravelights.core.custom_typing import T_JSON
@@ -17,6 +16,7 @@ class EventHandler:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings: Settings = self.root.settings
+        self.devices = self.root.devices
         self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.effecthandler: EffectHandler = self.root.effecthandler
         self.modification_queue: list[T_JSON] = []
@@ -58,6 +58,9 @@ class EventHandler:
                 case {"action": "set_settings_autopilot", **other_kwargs}:
                     logger.info("set_settings_autopilot (...)")
                     self.settings.settings_autopilot.update(other_kwargs)
+                case {"action": "set_device_settings", "device_id": device_id, **other_kwargs}:
+                    assert isinstance(device_id, int)
+                    self.devices[device_id].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:

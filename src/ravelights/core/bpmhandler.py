@@ -101,7 +101,7 @@ class BeatStatePattern:
             else:
                 self.trigger_counter += 1
                 self.previous_triggered_time = other.settings.timehandler.time_0
-            is_triggered = self.trigger_counter % other.settings.global_skip_trigger == 0
+            is_triggered = self.trigger_counter % other.settings.global_triggerskip == 0
 
         # ------------------------------- random chance ------------------------------ #
         # add random chance for trigger to fail if p < 1.0
