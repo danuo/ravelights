@@ -90,7 +90,7 @@ class Settings:
     triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
     active_timeline_index: int = 1  # default timeline index
     use_manual_timeline: bool = True
-    manual_global_timeline_level: int = 1
+    global_manual_timeline_level: int = 1
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict = field(init=False)

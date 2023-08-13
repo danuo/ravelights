@@ -20,7 +20,7 @@ class RenderModule:
         self.settings: Settings = self.root.settings
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
-        self.device_timeline_level = 0
+        self.device_automatic_timeline_level = 0
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
         self.generators_dict: dict[str, Generator] = dict()
@@ -32,7 +32,7 @@ class RenderModule:
     def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if level is None:
-            level = self.device_timeline_level
+            level = self.device_automatic_timeline_level
         return self.settings.triggers[identifier][level]
 
     def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
@@ -51,9 +51,12 @@ class RenderModule:
         """
 
         if self.settings.use_manual_timeline:
-            return self.settings.manual_global_timeline_level
+            if self.device.device_manual_timeline_level != 4:
+                return self.device.device_manual_timeline_level
+            else:
+                return self.settings.global_manual_timeline_level
         else:
-            return self.device_timeline_level
+            return self.device_automatic_timeline_level
 
     def render(self):
         # ---------------------------- get timeline_level ---------------------------- #
