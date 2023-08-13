@@ -10,6 +10,7 @@ from flask_restful import Api, Resource, fields, marshal_with
 
 from ravelights.core.custom_typing import T_JSON
 from ravelights.core.eventhandler import EventHandler
+from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 
@@ -24,14 +25,14 @@ class RestAPI:
         self,
         root: "RaveLightsApp",
         port: int = 80,
-        # static_dir: Optional[Path] = None,
         serve_static_files=True,
         static_files_dir: Optional[Path] = None,
     ):
         self.root = root
         self.settings: Settings = self.root.settings
         self.eventhandler: EventHandler = self.root.eventhandler
-        self.patternscheduler: PatternScheduler = self.eventhandler.patternscheduler
+        self.patternscheduler: PatternScheduler = self.root.patternscheduler
+        self.metahandler: MetaHandler = self.root.metahandler
         self.port = port
 
         static_files_dir = self.check_static_files_dir(static_files_dir)
@@ -74,6 +75,7 @@ class RestAPI:
 
     def _setup_resource_routing(self):
         self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.eventhandler,))
+        self._api.add_resource(MetaAPIResource, "/meta", resource_class_args=(self.metahandler,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.eventhandler,))
         self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.eventhandler,))
 
@@ -101,6 +103,18 @@ class RaveAPIResource(Resource):
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
+
+
+class MetaAPIResource(Resource):
+    def __init__(self, metahandler: MetaHandler):
+        super().__init__()
+        self.metahandler = metahandler
+        self.data = None
+
+    def get(self):
+        if self.data is None:
+            self.data = jsonify(self.metahandler.api_content)
+        return make_response(self.data, 200)
 
 
 class ColorAPIResource(Resource):

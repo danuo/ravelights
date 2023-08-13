@@ -10,6 +10,7 @@ from ravelights.effects.effect_super import Effect
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
     from ravelights.core.patternscheduler import PatternScheduler
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,7 @@ class GenSelector:
     """
 
     gen_type: Type[Generator]
-    patternscheduler: "PatternScheduler"
+    root: "RaveLightsApp"
 
     pattern_name: Optional[str] = None
     vfilter_name: Optional[str] = None
@@ -61,7 +62,9 @@ class GenSelector:
     trigger_on_change: bool = True
 
     def __post_init__(self):
-        self.settings: Settings = self.patternscheduler.settings
+        self.settings: Settings = self.root.settings
+        self.metahandler = self.root.metahandler
+        # self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.keywords = [k.value for k in self.keywords]
 
         # ─── Pattern ──────────────────────────────────────────────────
@@ -71,7 +74,7 @@ class GenSelector:
                 self.pattern_name = self.name
             else:
                 self.pattern_name = self.get_random_generator(gen_type=Pattern)
-            pattern = self.patternscheduler.devices[0].rendermodule.find_generator(name=self.pattern_name)
+            pattern = self.root.devices[0].rendermodule.find_generator(name=self.pattern_name)
             assert isinstance(pattern, Generator)
 
             # todo:
@@ -136,7 +139,7 @@ class GenSelector:
 
     def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[dict[str, str | list[str] | float]]:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        generators = self.patternscheduler.settings.meta["available_generators"][identifier]
+        generators = self.metahandler["available_generators"][identifier]
         return generators
 
 
@@ -145,7 +148,7 @@ class GenPlacing:
     """places instructions into instruction queue at specific timings, to load specific
     generator levels at that time."""
 
-    patternscheduler: "PatternScheduler"
+    root: "RaveLightsApp"
     level: int  # 1, for action="load", only one level makes sense
     timings: list[int]
     p: float = 1.0
@@ -159,7 +162,7 @@ class EffectSelectorPlacing:
     effect_name: str = field(init=False)
 
     gen_type: Type[Effect] = Effect
-    name: str = None
+    name: Optional[str] = None
     keywords: list["Keywords"] = field(default_factory=list)
     length_q: int = 4
     timings: list[int] = field(default_factory=list)

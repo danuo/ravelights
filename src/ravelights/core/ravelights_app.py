@@ -4,10 +4,10 @@ from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
+from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 from ravelights.interface.datarouter import DataRouter
-from ravelights.interface.meta import MetaControls
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
@@ -36,12 +36,13 @@ class RaveLightsApp:
         visualizer=True,
     ):
         self.settings = Settings(device_config=device_config, fps=fps, bpm_base=80.0)
+        self.metahandler = MetaHandler(root=self)
         self.devices = create_devices(root=self)
         self.autopilot = AutoPilot(settings=self.settings, devices=self.devices, autopilot_loop_length=16)
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
         self.eventhandler = EventHandler(root=self)
-        self.controls = MetaControls(root=self)
+
         self.visualizer = None
         if visualizer:
             from ravelights.interface.visualizer import Visualizer
