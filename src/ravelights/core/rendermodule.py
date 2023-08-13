@@ -86,15 +86,15 @@ class RenderModule:
             dimmer = self.get_generator_by_name("d_none")
 
         # ------------------------------- check trigger ------------------------------ #
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Pattern):
+        if self.get_selected_trigger(gen_type=Pattern).is_match(self.settings.beat_state, self.device):
             pattern.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type="pattern_sec"):
+        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.settings.beat_state, self.device):
             pattern_sec.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Vfilter):
+        if self.get_selected_trigger(gen_type=Vfilter).is_match(self.settings.beat_state, self.device):
             vfilter.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Thinner):
+        if self.get_selected_trigger(gen_type=Thinner).is_match(self.settings.beat_state, self.device):
             thinner.on_trigger()
-        if self.settings.beat_state == self.get_selected_trigger(gen_type=Dimmer):
+        if self.get_selected_trigger(gen_type=Dimmer).is_match(self.settings.beat_state, self.device):
             dimmer.on_trigger()
 
         # ---------------------------------- colors ---------------------------------- #

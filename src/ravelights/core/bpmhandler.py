@@ -6,6 +6,7 @@ from ravelights.core.custom_typing import T_JSON
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
+    from ravelights.core.device import Device
     from ravelights.core.settings import Settings
     from ravelights.core.timehandler import TimeHandler
 
@@ -67,15 +68,10 @@ class BeatStatePattern:
         self.previous_triggered_time = None
         self.trigger_counter = -1
 
-    def __eq__(self, other: BeatState) -> bool:
+    def is_match(self, other: BeatState, device: Optional["Device"] = None) -> bool:
         """
-        This function makes it possible to make this object comparison:
-        BeatState == BeatStatePattern
         Will return True, if pattern matches current BeatState.
         """
-
-        if not isinstance(other, BeatState):
-            return NotImplemented
 
         # check if BeatPattern conditions are met
         # current_beat: other.n_quarters_long % (self.loop_length * 4) // 4
@@ -94,6 +90,12 @@ class BeatStatePattern:
         # global skip trigger = 2: every second trigger works
         # global skip trigger = 3: every third trigger works
         # global skip trigger = 4: every fourth trigger works
+
+        # determine triggerskip from global and device settings
+        triggerskip = other.settings.global_triggerskip
+        if device:
+            triggerskip = max(triggerskip, device.device_triggerskip)
+
         if is_triggered:
             if self.previous_triggered_time == other.settings.timehandler.time_0:
                 # the BeatStatePattern was already triggered within the current frame
@@ -101,7 +103,8 @@ class BeatStatePattern:
             else:
                 self.trigger_counter += 1
                 self.previous_triggered_time = other.settings.timehandler.time_0
-            is_triggered = self.trigger_counter % other.settings.global_triggerskip == 0
+
+            is_triggered = self.trigger_counter % triggerskip == 0
 
         # ------------------------------- random chance ------------------------------ #
         # add random chance for trigger to fail if p < 1.0
