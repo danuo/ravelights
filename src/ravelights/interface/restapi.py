@@ -103,14 +103,22 @@ class RaveAPIResource(Resource):
         return "", 204
 
 
+resource_fields_devices = {
+    "device_id": fields.Integer,
+    "n_leds": fields.Integer,
+    "n_lights": fields.Integer,
+    "is_prim": fields.Boolean,
+}
+
+
 class DevicesAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
         self.devices: list["Device"] = root.devices
 
+    @marshal_with(resource_fields_devices)
     def get(self):
-        out = jsonify("test")
-        return make_response(out, 200)
+        return self.devices, 200
 
 
 class MetaAPIResource(Resource):
