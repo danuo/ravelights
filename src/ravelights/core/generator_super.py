@@ -11,6 +11,7 @@ from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
+    from ravelights.configs.components import Keywords
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
@@ -24,6 +25,8 @@ class Generator(ABC):
         root: "RaveLightsApp",
         device: "Device",
         name: str = "undefined",
+        keywords: Optional[list["Keywords"]] = None,
+        weight=1.0,
         is_prim: bool = True,
         version: int = 0,
         p_add_dimmer: float = 0.5,
@@ -36,6 +39,8 @@ class Generator(ABC):
         self.device = device
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name = name
+        self.keywords = keywords
+        self.weight = weight
         self.is_prim = is_prim  # set to true if this is loaded as a primary pattern. Relevant for coloring.
         self.version = version
         self.p_add_dimmer = p_add_dimmer
