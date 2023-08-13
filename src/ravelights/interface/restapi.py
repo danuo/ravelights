@@ -75,7 +75,7 @@ class RestAPI:
 
     def _setup_resource_routing(self):
         self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.eventhandler,))
-        self._api.add_resource(MetaAPIResource, "/meta", resource_class_args=(self.metahandler,))
+        self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.metahandler,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.eventhandler,))
         self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.eventhandler,))
 
@@ -112,6 +112,7 @@ class MetaAPIResource(Resource):
         self.data = None
 
     def get(self):
+        print("called this")
         if self.data is None:
             self.data = jsonify(self.metahandler.api_content)
         return make_response(self.data, 200)
