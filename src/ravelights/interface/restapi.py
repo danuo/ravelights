@@ -156,7 +156,7 @@ class ColorAPIResource(Resource):
         return make_response(jsonify(colors), 201)
 
 
-resource_fields = {
+resource_fields_effect = {
     "name": fields.String,
     "mode": fields.String,
     "limit_frames": fields.String,
@@ -171,7 +171,7 @@ class EffectAPIResource(Resource):
         self.effecthandler = root.effecthandler
         self.eventhandler: EventHandler = root.eventhandler
 
-    @marshal_with(resource_fields)
+    @marshal_with(resource_fields_effect)
     def get(self):
         return self.effecthandler.effect_queue, 200
 
