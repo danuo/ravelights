@@ -118,8 +118,9 @@ class BeatStatePattern:
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):
-                # logger.debug(f"successfully set {key}")
                 setattr(self, key, value)
+            else:
+                logger.warning(f"key {key} does not exist in settings")
 
 
 class BPMhandler:

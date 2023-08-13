@@ -149,6 +149,8 @@ class Settings:
         for key, value in update_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+            else:
+                logger.warning(f"key {key} does not exist in settings")
 
     def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str):
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
