@@ -71,7 +71,7 @@ class RestAPI:
         return static_files_dir
 
     def _setup_resource_routing(self):
-        self._api.add_resource(RaveAPIResource, "/rest", resource_class_args=(self.root,))
+        self._api.add_resource(RaveAPIResource, "/rest/settings", resource_class_args=(self.root,))
         self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root,))
         self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.root,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.root,))
