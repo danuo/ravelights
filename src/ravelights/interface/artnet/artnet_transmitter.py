@@ -32,10 +32,11 @@ class ArtnetTransmitter(metaclass=ABCMeta):
         assert matrix.shape[-1] == 3
         self._transmit_channels(matrix.flatten())
 
-    def transmit_output_config(self, lights_per_output: list[int]) -> None:
-        assert len(lights_per_output) == 4
-        checksum = sum(lights_per_output)
-        channels = np.array([*lights_per_output, checksum], dtype=np.uint8)
+    def transmit_output_config(self, leds_per_output: list[int]) -> None:
+        assert len(leds_per_output) == 4
+
+        checksum = sum(leds_per_output)
+        channels = np.array([*leds_per_output, checksum], dtype=np.uint32).view(dtype=np.uint8)
         self._send_universe(universe=self._CONFIG_UNIVERSE_INDEX, data=channels)
 
     def _transmit_channels(self, channels: npt.NDArray[np.uint8]):

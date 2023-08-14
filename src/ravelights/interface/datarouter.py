@@ -14,24 +14,7 @@ class DataRouter:
         self.devices = self.root.devices
         self.transmitter = transmitter
         self.process_output_config(transmitter_config)
-
-        # --------------------------------- todo nick -------------------------------- #
-        # todo: nick
-        # self.leds_per_output holds led numbers [720 720 0 0]
-        # lights144_per_output holds light numbers [5 5 0 0]
-
-        # code for transmit_output_config():
-        uint32_array = np.array(self.leds_per_output, dtype=np.uint32)  # size 4
-        uint8_array = uint32_array.view(dtype=np.uint8)  # size 16
-
-        # code for here:
-        # self.transmitter.transmit_output_config(self.leds_per_output)
-
-        # code to remove:
-        lights144_per_output = [n // 144 for n in self.leds_per_output]
-        self.transmitter.transmit_output_config(lights144_per_output)
-        # --------------------------------- todo nick -------------------------------- #
-
+        self.transmitter.transmit_output_config(self.leds_per_output)
         # one out matrix per datarouter / transmitter
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
 
