@@ -75,7 +75,9 @@ class EffectHandler:
         for effect_wrapper in self.effect_queue:
             # ---------------------------------- remove ---------------------------------- #
             if effect_wrapper.is_finished():
+                effect_wrapper.on_delete()
                 self.effect_queue.remove(effect_wrapper)
+                continue
 
             # ------------------------------ counting before ----------------------------- #
             effect_wrapper.counting_before_check()
