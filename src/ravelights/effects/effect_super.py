@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
+from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import Array, ArrayNx3
 from ravelights.core.pixelmatrix import PixelMatrix
@@ -33,6 +34,7 @@ class EffectWrapper:
 
         self.mode = "frames"
         self.active = False
+        self.trigger: Optional[BeatStatePattern] = None
 
         # mode == "frames"
         self.counter_frames: int = 0
@@ -48,6 +50,14 @@ class EffectWrapper:
         self.limit_loopquarters_loop: int = 0
         self.counter_quarters_loop: int = 0
         self.loop_length_beats: int = 1
+
+    def set_trigger(self, trigger=None):
+        # todo: find trigger
+        self.trigger = trigger
+
+    def get_trigger(self):
+        """use this to see if trigger is hit"""
+        return self.trigger
 
     def run_before(self):
         """Called once before each render cycle"""
@@ -133,7 +143,7 @@ class EffectWrapper:
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
         if self.mode == "loopquarters":
-            # reset counter erst später
+            # reset counter erst sp�ter
             self.has_started = False
             self.counter_frames = 0
             self.limit_frames = limit_frames
