@@ -70,7 +70,6 @@ class EffectHandler:
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
     def run_before(self):
-        # todo: check trigger
         self.load_and_apply_instructions()
 
         for effect_wrapper in self.effect_queue:
@@ -79,6 +78,11 @@ class EffectHandler:
                 effect_wrapper.on_delete()
                 self.effect_queue.remove(effect_wrapper)
                 continue
+
+            # ---------------------------------- trigger --------------------------------- #
+            if effect_wrapper.trigger:
+                if effect_wrapper.trigger.is_match(self.settings.beat_state):
+                    effect_wrapper.on_trigger()
 
             # ------------------------------ counting before ----------------------------- #
             effect_wrapper.counting_before_check()

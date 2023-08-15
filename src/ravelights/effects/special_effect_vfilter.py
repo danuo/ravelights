@@ -1,3 +1,4 @@
+import random
 from typing import TYPE_CHECKING
 
 from ravelights.core.colorhandler import Color
@@ -19,6 +20,12 @@ class SpecialEffectVfilter(Effect):
     def __init__(self, root: "RaveLightsApp", device: "Device", name: str, vfilter: type["Vfilter"]):
         super().__init__(root, device, name)
         self.vfilter = vfilter(root, device, name)
+
+    def get_new_trigger(self):
+        return random.choice(self.vfilter.possible_triggers)
+
+    def on_trigger(self):
+        self.vfilter.on_trigger()
 
     def reset(self):
         """
