@@ -39,7 +39,6 @@ def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
         Vfilter.get_identifier(): [BeatStatePattern() for _ in range(5)],
         Thinner.get_identifier(): [BeatStatePattern() for _ in range(5)],
         Dimmer.get_identifier(): [BeatStatePattern() for _ in range(5)],
-        "effect": [BeatStatePattern(p=1.0) for _ in range(5)],
     }
 
 
