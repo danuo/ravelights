@@ -127,16 +127,14 @@ class EffectHandler:
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queue:
-            effect.on_delete()
-            self.effect_queue.remove(effect)
+            effect.renew_trigger()
 
     def effect_alternate(self, effect: str | EffectWrapper):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queue:
-            effect.on_delete()
-            self.effect_queue.remove(effect)
+            effect.alternate()
 
     def effect_remove(self, effect: str | EffectWrapper):
         if isinstance(effect, str):
