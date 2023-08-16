@@ -29,6 +29,7 @@ from ravelights.patterns.pattern_debug_solid_color import PatternDebugSolidColor
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
 from ravelights.patterns.pattern_gradient import PatternGradient
 from ravelights.patterns.pattern_hor_stripes import PatternHorStripes
+from ravelights.patterns.pattern_inverse_square import PatternInerseSquare
 from ravelights.patterns.pattern_meteor import PatternMeteor
 from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
 from ravelights.patterns.pattern_movingstrobe import PatternMovingStrobe
@@ -121,6 +122,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSinwave, dict(name="s_sinwave", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternSinOverlay, dict(name="p_sin_overlay", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
+    BlueprintGen(PatternInerseSquare, dict(name="p_inverse_square", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternPidSplash, dict(name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternHorStripes, dict(name="p_hor_stripes", keywords=[K.SHORT, K.LONG])),
@@ -174,7 +176,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "4beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="s_sinwave")),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_inverse_square")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_hor_stripes")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
