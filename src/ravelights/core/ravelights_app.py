@@ -85,9 +85,16 @@ class RaveLightsApp:
             device.instructionhandler.load_and_apply_instructions()
         self.effecthandler.run_before()
         # ----------------------------------- sync ----------------------------------- #
+        # todo: generalize
+        # generators
         sync_dict = self.devices[0].rendermodule.get_selected_generator("pattern").sync_send()
-        for device in self.devices[2:]:
+        for device in self.devices[1:]:
             device.rendermodule.get_selected_generator("pattern").sync_load(in_dict=sync_dict)
+
+        # vfilter
+        sync_dict = self.devices[0].rendermodule.get_selected_generator("vfilter").sync_send()
+        for device in self.devices[1:]:
+            device.rendermodule.get_selected_generator("vfilter").sync_load(in_dict=sync_dict)
         # ---------------------------------- render ---------------------------------- #
         for i, device in enumerate(self.devices):
             device.render()
