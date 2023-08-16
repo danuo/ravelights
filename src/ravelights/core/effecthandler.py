@@ -43,15 +43,13 @@ class EffectHandler:
         self.build_effectwrappers_from_vfilters()
 
     def build_effectwrappers_from_blueprints(self):
-        device_ids = []
         effects_per_device: list[list[Effect]] = []
         for device in self.devices:
-            device_ids.append(device.device_id)
             kwargs = dict(root=self.root, device=device)
             effects: list[Effect] = create_from_blueprint(blueprints=blueprint_effects, kwargs=kwargs)
             effects_per_device.append(effects)
         for effect_objects in zip(*effects_per_device):
-            effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects, device_ids=device_ids)
+            effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
     def build_effectwrappers_from_vfilters(self):
@@ -61,12 +59,10 @@ class EffectHandler:
             vfilter_name: str = blueprint.args["name"]
             effect_name = "e" + vfilter_name
             effects: list[Effect] = []
-            device_ids = []
             for device in self.devices:
                 effect = SpecialEffectVfilter(root=self.root, device=device, name=effect_name, vfilter=blueprint.cls)
                 effects.append(effect)
-                device_ids.append(device.device_id)
-            effect_wrapper = EffectWrapper(root=self.root, effect_objects=effects, device_ids=device_ids)
+            effect_wrapper = EffectWrapper(root=self.root, effect_objects=effects)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
     def run_before(self):
@@ -83,6 +79,8 @@ class EffectHandler:
             if effect_wrapper.trigger:
                 if effect_wrapper.trigger.is_match(self.settings.beat_state):
                     effect_wrapper.on_trigger()
+            # ----------------------------------- sync ----------------------------------- #
+            effect_wrapper.sync_effects()
 
             # ------------------------------ counting before ----------------------------- #
             effect_wrapper.counting_before_check()
@@ -127,16 +125,14 @@ class EffectHandler:
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queue:
-            effect.on_delete()
-            self.effect_queue.remove(effect)
+            effect.renew_trigger()
 
     def effect_alternate(self, effect: str | EffectWrapper):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queue:
-            effect.on_delete()
-            self.effect_queue.remove(effect)
+            effect.alternate()
 
     def effect_remove(self, effect: str | EffectWrapper):
         if isinstance(effect, str):

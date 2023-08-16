@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
@@ -15,6 +16,8 @@ if TYPE_CHECKING:
     from ravelights.core.settings import Settings
     from ravelights.core.timehandler import TimeHandler
 
+logger = logging.getLogger(__name__)
+
 
 class EffectWrapper:
     """
@@ -22,19 +25,17 @@ class EffectWrapper:
     Each EffectWrapper contains one Effect instance per Device
     """
 
-    def __init__(self, root: "RaveLightsApp", effect_objects: list["Effect"], device_ids: list[int]):
+    def __init__(self, root: "RaveLightsApp", effect_objects: list["Effect"]):
         self.root = root
         self.settings: Settings = self.root.settings
-        self.effect_dict: dict[int, Effect] = dict()
-        for device_id, effect in zip(device_ids, effect_objects):
-            self.effect_dict[device_id] = effect
+        self.effects: list[Effect] = effect_objects
         self.name = effect_objects[0].name
         self.keywords = effect_objects[0].keywords
         self.weight = effect_objects[0].weight
         self.mode = "frames"
         self.active = False
-        self.trigger: Optional[BeatStatePattern] = effect_objects[0].get_new_trigger()  # can be None or Beatstatepattern
-        self.trigger = BeatStatePattern()
+        self.trigger: Optional[BeatStatePattern] = None
+        self.renew_trigger()
 
         # mode == "frames"
         self.counter_frames: int = 0
@@ -54,13 +55,13 @@ class EffectWrapper:
     def run_before(self):
         """Called once before each render cycle"""
         if self.active:
-            effect = self.effect_dict[0]
+            effect = self.effects[0]
             effect.run_before()
 
     def run_after(self):
         """Called once after each render cycle"""
         if self.active:
-            effect = self.effect_dict[0]
+            effect = self.effects[0]
             effect.run_before()
 
     def reset(
@@ -150,12 +151,12 @@ class EffectWrapper:
             self.loop_length_beats = loop_length_beats  # in beats
             self.limit_loopquarters_loop = limit_quarters_loop
 
-        for effect in self.effect_dict.values():
+        for effect in self.effects:
             effect.reset()
 
     def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int):
         if self.active:
-            effect = self.effect_dict[device_id]
+            effect = self.effects[device_id]
             return effect.render_matrix(in_matrix=in_matrix, color=color)
         else:
             return in_matrix
@@ -172,6 +173,8 @@ class EffectWrapper:
 
     def check_active(self) -> bool:
         """Invisible render class with effect logic"""
+        if not self.settings.global_effects_enabled:
+            return False
 
         if self.mode == "frames" or self.mode == "quarters":
             return self.check_active_matrix_frames()
@@ -216,18 +219,23 @@ class EffectWrapper:
                     self.counter_frames = 0
 
     def renew_trigger(self):
-        self.trigger = self.effect_dict[0].get_new_trigger()
+        self.trigger = self.effects[0].get_new_trigger()
 
     def alternate(self):
-        for effect in self.effect_dict.values():
-            self.effect_dict[0].alternate()
+        for effect in self.effects:
+            effect.alternate()
 
     def on_trigger(self):
-        for effect in self.effect_dict.values():
+        for effect in self.effects:
             effect.on_trigger()
 
+    def sync_effects(self):
+        sync_dict = self.effects[0].sync_send()
+        for effect in self.effects[1:]:
+            effect.sync_load(in_dict=sync_dict)
+
     def on_delete(self):
-        for effect in self.effect_dict.values():
+        for effect in self.effects:
             effect.on_delete()
 
     def is_finished(self):
@@ -241,7 +249,7 @@ class EffectWrapper:
         return False
 
     def get_identifier(self):
-        return self.effect_dict[0].get_identifier()
+        return self.effects[0].get_identifier()
 
 
 class Effect(ABC):
@@ -263,6 +271,7 @@ class Effect(ABC):
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.settings.timehandler
         self.device = device
+        self.device_id = device.device_id
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []
@@ -299,6 +308,18 @@ class Effect(ABC):
     def get_identifier():
         return "effect"
 
+    def sync_send(self) -> dict:
+        ...
+
+    def sync_load(self, in_dict: dict):
+        if not isinstance(in_dict, dict):
+            return None
+        for key, value in in_dict.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                logger.warning(f"key {key} does not exist in settings")
+
     def alternate(self):
         ...
 
@@ -329,8 +350,8 @@ class Effect(ABC):
             matrix_rgb = np.zeros((*matrix_mono.shape, 3))
 
         shape = [1] * matrix_mono.ndim + [3]
-        color = np.array(color).reshape(shape)
-        matrix_rgb = matrix_mono[..., None] * color
+        color_array = np.array(color).reshape(shape)
+        matrix_rgb = matrix_mono[..., None] * color_array
         return matrix_rgb
 
     def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
