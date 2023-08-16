@@ -33,8 +33,8 @@ class EffectWrapper:
         self.weight = effect_objects[0].weight
         self.mode = "frames"
         self.active = False
-        self.trigger: Optional[BeatStatePattern] = effect_objects[0].get_new_trigger()  # can be None or Beatstatepattern
-        self.trigger = BeatStatePattern()
+        self.trigger: Optional[BeatStatePattern] = None
+        self.renew_trigger()
 
         # mode == "frames"
         self.counter_frames: int = 0
