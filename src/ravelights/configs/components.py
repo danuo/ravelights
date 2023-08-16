@@ -23,6 +23,7 @@ from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_frameskip import EffectFrameskip
 from ravelights.effects.effect_super import Effect
+from ravelights.patterns.pattern_debug_bpm_sync import PatternDebugBPMSync
 from ravelights.patterns.pattern_debug_gradient import PatternDebugGradient
 from ravelights.patterns.pattern_debug_linear_block import PatternDebugLinearBlock
 from ravelights.patterns.pattern_debug_solid_color import PatternDebugSolidColor
@@ -102,6 +103,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(ThinnerNone, dict(name="t_none", weight=0)),
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
     BlueprintGen(PatternDebugGradient, dict(name="p_debug_graident", weight=0)),
+    BlueprintGen(PatternDebugBPMSync, dict(name="p_debug_bpm_sync", weight=0)),
     BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
     BlueprintGen(PatternDebugLinearBlock, dict(name="p_debug_linear_block", weight=0)),
     BlueprintGen(PatternGradient, dict(name="p_graident", weight=0)),
