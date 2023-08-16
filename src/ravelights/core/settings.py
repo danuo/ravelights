@@ -87,7 +87,7 @@ class Settings:
     # ─── Pattern Settings ─────────────────────────────────────────────────
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
     triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
-    active_timeline_index: int = 1  # default timeline index
+    active_timeline_index: int = 0  # default timeline index
     use_manual_timeline: bool = True
     global_manual_timeline_level: int = 1
 

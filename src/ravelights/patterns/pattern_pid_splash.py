@@ -4,14 +4,14 @@ import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx1, ArrayNx3
+from ravelights.core.custom_typing import ArrayNx3
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
 
 
-class PatternPID2(Pattern):
-    """pattern name: p_pid2"""
+class PatternPidSplash(Pattern):
+    """pattern name: p_pid_splash"""
 
     def init(self):
         self.width = 10

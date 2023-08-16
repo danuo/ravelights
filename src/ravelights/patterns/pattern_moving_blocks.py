@@ -26,8 +26,6 @@ class PatternMovingBlocks(Pattern):
     def init(self):
         # prerendered items are larger than actual light, so that big items can fit
         self.matrix_length = self.n_leds * 3
-        # self.possible_triggers = ["", "a0", "0", "0,2", "0,1,2,3"]
-        # todo: test the following
         self.possible_triggers = [
             BeatStatePattern(beats=[0], loop_length=4),
             BeatStatePattern(beats=[0], quarters="A", loop_length=1),
@@ -35,6 +33,7 @@ class PatternMovingBlocks(Pattern):
             BeatStatePattern(beats=[0], quarters="ABCD", loop_length=1),
         ]
 
+    def alternate(self):
         version = random.choice([0, 1, 2, 3])
         # version = 0
         if version == 0:
@@ -82,9 +81,6 @@ class PatternMovingBlocks(Pattern):
             b = int(self.matrix_length / 2 + length / 2)
             matrix[a:b] = 1.0
             self.prerendered_matrices.append(matrix)
-
-    def alternate(self):
-        ...
 
     def reset(self):
         self.states: list[State] = []
