@@ -34,7 +34,7 @@ from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
 from ravelights.patterns.pattern_movingstrobe import PatternMovingStrobe
 from ravelights.patterns.pattern_movingstrobev2 import PatternMovingStrobeV2
 from ravelights.patterns.pattern_pid import PatternPID
-from ravelights.patterns.pattern_pid2 import PatternPID2
+from ravelights.patterns.pattern_pid_splash import PatternPidSplash
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
 from ravelights.patterns.pattern_shadow_big import PatternShadowBig
@@ -118,6 +118,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternPidSplash, dict(name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternHorStripes, dict(name="p_hor_stripes", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternShadowSmall, dict(name="p_shadow_small", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),
