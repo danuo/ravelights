@@ -31,17 +31,22 @@ class PatternShadow(Pattern):
         self.grid_n = 20
         self.gutter = np.linspace(0, self.n_leds - 1, self.grid_n)
 
+        self.max_dist = 100
+
     def alternate(self):
         ...
 
     def reset(self):
-        self.pos = 0
+        self.pos = -self.max_dist
 
     def on_trigger(self):
         ...
 
     def render(self, color: Color) -> ArrayNx3:
-        self.pos = (self.pos + self.vel) % self.n_leds
+        self.pos = self.pos + self.vel
+        if self.pos > self.n_leds + self.max_dist:
+            self.pos = -self.max_dist
+
         matrix = self.get_float_matrix_rgb()
 
         for index in range(self.grid_n - 1):
