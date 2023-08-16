@@ -165,6 +165,7 @@ resource_fields_effect = {
     "mode": fields.String,
     "limit_frames": fields.String,
     "loop_length": fields.String,
+    "trigger": fields.String,
 }
 
 

@@ -80,13 +80,22 @@ class EventHandler:
                     pass
                 case {"action": "clear_effect_queue"}:
                     self.effecthandler.clear_qeueues()
-                    print("cleared all effect queues")
+                    logger.info("cleared all effect queues")
                 case {"action": "set_effect", **other_kwargs}:
-                    print("in EventHandler", other_kwargs)
+                    logger.info(f"set_effect: {other_kwargs}")
                     self.effecthandler.load_effect(**other_kwargs)
-                case {"action": "remove_effect", "effect_name": effect_name}:
-                    print("remove_effect: ", effect_name)
-                    self.effecthandler.remove_effect(effect=effect_name)
+                case {"action": "modify_effect", "operation": operation, "effect_name": effect_name}:
+                    assert isinstance(effect_name, str)
+                    match operation:
+                        case "renew_trigger":
+                            logger.info(f"modify_effect renew_trigger: {effect_name}")
+                            self.effecthandler.effect_renew_trigger(effect=effect_name)
+                        case "alternate":
+                            logger.info(f"modify_effect alter: {effect_name}")
+                            self.effecthandler.effect_alternate(effect=effect_name)
+                        case "remove":
+                            logger.info(f"modify_effect remove: {effect_name}")
+                            self.effecthandler.effect_remove(effect=effect_name)
                 case other:
                     logger.warning(other)
                     logger.warning("API instruction not understood")
