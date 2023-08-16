@@ -18,7 +18,16 @@ class VfilterRandomBlackout(Vfilter):
         self.on_trigger()
 
     def alternate(self):
-        ...
+        self.use_devices = random.choice(["all", "one"])
+        if self.use_devices == "all":
+            self.active_devices = [True] * self.n_devices
+        elif self.use_devices == "one":
+            self.active_devices = [False] * self.n_devices
+            self.active_devices[random.randrange(0, self.n_devices)] = True
+        # todo: jump across devices in mode "one"
+
+    def sync_send(self):
+        return dict(active_devices=self.active_devices)
 
     def reset(self):
         ...
@@ -30,13 +39,14 @@ class VfilterRandomBlackout(Vfilter):
         self.source_index = None
 
     def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+        print(self.active_devices)
         if self.source_index is None:
             bw_matrix = self.bw_matrix(in_matrix)
             print(bw_matrix.shape)
             self.source_index = np.argmax(np.mean(bw_matrix, axis=0))
             print(self.source_index)
         out_matrix = self.get_float_matrix_rgb()
-        if self.counter < self.limit_frames:
+        if self.active_devices[self.device.device_id] and self.counter < self.limit_frames:
             out_index = random.randrange(0, self.n_lights)
             out_matrix[:, out_index, :] = in_matrix[:, self.source_index, :]
         return out_matrix
