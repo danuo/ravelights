@@ -1,9 +1,7 @@
-import math
 import random
 
 import numpy as np
 
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayNx3
 from ravelights.core.generator_super import Pattern
@@ -31,6 +29,20 @@ class PatternSinwave(Pattern):
     def on_trigger(self):
         ...
 
+    @property
+    def energy(self):
+        """
+        0.1 -> 0.1
+        0.2 -> 0.2
+        0.5 -> 0.5
+        0.6 -> 0.9
+        1.0 -> 2.0
+        """
+        energy_factor = self.settings.global_energy + 0.05
+        if energy_factor > 0.5:
+            energy_factor = 0.5 + (energy_factor - 0.5) * 5
+        return energy_factor
+
     def get_square_positions(self):
         self.static_x += 5
         if self.static_x < -self.bounds:
@@ -38,12 +50,11 @@ class PatternSinwave(Pattern):
         if self.static_x > self.n_leds + self.bounds:
             self.static_x = self.static_x - self.n_leds - 2 * self.bounds
 
-        # out = self.factors[0] * np.sin(k * self.eval_points)
-        out = self.factors[0] * np.sin(0.25 * self.eval_points + self.settings.timehandler.time_0)
-        out = self.factors[1] * np.sin(0.5 * self.eval_points + self.settings.timehandler.time_0)
-        out += self.factors[2] * np.sin(1 * self.eval_points + self.settings.timehandler.time_0)
-        out += self.factors[3] * np.sin(2 * self.eval_points + self.settings.timehandler.time_0)
-        out += self.factors[4] * np.sin(4 * self.eval_points + self.settings.timehandler.time_0)
+        out = self.factors[0] * np.sin(0.25 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
+        out = self.factors[1] * np.sin(0.5 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
+        out += self.factors[2] * np.sin(1 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
+        out += self.factors[3] * np.sin(2 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
+        out += self.factors[4] * np.sin(4 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
         out = out * self.n_leds * 0.5 + self.n_leds * 0.5
         if self.use_static:
             out += self.static_x
