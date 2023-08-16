@@ -42,6 +42,7 @@ from ravelights.patterns.pattern_shadow_big import PatternShadowBig
 from ravelights.patterns.pattern_shadow_small import PatternShadowSmall
 from ravelights.patterns.pattern_sin_overlay import PatternSinOverlay
 from ravelights.patterns.pattern_sinwave import PatternSinwave
+from ravelights.patterns.pattern_sinwave_squares import PatternSinwaveSquares
 from ravelights.patterns.pattern_solid_color import PatternSolidColor
 from ravelights.patterns.pattern_strobespawner import PatternStrobeSpawner
 from ravelights.patterns.pattern_swiper import PatternSwiper
@@ -120,6 +121,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternMovingBlocks, dict(name="p_moving_blocks", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternSinwave, dict(name="s_sinwave", keywords=[K.SHORT, K.LONG, K.CHORUS])),
+    BlueprintGen(PatternSinwaveSquares, dict(name="s_sinwave_square", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternSinOverlay, dict(name="p_sin_overlay", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternInerseSquare, dict(name="p_inverse_square", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
@@ -176,7 +178,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "4beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_inverse_square")),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="s_sinwave_square")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_hor_stripes")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
