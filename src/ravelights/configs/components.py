@@ -36,6 +36,7 @@ from ravelights.patterns.pattern_pid import PatternPID
 from ravelights.patterns.pattern_pid2 import PatternPID2
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
+from ravelights.patterns.pattern_shadow import PatternShadow
 from ravelights.patterns.pattern_solid_color import PatternSolidColor
 from ravelights.patterns.pattern_strobespawner import PatternStrobeSpawner
 from ravelights.patterns.pattern_swiper import PatternSwiper
@@ -48,7 +49,11 @@ from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
+from ravelights.vfilters.vfilter_reverb import VfilterReverb
+from ravelights.vfilters.vfilter_rgb_shift import VfilterRgbShift
+from ravelights.vfilters.vfilter_roll_overlay import VfilterRollOverlay
 from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
+from ravelights.vfilters.vfilter_time_delay import VfilterTimeDelay
 
 
 class Keywords(StrEnum):
@@ -110,6 +115,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternShadow, dict(name="p_shadow", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
     BlueprintGen(PatternMovingStrobe, dict(name="p_moving_strobe", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(PatternMovingStrobeV2, dict(name="p_moving_strobe_v2", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
@@ -117,12 +123,16 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterFlipVer, dict(name="v_flip_ver")),
     BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
+    BlueprintGen(VfilterRgbShift, dict(name="v_rgb_shift")),
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
     BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_1", version=0)),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_3", version=1)),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_5", version=2)),
+    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay", version=2)),
+    BlueprintGen(VfilterReverb, dict(name="v_reverb")),
+    BlueprintGen(VfilterRollOverlay, dict(name="v_roll_overlay")),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
@@ -155,13 +165,13 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "4beat 2level",
         },
         "selectors": [
-            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_meteor_fast05", p=0.5)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], keywords=[K.SHORT], apply_on_all=True)),
+            # BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], keywords=[K.SHORT], apply_on_all=True)),
         ],
     },
     {
