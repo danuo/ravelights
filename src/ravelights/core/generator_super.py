@@ -37,6 +37,7 @@ class Generator(ABC):
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
         self.device: "Device" = device
+        self.n_devices = len(self.root.devices)
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []
@@ -83,7 +84,13 @@ class Generator(ABC):
 
     def sync_load(self, in_dict: dict):
         # after set_kwargs is called
-        ...
+        if not isinstance(in_dict, dict):
+            return None
+        for key, value in in_dict.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                logger.warning(f"key {key} does not exist in settings")
 
     def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
         self.pixelmatrix = pixelmatrix
