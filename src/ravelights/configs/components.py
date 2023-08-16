@@ -55,6 +55,7 @@ from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
+from ravelights.vfilters.vfilter_random_blackout import VfilterRandomBlackout
 from ravelights.vfilters.vfilter_reverb import VfilterReverb
 from ravelights.vfilters.vfilter_rgb_shift import VfilterRgbShift
 from ravelights.vfilters.vfilter_roll_overlay import VfilterRollOverlay
@@ -147,6 +148,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay", version=2)),
     BlueprintGen(VfilterReverb, dict(name="v_reverb")),
     BlueprintGen(VfilterRollOverlay, dict(name="v_roll_overlay")),
+    BlueprintGen(VfilterRandomBlackout, dict(name="v_random_blackout")),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),
