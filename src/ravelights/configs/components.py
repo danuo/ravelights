@@ -36,7 +36,8 @@ from ravelights.patterns.pattern_pid import PatternPID
 from ravelights.patterns.pattern_pid2 import PatternPID2
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
-from ravelights.patterns.pattern_shadow import PatternShadow
+from ravelights.patterns.pattern_shadow_big import PatternShadowBig
+from ravelights.patterns.pattern_shadow_small import PatternShadowSmall
 from ravelights.patterns.pattern_solid_color import PatternSolidColor
 from ravelights.patterns.pattern_strobespawner import PatternStrobeSpawner
 from ravelights.patterns.pattern_swiper import PatternSwiper
@@ -116,7 +117,8 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[K.SHORT, K.LONG])),
-    BlueprintGen(PatternShadow, dict(name="p_shadow", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternShadowSmall, dict(name="p_shadow_small", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
     BlueprintGen(PatternMovingStrobe, dict(name="p_moving_strobe", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(PatternMovingStrobeV2, dict(name="p_moving_strobe_v2", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
@@ -165,7 +167,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "4beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow")),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],

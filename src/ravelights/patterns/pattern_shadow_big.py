@@ -11,7 +11,7 @@ from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
 
 
-class PatternShadow(Pattern):
+class PatternShadowBig(Pattern):
     """pattern name: p_shadow"""
 
     def init(self):
@@ -27,7 +27,6 @@ class PatternShadow(Pattern):
         self.dist_gutter = 0.1
         self.dist_screen = 2
 
-        self.gutter_width = 10
         self.grid_n = 20
         self.gutter = np.linspace(0, self.n_leds - 1, self.grid_n)
 
