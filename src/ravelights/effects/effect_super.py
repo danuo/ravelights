@@ -34,6 +34,7 @@ class EffectWrapper:
         self.mode = "frames"
         self.active = False
         self.trigger: Optional[BeatStatePattern] = effect_objects[0].get_new_trigger()  # can be None or Beatstatepattern
+        self.trigger = BeatStatePattern()
 
         # mode == "frames"
         self.counter_frames: int = 0
@@ -214,6 +215,13 @@ class EffectWrapper:
                     self.counter_quarters = 0
                     self.counter_frames = 0
 
+    def renew_trigger(self):
+        self.trigger = self.effect_dict[0].get_new_trigger()
+
+    def alternate(self):
+        for effect in self.effect_dict.values():
+            self.effect_dict[0].alternate()
+
     def on_trigger(self):
         for effect in self.effect_dict.values():
             effect.on_trigger()
@@ -290,6 +298,9 @@ class Effect(ABC):
     @staticmethod
     def get_identifier():
         return "effect"
+
+    def alternate(self):
+        ...
 
     def get_new_trigger(self) -> Optional[BeatStatePattern]:
         return None

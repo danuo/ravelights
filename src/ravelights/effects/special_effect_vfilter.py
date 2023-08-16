@@ -21,6 +21,9 @@ class SpecialEffectVfilter(Effect):
         super().__init__(root, device, name)
         self.vfilter = vfilter(root, device, name)
 
+    def alternate(self):
+        self.vfilter.alternate()
+
     def get_new_trigger(self):
         return random.choice(self.vfilter.possible_triggers)
 
