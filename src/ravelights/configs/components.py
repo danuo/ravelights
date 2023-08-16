@@ -13,7 +13,6 @@ from ravelights.dimmers.dimmer_decay_very_slow import DimmerDecayVerySlow
 from ravelights.dimmers.dimmer_peak import DimmerPeak
 from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
 from ravelights.dimmers.dimmer_sine import DimmerSine
-from ravelights.effects.effect_bw import EffectBW
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
 from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
@@ -154,7 +153,6 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorStrobeRainbowPixel, dict(name="e_color_strobe_rainbow_pixel")),
     BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
     BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
-    BlueprintEffect(EffectBW, dict(name="e_bw")),
     BlueprintEffect(EffectColorize, dict(name="e_colorize")),
     BlueprintEffect(EffectFlicker, dict(name="e_flicker")),
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
