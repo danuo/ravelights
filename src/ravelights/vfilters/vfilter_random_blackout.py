@@ -25,6 +25,7 @@ class VfilterRandomBlackout(Vfilter):
             self.active_devices = [False] * self.n_devices
             self.active_devices[random.randrange(0, self.n_devices)] = True
         # todo: jump across devices in mode "one"
+        # todo: will not be synced in effects right now
 
     def sync_send(self):
         return dict(active_devices=self.active_devices)
