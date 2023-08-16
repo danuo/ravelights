@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
+from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import Array, ArrayNx3
 from ravelights.core.pixelmatrix import PixelMatrix
@@ -30,9 +31,10 @@ class EffectWrapper:
         self.name = effect_objects[0].name
         self.keywords = effect_objects[0].keywords
         self.weight = effect_objects[0].weight
-
         self.mode = "frames"
         self.active = False
+        self.trigger: Optional[BeatStatePattern] = effect_objects[0].get_new_trigger()  # can be None or Beatstatepattern
+        self.trigger = BeatStatePattern()
 
         # mode == "frames"
         self.counter_frames: int = 0
@@ -133,7 +135,7 @@ class EffectWrapper:
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
         if self.mode == "loopquarters":
-            # reset counter erst später
+            # reset counter erst sp�ter
             self.has_started = False
             self.counter_frames = 0
             self.limit_frames = limit_frames
@@ -213,6 +215,17 @@ class EffectWrapper:
                     self.counter_quarters = 0
                     self.counter_frames = 0
 
+    def renew_trigger(self):
+        self.trigger = self.effect_dict[0].get_new_trigger()
+
+    def alternate(self):
+        for effect in self.effect_dict.values():
+            self.effect_dict[0].alternate()
+
+    def on_trigger(self):
+        for effect in self.effect_dict.values():
+            effect.on_trigger()
+
     def on_delete(self):
         for effect in self.effect_dict.values():
             effect.on_delete()
@@ -254,7 +267,6 @@ class Effect(ABC):
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []
         self.weight: float = float(weight)
-
         self.reset()
 
     @abstractmethod
@@ -286,6 +298,15 @@ class Effect(ABC):
     @staticmethod
     def get_identifier():
         return "effect"
+
+    def alternate(self):
+        ...
+
+    def get_new_trigger(self) -> Optional[BeatStatePattern]:
+        return None
+
+    def on_trigger(self):
+        ...
 
     def colorize_matrix(self, matrix_mono: Array, color: Color) -> ArrayNx3:
         """

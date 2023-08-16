@@ -79,6 +79,11 @@ class EffectHandler:
                 self.effect_queue.remove(effect_wrapper)
                 continue
 
+            # ---------------------------------- trigger --------------------------------- #
+            if effect_wrapper.trigger:
+                if effect_wrapper.trigger.is_match(self.settings.beat_state):
+                    effect_wrapper.on_trigger()
+
             # ------------------------------ counting before ----------------------------- #
             effect_wrapper.counting_before_check()
 
@@ -117,7 +122,23 @@ class EffectHandler:
         effect_wrapper.reset(**kwargs)
         self.effect_queue.append(effect_wrapper)
 
-    def remove_effect(self, effect: str | EffectWrapper):
+    def effect_renew_trigger(self, effect: str | EffectWrapper):
+        if isinstance(effect, str):
+            effect = self.find_effect(name=effect)
+        assert isinstance(effect, EffectWrapper)
+        if effect in self.effect_queue:
+            effect.on_delete()
+            self.effect_queue.remove(effect)
+
+    def effect_alternate(self, effect: str | EffectWrapper):
+        if isinstance(effect, str):
+            effect = self.find_effect(name=effect)
+        assert isinstance(effect, EffectWrapper)
+        if effect in self.effect_queue:
+            effect.on_delete()
+            self.effect_queue.remove(effect)
+
+    def effect_remove(self, effect: str | EffectWrapper):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
