@@ -56,7 +56,6 @@ class AutoPilot:
             p_alternate_pattern_sec=0.1,  # run on every item in selected seperately
             triggers=True,
             p_triggers=0.1,  # run on every item in selected seperately
-            autoload_triggers=True,
         )
 
     def get_autopilot_controls(self):
