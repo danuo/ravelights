@@ -1,4 +1,6 @@
 import logging
+import queue
+import threading
 
 import serial
 
@@ -16,11 +18,15 @@ class ArtnetSerialTransmitter(ArtnetTransmitter):
         debug: bool = False,
     ):
         super().__init__(start_universe=start_universe, debug=debug)
-        self._serial_port = serial.Serial(port=serial_port_address, baudrate=baud_rate, write_timeout=0)
+        self._serial_port = serial.Serial(port=serial_port_address, baudrate=baud_rate)
+        self._output_queue = queue.Queue()
+
+        threading.Thread(target=self._send_thread, daemon=True).start()
 
     def _send_bytes(self, data: bytes) -> None:
-        if not self._serial_port.writable():
-            logger.warn("Serial port not ready for writing yet. Skipping this frame...")
-            return
+        self._output_queue.put(data)
 
-        self._serial_port.write(data)
+    def _send_thread(self):
+        while True:
+            data = self._output_queue.get()
+            self._serial_port.write(data)
