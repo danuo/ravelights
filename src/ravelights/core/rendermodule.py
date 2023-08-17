@@ -134,7 +134,7 @@ class RenderModule:
 
         # ─── Render Effects ───────────────────────────────────────────
         for effect_wrapper in self.root.effecthandler.effect_queue:
-            matrix = effect_wrapper.render_matrix(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
+            matrix = effect_wrapper.render(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
         self.assert_dims(matrix)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────

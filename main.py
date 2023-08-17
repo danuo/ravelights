@@ -1,14 +1,12 @@
 import argparse
-import cProfile
 import logging
-import pstats
-from pathlib import Path
 
 from ravelights import RaveLightsApp
+from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 # for devices in ravelights app
 device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=10, n_leds=144)]
@@ -52,6 +50,7 @@ def parse_args():
 
 
 args = parse_args()
+visualizer = args.visualizer if not args.profiling else False
 
 # ------------------------------ port selection ------------------------------ #
 
@@ -99,20 +98,15 @@ app = RaveLightsApp(
     fps=args.fps,
     device_config=device_config,
     data_routers_configs=data_routers_configs,
-    visualizer=args.visualizer,
+    visualizer=visualizer,
     webserver_port=webserver_port,
     serve_webinterface=args.webui,
 )
 
-if not args.profiling:
-    app.run()
+if args.profiling:
+    profiler = Profiler(app=app)
+    profiler.run()
+    profiler.plot()
+    profiler.write_data()
 else:
-    logging.info("To visualize the profiling file, run `snakeviz ./log/profiling.prof` in terminal")
-    with cProfile.Profile() as pr:
-        app.profile()
-
-    stats = pstats.Stats(pr)
-    stats.sort_stats(pstats.SortKey.TIME)
-    # stats.print_stats()
-    filename = Path("log") / "profiling.prof"
-    stats.dump_stats(filename=filename)
+    app.run()
