@@ -44,8 +44,6 @@ class AutoPilot:
             p_renew_dimmer=0.1,  # use in timeline genselector
             color_primary=True,
             p_color_primary=0.1,
-            color_secondary=True,
-            p_color_secondary=0.1,
             color_effect=True,
             p_color_effect=0.1,
             timeline=True,
@@ -181,10 +179,8 @@ class AutoPilot:
 
         if self.settings.settings_autopilot["color_primary"]:
             if p(self.settings.settings_autopilot["p_color_primary"]):
-                self.settings.color[0] = ColorHandler.get_random_color()
-        if self.settings.settings_autopilot["color_secondary"]:
-            if p(self.settings.settings_autopilot["p_color_secondary"]):
-                self.settings.color[1] = ColorHandler.get_random_color()
+                random_color = ColorHandler.get_random_color()
+                self.settings.color_engine.set_color_with_rule(color=random_color, color_level=1)
         if self.settings.settings_autopilot["color_effect"]:
             if p(self.settings.settings_autopilot["p_color_effect"]):
                 self.settings.color[2] = ColorHandler.get_random_color()

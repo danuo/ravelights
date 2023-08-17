@@ -56,7 +56,7 @@ class ColorEngine:
         default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
         self.color_pids: list[ColorPID] = [ColorPID(init_color_rgb=c) for c in default_colors]
 
-    def run_pid_step(self):
+    def _run_pid_step(self):
         # apply color transition speed to pid controller if it has changed
         if self._internal_color_transition_speed != self.settings.color_transition_speed:
             self._internal_color_transition_speed = self.settings.color_transition_speed
@@ -66,22 +66,27 @@ class ColorEngine:
             color_pid.run_pid_step()
 
     def set_color_with_rule(self, color: list | Color, color_level):
-        # color_level = 0: primary
-        # color_level = 1: secondary
-        # color_level = 2: effect
-        print("set color with rule", self.settings.color_sec_mode)
+        """
+        color_level = 1: primary
+        color_level = 2: secondary
+        color_level = 3: effect
+        """
         assert len(color) == 3
-        print("level is ", color_level)
+        logger.info(f"set color with rule {self.settings.color_sec_mode} and level {color_level}")
         color = ColorHandler.convert_to_color(color)
         self.set_single_color_rgb(color, color_level)
-        if color_level == 0 and self.settings.color_sec_active:
+        if color_level == 1 and self.settings.color_sec_active:
             sec_color = self.get_secondary_color(color)
-            print("sec_color", sec_color)
-            self.set_single_color_rgb(sec_color, 1)
-        print(self.get_colors_rgb_target()[1])
+            logger.info(f"set sec_color: {sec_color}")
+            self.set_single_color_rgb(sec_color, 2)
 
     def set_single_color_rgb(self, color: Color, level):
-        self.color_pids[level].set_rgb_target(color)
+        """
+        color_level = 1: primary
+        color_level = 2: secondary
+        color_level = 3: effect
+        """
+        self.color_pids[level - 1].set_rgb_target(color)
 
     def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
