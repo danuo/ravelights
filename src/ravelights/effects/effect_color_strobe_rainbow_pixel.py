@@ -6,7 +6,6 @@ from ravelights.core.colorhandler import Color, ColorHandler
 from ravelights.core.custom_typing import ArrayMxKx3
 from ravelights.core.generator_super import Generator
 from ravelights.effects.effect_super import Effect
-from ravelights.vfilters.vfilter_bw import VfilterBW
 
 
 class EffectColorStrobeRainbowPixel(Effect):
@@ -15,8 +14,7 @@ class EffectColorStrobeRainbowPixel(Effect):
         hue_range controls the color variation for each frame
         """
 
-        self.bw_filter = VfilterBW(root=self.root, device=self.device)
-        self.randi = None
+        self.color_matrix = self.get_color_matrix()
 
     def run_before(self):
         ...
@@ -24,21 +22,24 @@ class EffectColorStrobeRainbowPixel(Effect):
     def run_after(self):
         ...
 
+    def alternate(self):
+        self.color_matrix = self.get_color_matrix()
+
+    def get_color_matrix(self):
+        color_matrix = np.zeros((self.n, 3))
+        color_matrix[:, 0] = np.random.rand(self.n)
+        color_matrix[:, 1] = 1.0
+        rng = np.random.default_rng()
+        rng.shuffle(color_matrix, axis=-1)  # same shuffle for each row
+        color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3), order="F")
+        return color_matrix
+
     def render_matrix(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
         """Called each render cycle"""
-        if self.randi is None:
-            color_matrix = np.zeros((self.n, 3))
-            color_matrix[:, 0] = np.random.rand(self.n)
-            color_matrix[:, 1] = 1.0
-            rng = np.random.default_rng()
-            rng.shuffle(color_matrix, axis=-1)  # same shuffle for each row
-            color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3), order="F")
-            self.randi = color_matrix
-        else:
-            self.randi = np.roll(self.randi, shift=1, axis=0)
+        self.color_matrix = np.roll(self.color_matrix, shift=1, axis=0)
 
         bw_matrix_mono = Generator.bw_matrix(in_matrix)
-        matrix_out = bw_matrix_mono[..., None] * self.randi
+        matrix_out = bw_matrix_mono[..., None] * self.color_matrix
 
         return matrix_out
 
