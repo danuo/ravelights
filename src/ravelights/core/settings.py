@@ -166,9 +166,12 @@ class Settings:
         logger.debug(f"set_generator with {gen_type} {timeline_level} {gen_name}")
         self.selected[gen_type][timeline_level] = gen_name
         if renew_trigger:
-            generator = self.root.devices[0].rendermodule.get_generator_by_name(gen_name)
-            new_trigger = generator.get_new_trigger()
-            self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
+            self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+
+    def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
+        generator = self.root.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
+        new_trigger = generator.get_new_trigger()
+        self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
 
     def set_trigger(
         self, gen_type: str | Type["Generator"], timeline_level: int, beatstate_pattern: Optional[BeatStatePattern] = None, **kwargs
