@@ -33,8 +33,7 @@ class EventHandler:
                     device = self.patternscheduler.devices[0]
                     if level == 0:  # level = 0 means auto
                         level = device.rendermodule.device_automatic_timeline_level
-                    generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
-                    self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, timeline_level=level)
+                    self.settings.renew_trigger(gen_type=gen_type, timeline_level=level)
                 case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": command}:
                     if level == 0:
                         level = None  # auto mode
