@@ -121,6 +121,13 @@ class EffectHandler:
         effect_wrapper.reset(**kwargs)
         self.effect_queue.append(effect_wrapper)
 
+    def effect_change_draw(self, effect: str | EffectWrapper):
+        if isinstance(effect, str):
+            effect = self.find_effect(name=effect)
+        assert isinstance(effect, EffectWrapper)
+        if effect in self.effect_queue:
+            effect.change_draw()
+
     def effect_renew_trigger(self, effect: str | EffectWrapper):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)

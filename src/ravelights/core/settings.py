@@ -82,6 +82,7 @@ class Settings:
     # ─── Effect Settings ──────────────────────────────────────────────────
 
     global_effects_enabled: bool = True
+    global_effect_draw_mode: str = "overlay"  # "overlay" or replace
     effect_draw_mode: str = "overlay"  # "overlay" or replace
 
     # ─── Generator Settings ────────────────────────────────────────────────

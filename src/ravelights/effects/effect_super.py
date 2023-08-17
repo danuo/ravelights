@@ -219,6 +219,14 @@ class EffectWrapper:
                     self.counter_quarters = 0
                     self.counter_frames = 0
 
+    def change_draw(self):
+        if self.draw_mode == "overlay":
+            self.draw_mode = "normal"
+        elif self.draw_mode == "normal":
+            self.draw_mode = "overlay"
+        else:
+            assert False
+
     def renew_trigger(self):
         self.trigger = self.effects[0].get_new_trigger()
 
