@@ -6,7 +6,7 @@ from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 
 logger = logging.getLogger(__name__)
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 # for devices in ravelights app
 device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=10, n_leds=144)]
