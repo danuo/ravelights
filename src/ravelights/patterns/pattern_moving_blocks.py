@@ -7,6 +7,7 @@ from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayNx1
 from ravelights.core.generator_super import Pattern
+from ravelights.core.utils import p
 
 
 @dataclass
@@ -34,33 +35,38 @@ class PatternMovingBlocks(Pattern):
         ]
 
     def alternate(self):
-        version = random.choice([0, 1, 2, 3])
+        self.version = random.choice([0, 1, 2, 3])
         # version = 0
-        if version == 0:
+        if self.version == 0:
             self.n_lengths = 10
             self.length_step_factor = 2
             self.max_speed = 4
             self.n_items = 10
             self.brightness = 1.0
-        if version == 1:
+            self.max_roll_speed = 5
+        if self.version == 1:
             self.n_lengths = 8
             self.length_step_factor = 3
             self.max_speed = 3
             self.n_items = 15
             self.brightness = 1.0
-        if version == 2:
+            self.max_roll_speed = 5
+        if self.version == 2:
             self.n_lengths = 10
             self.length_step_factor = 4
             self.max_speed = 0  # no speed but reset constantly
             self.n_items = 15
             self.brightness = 1.0
-            # self.possible_triggers = ["0", "0,1", "0,2", "1,2,3,4"]
-        if version == 3:
+            self.max_roll_speed = 2
+        if self.version == 3:
             self.n_lengths = 10
             self.length_step_factor = 4
             self.max_speed = 2
             self.n_items = 15
             self.brightness = 0.5
+            self.max_roll_speed = 10
+
+        self.enable_roll = p(0.5)
 
         # ─── Generate Prerendered Blocks ──────────────────────────────
         def sequence_func(num: int):
@@ -87,7 +93,7 @@ class PatternMovingBlocks(Pattern):
             pos = random.uniform(0, self.matrix_length)
             speed = 0 if self.max_speed == 0 else random.uniform(-self.max_speed, self.max_speed)
             self.states.append(State(item_id, bright, pos, speed))
-        self.roll_speeds = [random.uniform(-5, 5) for _ in range(self.n_lights)]
+        self.roll_speeds = [random.uniform(-self.max_roll_speed, self.max_roll_speed) for _ in range(self.n_lights)]
         self.rolls = [0.0] * self.n_lights
 
     def on_trigger(self):
@@ -104,8 +110,7 @@ class PatternMovingBlocks(Pattern):
         matrix = self.pixelmatrix.clip_matrix_to_1(matrix)
         matrix = np.repeat(matrix[..., None], repeats=self.n_lights, axis=-1)
 
-        rolls = True
-        if rolls:
+        if self.enable_roll:
             for index in range(self.n_lights):
                 self.rolls[index] += self.roll_speeds[index]
             for index in range(self.n_lights):
