@@ -251,6 +251,9 @@ class EffectWrapper:
     def get_identifier(self):
         return self.effects[0].get_identifier()
 
+    def __repr__(self):
+        return f"<EffectWrapper {self.name}>"
+
 
 class Effect(ABC):
     """
