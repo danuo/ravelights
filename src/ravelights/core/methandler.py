@@ -34,7 +34,6 @@ class MetaHandler:
         self.api_content["available_keywords"] = self.get_meta_available_keywords()
         self.api_content["available_generators"] = self.get_meta_available_generators()
         self.api_content["controls_global_sliders"] = self.get_controls_global_sliders()
-        self.api_content["controls_live_generator"] = self.set_controls_generators_live()
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
@@ -112,15 +111,6 @@ class MetaHandler:
             dict(type="slider", var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
         ]
         return controls_global_sliders
-
-    def set_controls_generators_live(self):
-        """Generates buttons for alternate, reset and on_trigger command for the generator types
-        pattern, vfilter, thinner and dimmer."""
-        out = []
-        for ident in self.root.settings.generator_classes_identifiers[:4]:
-            for command in ["alternate", "new trigger", "on_trigger"]:
-                out.append(dict(name=f"{ident} {command}", gen_type=ident, action="gen_command", command=command))
-        return out
 
     def get_all_timeline_svgs(self):
         names = []
