@@ -78,7 +78,15 @@ class Settings:
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
     global_triggerskip: int = 1
+
+    # ─── Effect Settings ──────────────────────────────────────────────────
+
     global_effects_enabled: bool = True
+    global_effect_draw_mode: str = "overlay"  # "overlay" or replace
+    effect_draw_mode: str = "overlay"  # "overlay" or replace
+
+    # ─── Generator Settings ────────────────────────────────────────────────
+
     global_pattern_sec: bool = False
     global_vfilter: bool = False
     global_thinner: bool = False

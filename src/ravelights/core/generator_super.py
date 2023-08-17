@@ -167,15 +167,15 @@ class Generator(ABC):
         return np.fmin(1.0, matrix_1 + matrix_2)
 
     @staticmethod
-    def merge_matrices(matrix_1: Array, matrix_2: Array) -> Array:
+    def merge_matrices(minor: Array, major: Array) -> Array:
         """
         Combines two matrices similar to add_matrices. Every pixel with brightness > 0 from matrix 2
         will overwrite matrix 1 at that location. This is superior than add_matrices, as different
         colors do not combine to white"""
 
-        matrix_2_max = np.max(matrix_2, axis=2)
+        matrix_2_max = np.max(major, axis=2)
         matrix_2_max_repeated = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
-        return np.where(matrix_2_max_repeated > 0, matrix_2, matrix_1)
+        return np.where(matrix_2_max_repeated > 0, major, minor)
 
     @staticmethod
     def apply_mask(in_matrix: ArrayNx3, mask: ArrayNx1) -> ArrayNx3:

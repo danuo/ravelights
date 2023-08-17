@@ -33,6 +33,7 @@ class EffectWrapper:
         self.keywords = effect_objects[0].keywords
         self.weight = effect_objects[0].weight
         self.mode = "frames"
+        self.draw_mode = "overlay"  # "overlay", "normal"
         self.active = False
         self.trigger: Optional[BeatStatePattern] = None
         self.renew_trigger()
@@ -217,6 +218,14 @@ class EffectWrapper:
                     self.counter_quarters_loop += 1
                     self.counter_quarters = 0
                     self.counter_frames = 0
+
+    def change_draw(self):
+        if self.draw_mode == "overlay":
+            self.draw_mode = "normal"
+        elif self.draw_mode == "normal":
+            self.draw_mode = "overlay"
+        else:
+            assert False
 
     def renew_trigger(self):
         self.trigger = self.effects[0].get_new_trigger()
