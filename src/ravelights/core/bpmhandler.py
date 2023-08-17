@@ -26,6 +26,10 @@ class BeatState:
         return self.n_quarters_long // 4
 
     @property
+    def string_quarters(self):
+        return "ABCD"[self.n_quarters_long % 4]
+
+    @property
     def is_beat(self) -> bool:
         return self.is_quarter and (self.n_quarters_long % 4 == 0)
 

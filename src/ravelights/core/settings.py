@@ -1,7 +1,7 @@
 import logging
-from dataclasses import dataclass, field
+from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
-from typing import Optional, Type
+from typing import TYPE_CHECKING, Optional, Type
 
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, Color, ColorEngine, ColorHandler, SecondaryColorModes
@@ -9,6 +9,9 @@ from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner,
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import StrEnum
 from ravelights.effects.effect_super import Effect
+
+if TYPE_CHECKING:
+    from ravelights.core.ravelights_app import RaveLightsApp
 
 T_JSON = dict[str, str | float | int | bool]
 logger = logging.getLogger(__name__)
@@ -50,6 +53,7 @@ class Settings:
     """
 
     # ─── Device Configuration ─────────────────────────────────────────────
+    root_init: InitVar["RaveLightsApp"]
     device_config: list[dict]
 
     # ─── Meta Information ─────────────────────────────────────────────────
@@ -84,6 +88,10 @@ class Settings:
     queue_length: int = 32 * 4
     global_frameskip: int = 1  # must be >= 1
 
+    # ---------------------------------- trigger --------------------------------- #
+    renew_trigger_from_manual: bool = True
+    renew_trigger_from_timeline: bool = True
+
     # ─── Pattern Settings ─────────────────────────────────────────────────
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
     triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
@@ -94,7 +102,8 @@ class Settings:
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self, root):
+        self.root = root
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
         self.generator_classes_identifiers = [c.get_identifier() for c in self.generator_classes]
@@ -152,14 +161,26 @@ class Settings:
             else:
                 logger.warning(f"key {key} does not exist in settings")
 
-    def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str):
+    def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool):
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         logger.debug(f"set_generator with {gen_type} {timeline_level} {gen_name}")
         self.selected[gen_type][timeline_level] = gen_name
+        if renew_trigger:
+            self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
 
-    def set_trigger(self, gen_type: str | Type["Generator"], timeline_level: int, **kwargs) -> None:
+    def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
+        generator = self.root.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
+        new_trigger = generator.get_new_trigger()
+        self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
+
+    def set_trigger(
+        self, gen_type: str | Type["Generator"], timeline_level: int, beatstate_pattern: Optional[BeatStatePattern] = None, **kwargs
+    ):
+        """triggers can be updated by new BeatStatePattern object or via keywords (kwargs)"""
+        if beatstate_pattern is not None:
+            kwargs.update(asdict(beatstate_pattern))
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        logger.debug(f"set_trigger with {gen_type} {timeline_level} {kwargs}")
+        logger.debug(f"set_trigger with {gen_type} {timeline_level}")
         self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
 
     def before(self):

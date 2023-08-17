@@ -89,31 +89,18 @@ class PatternScheduler:
 
     def process_selector_object(self, obj: GenSelector):
         # load each generator that is defined inside of the GenSelector Object
+        renew_trigger = self.settings.renew_trigger_from_timeline
         if obj.pattern_name:
-            self.settings.set_generator(gen_type=Pattern, timeline_level=obj.level, gen_name=obj.pattern_name)
-            if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.pattern_name, timeline_level=obj.level)
+            self.settings.set_generator(gen_type=Pattern, timeline_level=obj.level, gen_name=obj.pattern_name, renew_trigger=renew_trigger)
 
         if obj.vfilter_name:
-            self.settings.set_generator(gen_type=Vfilter, timeline_level=obj.level, gen_name=obj.vfilter_name)
-            if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.vfilter_name, timeline_level=obj.level)
+            self.settings.set_generator(gen_type=Vfilter, timeline_level=obj.level, gen_name=obj.vfilter_name, renew_trigger=renew_trigger)
 
         if obj.dimmer_name:
-            self.settings.set_generator(gen_type=Dimmer, timeline_level=obj.level, gen_name=obj.dimmer_name)
-            if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.dimmer_name, timeline_level=obj.level)
+            self.settings.set_generator(gen_type=Dimmer, timeline_level=obj.level, gen_name=obj.dimmer_name, renew_trigger=renew_trigger)
 
         if obj.thinner_name:
-            self.settings.set_generator(gen_type=Thinner, timeline_level=obj.level, gen_name=obj.thinner_name)
-            if self.settings.settings_autopilot["autoload_triggers"]:
-                self.load_generator_specific_trigger(gen_name=obj.thinner_name, timeline_level=obj.level)
-
-    def load_generator_specific_trigger(self, gen_name: str, timeline_level: int):
-        generator = self.devices[0].rendermodule.get_generator_by_name(gen_name)
-        trigger = random.choice(generator.possible_triggers)
-        kwargs = asdict(trigger)
-        self.settings.set_trigger(gen_type=generator.get_identifier(), timeline_level=timeline_level, **kwargs)
+            self.settings.set_generator(gen_type=Thinner, timeline_level=obj.level, gen_name=obj.thinner_name, renew_trigger=renew_trigger)
 
     def process_generator_placement_object(self, obj: GenPlacing):
         instruction = InstructionDevice(level=obj.level)

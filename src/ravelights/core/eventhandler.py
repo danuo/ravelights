@@ -29,17 +29,18 @@ class EventHandler:
         while self.modification_queue:
             receive_data: T_JSON = self.modification_queue.pop()
             match receive_data:
-                case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": "new trigger"}:
+                case {"action": "gen_command", "gen_type": gen_type, "timeline_level": timeline_level, "command": "renew_trigger"}:
+                    logger.info(f"gen_command with {gen_type} at level {timeline_level} and command renew_trigger")
                     device = self.patternscheduler.devices[0]
-                    if level == 0:  # level = 0 means auto
-                        level = device.rendermodule.device_automatic_timeline_level
-                    generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
-                    self.patternscheduler.load_generator_specific_trigger(gen_name=generator.name, timeline_level=level)
-                case {"action": "gen_command", "gen_type": gen_type, "level": level, "command": command}:
-                    if level == 0:
-                        level = None  # auto mode
+                    if timeline_level == 0:  # level = 0 means auto
+                        timeline_level = device.rendermodule.get_timeline_level()
+                    self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+                case {"action": "gen_command", "gen_type": gen_type, "timeline_level": timeline_level, "command": command}:
+                    logger.info(f"gen_command with {gen_type} at level {timeline_level} and command {command}")
                     for device in self.patternscheduler.devices:
-                        generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=level)
+                        if timeline_level == 0:
+                            timeline_level = device.rendermodule.get_timeline_level()
+                        generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
                         function = getattr(generator, command)
                         function()
                 case {"action": "set_sync"}:
@@ -64,7 +65,8 @@ class EventHandler:
                 case {"action": "set_trigger", **other_kwargs}:
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
-                    self.settings.set_generator(**other_kwargs)
+                    renew_trigger = self.settings.renew_trigger_from_manual
+                    self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
                     # if set_full:     load generators, load timeline
                     # if not set_full: load timeline

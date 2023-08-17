@@ -13,22 +13,19 @@ class EffectColorize(Effect):
         hue_range controls the color variation for each frame
         """
 
-        self.color_matrix = np.zeros(shape=(self.n_leds, self.n_lights), dtype=int)
+        def get_color_matrix(k):
+            color_matrix = np.zeros(shape=(self.n_leds * self.n_lights), dtype=int)
+            index = 0
+            while index < self.n:
+                index += int(abs(random.gauss(mu=50, sigma=30)))
+                dist = int(abs(random.gauss(mu=k * 20, sigma=k * 15)))
+                color_matrix[index : index + dist] = 1
+                index += dist
+            return color_matrix.reshape((self.n_leds, self.n_lights), order="F")
 
-        self.mode = random.choice(["up_down", "blocks"])
-        self.mode = "blocks"
-        match self.mode:
-            case "up_down":
-                # demo color segmentation
-                self.color_matrix[:70, :] = 1
-            case "blocks":
-                i = 0
-                sign = False
-                while i < self.n:
-                    number = random.randint(5, 50)
-                    self.color_matrix[i : i + number] = sign
-                    sign = not sign
-                    i += number
+        self.color_matrices = [get_color_matrix(k) for k in [0.1, 0.2, 1]]
+
+        self.roll = 0
 
     def run_before(self):
         ...
@@ -43,7 +40,24 @@ class EffectColorize(Effect):
         color_1, color_2, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=1)
         in_matrix_color1 = self.colorize_matrix(in_matrix_bw, color=color_1)
         in_matrix_color2 = self.colorize_matrix(in_matrix_bw, color=color_2)
-        out_matrix_rgb = np.where(self.color_matrix[..., None].repeat(3, axis=2) == 1, in_matrix_color1, in_matrix_color2)
+        self.roll += 1
+
+        # get index
+        beat_state = self.settings.beat_state
+        n_beats = beat_state.n_beats % 2
+        quarter = beat_state.string_quarters
+
+        # use index
+        if n_beats == 0:
+            index = 0
+        elif quarter in "AB":
+            index = 1
+        else:
+            index = 2
+
+        color_matrix = self.color_matrices[index]
+        color_matrix = np.roll(color_matrix, shift=self.roll, axis=0)
+        out_matrix_rgb = np.where(color_matrix[..., None].repeat(3, axis=2) == 0, in_matrix_color1, in_matrix_color2)
         return out_matrix_rgb
 
     def on_delete(self):
