@@ -132,10 +132,14 @@ class RenderModule:
         matrix = dimmer.render(matrix, color=color_prim)
         self.assert_dims(matrix)
 
-        # ─── Render Effects ───────────────────────────────────────────
+        # ─── Render Effects ───────────────────────────────────────────────
+
+        matrix_copy = matrix.copy()
         for effect_wrapper in self.root.effecthandler.effect_queue:
             matrix = effect_wrapper.render(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
         self.assert_dims(matrix)
+        if self.settings.effect_add_mode == "overlay":
+            matrix = Generator.merge_matrices(matrix_copy, matrix)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────
         self.pixelmatrix.set_matrix_float(matrix)
