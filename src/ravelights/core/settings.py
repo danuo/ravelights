@@ -26,6 +26,13 @@ class MusicStyles(StrEnum):
 
 
 def get_default_selected_dict() -> dict[str, list[str]]:
+    """
+    level 0: none
+    level 1: 1
+    level 2: 2
+    level 3: 3
+    level 4: not used
+    """
     return {
         Pattern.get_identifier(): ["p_none" for _ in range(5)],
         Pattern.get_identifier() + "_sec": ["p_none" for _ in range(5)],

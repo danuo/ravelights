@@ -37,7 +37,7 @@ class RaveLightsApp:
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=80.0)
         self.devices = create_devices(root=self)
-        self.autopilot = AutoPilot(root=self, autopilot_loop_length=16)
+        self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
         self.metahandler = MetaHandler(root=self)

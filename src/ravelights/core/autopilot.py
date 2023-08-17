@@ -23,15 +23,14 @@ class AutoPilot:
     """
 
     root: "RaveLightsApp"
-    autopilot_loop_length: InitVar[int]
 
-    def __post_init__(self, autopilot_loop_length):
+    def __post_init__(self):
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
 
         self.settings.settings_autopilot = dict(
             autopilot=False,
-            autopilot_loop_length=autopilot_loop_length,
+            autopilot_loop_length=4,
             renew_pattern=True,
             p_renew_pattern=0.1,  # use in timeline genselector
             renew_pattern_sec=True,
@@ -115,15 +114,6 @@ class AutoPilot:
             ),
             dict(
                 type="toggle_slider",
-                name_toggle="color_secondary",
-                name_slider="p_color_secondary",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
                 name_toggle="color_effect",
                 name_slider="p_color_effect",
                 range_min=0.0,
@@ -155,7 +145,7 @@ class AutoPilot:
             dict(
                 type="toggle_slider", name_toggle="triggers", name_slider="p_triggers", range_min=0.0, range_max=1.0, step=0.1, markers=True
             ),
-            dict(type="slider", name_slider="loop_length", range_min=4, range_max=32, step=4, markers=True),
+            dict(type="slider", name_slider="autopilot_loop_length", range_min=4, range_max=32, step=4, markers=True),
         ]
         return controls_autopilot
 
@@ -171,24 +161,30 @@ class AutoPilot:
         if not self.settings.settings_autopilot["autopilot"]:
             return None
 
-        is_triggerd = self.settings.beat_state == BeatStatePattern(loop_length=self.settings.settings_autopilot["autopilot_loop_length"])
-        if not is_triggerd:
+        beat_pattern = BeatStatePattern(loop_length=self.settings.settings_autopilot["autopilot_loop_length"])
+        if not beat_pattern.is_match(self.settings.beat_state):
             return None
+
+        logger.info("run randomize routine")
 
         # ─── Colors ───────────────────────────────────────────────────
 
         if self.settings.settings_autopilot["color_primary"]:
             if p(self.settings.settings_autopilot["p_color_primary"]):
                 random_color = ColorHandler.get_random_color()
+                logger.info("set new color_primary")
                 self.settings.color_engine.set_color_with_rule(color=random_color, color_level=1)
         if self.settings.settings_autopilot["color_effect"]:
             if p(self.settings.settings_autopilot["p_color_effect"]):
-                self.settings.color[2] = ColorHandler.get_random_color()
+                logger.info("set new color_effect")
+                random_color = ColorHandler.get_random_color()
+                self.settings.color_engine.set_color_with_rule(color=random_color, color_level=3)
 
         # ─── Triggers ─────────────────────────────────────────────────
 
         if self.settings.settings_autopilot["triggers"]:
-            if p(self.settings.settings_autopilot["p_triggers"]):
-                for level in range(3):
-                    for gen_type in ["WIP"]:
-                        pass
+            for gen_type in ["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"]:
+                for timeline_level in range(1, 4):  # levels 1 to 4
+                    if p(self.settings.settings_autopilot["p_triggers"]):
+                        logger.info(f"renew_trigger {gen_type} {timeline_level}")
+                        self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
