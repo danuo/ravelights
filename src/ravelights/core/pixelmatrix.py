@@ -90,3 +90,13 @@ class PixelMatrix:
                 queues[light_id].remove(ele)
         matrix = np.fmin(1, matrix)
         return matrix
+
+    def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayNx3:
+        # todo: this is duplicate. move all these functions here
+        """
+        shape: (n_leds, n_lights, 3)
+        Returns empty 3-channel color matrix in correct size and dtype float.
+        """
+
+        matrix = np.full(shape=(self.n_leds, self.n_lights, 3), fill_value=fill_value, dtype=float)
+        return matrix
