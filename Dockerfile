@@ -1,14 +1,9 @@
 FROM python:3.11
 
-WORKDIR /code
+WORKDIR /app
 
-# First step: Install dependencies only.
-# This allows docker to cache them as long as pyproject.toml remains unchanged
-COPY pyproject.toml /code/pyproject.toml
+# Install dependencies only.
+# The complete app must be mounted to /app
+COPY pyproject.toml /app/pyproject.toml
 RUN mkdir src
-RUN pip install .[serial]
-
-# Second step: Install package including dependencies
-# Pip will not reinstall them since they were installed in the previous step
-COPY . /code
-RUN pip install .[serial]
+RUN pip install -e .[serial]
