@@ -33,6 +33,7 @@ class EffectWrapper:
         self.keywords = effect_objects[0].keywords
         self.weight = effect_objects[0].weight
         self.mode = "frames"
+        self.draw_mode = "overlay"  # "overlay", "normal"
         self.active = False
         self.trigger: Optional[BeatStatePattern] = None
         self.renew_trigger()

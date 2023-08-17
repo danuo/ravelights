@@ -133,13 +133,15 @@ class RenderModule:
         self.assert_dims(matrix)
 
         # ─── Render Effects ───────────────────────────────────────────────
-
-        matrix_copy = matrix.copy()
         for effect_wrapper in self.root.effecthandler.effect_queue:
-            matrix = effect_wrapper.render(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
+            out_matrix = effect_wrapper.render(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
+            if effect_wrapper.draw_mode == "overlay":
+                matrix = Generator.merge_matrices(out_matrix, matrix)
+            elif effect_wrapper.draw_mode == "normal":
+                matrix = out_matrix
+            else:
+                assert False
         self.assert_dims(matrix)
-        if self.settings.effect_add_mode == "overlay":
-            matrix = Generator.merge_matrices(matrix_copy, matrix)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────
         self.pixelmatrix.set_matrix_float(matrix)
