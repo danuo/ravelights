@@ -115,8 +115,9 @@ class EffectHandler:
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
     def load_effect(self, effect_name: str, **kwargs):
-        print("in EffectHandler", effect_name, kwargs)
+        logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
+        effect_wrapper.draw_mode = self.settings.effect_draw_mode
         effect_wrapper.reset(**kwargs)
         self.effect_queue.append(effect_wrapper)
 
