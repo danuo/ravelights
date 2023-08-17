@@ -1,4 +1,5 @@
 import logging
+import random
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
@@ -38,7 +39,10 @@ class Generator(ABC):
         self.timehandler: "TimeHandler" = self.settings.timehandler
         self.device: "Device" = device
         self.n_devices = len(self.root.devices)
-        self.init_pixelmatrix(self.device.pixelmatrix)
+        self.pixelmatrix = self.device.pixelmatrix
+        self.n_lights: int = self.pixelmatrix.n_lights
+        self.n_leds: int = self.pixelmatrix.n_leds
+        self.n: int = self.pixelmatrix.n_leds * self.pixelmatrix.n_lights
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []
         self.weight: float = float(weight)
@@ -92,11 +96,8 @@ class Generator(ABC):
             else:
                 logger.warning(f"key {key} does not exist in settings")
 
-    def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
-        self.pixelmatrix = pixelmatrix
-        self.n_lights: int = pixelmatrix.n_lights
-        self.n_leds: int = pixelmatrix.n_leds
-        self.n: int = pixelmatrix.n_leds * pixelmatrix.n_lights
+    def get_new_trigger(self) -> BeatStatePattern:
+        return random.choice(self.possible_triggers)
 
     def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayNx3:
         """
