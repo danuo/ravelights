@@ -1,19 +1,15 @@
 from collections import namedtuple
-from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Iterable, Type, cast
+from typing import TYPE_CHECKING, cast
 
-from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines, create_from_blueprint
+from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS
-from ravelights.core.generator_super import Generator
 from ravelights.core.templateobjects import GenPlacing
-from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
 Item = namedtuple("Item", field_names="timing level")
 
-SVG_HEIGHT = 70
 TIMELINE_COLORS = {
     1: "rgb(113,231,255)",
     2: "rgb(55,30,95)",
@@ -124,6 +120,8 @@ class MetaHandler:
         self.root.settings.meta["timelines"] = dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
     def get_svg_for_timeline(self, timeline):
+        SVG_HEIGHT = 70
+
         placements = timeline["placements"]
         items = []
         for placement in placements:
