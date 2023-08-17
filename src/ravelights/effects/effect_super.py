@@ -154,7 +154,7 @@ class EffectWrapper:
         for effect in self.effects:
             effect.reset()
 
-    def render_matrix(self, in_matrix: ArrayNx3, color: Color, device_id: int):
+    def render(self, in_matrix: ArrayNx3, color: Color, device_id: int):
         if self.active:
             effect = self.effects[device_id]
             return effect.render_matrix(in_matrix=in_matrix, color=color)
