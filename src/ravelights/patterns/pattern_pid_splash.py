@@ -37,7 +37,6 @@ class PatternPidSplash(Pattern):
         ...
 
     def on_trigger(self):
-        print("trigger")
         self.counter_frames = 0
         start_pos = random.randrange(20, self.n_leds // 2)
         end_pos = self.n_leds - start_pos
