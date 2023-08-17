@@ -180,7 +180,7 @@ class Settings:
         if beatstate_pattern is not None:
             kwargs.update(asdict(beatstate_pattern))
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        logger.debug(f"set_trigger with {gen_type} {timeline_level} {kwargs}")
+        logger.debug(f"set_trigger with {gen_type} {timeline_level}")
         self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
 
     def before(self):
