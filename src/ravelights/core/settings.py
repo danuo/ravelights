@@ -177,8 +177,10 @@ class Settings:
                 logger.warning(f"key {key} does not exist in settings")
 
     def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool):
-        gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         logger.debug(f"set_generator with {gen_type} {timeline_level} {gen_name}")
+        if timeline_level == 0:
+            timeline_level = self.global_manual_timeline_level
+        gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         self.selected[gen_type][timeline_level] = gen_name
         if renew_trigger:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
