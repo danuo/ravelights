@@ -34,13 +34,15 @@ class PatternPID(Pattern):
         for pid in self.pids:
             pid.target = random.randrange(0, self.n_leds)
 
-    def render(self, color: Color) -> ArrayNx3:
-        # dynamic kd
+    def perform_pid_steps(self):
         for pid in self.pids:
+            # dynamic kd
             pid.kp = lerp(self.settings.global_energy, 0.1, 1.0)
             pid.kd = lerp(self.settings.global_energy, 0.05, 0.15)
             pid.perform_pid_step()
 
+    def render(self, color: Color) -> ArrayNx3:
+        self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono()
         for index in range(self.n_lights):
             pos = int(self.pids[index].value)
