@@ -169,7 +169,7 @@ class Settings:
         for key, value in update_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-                logger.info(f"successfully set {key} with {value} in device")
+                logger.info(f"successfully set {key} with {value}")
             else:
                 logger.warning(f"key {key} does not exist in settings")
 
