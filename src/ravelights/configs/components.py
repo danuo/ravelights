@@ -177,6 +177,17 @@ blueprint_effects: list[BlueprintEffect] = [
 blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list[BlueprintSel]]] = [
     {
         "meta": {
+            "name": "all 1 level",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_sinwave_square")),
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
+        ],
+    },
+    {
+        "meta": {
             "name": "4beat 2level",
         },
         "selectors": [
