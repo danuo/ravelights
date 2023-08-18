@@ -108,7 +108,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterNone, dict(name="v_none", weight=0)),
     BlueprintGen(ThinnerNone, dict(name="t_none", weight=0)),
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
-    BlueprintGen(PatternDebugGradient, dict(name="p_debug_graident", weight=0)),
+    BlueprintGen(PatternDebugGradient, dict(name="p_debug_gradient", weight=0)),
     BlueprintGen(PatternDebugBPMSync, dict(name="p_debug_bpm_sync", weight=0)),
     BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
     BlueprintGen(PatternDebugLinearBlock, dict(name="p_debug_linear_block", weight=0)),
