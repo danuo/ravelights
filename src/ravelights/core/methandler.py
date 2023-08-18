@@ -99,7 +99,6 @@ class MetaHandler:
 
     def get_controls_global_sliders(self):
         controls_global_sliders = [
-            dict(type="slider", var_name="bpm_base", range_min=40, range_max=200, step=1, markers=False),
             dict(type="slider", var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
             dict(type="slider", var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
             dict(type="slider", var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
@@ -117,7 +116,7 @@ class MetaHandler:
             names.append(timeline["meta"].get("name", "unnamed"))
             descriptions.append(timeline["meta"].get("description", "no description"))
             svgs.append(self.get_svg_for_timeline(timeline))
-        self.root.settings.meta["timelines"] = dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
+        return dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
     def get_svg_for_timeline(self, timeline):
         SVG_HEIGHT = 70

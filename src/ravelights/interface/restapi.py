@@ -179,7 +179,7 @@ class EffectAPIResource(Resource):
 
     @marshal_with(resource_fields_effect)
     def get(self):
-        return self.effecthandler.effect_queue, 200
+        return self.effecthandler.effect_queues, 200
 
     def put(self):
         receive_data: T_JSON = request.get_json()

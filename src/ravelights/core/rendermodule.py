@@ -134,7 +134,7 @@ class RenderModule:
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
-        for effect_wrapper in self.root.effecthandler.effect_queue:
+        for effect_wrapper in self.root.effecthandler.effective_effect_queue:
             out_matrix = effect_wrapper.render(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
             if effect_wrapper.draw_mode == "overlay":
                 matrix = Generator.merge_matrices(matrix, out_matrix)

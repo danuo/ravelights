@@ -31,7 +31,7 @@ class EffectHandler:
     settings: "Settings" = field(init=False)
     timehandler: "TimeHandler" = field(init=False)
     instruction_queue: InstructionQueue = field(init=False)
-    effect_queue: list[EffectWrapper] = field(default_factory=list)
+    effect_queues: list[list[EffectWrapper]] = field(default_factory=lambda: [[] for _ in range(4)])
 
     def __post_init__(self):
         self.settings = self.root.settings
@@ -68,13 +68,20 @@ class EffectHandler:
     def run_before(self):
         self.load_and_apply_instructions()
 
-        for effect_wrapper in self.effect_queue:
-            # ---------------------------------- remove ---------------------------------- #
-            if effect_wrapper.is_finished():
-                effect_wrapper.on_delete()
-                self.effect_queue.remove(effect_wrapper)
-                continue
+        # ---------------------------------- remove ---------------------------------- #
+        for effect_queue in self.effect_queues:
+            for effect_wrapper in effect_queue:
+                if effect_wrapper.is_finished():
+                    effect_wrapper.on_delete()
+                    effect_queue.remove(effect_wrapper)
 
+        # ─── Assemble Queues ──────────────────────────────────────────
+        timeline_levels = {device.rendermodule.get_timeline_level() for device in self.devices}
+        self.effective_effect_queue = [*self.effect_queues[0]]
+        for timeline_level in timeline_levels:
+            self.effective_effect_queue += self.effect_queues[timeline_level]
+
+        for effect_wrapper in self.effective_effect_queue:
             # ---------------------------------- trigger --------------------------------- #
             if effect_wrapper.trigger:
                 if effect_wrapper.trigger.is_match(self.settings.beat_state):
@@ -95,11 +102,12 @@ class EffectHandler:
             effect_wrapper.run_before()
 
     def run_after(self):
-        for effect_wrapper in self.effect_queue:
+        for effect_wrapper in self.effective_effect_queue:
             effect_wrapper.run_after()
 
     def clear_qeueues(self):
-        self.effect_queue.clear()
+        for queue in self.effect_queues:
+            queue.clear()
         self.instruction_queue.clear()
 
     def load_and_apply_instructions(self):  # before
@@ -114,49 +122,43 @@ class EffectHandler:
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
-    def load_effect(self, effect_name: str, **kwargs):
+    def load_effect(self, effect_name: str, timeline_level: int, **kwargs):
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         effect_wrapper.draw_mode = self.settings.effect_draw_mode
         effect_wrapper.reset(**kwargs)
-        self.effect_queue.append(effect_wrapper)
+        print(self.effect_queues)
+        self.effect_queues[timeline_level].append(effect_wrapper)
+        print(self.effect_queues)
 
-    def effect_change_draw(self, effect: str | EffectWrapper):
+    def effect_change_draw(self, effect: str | EffectWrapper, timeline_level: int):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
-        if effect in self.effect_queue:
+        if effect in self.effect_queues[timeline_level]:
             effect.change_draw()
 
-    def effect_renew_trigger(self, effect: str | EffectWrapper):
+    def effect_renew_trigger(self, effect: str | EffectWrapper, timeline_level: int):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
-        if effect in self.effect_queue:
+        if effect in self.effect_queues[timeline_level]:
             effect.renew_trigger()
 
-    def effect_alternate(self, effect: str | EffectWrapper):
+    def effect_alternate(self, effect: str | EffectWrapper, timeline_level: int):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
-        if effect in self.effect_queue:
+        if effect in self.effect_queues[timeline_level]:
             effect.alternate()
 
-    def effect_remove(self, effect: str | EffectWrapper):
+    def effect_remove(self, effect: str | EffectWrapper, timeline_level: int):
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
-        if effect in self.effect_queue:
+        if effect in self.effect_queues[timeline_level]:
             effect.on_delete()
-            self.effect_queue.remove(effect)
+            self.effect_queues[timeline_level].remove(effect)
 
     def find_effect(self, name: str) -> EffectWrapper:
         return self.effect_wrappers_dict[name]
-
-    def _perform_counting_per_frame(self):
-        """
-        execute this once per frame after rendering
-        """
-        pass
-        # for effect_wrapper in self.effect_queue:
-        #     effect_wrapper._perform_counting_after()

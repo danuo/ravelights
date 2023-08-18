@@ -65,8 +65,6 @@ class Settings:
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
-    controls: dict = field(default_factory=dict)  # holds meta data to create controls in ui dynamically
-    meta: dict = field(default_factory=dict)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
@@ -91,9 +89,8 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    load_thinner_with_pat: bool = False
-    load_dimmer_with_pat: bool = False
-    load_triggers_with_gen: bool = False
+    load_thinner_with_pat: bool = True
+    load_dimmer_with_pat: bool = True
     music_style: str = MusicStyles.TECHNO.value
 
     # ─── Time Settings ────────────────────────────────────────────────────
@@ -172,13 +169,20 @@ class Settings:
         for key, value in update_dict.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-                logger.info(f"successfully set {key} with {value} in device")
+                logger.info(f"successfully set {key} with {value}")
             else:
                 logger.warning(f"key {key} does not exist in settings")
 
     def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool):
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        logger.debug(f"set_generator with {gen_type} {timeline_level} {gen_name}")
+        if timeline_level == 0:
+            timeline_level = self.global_manual_timeline_level
+            if gen_type == "vfilter" and self.global_vfilter:
+                timeline_level = 0
+            elif gen_type == "thinner" and self.global_thinner:
+                timeline_level = 0
+            elif gen_type == "dimmer" and self.global_dimmer:
+                timeline_level = 0
         self.selected[gen_type][timeline_level] = gen_name
         if renew_trigger:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)

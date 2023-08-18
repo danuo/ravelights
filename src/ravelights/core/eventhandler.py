@@ -63,8 +63,10 @@ class EventHandler:
                     assert isinstance(device_id, int)
                     self.devices[device_id].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
+                    logger.info(f"set_trigger with {other_kwargs}")
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
+                    logger.info(f"set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
@@ -86,21 +88,22 @@ class EventHandler:
                 case {"action": "set_effect", **other_kwargs}:
                     logger.info(f"set_effect: {other_kwargs}")
                     self.effecthandler.load_effect(**other_kwargs)
-                case {"action": "modify_effect", "operation": operation, "effect_name": effect_name}:
+                case {"action": "modify_effect", "operation": operation, "effect_name": effect_name, "timeline_level": timeline_level}:
                     assert isinstance(effect_name, str)
+                    assert isinstance(timeline_level, int)
                     match operation:
                         case "change_draw":
                             logger.info(f"modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_change_draw(effect=effect_name)
+                            self.effecthandler.effect_change_draw(effect=effect_name, timeline_level=timeline_level)
                         case "renew_trigger":
                             logger.info(f"modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_renew_trigger(effect=effect_name)
+                            self.effecthandler.effect_renew_trigger(effect=effect_name, timeline_level=timeline_level)
                         case "alternate":
                             logger.info(f"modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_alternate(effect=effect_name)
+                            self.effecthandler.effect_alternate(effect=effect_name, timeline_level=timeline_level)
                         case "remove":
                             logger.info(f"modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_remove(effect=effect_name)
+                            self.effecthandler.effect_remove(effect=effect_name, timeline_level=timeline_level)
                 case other:
                     logger.warning(other)
                     logger.warning("API instruction not understood")
