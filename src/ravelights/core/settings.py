@@ -89,9 +89,8 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    load_thinner_with_pat: bool = False
-    load_dimmer_with_pat: bool = False
-    load_triggers_with_gen: bool = False
+    load_thinner_with_pat: bool = True
+    load_dimmer_with_pat: bool = True
     music_style: str = MusicStyles.TECHNO.value
 
     # ─── Time Settings ────────────────────────────────────────────────────
@@ -175,10 +174,15 @@ class Settings:
                 logger.warning(f"key {key} does not exist in settings")
 
     def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool):
-        logger.debug(f"set_generator with {gen_type} {timeline_level} {gen_name}")
+        gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if timeline_level == 0:
             timeline_level = self.global_manual_timeline_level
-        gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
+            if gen_type == "vfilter" and self.global_vfilter:
+                timeline_level = 0
+            elif gen_type == "thinner" and self.global_thinner:
+                timeline_level = 0
+            elif gen_type == "dimmer" and self.global_dimmer:
+                timeline_level = 0
         self.selected[gen_type][timeline_level] = gen_name
         if renew_trigger:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
