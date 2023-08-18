@@ -4,7 +4,7 @@ import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx1, ArrayNx3
+from ravelights.core.custom_typing import ArrayNx3
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
@@ -15,7 +15,7 @@ class PatternPID(Pattern):
 
     def init(self):
         self.width = 20
-        self.pid = PIDController(kp=0.5, kd=0.1, dt=self.settings.frame_time)
+        self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.settings.frame_time) for _ in range(self.n_lights)]
 
     @property
     def possible_triggers(self) -> list[BeatStatePattern]:
@@ -31,18 +31,22 @@ class PatternPID(Pattern):
         ...
 
     def on_trigger(self):
-        self.pid.target = random.randrange(0, self.n_leds)
+        for pid in self.pids:
+            pid.target = random.randrange(0, self.n_leds)
 
     def render(self, color: Color) -> ArrayNx3:
         # dynamic kd
-        self.pid.kp = lerp(self.settings.global_energy, 0.1, 1.0)
-        self.pid.kd = lerp(self.settings.global_energy, 0.05, 0.15)
-        self.pid.perform_pid_step()
-        pos = int(self.pid.value)
-        start = np.clip(pos - self.width // 2, 0, self.n_leds - 1)
-        end = np.clip(pos + self.width // 2, 0, self.n_leds - 1)
+        for pid in self.pids:
+            pid.kp = lerp(self.settings.global_energy, 0.1, 1.0)
+            pid.kd = lerp(self.settings.global_energy, 0.05, 0.15)
+            pid.perform_pid_step()
 
         matrix = self.get_float_matrix_2d_mono()
-        matrix[start:end, :] = 1
+        for index in range(self.n_lights):
+            pos = int(self.pids[index].value)
+            start = np.clip(pos - self.width // 2, 0, self.n_leds - 1)
+            end = np.clip(pos + self.width // 2, 0, self.n_leds - 1)
+
+            matrix[start:end, index] = 1
         matrix_rgb = self.colorize_matrix(matrix, color=color)
         return matrix_rgb
