@@ -3,7 +3,7 @@ services:
   ravelights-backend:
     container_name: ravelights-backend
     build: .
-    restart: unless-stopped
+    restart: on-failure
     volumes:
       - .:/app
     network_mode: "host"
