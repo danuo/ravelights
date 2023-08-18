@@ -18,11 +18,9 @@ class PatternMeteor(Pattern):
 
     def load_version(self):
         if self.version == 0:
-            # very fast meteor (1/2 beat) - reset after 1/2, 1, 2 or 4
             self.travel_time = 0.5
             self.width = 30
             self.decay_factor = 0.6
-            # self.possible_triggers = ["0", "a0", "a0, b0", "a0, c0"]
             self.possible_triggers = [
                 BeatStatePattern(beats=[0], loop_length=1),
                 BeatStatePattern(beats=[0], loop_length=4),
@@ -31,36 +29,35 @@ class PatternMeteor(Pattern):
             ]
             self.possible_lengths = [0, 1, 2, 3, 4]  # idea
         if self.version == 1:
-            # fast meteor (1 beat) - reset after 1, 2 or 4
             self.travel_time = 1
             self.width = 20
             self.decay_factor = 0.8
-            # self.possible_triggers = ["0", "a0", "a0, b0", "a0, c0"]
             self.possible_triggers = [
                 BeatStatePattern(beats=[0], loop_length=1),
+                BeatStatePattern(beats=[0], loop_length=2),
+                BeatStatePattern(beats=[0], loop_length=2, p=0.4),
                 BeatStatePattern(beats=[0], loop_length=4),
                 BeatStatePattern(beats=[0, 1], loop_length=4),
-                BeatStatePattern(beats=[0, 2], loop_length=4),
+                BeatStatePattern(beats=[0, 1], loop_length=8),
             ]
         if self.version == 2:
-            # slow meteor (2 beats) - reset after 2 or 4
             self.travel_time = 2
             self.width = 15
             self.decay_factor = 0.9
-            # self.possible_triggers = ["a0", "a0, c0"]
             self.possible_triggers = [
+                BeatStatePattern(beats=[0], loop_length=2),
+                BeatStatePattern(beats=[0], loop_length=2, p=0.5),
                 BeatStatePattern(beats=[0], loop_length=4),
-                BeatStatePattern(beats=[0, 2], loop_length=4),
+                BeatStatePattern(beats=[0], loop_length=8),
             ]
         if self.version == 3:
-            # very slow meteor (3 beats) - reset after 4
             self.travel_time = 3
             self.width = 10
             self.decay_factor = 0.99
-            # self.possible_triggers = ["a0", "a0, c0"]
             self.possible_triggers = [
                 BeatStatePattern(beats=[0], loop_length=4),
-                BeatStatePattern(beats=[0, 2], loop_length=4),
+                BeatStatePattern(beats=[0], loop_length=4, p=0.5),
+                BeatStatePattern(beats=[0], loop_length=4, p=0.3),
             ]
 
     def alternate(self, modes: list[int] = [0, 1, 2, 3, 4]):
@@ -102,7 +99,6 @@ class PatternMeteor(Pattern):
         # this pattern has to be reset for new meteor
         self.n_beats = -1
         if p(0.2):
-            self.alternate(modes=[1])  # reset light selection
             self.alternate()
 
     def render(self, color: Color):
