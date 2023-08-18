@@ -63,8 +63,10 @@ class EventHandler:
                     assert isinstance(device_id, int)
                     self.devices[device_id].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
+                    logger.info(f"set_trigger with {other_kwargs}")
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
+                    logger.info(f"set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
