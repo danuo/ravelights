@@ -76,13 +76,6 @@ if not args.webui:
     webserver_port = 5000
     logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
 
-# -------------------------- construct transmitters -------------------------- #
-# idea:
-# keep transmitters simple
-# construct them here, with datarouter config
-# inside of app, they are wrapped into datawrapper object
-
-
 data_routers_configs = []
 if args.artnet_wifi:
     transmitter = ArtnetUdpTransmitter(ip_address=args.artnet_address)
@@ -107,6 +100,5 @@ if args.profiling:
     profiler = Profiler(app=app)
     profiler.run()
     profiler.plot()
-    profiler.write_data()
 else:
     app.run()
