@@ -226,8 +226,8 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], p=0.1)),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
+            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True)),
         ],
     },
 ]
