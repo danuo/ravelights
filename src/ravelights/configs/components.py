@@ -52,6 +52,7 @@ from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
 from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
+from ravelights.vfilters.vfilter_flipped_color_fuse import VfilterFlippedColorFuse
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
@@ -139,6 +140,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
     BlueprintGen(VfilterRgbShift, dict(name="v_rgb_shift")),
+    BlueprintGen(VfilterFlippedColorFuse, dict(name="v_flipped_color_fuse")),
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
     BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
@@ -180,7 +182,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "all 1 level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_sinwave_square")),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
