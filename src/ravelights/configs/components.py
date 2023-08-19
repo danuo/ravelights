@@ -39,8 +39,8 @@ from ravelights.patterns.pattern_pid_inverse import PatternPIDInverse
 from ravelights.patterns.pattern_pid_splash import PatternPidSplash
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
+from ravelights.patterns.pattern_shadow import PatternShadow
 from ravelights.patterns.pattern_shadow_big import PatternShadowBig
-from ravelights.patterns.pattern_shadow_small import PatternShadowStatic
 from ravelights.patterns.pattern_sin_overlay import PatternSinOverlay
 from ravelights.patterns.pattern_sinwave import PatternSinwave
 from ravelights.patterns.pattern_sinwave_squares import PatternSinwaveSquares
@@ -132,7 +132,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternPIDInverse, dict(name="p_pid_inverse", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternPidSplash, dict(name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternHorStripes, dict(name="p_hor_stripes", keywords=[K.SHORT, K.LONG])),
-    BlueprintGen(PatternShadowStatic, dict(name="p_shadow_small", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternShadow, dict(name="p_shadow", keywords=[K.SHORT, K.LONG])),
     # BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),  # todo
     BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
     BlueprintGen(PatternMovingStrobeSlow, dict(name="p_moving_strobe_slow", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
@@ -184,7 +184,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "all 1 level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow")),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
@@ -197,7 +197,6 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
         "selectors": [
             BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_sinwave_square")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_hor_stripes")),
-            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],

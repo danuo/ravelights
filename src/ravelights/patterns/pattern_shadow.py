@@ -11,7 +11,7 @@ from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
 
 
-class PatternShadowStatic(Pattern):
+class PatternShadow(Pattern):
     """pattern name: p_shadow"""
 
     def init(self):
