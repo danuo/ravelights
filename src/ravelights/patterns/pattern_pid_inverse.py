@@ -10,11 +10,11 @@ from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
 
 
-class PatternPID(Pattern):
+class PatternPIDInverse(Pattern):
     """pattern name: p_pid"""
 
     def init(self):
-        self.width = 20
+        self.widths = [random.randrange(int(self.n_leds * 0.4), int(self.n_leds * 0.9)) for _ in range(self.n_lights)]
         self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.settings.frame_time) for _ in range(self.n_lights)]
 
     @property
@@ -43,12 +43,13 @@ class PatternPID(Pattern):
 
     def render(self, color: Color) -> ArrayNx3:
         self.perform_pid_steps()
-        matrix = self.get_float_matrix_2d_mono()
+        matrix = self.get_float_matrix_2d_mono(fill_value=1)
         for index in range(self.n_lights):
+            width = self.widths[index]
             pos = int(self.pids[index].value)
-            start = np.clip(pos - self.width // 2, 0, self.n_leds - 1)
-            end = np.clip(pos + self.width // 2, 0, self.n_leds)
+            start = np.clip(pos - width // 2, 0, self.n_leds - 1)
+            end = np.clip(pos + width // 2, 0, self.n_leds)
 
-            matrix[start:end, index] = 1
+            matrix[start:end, index] = 0
         matrix_rgb = self.colorize_matrix(matrix, color=color)
         return matrix_rgb

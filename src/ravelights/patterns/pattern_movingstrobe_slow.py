@@ -7,7 +7,7 @@ from ravelights.core.utils import p
 from ravelights.lights.lights_super import FallingSmallBlock, OneThing
 
 
-class PatternMovingStrobe(Pattern):
+class PatternMovingStrobeSlow(Pattern):
     """pattern name: p_moving_strobe"""
 
     def init(self):

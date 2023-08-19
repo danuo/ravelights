@@ -32,14 +32,15 @@ from ravelights.patterns.pattern_hor_stripes import PatternHorStripes
 from ravelights.patterns.pattern_inverse_square import PatternInerseSquare
 from ravelights.patterns.pattern_meteor import PatternMeteor
 from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
-from ravelights.patterns.pattern_movingstrobe import PatternMovingStrobe
-from ravelights.patterns.pattern_movingstrobev2 import PatternMovingStrobeV2
+from ravelights.patterns.pattern_movingstrobe_fast import PatternMovingStrobeFast
+from ravelights.patterns.pattern_movingstrobe_slow import PatternMovingStrobeSlow
 from ravelights.patterns.pattern_pid import PatternPID
+from ravelights.patterns.pattern_pid_inverse import PatternPIDInverse
 from ravelights.patterns.pattern_pid_splash import PatternPidSplash
 from ravelights.patterns.pattern_rain import PatternRain
 from ravelights.patterns.pattern_random_stripes import PatternRandomStripes
+from ravelights.patterns.pattern_shadow import PatternShadow
 from ravelights.patterns.pattern_shadow_big import PatternShadowBig
-from ravelights.patterns.pattern_shadow_small import PatternShadowSmall
 from ravelights.patterns.pattern_sin_overlay import PatternSinOverlay
 from ravelights.patterns.pattern_sinwave import PatternSinwave
 from ravelights.patterns.pattern_sinwave_squares import PatternSinwaveSquares
@@ -52,6 +53,7 @@ from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
 from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
+from ravelights.vfilters.vfilter_flipped_color_fuse import VfilterFlippedColorFuse
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
@@ -108,7 +110,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterNone, dict(name="v_none", weight=0)),
     BlueprintGen(ThinnerNone, dict(name="t_none", weight=0)),
     BlueprintGen(DimmerNone, dict(name="d_none", weight=0)),
-    BlueprintGen(PatternDebugGradient, dict(name="p_debug_graident", weight=0)),
+    BlueprintGen(PatternDebugGradient, dict(name="p_debug_gradient", weight=0)),
     BlueprintGen(PatternDebugBPMSync, dict(name="p_debug_bpm_sync", weight=0)),
     BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
     BlueprintGen(PatternDebugLinearBlock, dict(name="p_debug_linear_block", weight=0)),
@@ -117,8 +119,8 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
     BlueprintGen(PatternMeteor, dict(version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2)),
     BlueprintGen(PatternMeteor, dict(version=1, name="p_meteor_fast10", keywords=[K.LONG, K.CHORUS], weight=0.2)),
-    BlueprintGen(PatternMeteor, dict(version=2, name="p_meteor_slow30", keywords=[K.LONG, K.CHORUS], weight=0.2)),
-    BlueprintGen(PatternMeteor, dict(version=3, name="p_meteor_slow40", keywords=[K.LONG, K.CHORUS], weight=0.2)),
+    BlueprintGen(PatternMeteor, dict(version=2, name="p_meteor_fast20", keywords=[K.LONG, K.CHORUS], weight=0.2)),
+    BlueprintGen(PatternMeteor, dict(version=3, name="p_meteor_slow30", keywords=[K.LONG, K.CHORUS], weight=0.2)),
     BlueprintGen(PatternMovingBlocks, dict(name="p_moving_blocks", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternSwiper, dict(name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS])),
     BlueprintGen(PatternSinwave, dict(name="s_sinwave", keywords=[K.SHORT, K.LONG, K.CHORUS])),
@@ -127,18 +129,20 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternRain, dict(name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternInerseSquare, dict(name="p_inverse_square", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS])),
     BlueprintGen(PatternPID, dict(name="p_pid", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternPIDInverse, dict(name="p_pid_inverse", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternPidSplash, dict(name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternHorStripes, dict(name="p_hor_stripes", keywords=[K.SHORT, K.LONG])),
-    BlueprintGen(PatternShadowSmall, dict(name="p_shadow_small", keywords=[K.SHORT, K.LONG])),
-    BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),
+    BlueprintGen(PatternShadow, dict(name="p_shadow", keywords=[K.SHORT, K.LONG])),
+    # BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),  # todo
     BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
-    BlueprintGen(PatternMovingStrobe, dict(name="p_moving_strobe", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
-    BlueprintGen(PatternMovingStrobeV2, dict(name="p_moving_strobe_v2", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
+    BlueprintGen(PatternMovingStrobeSlow, dict(name="p_moving_strobe_slow", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
+    BlueprintGen(PatternMovingStrobeFast, dict(name="p_moving_strobe_fast", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(PatternStrobeSpawner, dict(name="p_strobe_spawner", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(VfilterFlipVer, dict(name="v_flip_ver")),
     BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
     BlueprintGen(VfilterBW, dict(name="v_bw")),
     BlueprintGen(VfilterRgbShift, dict(name="v_rgb_shift")),
+    BlueprintGen(VfilterFlippedColorFuse, dict(name="v_flipped_color_fuse")),
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
     BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
@@ -177,12 +181,22 @@ blueprint_effects: list[BlueprintEffect] = [
 blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list[BlueprintSel]]] = [
     {
         "meta": {
+            "name": "all 1 level",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow")),
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
+        ],
+    },
+    {
+        "meta": {
             "name": "4beat 2level",
         },
         "selectors": [
             BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_sinwave_square")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_hor_stripes")),
-            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow_small")),
             # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
             # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
         ],
@@ -213,8 +227,8 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], p=0.1)),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
+            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True)),
         ],
     },
 ]

@@ -89,8 +89,6 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    load_thinner_with_pat: bool = True
-    load_dimmer_with_pat: bool = True
     music_style: str = MusicStyles.TECHNO.value
 
     # ─── Time Settings ────────────────────────────────────────────────────
@@ -100,8 +98,10 @@ class Settings:
     queue_length: int = 32 * 4
     global_frameskip: int = 1  # must be >= 1
 
-    # ---------------------------------- trigger --------------------------------- #
+    # ─── Autoloading ──────────────────────────────────────────────────────
     renew_trigger_from_manual: bool = True
+    renew_thinner_from_manual: bool = True
+    renew_dimmer_from_manual: bool = True
     renew_trigger_from_timeline: bool = True
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
@@ -204,7 +204,7 @@ class Settings:
 
     def before(self):
         self.timehandler.before()
-        self.color_engine._run_pid_step()
+        self.color_engine.before()
 
     def after(self):
         self.timehandler.after()

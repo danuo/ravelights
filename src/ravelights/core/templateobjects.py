@@ -99,13 +99,13 @@ class GenSelector:
         # * not related to pattern, add vfilter purely random
 
         # ─── Dimmer ───────────────────────────────────────────────────
-        if p(pattern.p_add_dimmer):
+        if p(pattern.p_add_dimmer) and self.settings.renew_dimmer_from_manual:
             self.dimmer_name = self.get_random_generator(gen_type=Dimmer)
         else:
             self.dimmer_name = "d_none"
 
         # ─── Thinner ──────────────────────────────────────────────────
-        if p(pattern.p_add_thinner):
+        if p(pattern.p_add_thinner) and self.settings.renew_thinner_from_manual:
             self.thinner_name = self.get_random_generator(gen_type=Thinner)
         else:
             self.thinner_name = "t_none"
