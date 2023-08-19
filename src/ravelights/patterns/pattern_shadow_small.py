@@ -11,7 +11,7 @@ from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
 
 
-class PatternShadowSmall(Pattern):
+class PatternShadowStatic(Pattern):
     """pattern name: p_shadow"""
 
     def init(self):
@@ -21,18 +21,21 @@ class PatternShadowSmall(Pattern):
         self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.settings.frame_time) for _ in range(self.n_lights)]
         for pid in self.pids:
             pid.load_parameter_preset("slow")
-
         self.width = 2
         self.pos = 0
         self.vel = 1
         self.dist_light = 0.7
         self.dist_gutter = 0.3
         self.dist_screen = 1.5
-
         self.grid_n = 30
         self.gutter = np.linspace(0, self.n_leds - 1, self.grid_n)
-
         self.max_dist = 50
+
+        # ─── New ──────────────────────────────────────────────────────
+
+        self.poss = [0] * self.n_lights
+        self.speeds = [0] * self.n_lights
+        self.bounds = 50
 
     @property
     def possible_triggers(self) -> list[BeatStatePattern]:
@@ -50,6 +53,7 @@ class PatternShadowSmall(Pattern):
     def on_trigger(self):
         for pid in self.pids:
             pid.target = random.randrange(0, self.n_leds)
+        self.speeds = [random.uniform(-10, 10) for _ in range(self.n_lights)]
 
     def perform_pid_steps(self):
         for pid in self.pids:
@@ -93,7 +97,16 @@ class PatternShadowSmall(Pattern):
         self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono()
         for index in range(self.n_lights):
-            pos = int(self.pids[index].value)
+            speed = self.speeds[index]
+            speed = self.pids[index].value * 0.1
+            self.poss[index] += speed
+            if self.poss[index] < -self.bounds:
+                self.poss[index] = self.poss[index] + self.n_leds + 2 * self.bounds
+            if self.poss[index] > self.n_leds + self.bounds:
+                self.poss[index] = self.poss[index] - self.n_leds - 2 * self.bounds
+
+            pos = int(round(self.poss[index]))
+            # pos = int(self.pids[index].value)
             matrix[:, index] = self.render_shadow(pos)
 
         matrix = np.fmin(1.0, matrix)
