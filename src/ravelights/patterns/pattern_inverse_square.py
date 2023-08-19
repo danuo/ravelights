@@ -8,8 +8,8 @@ from ravelights.core.generator_super import Pattern
 
 class PatternInerseSquare(Pattern):
     def init(self):
-        self.p_add_thinner = 0.0
-        self.p_add_dimmer = 0.0
+        self.p_add_thinner = 0.1
+        self.p_add_dimmer = 0.1
         self.pos = 0
         self.bounds = 50
         self.square_baselength = 20
