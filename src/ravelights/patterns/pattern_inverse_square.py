@@ -1,4 +1,5 @@
 import math
+import random
 
 import numpy as np
 
@@ -20,7 +21,7 @@ class PatternInerseSquare(Pattern):
         self.influence = 20
 
     def alternate(self):
-        ...
+        self.mode = random.choice([0, 1])
 
     def reset(self):
         ...
@@ -32,15 +33,9 @@ class PatternInerseSquare(Pattern):
     def speed(self):
         return 3 * 2 * self.settings.global_energy
 
-    def render(self, color: Color):
-        self.pos += self.speed
-        if self.pos < -self.bounds:
-            self.pos = self.pos + self.n_leds + 2 * self.bounds
-        if self.pos > self.n_leds + self.bounds:
-            self.pos = self.pos - self.n_leds - 2 * self.bounds
-        pos = int(round(self.pos))
-
-        matrix = self.get_float_matrix_2d_mono()
+    def render_thing(self, pos: float):
+        pos = int(round(pos))
+        matrix = np.zeros((self.n_leds,))
         for anker_pos in self.anker_positions:
             diff = pos - anker_pos
             dist = min(abs(diff), self.influence) / self.influence
@@ -56,6 +51,25 @@ class PatternInerseSquare(Pattern):
             a = max(0, a)
             if b < 0:
                 continue
-            matrix[a:b, :] = intensity
+            matrix[a:b] = intensity
+        return matrix
+
+    def render(self, color: Color):
+        self.pos += self.speed
+        if self.pos < -self.bounds:
+            self.pos = self.pos + self.n_leds + 2 * self.bounds
+        if self.pos > self.n_leds + self.bounds:
+            self.pos = self.pos - self.n_leds - 2 * self.bounds
+
+        matrix = self.get_float_matrix_2d_mono()
+        for index in range(self.n_lights):
+            if self.mode == 0:
+                pos = self.pos
+            elif self.mode == 1:
+                if index % 2 == 0:
+                    pos = self.pos
+                else:
+                    pos = self.n_leds - self.pos
+            matrix[:, index] = self.render_thing(pos)
 
         return self.colorize_matrix(matrix, color=color)
