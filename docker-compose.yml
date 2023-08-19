@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/app
     network_mode: "host"
-    command: python3 main.py --artnet-serial --no-visualizer --artnet-serial-baudrate 3000000
+    command: python3 main.py --artnet-wifi --no-visualizer
     #command: python3 main.py --artnet-wifi --artnet-address 192.168.188.21 --no-visualizer
     devices:
       - "/dev/ttyAMA0:/dev/ttyAMA0"

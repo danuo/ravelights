@@ -56,8 +56,6 @@ class Profiler:
 
             names = list(self.data.keys())
             data = list(self.data.values())
-            print(names)
-            print(data)
 
             combined = list(zip(data, names))
             combined.sort(key=lambda x: x[0], reverse=True)

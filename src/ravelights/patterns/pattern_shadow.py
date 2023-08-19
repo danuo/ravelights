@@ -37,6 +37,7 @@ class PatternShadow(Pattern):
         self.poss = [0] * self.n_lights
         self.speeds = [0] * self.n_lights
         self.bounds = 50
+        self.on_trigger()
 
     def alternate(self):
         self.mode = random.choice([0, 1])
