@@ -5,7 +5,7 @@ import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx1, ArrayNx3
+from ravelights.core.custom_typing import ArrayNx3
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
@@ -33,19 +33,14 @@ class PatternShadowStatic(Pattern):
 
         # ─── New ──────────────────────────────────────────────────────
 
+        self.possible_triggers = [BeatStatePattern(loop_length=4)]
         self.poss = [0] * self.n_lights
         self.speeds = [0] * self.n_lights
         self.bounds = 50
 
-    @property
-    def possible_triggers(self) -> list[BeatStatePattern]:
-        if self.settings.global_energy >= 0.5:
-            return [BeatStatePattern(loop_length=4)]
-        else:
-            return [BeatStatePattern(loop_length=4)]
-
     def alternate(self):
-        ...
+        self.mode = random.choice([0, 1])
+        self.speeds = [random.uniform(-10, 10) for _ in range(self.n_lights)]
 
     def reset(self):
         ...
@@ -53,7 +48,6 @@ class PatternShadowStatic(Pattern):
     def on_trigger(self):
         for pid in self.pids:
             pid.target = random.randrange(0, self.n_leds)
-        self.speeds = [random.uniform(-10, 10) for _ in range(self.n_lights)]
 
     def perform_pid_steps(self):
         for pid in self.pids:
@@ -88,7 +82,7 @@ class PatternShadowStatic(Pattern):
 
             pax_int = int(round(projection_A))
             pbx_int = int(round(projection_B))
-            # green:
+
             if pbx_int > 0:
                 matrix[pax_int : pbx_int + 1] += 1 / (dist * 0.1)
         return matrix
@@ -97,8 +91,11 @@ class PatternShadowStatic(Pattern):
         self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono()
         for index in range(self.n_lights):
-            speed = self.speeds[index]
-            speed = self.pids[index].value * 0.1
+            if self.mode == 0:
+                speed = self.speeds[index]
+            elif self.mode == 1:
+                speed = self.pids[index].value * 0.1
+
             self.poss[index] += speed
             if self.poss[index] < -self.bounds:
                 self.poss[index] = self.poss[index] + self.n_leds + 2 * self.bounds
@@ -106,7 +103,6 @@ class PatternShadowStatic(Pattern):
                 self.poss[index] = self.poss[index] - self.n_leds - 2 * self.bounds
 
             pos = int(round(self.poss[index]))
-            # pos = int(self.pids[index].value)
             matrix[:, index] = self.render_shadow(pos)
 
         matrix = np.fmin(1.0, matrix)
