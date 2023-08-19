@@ -17,8 +17,8 @@ class Horbar:
 
 class PatternHorStripes(Pattern):
     def init(self):
-        self.p_add_thinner = 0.0
-        self.p_add_dimmer = 0.0
+        self.p_add_thinner = 0.5
+        self.p_add_dimmer = 0.5
 
     def alternate(self):
         ...
