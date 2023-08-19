@@ -204,7 +204,7 @@ class Settings:
 
     def before(self):
         self.timehandler.before()
-        self.color_engine._run_pid_step()
+        self.color_engine.before()
 
     def after(self):
         self.timehandler.after()

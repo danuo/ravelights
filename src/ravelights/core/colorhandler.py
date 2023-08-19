@@ -56,6 +56,10 @@ class ColorEngine:
         default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
         self.color_pids: list[ColorPID] = [ColorPID(init_color_rgb=c) for c in default_colors]
 
+    def before(self):
+        self._run_pid_step()
+        self.color_overwrite = [None] * 3
+
     def _run_pid_step(self):
         # apply color transition speed to pid controller if it has changed
         if self._internal_color_transition_speed != self.settings.color_transition_speed:
