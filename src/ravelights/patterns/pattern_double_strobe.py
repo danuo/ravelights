@@ -33,7 +33,7 @@ class PatternDoubleStrobe(Pattern):
         self.counter = -1
 
     def on_trigger(self):
-        ...
+        self.counter = -1
 
     def render(self, color: Color):
         self.counter += 1
