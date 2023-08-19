@@ -47,7 +47,7 @@ class PatternPID(Pattern):
         for index in range(self.n_lights):
             pos = int(self.pids[index].value)
             start = np.clip(pos - self.width // 2, 0, self.n_leds - 1)
-            end = np.clip(pos + self.width // 2, 0, self.n_leds - 1)
+            end = np.clip(pos + self.width // 2, 0, self.n_leds)
 
             matrix[start:end, index] = 1
         matrix_rgb = self.colorize_matrix(matrix, color=color)
