@@ -131,7 +131,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternPidSplash, dict(name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternHorStripes, dict(name="p_hor_stripes", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternShadowSmall, dict(name="p_shadow_small", keywords=[K.SHORT, K.LONG])),
-    BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),
+    # BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),  # todo
     BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
     BlueprintGen(PatternMovingStrobeSlow, dict(name="p_moving_strobe_slow", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(PatternMovingStrobeFast, dict(name="p_moving_strobe_fast", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
