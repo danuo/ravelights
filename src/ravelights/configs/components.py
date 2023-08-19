@@ -32,8 +32,8 @@ from ravelights.patterns.pattern_hor_stripes import PatternHorStripes
 from ravelights.patterns.pattern_inverse_square import PatternInerseSquare
 from ravelights.patterns.pattern_meteor import PatternMeteor
 from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
-from ravelights.patterns.pattern_movingstrobe import PatternMovingStrobe
-from ravelights.patterns.pattern_movingstrobev2 import PatternMovingStrobeV2
+from ravelights.patterns.pattern_movingstrobe_fast import PatternMovingStrobeFast
+from ravelights.patterns.pattern_movingstrobe_slow import PatternMovingStrobeSlow
 from ravelights.patterns.pattern_pid import PatternPID
 from ravelights.patterns.pattern_pid_splash import PatternPidSplash
 from ravelights.patterns.pattern_rain import PatternRain
@@ -133,8 +133,8 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternShadowSmall, dict(name="p_shadow_small", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternShadowBig, dict(name="p_shadow_big", keywords=[K.SHORT, K.LONG])),
     BlueprintGen(PatternDoubleStrobe, dict(name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE])),
-    BlueprintGen(PatternMovingStrobe, dict(name="p_moving_strobe", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
-    BlueprintGen(PatternMovingStrobeV2, dict(name="p_moving_strobe_v2", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
+    BlueprintGen(PatternMovingStrobeSlow, dict(name="p_moving_strobe_slow", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
+    BlueprintGen(PatternMovingStrobeFast, dict(name="p_moving_strobe_fast", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(PatternStrobeSpawner, dict(name="p_strobe_spawner", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE])),
     BlueprintGen(VfilterFlipVer, dict(name="v_flip_ver")),
     BlueprintGen(VfilterMirrorVer, dict(name="v_mirror_ver")),
