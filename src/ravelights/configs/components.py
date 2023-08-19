@@ -184,7 +184,7 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "all 1 level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_shadow")),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
@@ -195,14 +195,13 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "4beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_sinwave_square")),
-            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, name="p_hor_stripes")),
-            # BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.STROBE], trigger="0")),
-            # Blueprint(GenSelector, dict(gen_type=Pattern, level=3, element="p_strobe", length=3)),  # todo: implement
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
-            # BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)], keywords=[K.SHORT], apply_on_all=True)),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)])),
         ],
     },
     {
@@ -210,13 +209,13 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "8beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1, keywords=[K.LONG])),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2, keywords=[K.SHORT])),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
         ],
     },
     {
@@ -224,6 +223,13 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             "name": "8beat 3level",
         },
         "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=3)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=2, p=0.2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=3, p=0.2)),
+
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
