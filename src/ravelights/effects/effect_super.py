@@ -94,7 +94,7 @@ class EffectWrapper:
             frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
             return frames_pattern_binary
 
-        def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int):
+        def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int, limit_loopquarters: int):
             """
             Turns quarters_pattern into a binary array. Each value represents a quarter
             loop_length_beats: loop length in beats
@@ -112,7 +112,7 @@ class EffectWrapper:
                 assert letter in "ABCD"
                 letter_num = ord(letter) - 65  # A->0, B->1 etc.
                 index = num * 4 + letter_num
-                if index < loop_length_quarters:
+                if index < limit_loopquarters:
                     quarters_pattern_binary[index] = True
             return quarters_pattern_binary
 
@@ -146,7 +146,7 @@ class EffectWrapper:
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
             self.quarters_pattern_binary = get_quarters_pattern_binary(
-                quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats
+                quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats, limit_loopquarters=limit_loopquarters
             )
             self.limit_loopquarters = limit_quarters  # in quarters
             self.loop_length_beats = loop_length_beats  # in beats
@@ -214,7 +214,7 @@ class EffectWrapper:
             if self.settings.beat_state.is_quarter:
                 self.counter_quarters += 1
                 counter_beats = self.counter_quarters // 4
-                if counter_beats > 0 and counter_beats // self.loop_length_beats == 0:
+                if counter_beats > 0 and counter_beats % self.loop_length_beats == 0:
                     self.counter_quarters_loop += 1
                     self.counter_quarters = 0
                     self.counter_frames = 0
