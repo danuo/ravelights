@@ -2,8 +2,11 @@ from enum import auto
 from typing import NamedTuple, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
-from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
-from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
+from ravelights.core.generator_super import (Dimmer, DimmerNone, Generator,
+                                             Pattern, PatternNone, Thinner,
+                                             ThinnerNone, Vfilter, VfilterNone)
+from ravelights.core.templateobjects import (EffectSelectorPlacing, GenPlacing,
+                                             GenSelector)
 from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
 from ravelights.dimmers.dimmer_decay_medium import DimmerDecayMedium
@@ -15,25 +18,32 @@ from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
 from ravelights.dimmers.dimmer_sine import DimmerSine
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
-from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
-from ravelights.effects.effect_color_strobe_rainbow_pixel import EffectColorStrobeRainbowPixel
+from ravelights.effects.effect_color_strobe_rainbow import \
+    EffectColorStrobeRainbow
+from ravelights.effects.effect_color_strobe_rainbow_pixel import \
+    EffectColorStrobeRainbowPixel
 from ravelights.effects.effect_color_swap import EffectColorSwap
 from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_frameskip import EffectFrameskip
 from ravelights.effects.effect_super import Effect
+from ravelights.effects.effect_tint import EffectTint
 from ravelights.patterns.pattern_debug_bpm_sync import PatternDebugBPMSync
 from ravelights.patterns.pattern_debug_gradient import PatternDebugGradient
-from ravelights.patterns.pattern_debug_linear_block import PatternDebugLinearBlock
-from ravelights.patterns.pattern_debug_solid_color import PatternDebugSolidColor
+from ravelights.patterns.pattern_debug_linear_block import \
+    PatternDebugLinearBlock
+from ravelights.patterns.pattern_debug_solid_color import \
+    PatternDebugSolidColor
 from ravelights.patterns.pattern_double_strobe import PatternDoubleStrobe
 from ravelights.patterns.pattern_gradient import PatternGradient
 from ravelights.patterns.pattern_hor_stripes import PatternHorStripes
 from ravelights.patterns.pattern_inverse_square import PatternInerseSquare
 from ravelights.patterns.pattern_meteor import PatternMeteor
 from ravelights.patterns.pattern_moving_blocks import PatternMovingBlocks
-from ravelights.patterns.pattern_movingstrobe_fast import PatternMovingStrobeFast
-from ravelights.patterns.pattern_movingstrobe_slow import PatternMovingStrobeSlow
+from ravelights.patterns.pattern_movingstrobe_fast import \
+    PatternMovingStrobeFast
+from ravelights.patterns.pattern_movingstrobe_slow import \
+    PatternMovingStrobeSlow
 from ravelights.patterns.pattern_pid import PatternPID
 from ravelights.patterns.pattern_pid_inverse import PatternPIDInverse
 from ravelights.patterns.pattern_pid_splash import PatternPidSplash
@@ -53,7 +63,8 @@ from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
 from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
 from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
-from ravelights.vfilters.vfilter_flipped_color_fuse import VfilterFlippedColorFuse
+from ravelights.vfilters.vfilter_flipped_color_fuse import \
+    VfilterFlippedColorFuse
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
@@ -175,6 +186,7 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorize, dict(name="e_colorize")),
     BlueprintEffect(EffectFlicker, dict(name="e_flicker")),
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
+    BlueprintEffect(EffectTint, dict(name="e_tint")),
 ]
 
 # todo: effects need length, patterns do not
@@ -202,6 +214,20 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
             BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)])),
+        ],
+    },
+    {
+        "meta": {
+            "name": "2beat 2level fast",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[2*4*x for x in range(128//8)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[2*4*x + 4 for x in range(128//8)])),
         ],
     },
     {
@@ -235,6 +261,25 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
             BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
             BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True)),
+        ],
+    },
+    {
+        "meta": {
+            "name": "8beat 3level fast switching",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=3)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=2, p=0.2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=3, p=0.2)),
+
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[8*x for x in range(128//8)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[8*x + 2 for x in range(128//8)], trigger_on_change=True)),
+            BlueprintPlace(GenPlacing, dict(level=3, timings=[8*x + 4 for x in range(128//8)], trigger_on_change=True)),
         ],
     },
 ]

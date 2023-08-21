@@ -3,7 +3,7 @@ from ravelights.core.custom_typing import Array
 from ravelights.effects.effect_super import Effect
 
 
-class EffectColorSwap(Effect):
+class EffectTint(Effect):
     def reset(self):
         ...
 
@@ -12,8 +12,8 @@ class EffectColorSwap(Effect):
 
     def run_before(self):
         curent_colors = self.settings.color_engine.get_colors_rgb(timeline_level=0)
-        self.settings.color_engine.color_overwrite[0] = curent_colors[1]
-        self.settings.color_engine.color_overwrite[1] = curent_colors[0]
+        self.settings.color_engine.color_overwrite[0] = curent_colors[2]
+        self.settings.color_engine.color_overwrite[1] = curent_colors[2]
 
     def run_after(self):
         for i in range(2):
