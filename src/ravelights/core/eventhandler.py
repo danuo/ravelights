@@ -75,11 +75,6 @@ class EventHandler:
                     print(index, set_full)
                     # todo: implement set_full
                     self.patternscheduler.load_timeline_from_index(int(index))
-                case {"action": "generator_alternate"}:
-                    print("todo: implement")
-                    # todo: implement
-                    pass
-                    # self.patternscheduler.alternate_timeline(**receive_data)
                 case {"action": "generator_beat"}:
                     pass
                 case {"action": "clear_effect_queue"}:
