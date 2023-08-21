@@ -206,6 +206,20 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
     },
     {
         "meta": {
+            "name": "2beat 2level fast",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[2*4*x for x in range(128//8)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[2*4*x + 4 for x in range(128//8)])),
+        ],
+    },
+    {
+        "meta": {
             "name": "8beat 2level",
         },
         "selectors": [
@@ -235,6 +249,25 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
             BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
             BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True)),
+        ],
+    },
+    {
+        "meta": {
+            "name": "8beat 3level fast switching",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
+            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=3)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=2, p=0.2)),
+            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=3, p=0.2)),
+
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[8*x for x in range(128//8)])),
+            BlueprintPlace(GenPlacing, dict(level=2, timings=[8*x + 2 for x in range(128//8)], trigger_on_change=True)),
+            BlueprintPlace(GenPlacing, dict(level=3, timings=[8*x + 4 for x in range(128//8)], trigger_on_change=True)),
         ],
     },
 ]
