@@ -80,8 +80,8 @@ class Settings:
     # ─── Effect Settings ──────────────────────────────────────────────────
 
     global_effects_enabled: bool = True
-    global_effect_draw_mode: str = "overlay"  # "overlay" or replace
-    effect_draw_mode: str = "overlay"  # "overlay" or replace
+    global_effect_draw_mode: str = "normal"  # "overlay" or "normal"
+    effect_draw_mode: str = "normal"  # "overlay" or "normal"
 
     # ─── Generator Settings ────────────────────────────────────────────────
 
