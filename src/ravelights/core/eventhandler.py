@@ -75,8 +75,6 @@ class EventHandler:
                     print(index, set_full)
                     # todo: implement set_full
                     self.patternscheduler.load_timeline_from_index(int(index))
-                case {"action": "generator_beat"}:
-                    pass
                 case {"action": "clear_effect_queue"}:
                     self.effecthandler.clear_qeueues()
                     logger.info("cleared all effect queues")
