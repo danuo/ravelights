@@ -253,7 +253,7 @@ class EffectWrapper:
             if self.limit_frames != "inf" and self.counter_frames >= self.limit_frames:
                 return True
         elif self.mode == "loopquarters":
-            if self.counter_quarters_loop >= self.limit_loopquarters_loop:
+            if self.limit_loopquarters_loop != "inf" and self.counter_quarters_loop >= self.limit_loopquarters_loop:
                 return True
         return False
 
