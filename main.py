@@ -12,17 +12,40 @@ logging.basicConfig(level=logging.DEBUG)
 device_config = [dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144), dict(n_lights=1, n_leds=44)]
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
-transmitter_config: list[list[dict]] = [
-    [],  # output 0
-    [],  # output 1
-    [],  # output 2
+
+transmitter_config_laser: list[list[dict]] = [
     [
-        dict(device=0, light=0),
-        dict(device=0, light=1),
-        dict(device=0, light=2, flip=True),
+        dict(device=2, light=0, flip=False),
+    ],
+    [],
+    [],
+    [],
+]
+
+transmitter_config_box: list[list[dict]] = [
+    [
+        dict(device=1, light=0, flip=False),
+    ],  # output 0
+    [
+        dict(device=1, light=1, flip=False),
+        dict(device=1, light=2, flip=False),
+        dict(device=1, light=3, flip=False),
+        dict(device=1, light=4, flip=False),
+    ],  # output 1
+    [
+        dict(device=1, light=5, flip=False),
+        dict(device=1, light=6, flip=False),
+        dict(device=1, light=7, flip=False),
+        dict(device=1, light=8, flip=False),
+        dict(device=1, light=9, flip=False),
+    ],  # output 2
+    [
+        dict(device=0, light=2),
         dict(device=0, light=3, flip=True),
         dict(device=0, light=4),
-        dict(device=0, light=5),
+        dict(device=0, light=1, flip=True),
+        dict(device=0, light=0),
+        dict(device=0, light=5, flip=True),
     ],  # output 3
 ]
 
@@ -73,8 +96,17 @@ if not args.webui:
 
 data_routers_configs = []
 if args.artnet_wifi:
-    transmitter = ArtnetUdpTransmitter(ip_address=args.artnet_address)
-    data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config))
+    ip_laser = "192.168.188.30"
+    ip_box = "192.168.188.23"
+
+    data_routers_configs.append(
+        dict(transmitter=ArtnetUdpTransmitter(ip_address=ip_laser), transmitter_config=transmitter_config_laser)
+    )
+    data_routers_configs.append(
+        dict(transmitter=ArtnetUdpTransmitter(ip_address=ip_box), transmitter_config=transmitter_config_box)
+    )
+
+
 if args.artnet_serial:
     # import here because of serial dependency
     from ravelights.interface.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter
@@ -82,7 +114,7 @@ if args.artnet_serial:
     transmitter = ArtnetSerialTransmitter(
         serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
     )
-    data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config))
+    data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config_serial))
 
 app = RaveLightsApp(
     fps=args.fps,
