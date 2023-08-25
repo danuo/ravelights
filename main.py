@@ -9,26 +9,21 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # for devices in ravelights app
-device_config = [dict(n_lights=5, n_leds=144), dict(n_lights=10, n_leds=144)]
+device_config = [dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144), dict(n_lights=1, n_leds=44)]
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
 transmitter_config: list[list[dict]] = [
-    [  # output 0
+    [],  # output 0
+    [],  # output 1
+    [],  # output 2
+    [
         dict(device=0, light=0),
         dict(device=0, light=1),
         dict(device=0, light=2, flip=True),
         dict(device=0, light=3, flip=True),
-        dict(device=0, light=4, flip=True),
-    ],
-    [  # output 1
-        dict(device=1, light=0),
-        dict(device=1, light=1),
-        dict(device=1, light=2),
-        dict(device=1, light=3),
-        dict(device=1, light=4),
-    ],
-    [],  # output 2
-    [],  # output 3
+        dict(device=0, light=4),
+        dict(device=0, light=5),
+    ],  # output 3
 ]
 
 
@@ -84,7 +79,9 @@ if args.artnet_serial:
     # import here because of serial dependency
     from ravelights.interface.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter
 
-    transmitter = ArtnetSerialTransmitter(serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate)
+    transmitter = ArtnetSerialTransmitter(
+        serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
+    )
     data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config))
 
 app = RaveLightsApp(
