@@ -30,6 +30,14 @@ class VfilterEdgedetect(Vfilter):
         # bw
         bw_matrix_mono = self.bw_matrix(in_matrix)
 
+        # get color
+        # todo: cleanup
+        rgb_sum = np.sum(in_matrix, axis=-1).reshape((-1))
+        max_id = np.argmax(rgb_sum)
+        if rgb_sum[max_id] > 0:
+            color = in_matrix.reshape(-1, 3, order="F")[max_id]
+            color = color / np.max(color)
+
         # find edge
         roll = np.roll(bw_matrix_mono, shift=1, axis=0)
         roll[0] = 0  # does this work?
