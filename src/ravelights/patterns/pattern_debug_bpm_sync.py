@@ -10,10 +10,10 @@ class PatternDebugBPMSync(Pattern):
         self.p_add_thinner = 0.0
         self.width1 = 5
         self.weidth2 = 5
-        self.mode = 1
+        self.devices = [0]
 
     def alternate(self):
-        self.mode = random.choice([1, 2])
+        self.devices = random.choices(range(self.n_devices), k=random.randint(1, self.n_devices))
 
     def reset(self):
         ...
@@ -22,7 +22,8 @@ class PatternDebugBPMSync(Pattern):
         ...
 
     def render(self, color: Color):
-        matrix = self.get_float_matrix_rgb()
+        # matrix = self.get_float_matrix_rgb()
+        matrix = self.get_float_matrix_2d_mono()
 
         # draw beat_progress
 
@@ -33,16 +34,12 @@ class PatternDebugBPMSync(Pattern):
         b = pos + self.width1
         a = max(0, a)
         b = min(b, self.n_leds)
-        if self.mode == 1:
-            matrix[a:b, :, 0] = 1.0
-        else:
-            matrix[a:b, 0, 0] = 1.0
+        matrix[a:b, :] = 1.0
+
+        matrix_rgb = self.colorize_matrix(matrix, color=color)
 
         if self.settings.beat_state.is_beat:
             mid = self.n_leds // 2
-            if self.mode == 1:
-                matrix[mid - self.weidth2 : mid + self.weidth2, :, 1:] = 1.0
-            else:
-                matrix[mid - self.weidth2 : mid + self.weidth2, 0, 1:] = 1.0
+            matrix_rgb[mid - self.weidth2 : mid + self.weidth2, :] = 1.0
 
-        return matrix
+        return matrix_rgb
