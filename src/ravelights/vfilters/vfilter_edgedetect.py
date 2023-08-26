@@ -28,6 +28,7 @@ class VfilterEdgedetect(Vfilter):
 
     def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
         # bw
+        color = np.asanyarray(color)
         bw_matrix_mono = self.bw_matrix(in_matrix)
 
         # get color
@@ -37,6 +38,7 @@ class VfilterEdgedetect(Vfilter):
         if rgb_sum[max_id] > 0:
             color = in_matrix.reshape(-1, 3, order="F")[max_id]
             color = color / np.max(color)
+            color = np.fmin(1, color)
 
         # find edge
         roll = np.roll(bw_matrix_mono, shift=1, axis=0)

@@ -34,8 +34,8 @@ transmitter_config_box: list[list[dict]] = [
     ],  # output 1
     [
         dict(device=1, light=5, flip=False),
-        dict(device=1, light=6, flip=False),
-        dict(device=1, light=7, flip=False),
+        dict(device=1, light=6, flip=True),
+        dict(device=1, light=7, flip=True),
         dict(device=1, light=8, flip=False),
         dict(device=1, light=9, flip=False),
     ],  # output 2
