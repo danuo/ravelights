@@ -2,7 +2,7 @@ import logging
 from typing import TYPE_CHECKING, Optional, Type
 
 from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.custom_typing import ArrayNx1, ArrayNx3
+from ravelights.core.custom_typing import ArrayNx3
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.settings import Settings
@@ -35,9 +35,7 @@ class RenderModule:
             level = self.device_automatic_timeline_level
         return self.settings.triggers[identifier][level]
 
-    def get_selected_generator(
-        self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None
-    ) -> Generator:
+    def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
@@ -73,9 +71,7 @@ class RenderModule:
 
         # ------------------------------ get generators ------------------------------ #
         pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
-        pattern_sec: Pattern = self.get_selected_generator(
-            gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec
-        )
+        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
         vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level_vfilter)
         thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level_thinner)
         dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level_dimmer)
@@ -108,15 +104,13 @@ class RenderModule:
             dimmer.on_trigger()
 
         # ---------------------------------- colors ---------------------------------- #
-        # color is a tuple of 3 colors
-        # primary color: for every Generator, except secondary Pattern
-        # secondary color: for secondary Pattern
-        # effect color: for every Effect
-        #
-        color_prim, color_sec, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
+        # color is a tuple of 2 colors
+        # primary color: dominant color in pattern
+        # secondary color: optional supplementary color
+        colors = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
-        matrix = pattern.render(color=color_prim)
+        matrix = pattern.render(colors=colors)
         self.assert_dims(matrix)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
@@ -124,25 +118,25 @@ class RenderModule:
         self.assert_dims(matrix)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
-        matrix_sec = pattern_sec.render(color=color_sec)
+        matrix_sec = pattern_sec.render(colors=colors[::-1])  # todo
         matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
-        matrix = vfilter.render(matrix, color=color_prim)
+        matrix = vfilter.render(matrix, colors=colors)
         self.assert_dims(matrix)
 
         # ─── RENDER THINNER ──────────────────────────────────────────────
-        matrix = thinner.render(matrix, color=color_prim)
+        matrix = thinner.render(matrix, colors=colors)
         self.assert_dims(matrix)
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
-        matrix = dimmer.render(matrix, color=color_prim)
+        matrix = dimmer.render(matrix, colors=colors)
         self.assert_dims(matrix)
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
         for effect_wrapper in self.root.effecthandler.effective_effect_queue:
-            out_matrix = effect_wrapper.render(in_matrix=matrix, color=color_effect, device_id=self.device.device_id)
+            out_matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_id=self.device.device_id)
             if effect_wrapper.draw_mode == "overlay":
                 matrix = Generator.merge_matrices(matrix, out_matrix)
             elif effect_wrapper.draw_mode == "normal":

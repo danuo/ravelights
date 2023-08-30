@@ -47,7 +47,7 @@ class PatternPidSplash(Pattern):
         self.pid.target = end_pos
         self.pid._previous_error = (error) * 1.5
 
-    def render(self, color: Color) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayNx3:
         if self.counter_frames == 0:
             intensity = 0.2
         elif self.counter_frames == 1:
@@ -69,5 +69,5 @@ class PatternPidSplash(Pattern):
 
         matrix = self.get_float_matrix_2d_mono()
         matrix[start:end, :] = intensity
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

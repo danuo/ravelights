@@ -30,5 +30,5 @@ class PatternGradient(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         return self.matrix

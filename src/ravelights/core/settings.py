@@ -4,7 +4,7 @@ from enum import auto
 from typing import TYPE_CHECKING, Optional, Type
 
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, Color, ColorEngine, ColorHandler, SecondaryColorModes
+from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import StrEnum
@@ -52,6 +52,33 @@ def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     }
 
 
+def get_default_color_mappings() -> dict[str, dict[str, str]]:
+    """
+    level 1,2,3
+    primary, secondary
+    select colors from A, B, C
+    """
+
+    return {
+        "1": {
+            "prim": "A",
+            "sec": "B",
+        },
+        "2": {
+            "prim": "B",
+            "sec": "A",
+        },
+        "3": {
+            "prim": "C",
+            "sec": "A",
+        },
+    }
+
+
+def get_default_color_sec_modes() -> dict[str, str]:
+    return {"B": SecondaryColorModes.COMPLEMENTARY.value, "C": SecondaryColorModes.COMPLEMENTARY66.value}
+
+
 @dataclass
 class Settings:
     """
@@ -68,10 +95,9 @@ class Settings:
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
-    color_sec_active: bool = True  # to apply secondary color mode
-    color_sec_mode: str = SecondaryColorModes.COMPLEMENTARY.value
+    color_sec_mode: dict = field(default_factory=get_default_color_sec_modes)
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
-    color_names: list[str] = field(default_factory=lambda: ["primary", "secondary", "effect"])
+    color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
@@ -190,9 +216,7 @@ class Settings:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
 
     def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
-        generator = self.root.devices[0].rendermodule.get_selected_generator(
-            gen_type=gen_type, timeline_level=timeline_level
-        )
+        generator = self.root.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
         new_trigger = generator.get_new_trigger()
         self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
 

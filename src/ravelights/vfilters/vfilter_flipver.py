@@ -18,7 +18,7 @@ class VfilterFlipVer(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: Array, color: Color) -> Array:
+    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
         if in_matrix.ndim == 1:
             matrix: ArrayNx1 = np.flip(in_matrix, axis=0)
         elif in_matrix.ndim == 2:

@@ -21,7 +21,7 @@ class PatternDebugBPMSync(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         # matrix = self.get_float_matrix_rgb()
         matrix = self.get_float_matrix_2d_mono()
 
@@ -36,7 +36,7 @@ class PatternDebugBPMSync(Pattern):
         b = min(b, self.n_leds)
         matrix[a:b, :] = 1.0
 
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
 
         if self.settings.beat_state.is_beat:
             mid = self.n_leds // 2

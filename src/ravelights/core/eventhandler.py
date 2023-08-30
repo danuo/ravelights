@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from ravelights.core.custom_typing import T_JSON
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
-from ravelights.core.settings import Settings
+from ravelights.core.settings import Settings, get_default_color_mappings
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -48,6 +48,8 @@ class EventHandler:
                 case {"action": "adjust_sync", "value": value}:
                     assert isinstance(value, float)
                     self.settings.timehandler.time_sync += value
+                case {"action": "reset_color_mappings"}:
+                    self.settings.color_mapping = get_default_color_mappings()
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
                     logger.info(f"set_settings color_transition_speed {speed_str}")
                     assert isinstance(speed_str, str)

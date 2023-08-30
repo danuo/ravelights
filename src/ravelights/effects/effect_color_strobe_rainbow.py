@@ -21,7 +21,7 @@ class EffectColorStrobeRainbow(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: Array, color: Color) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
         """Called each render cycle"""
         bw_matrix_mono = Generator.bw_matrix(in_matrix)
 
@@ -31,7 +31,7 @@ class EffectColorStrobeRainbow(Effect):
             matrix_view = bw_matrix_mono[:, light_id]
             random_hue = random.random()
             random_color = ColorHandler.get_color_from_hue(random_hue)
-            colored_matrix = self.bw_filter.colorize_matrix(matrix_mono=matrix_view, color=random_color)
+            colored_matrix = self.colorize_matrix(matrix_mono=matrix_view, color=random_color)
             matrix_out[:, light_id, :] = colored_matrix
 
         return matrix_out

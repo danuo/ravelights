@@ -2,17 +2,7 @@ from enum import auto
 from typing import NamedTuple, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
-from ravelights.core.generator_super import (
-    Dimmer,
-    DimmerNone,
-    Generator,
-    Pattern,
-    PatternNone,
-    Thinner,
-    ThinnerNone,
-    Vfilter,
-    VfilterNone,
-)
+from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
@@ -22,8 +12,8 @@ from ravelights.dimmers.dimmer_decay_very_fast import DimmerDecayVeryFast
 from ravelights.dimmers.dimmer_decay_very_slow import DimmerDecayVerySlow
 from ravelights.dimmers.dimmer_peak import DimmerPeak
 from ravelights.dimmers.dimmer_random_remove import DimmerRandomRemove
-from ravelights.dimmers.dimmer_sine import DimmerSine
 from ravelights.dimmers.dimmer_sideswipe import DimmerSideswipe
+from ravelights.dimmers.dimmer_sine import DimmerSine
 from ravelights.effects.effect_color_shift import EffectColorShift
 from ravelights.effects.effect_color_strobe import EffectColorStrobe
 from ravelights.effects.effect_color_strobe_rainbow import EffectColorStrobeRainbow
@@ -33,7 +23,6 @@ from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_frameskip import EffectFrameskip
 from ravelights.effects.effect_super import Effect
-from ravelights.effects.effect_tint import EffectTint
 from ravelights.patterns.pattern_debug_bpm_sync import PatternDebugBPMSync
 from ravelights.patterns.pattern_debug_gradient import PatternDebugGradient
 from ravelights.patterns.pattern_debug_linear_block import PatternDebugLinearBlock
@@ -190,7 +179,6 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectColorize, dict(name="e_colorize")),
     BlueprintEffect(EffectFlicker, dict(name="e_flicker")),
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
-    BlueprintEffect(EffectTint, dict(name="e_tint")),
 ]
 
 # todo: effects need length, patterns do not

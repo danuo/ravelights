@@ -41,7 +41,7 @@ class PatternShadowBig(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayNx3:
         self.pos = self.pos + self.vel
         if self.pos > self.n_leds + self.max_dist:
             self.pos = -self.max_dist
@@ -82,6 +82,6 @@ class PatternShadowBig(Pattern):
 
         matrix = np.fmin(1.0, matrix)
         return matrix
-        # matrix_rgb = self.colorize_matrix(matrix, color=color)
+        # matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         # matrix[start:end, :] = 1
         # return matrix_rgb

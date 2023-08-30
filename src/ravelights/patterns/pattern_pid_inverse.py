@@ -41,7 +41,7 @@ class PatternPIDInverse(Pattern):
             pid.kd = lerp(self.settings.global_energy, 0.05, 0.15)
             pid.perform_pid_step()
 
-    def render(self, color: Color) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayNx3:
         self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono(fill_value=1)
         for index in range(self.n_lights):
@@ -51,5 +51,5 @@ class PatternPIDInverse(Pattern):
             end = np.clip(pos + width // 2, 0, self.n_leds)
 
             matrix[start:end, index] = 0
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

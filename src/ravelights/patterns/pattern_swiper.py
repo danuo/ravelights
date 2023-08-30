@@ -45,8 +45,8 @@ class PatternSwiper(Pattern):
             ele = cls(self.root, self.device, flip=flip)
             self.add_element(light_id, ele)
 
-    def render(self, color: Color):
-        matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, color=color)
-        matrix = self.dimmer.render(matrix, color=color)
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+    def render(self, colors: list[Color]):
+        matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, colors=colors)
+        matrix = self.dimmer.render(matrix, colors=colors)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

@@ -34,7 +34,7 @@ class EffectColorStrobeRainbowPixel(Effect):
         color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3), order="F")
         return color_matrix
 
-    def render_matrix(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render_matrix(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         """Called each render cycle"""
         self.color_matrix = np.roll(self.color_matrix, shift=1, axis=0)
 

@@ -31,7 +31,7 @@ class VfilterRgbShift(Vfilter):
         self.shift = self.init_shift
         random.shuffle(self.order)
 
-    def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         if self.settings.beat_state.is_beat:
             self.on_trigger()
         if self.shift > self.limit:

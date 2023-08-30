@@ -18,7 +18,7 @@ class VfilterRollOverlay(Vfilter):
     def on_trigger(self):
         self.roll_amount = 0
 
-    def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         self.roll_amount += self.roll_speed
         out_matrix = in_matrix.copy()
         out_matrix += np.roll(in_matrix, shift=self.roll_amount, axis=0)

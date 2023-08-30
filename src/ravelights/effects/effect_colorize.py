@@ -33,13 +33,12 @@ class EffectColorize(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: Array, color: Color) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
         # bw filter
         in_matrix_bw = np.max(in_matrix, axis=-1)
 
-        color_1, color_2, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=1)
-        in_matrix_color1 = self.colorize_matrix(in_matrix_bw, color=color_1)
-        in_matrix_color2 = self.colorize_matrix(in_matrix_bw, color=color_2)
+        in_matrix_color1 = self.colorize_matrix(in_matrix_bw, color=colors[0])
+        in_matrix_color2 = self.colorize_matrix(in_matrix_bw, color=colors[1])
         self.roll += 1
 
         # get index

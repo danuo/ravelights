@@ -19,7 +19,7 @@ class VfilterMirrorVer(Vfilter):
         ...
 
     @staticmethod
-    def render(in_matrix: Array, color: Color) -> Array:
+    def render(in_matrix: Array, colors: list[Color]) -> Array:
         if in_matrix.ndim == 1:  # shape is (n_leds)
             n = in_matrix.shape[0] // 2
             matrix: ArrayNx1 = in_matrix

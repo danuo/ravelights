@@ -33,6 +33,6 @@ class ThinnerRandom(Thinner):
         random = np.random.random(size=shape)
         self.mask = np.where(random < self.settings.global_thinning_ratio, 1, 0)
 
-    def render(self, in_matrix: Array, color: Color):
+    def render(self, in_matrix: Array, colors: list[Color]):
         matrix = self.apply_mask(in_matrix=in_matrix, mask=self.mask.reshape(self.n_leds, -1))
         return matrix

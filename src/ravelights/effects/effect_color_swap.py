@@ -11,13 +11,13 @@ class EffectColorSwap(Effect):
         ...
 
     def run_before(self):
-        curent_colors = self.settings.color_engine.get_colors_rgb(timeline_level=0)
-        self.settings.color_engine.color_overwrite[0] = curent_colors[1]
-        self.settings.color_engine.color_overwrite[1] = curent_colors[0]
+        color_keys = self.settings.color_engine.get_color_keys(timeline_level=1)
+        curent_colors = self.settings.color_engine.get_colors_rgb(timeline_level=1)
+        self.settings.color_engine.color_overwrite[color_keys[0]] = curent_colors[1]
+        self.settings.color_engine.color_overwrite[color_keys[1]] = curent_colors[0]
 
     def run_after(self):
-        for i in range(2):
-            self.settings.color_engine.color_overwrite[i] = None
+        self.settings.color_engine.reset_color_overwrite()
 
-    def render_matrix(self, in_matrix: Array, color: Color) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
         return in_matrix

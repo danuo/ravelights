@@ -26,9 +26,9 @@ class VfilterEdgedetect(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         # bw
-        color = np.asanyarray(color)
+        color = np.asanyarray(colors[0])
         bw_matrix_mono = self.bw_matrix(in_matrix)
 
         # get color

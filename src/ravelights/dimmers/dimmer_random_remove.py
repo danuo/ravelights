@@ -33,7 +33,7 @@ class DimmerRandomRemove(Dimmer):
                 self.mask[i] = False
         self.counter_frames += 1
 
-    def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         self.step()  # todo: set this to seperate trigger
         matrix = self.apply_mask(in_matrix=self.intensity * in_matrix, mask=self.mask.reshape(self.n_leds, -1))
         return matrix

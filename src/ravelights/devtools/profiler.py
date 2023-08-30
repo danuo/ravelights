@@ -29,14 +29,14 @@ class Profiler:
 
     def profile_generator(self, generator: Generator):
         logger.info(generator.name)
-        color = self.app.settings.color_engine.get_colors_rgb(0)[0]
+        colors = self.app.settings.color_engine.get_colors_rgb(1)
         matrix = self.app.devices[0].pixelmatrix.get_float_matrix_rgb()
         if isinstance(generator, Pattern):
-            args = (color,)
+            args = (colors,)
         elif isinstance(generator, EffectWrapper):
-            args = (matrix, color, 0)
+            args = (matrix, colors, 0)
         else:
-            args = (matrix, color)
+            args = (matrix, colors)
         t0 = time.time_ns()
         for i in range(self.samples):
             if i % 200 == 0:  # alternate every 200 frames

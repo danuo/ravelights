@@ -23,7 +23,7 @@ class VfilterSomeFirst(Vfilter):
         else:
             self.light_ids = [0]
 
-    def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         assert in_matrix.shape == (self.n_leds, self.n_lights, 3)
 
         out_matrix = self.get_float_matrix_rgb()

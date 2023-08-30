@@ -73,7 +73,7 @@ class PixelMatrix:
         else:  # full
             return np.arange(self.n_lights)
 
-    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], color: Color) -> ArrayNx1:
+    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: list[Color]) -> ArrayNx1:
         """Renders lists of LightObjects (one queue per light) to a blank matrix."""
 
         matrix = np.zeros(shape=(self.n_leds, self.n_lights))
@@ -81,7 +81,7 @@ class PixelMatrix:
             matrix_view = matrix[:, light_id]
             elements_for_deletion = set()
             for ele in queues[light_id]:
-                ele_matrix, done = ele.render_super(color)
+                ele_matrix, done = ele.render_super(colors)
                 if done is True:
                     elements_for_deletion.add(ele)
                 else:

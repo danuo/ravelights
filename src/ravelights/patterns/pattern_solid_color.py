@@ -18,8 +18,8 @@ class PatternSolidColor(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         matrix = self.get_float_matrix_1d_mono()
         matrix[:] = 1.0
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

@@ -17,7 +17,7 @@ class EffectFlicker(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: Array, color: Color) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
         """Called each render cycle"""
         return in_matrix * random.random()
 

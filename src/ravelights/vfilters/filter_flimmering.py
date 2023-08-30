@@ -29,7 +29,7 @@ class VfilterFlimmering(Vfilter):
             x = 2
         return x
 
-    def render(self, in_matrix: Array, color: Color) -> Array:
+    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
         self.counter_frame = (self.counter_frame + 1) % 1024
         intens: float = abs(math.sin(self.counter_frame * self.sin_factor)) + 0.1
         intens = min(intens, 1)

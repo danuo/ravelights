@@ -26,7 +26,7 @@ class DimmerDecayVerySlow(Dimmer):
     def on_trigger(self):
         self.decay_ref = self.timehandler.time_0
 
-    def render(self, in_matrix: ArrayNx3, color: Color) -> ArrayNx3:
+    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
         decay: float = 1 + (self.timehandler.time_0 - self.decay_ref) * self.decay_factor
         matrix: ArrayNx3 = in_matrix * (1 / decay)
         return matrix

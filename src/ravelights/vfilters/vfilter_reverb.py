@@ -28,7 +28,7 @@ class VfilterReverb(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
         self.out_matrix *= self.decay
         self.out_matrix += in_matrix
 

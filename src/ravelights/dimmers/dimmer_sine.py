@@ -17,7 +17,7 @@ class DimmerSine(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayNx3, color: Color) -> ArrayNx3:
+    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
         x = self.settings.bpmhandler.get_beat_progress_n(self.frequency)
         intensity = cos_mapper(x)
         matrix: ArrayNx3 = in_matrix * intensity

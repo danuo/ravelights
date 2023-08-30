@@ -34,6 +34,6 @@ class ThinnerRandomPattern(Thinner):
         for i in items:
             self.mask[i :: pattern_length * 10] = 0
 
-    def render(self, in_matrix: Array, color: Color):
+    def render(self, in_matrix: Array, colors: list[Color]):
         matrix = self.apply_mask(in_matrix=in_matrix, mask=self.mask.reshape(self.n_leds, -1))
         return matrix

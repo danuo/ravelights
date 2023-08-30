@@ -23,7 +23,7 @@ class EffectColorShift(Effect):
     def run_before(self):
         for index, base_hue in enumerate(self.base_hue):
             if base_hue is None:
-                curent_color = self.settings.color_engine.get_colors_rgb(timeline_level=0)[index]
+                curent_color = self.settings.color_engine.get_colors_rgb(timeline_level=1)[index]
                 current_hue = ColorHandler.get_hue_from_rgb(curent_color)
                 base_hue = current_hue
 
@@ -36,7 +36,7 @@ class EffectColorShift(Effect):
         for index in range(2):
             self.settings.color_engine.color_overwrite[index] = None
 
-    def render_matrix(self, in_matrix: Array, color: Color) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
         """Called each render cycle"""
         return in_matrix
 
