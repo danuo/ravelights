@@ -17,8 +17,11 @@ class VfilterSomeFirst(Vfilter):
         ...
 
     def on_trigger(self):
-        n_selection = random.choice(range(self.n_lights - 1))
-        self.light_ids = random.choices(range(1, self.n_lights), k=n_selection)
+        if self.n_lights > 1:
+            n_selection = random.choice(range(self.n_lights - 1))
+            self.light_ids = random.choices(range(1, self.n_lights), k=n_selection)
+        else:
+            self.light_ids = [0]
 
     def render(self, in_matrix: ArrayMxKx3, color: Color) -> ArrayMxKx3:
         assert in_matrix.shape == (self.n_leds, self.n_lights, 3)

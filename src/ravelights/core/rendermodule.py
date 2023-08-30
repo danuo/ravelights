@@ -35,7 +35,9 @@ class RenderModule:
             level = self.device_automatic_timeline_level
         return self.settings.triggers[identifier][level]
 
-    def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
+    def get_selected_generator(
+        self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None
+    ) -> Generator:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
@@ -49,6 +51,9 @@ class RenderModule:
         """
         return manual level or level from timeline, accoridng to setting
         """
+        # todo: make this pretty
+        if self.device.device_manual_timeline_level != 4:
+            return self.device.device_manual_timeline_level
 
         if self.settings.use_manual_timeline:
             if self.device.device_manual_timeline_level != 4:
@@ -68,7 +73,9 @@ class RenderModule:
 
         # ------------------------------ get generators ------------------------------ #
         pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
-        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
+        pattern_sec: Pattern = self.get_selected_generator(
+            gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec
+        )
         vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level_vfilter)
         thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level_thinner)
         dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level_dimmer)
