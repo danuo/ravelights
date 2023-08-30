@@ -98,7 +98,7 @@ class Settings:
     color_sec_active: bool = True  # to apply secondary color mode
     color_sec_mode: dict = field(default_factory=get_default_color_sec_modes)
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
-    color_level_mapping: dict[int, dict[str, str]] = field(default_factory=get_default_color_mappings)
+    color_mapping: dict[int, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
