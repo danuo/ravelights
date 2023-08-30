@@ -20,12 +20,12 @@ class PatternRandomStripes(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         matrix = self.get_float_matrix_1d_mono()
         intensity = random.uniform(0, 1)
         for i in range(self.n_lights * self.n_leds):
             if p(0.05):
                 intensity = random.uniform(0, 1)
             matrix[i] = intensity
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

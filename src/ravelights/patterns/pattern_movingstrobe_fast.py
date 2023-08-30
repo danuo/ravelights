@@ -55,7 +55,7 @@ class PatternMovingStrobeFast(Pattern):
             self.queue_elements_one()
         self.queue_elements_one()
 
-    def render(self, color: Color):
-        matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, color=color)
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+    def render(self, colors: list[Color]):
+        matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, colors=colors)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

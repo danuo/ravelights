@@ -18,9 +18,9 @@ class PatternDebugLinearBlock(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         self.pos = (self.pos + self.vel) % self.n_leds
         matrix = self.get_float_matrix_2d_mono()
         matrix[self.pos : self.pos + self.size, :] = 1
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

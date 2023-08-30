@@ -54,7 +54,7 @@ class PatternInerseSquare(Pattern):
             matrix[a:b] = intensity
         return matrix
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         self.pos += self.speed
         if self.pos < -self.bounds:
             self.pos = self.pos + self.n_leds + 2 * self.bounds
@@ -72,4 +72,4 @@ class PatternInerseSquare(Pattern):
                     pos = self.n_leds - self.pos
             matrix[:, index] = self.render_thing(pos)
 
-        return self.colorize_matrix(matrix, color=color)
+        return self.colorize_matrix(matrix, color=colors[1])

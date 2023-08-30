@@ -80,7 +80,7 @@ class Generator(ABC):
         ...
 
     @abstractmethod
-    def render(self, in_matrix: Array, color: Color) -> Array:
+    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
         return in_matrix
 
     def sync_send(self) -> dict:
@@ -196,7 +196,7 @@ class Generator(ABC):
 
 
 class Pattern(Generator):
-    def render(self, color: Color) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayNx3:
         ...
 
 
@@ -215,7 +215,7 @@ class PatternNone(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, color: Color) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayNx3:
         return self.get_float_matrix_rgb()
 
 
@@ -238,7 +238,7 @@ class VfilterNone(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: Array, color: Color) -> Array:
+    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
         return in_matrix
 
 
@@ -263,7 +263,7 @@ class ThinnerNone(Thinner):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: Array, color: Color) -> Array:
+    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
         return in_matrix
 
 
@@ -286,5 +286,5 @@ class DimmerNone(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: Array, color: Color) -> Array:
+    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
         return in_matrix

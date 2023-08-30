@@ -30,9 +30,9 @@ class PatternHorStripes(Pattern):
         for _ in range(random.randrange(1, 4)):
             self.items.append(Horbar(self))
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         matrix = self.get_float_matrix_2d_mono()
         for item in self.items:
             item.pos += item.speed
             matrix[item.pos : item.pos + item.height, item.light : item.light + item.width] = 1.0
-        return self.colorize_matrix(matrix, color=color)
+        return self.colorize_matrix(matrix, color=colors[1])

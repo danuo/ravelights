@@ -99,7 +99,7 @@ class PatternMovingBlocks(Pattern):
     def on_trigger(self):
         self.reset()
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         matrix = self.get_float_matrix_2d_mono()
         matrix = np.zeros((self.n_leds))
         for state in self.states:
@@ -116,5 +116,5 @@ class PatternMovingBlocks(Pattern):
             for index in range(self.n_lights):
                 roll = int(round(self.rolls[index]))
                 matrix[:, index] = np.roll(matrix[:, index], axis=0, shift=roll)
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

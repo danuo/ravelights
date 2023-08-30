@@ -101,7 +101,7 @@ class PatternMeteor(Pattern):
         if p(0.2):
             self.alternate()
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         matrix = self.matrix
         # ! cannot execute before reset() is called
         # ─── CALCULATE POSITION FROM BEAT STATE ──────────────────────────
@@ -155,5 +155,5 @@ class PatternMeteor(Pattern):
         self.matrix = matrix
 
         # ─── PASS MATRIX ─────────────────────────────────────────────────
-        matrix_rgb = self.colorize_matrix(matrix, color=color)
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
         return matrix_rgb

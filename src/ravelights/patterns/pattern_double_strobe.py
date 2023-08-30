@@ -35,7 +35,7 @@ class PatternDoubleStrobe(Pattern):
     def on_trigger(self):
         self.counter = -1
 
-    def render(self, color: Color):
+    def render(self, colors: list[Color]):
         self.counter += 1
         # ─── GENERATE PATTERN ────────────────────────────────────────────
         if self.counter in [0, 4]:
@@ -47,6 +47,6 @@ class PatternDoubleStrobe(Pattern):
 
         # ─── APPLY PATTERN ON SPECIFIC FRAMES ────────────────────────────
         if self.counter in [0, 2, 4, 6]:
-            matrix_rgb = self.colorize_matrix(self.matrix_memory, color=color)
+            matrix_rgb = self.colorize_matrix(self.matrix_memory, color=colors[0])
             return matrix_rgb
         return self.get_float_matrix_rgb()
