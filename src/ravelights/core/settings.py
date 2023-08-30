@@ -4,7 +4,7 @@ from enum import auto
 from typing import TYPE_CHECKING, Optional, Type
 
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, Color, ColorEngine, ColorHandler, SecondaryColorModes
+from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import StrEnum
@@ -52,7 +52,7 @@ def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     }
 
 
-def get_default_color_mappings() -> dict[int, dict[str, str]]:
+def get_default_color_mappings() -> dict[str, dict[str, str]]:
     """
     level 1,2,3
     primary, secondary
@@ -60,15 +60,15 @@ def get_default_color_mappings() -> dict[int, dict[str, str]]:
     """
 
     return {
-        1: {
+        "1": {
             "prim": "A",
             "sec": "B",
         },
-        2: {
+        "2": {
             "prim": "B",
             "sec": "A",
         },
-        3: {
+        "3": {
             "prim": "C",
             "sec": "A",
         },
@@ -98,7 +98,7 @@ class Settings:
     color_sec_active: bool = True  # to apply secondary color mode
     color_sec_mode: dict = field(default_factory=get_default_color_sec_modes)
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
-    color_mapping: dict[int, dict[str, str]] = field(default_factory=get_default_color_mappings)
+    color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
