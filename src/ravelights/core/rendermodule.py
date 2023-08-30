@@ -108,12 +108,10 @@ class RenderModule:
             dimmer.on_trigger()
 
         # ---------------------------------- colors ---------------------------------- #
-        # color is a tuple of 3 colors
-        # primary color: for every Generator, except secondary Pattern
-        # secondary color: for secondary Pattern
-        # effect color: for every Effect
-        #
-        color_prim, color_sec, color_effect = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
+        # color is a tuple of 2 colors
+        # primary color: dominant color in pattern
+        # secondary color: optional supplementary color
+        color_prim, color_sec = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern.render(color=color_prim)

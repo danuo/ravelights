@@ -52,9 +52,9 @@ class ColorEngine:
     def __init__(self, settings: "Settings"):
         self.settings = settings
         self._internal_color_transition_speed: str = ""
-        # default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
+        default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
         # self.color_pids: list[ColorPID] = [ColorPID(init_color_rgb=c) for c in default_colors]
-        self.color_pids: dict[str, ColorPID] = {key: ColorPID() for key in "ABC"}
+        self.color_pids: dict[str, ColorPID] = {key: ColorPID(init_color_rgb=color) for key, color in zip("ABC", default_colors)}
         # self.color_overwrite: list[Optional[Color]] = [None] * 3
         self.color_overwrite: dict[str, Optional[Color]] = {key: None for key in "ABC"}
 
@@ -71,29 +71,26 @@ class ColorEngine:
         for color_pid in self.color_pids.values():
             color_pid.run_pid_step()
 
-    def set_color_with_rule(self, color: list | Color, color_level):
-        """
-        color_level = 1: primary
-        color_level = 2: secondary
-        color_level = 3: effect
-        """
+    def set_color_with_rule(self, color: list | Color, color_key: str):
         assert len(color) == 3
-        logger.info(f"set color with rule {self.settings.color_sec_mode} and level {color_level}")
+        logger.info(f"set color with rule {self.settings.color_sec_mode} and level {color_key=}")
         color = ColorHandler.convert_to_color(color)
-        self.set_single_color_rgb(color, color_level)
-        if color_level == 1 and self.settings.color_sec_active:
-            sec_color = self.get_secondary_color(color)
-            logger.info(f"set sec_color: {sec_color}")
-            self.set_single_color_rgb(sec_color, 2)
+        self.set_single_color_rgb(color, color_key)
+        if color_key == "A":
+            for key in "BC":
+                sec_color = self.get_secondary_color(color)  # todo
+                logger.info(f"set sec_color: {key=} {sec_color=}")
+                if sec_color is not None:
+                    self.set_single_color_rgb(sec_color, key)
 
     # def set_single_color_rgb(self, color: Color, level):
-    def set_single_color_rgb(self, color: Color, key):
+    def set_single_color_rgb(self, color: Color, color_key):
         """
         color_level_A
         color_level_B
         color_level_C
         """
-        self.color_pids[key].set_rgb_target(color)
+        self.color_pids[color_key].set_rgb_target(color)
 
     def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
@@ -101,31 +98,31 @@ class ColorEngine:
         color_1 and color_2 may be interchanged depending on the level
         """
 
-        # get colors
-        out_colors = [color_pid.get_rgb() for color_pid in self.color_pids]
+        color_key_prim = self.settings.color_level_mapping[timeline_level]["prim"]
+        if self.color_overwrite[color_key_prim] is not None:
+            color_prim = self.color_overwrite[color_key_prim]
+        else:
+            color_prim = self.color_pids[color_key_prim].get_rgb()
+        # print(timeline_level, color_key_prim, color_prim)
 
-        # check if there is overwrite
-        overwritten_colors = []
-        for index in range(3):
-            if self.color_overwrite[index] is None:
-                overwritten_colors.append(out_colors[index])
-            else:
-                overwritten_colors.append(self.color_overwrite[index])
+        color_key_sec = self.settings.color_level_mapping[timeline_level]["sec"]
+        if self.color_overwrite[color_key_sec] is not None:
+            color_sec = self.color_overwrite[color_key_sec]
+        else:
+            color_sec = self.color_pids[color_key_sec].get_rgb()
 
-        # do ordering for timeline_level 2
-        out_colors = [overwritten_colors[index] for index in [1, 0, 2]] if timeline_level == 2 else overwritten_colors
-        return out_colors
+        return (color_prim, color_sec)
 
-    def get_colors_rgb_target(self) -> list[Color]:
-        return [c.get_rgb_target() for c in self.color_pids]
+    def get_colors_rgb_target(self) -> dict[str, Color]:
+        return {k: v.get_rgb_target() for k, v in self.color_pids.items()}
 
     def get_secondary_color(self, in_color: Color) -> Optional[Color]:
         """returns a color that matches in input color, according to the secondary
         color rule currently selected in settings"""
 
         if not self.settings.color_sec_active:
-            # return old color if color_sec is not active
-            return self.get_colors_rgb(timeline_level=0)[1]
+            # return None if color_sec is not active
+            return None
         match SecondaryColorModes(self.settings.color_sec_mode):
             case SecondaryColorModes.COMPLEMENTARY:
                 return ColorHandler.get_complementary_color(in_color)
@@ -140,7 +137,7 @@ class ColorEngine:
 
     def set_color_speed(self, speed_str: str):
         if speed_str in COLOR_TRANSITION_SPEEDS:
-            for color_pid in self.color_pids:
+            for color_pid in self.color_pids.values():
                 for pid in color_pid.pids:
                     pid.load_parameter_preset(speed_str)
         else:

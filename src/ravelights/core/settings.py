@@ -52,6 +52,29 @@ def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     }
 
 
+def get_default_color_mappings() -> dict[int, dict[str, str]]:
+    """
+    level 1,2,3
+    primary, secondary
+    select colors from A, B, C
+    """
+
+    return {
+        1: {
+            "prim": "A",
+            "sec": "B",
+        },
+        2: {
+            "prim": "B",
+            "sec": "A",
+        },
+        3: {
+            "prim": "A",
+            "sec": "B",
+        },
+    }
+
+
 @dataclass
 class Settings:
     """
@@ -71,7 +94,7 @@ class Settings:
     color_sec_active: bool = True  # to apply secondary color mode
     color_sec_mode: str = SecondaryColorModes.COMPLEMENTARY.value
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
-    color_names: list[str] = field(default_factory=lambda: ["primary", "secondary", "effect"])
+    color_level_mapping: dict[int, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
