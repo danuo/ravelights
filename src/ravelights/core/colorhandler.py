@@ -21,6 +21,7 @@ COLOR_TRANSITION_SPEEDS = (PIDSpeeds.INSTANT, PIDSpeeds.FAST, PIDSpeeds.MEDIUM, 
 class SecondaryColorModes(StrEnum):
     """available modes to generate secondary color for settings"""
 
+    NONE = auto()
     RANDOM = auto()
     COMPLEMENTARY = auto()
     COMPLEMENTARY33 = auto()
@@ -78,7 +79,7 @@ class ColorEngine:
         self.set_single_color_rgb(color, color_key)
         if color_key == "A":
             for key in "BC":
-                sec_color = self.get_secondary_color(color)  # todo
+                sec_color = self.get_secondary_color(color, color_key=key)  # todo
                 logger.info(f"set sec_color: {key=} {sec_color=}")
                 if sec_color is not None:
                     self.set_single_color_rgb(sec_color, key)
@@ -116,14 +117,13 @@ class ColorEngine:
     def get_colors_rgb_target(self) -> dict[str, Color]:
         return {k: v.get_rgb_target() for k, v in self.color_pids.items()}
 
-    def get_secondary_color(self, in_color: Color) -> Optional[Color]:
+    def get_secondary_color(self, in_color: Color, color_key: str) -> Optional[Color]:
         """returns a color that matches in input color, according to the secondary
         color rule currently selected in settings"""
 
-        if not self.settings.color_sec_active:
-            # return None if color_sec is not active
-            return None
-        match SecondaryColorModes(self.settings.color_sec_mode):
+        match SecondaryColorModes(self.settings.color_sec_mode[color_key]):
+            case SecondaryColorModes.NONE:
+                return None
             case SecondaryColorModes.COMPLEMENTARY:
                 return ColorHandler.get_complementary_color(in_color)
             case SecondaryColorModes.COMPLEMENTARY33:

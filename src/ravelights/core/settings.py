@@ -69,10 +69,14 @@ def get_default_color_mappings() -> dict[int, dict[str, str]]:
             "sec": "A",
         },
         3: {
-            "prim": "A",
-            "sec": "B",
+            "prim": "C",
+            "sec": "A",
         },
     }
+
+
+def get_default_color_sec_modes() -> dict[str, str]:
+    return {"B": SecondaryColorModes.COMPLEMENTARY.value, "C": SecondaryColorModes.COMPLEMENTARY66.value}
 
 
 @dataclass
@@ -92,7 +96,7 @@ class Settings:
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
     color_sec_active: bool = True  # to apply secondary color mode
-    color_sec_mode: str = SecondaryColorModes.COMPLEMENTARY.value
+    color_sec_mode: dict = field(default_factory=get_default_color_sec_modes)
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
     color_level_mapping: dict[int, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
