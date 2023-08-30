@@ -54,9 +54,7 @@ class ColorEngine:
         self.settings = settings
         self._internal_color_transition_speed: str = ""
         default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
-        # self.color_pids: list[ColorPID] = [ColorPID(init_color_rgb=c) for c in default_colors]
         self.color_pids: dict[str, ColorPID] = {key: ColorPID(init_color_rgb=color) for key, color in zip("ABC", default_colors)}
-        # self.color_overwrite: list[Optional[Color]] = [None] * 3
         self.color_overwrite: dict[str, Optional[Color]] = {key: None for key in "ABC"}
 
     def before(self):
@@ -84,7 +82,6 @@ class ColorEngine:
                 if sec_color is not None:
                     self.set_single_color_rgb(sec_color, key)
 
-    # def set_single_color_rgb(self, color: Color, level):
     def set_single_color_rgb(self, color: Color, color_key):
         """
         color_level_A
@@ -99,14 +96,13 @@ class ColorEngine:
         color_1 and color_2 may be interchanged depending on the level
         """
 
-        color_key_prim = self.settings.color_level_mapping[timeline_level]["prim"]
+        color_key_prim = self.settings.color_mapping[timeline_level]["prim"]
         if self.color_overwrite[color_key_prim] is not None:
             color_prim = self.color_overwrite[color_key_prim]
         else:
             color_prim = self.color_pids[color_key_prim].get_rgb()
-        # print(timeline_level, color_key_prim, color_prim)
 
-        color_key_sec = self.settings.color_level_mapping[timeline_level]["sec"]
+        color_key_sec = self.settings.color_mapping[timeline_level]["sec"]
         if self.color_overwrite[color_key_sec] is not None:
             color_sec = self.color_overwrite[color_key_sec]
         else:
