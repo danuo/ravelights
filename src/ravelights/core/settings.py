@@ -95,7 +95,6 @@ class Settings:
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
-    color_sec_active: bool = True  # to apply secondary color mode
     color_sec_mode: dict = field(default_factory=get_default_color_sec_modes)
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
     color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
@@ -217,9 +216,7 @@ class Settings:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
 
     def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
-        generator = self.root.devices[0].rendermodule.get_selected_generator(
-            gen_type=gen_type, timeline_level=timeline_level
-        )
+        generator = self.root.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
         new_trigger = generator.get_new_trigger()
         self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
 
