@@ -92,7 +92,7 @@ class ColorEngine:
 
     def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
-        gives the list of colors [color_1, color_2, color_effect] in the correct order.
+        gives the tuple of colors (color_prim, color_sec) in the correct order.
         color_1 and color_2 may be interchanged depending on the level
         """
 
