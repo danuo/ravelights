@@ -50,15 +50,17 @@ class DefaultColors(Enum):
 
 class ColorEngine:
     def __init__(self, settings: "Settings"):
-        self.color_overwrite: list[Optional[Color]] = [None] * 3
         self.settings = settings
         self._internal_color_transition_speed: str = ""
-        default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
-        self.color_pids: list[ColorPID] = [ColorPID(init_color_rgb=c) for c in default_colors]
+        # default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
+        # self.color_pids: list[ColorPID] = [ColorPID(init_color_rgb=c) for c in default_colors]
+        self.color_pids: dict[str, ColorPID] = {key: ColorPID() for key in "ABC"}
+        # self.color_overwrite: list[Optional[Color]] = [None] * 3
+        self.color_overwrite: dict[str, Optional[Color]] = {key: None for key in "ABC"}
 
     def before(self):
         self._run_pid_step()
-        self.color_overwrite = [None] * 3
+        self.color_overwrite = {key: None for key in "ABC"}
 
     def _run_pid_step(self):
         # apply color transition speed to pid controller if it has changed
@@ -66,7 +68,7 @@ class ColorEngine:
             self._internal_color_transition_speed = self.settings.color_transition_speed
             self.set_color_speed(self.settings.color_transition_speed)
 
-        for color_pid in self.color_pids:
+        for color_pid in self.color_pids.values():
             color_pid.run_pid_step()
 
     def set_color_with_rule(self, color: list | Color, color_level):
@@ -84,13 +86,14 @@ class ColorEngine:
             logger.info(f"set sec_color: {sec_color}")
             self.set_single_color_rgb(sec_color, 2)
 
-    def set_single_color_rgb(self, color: Color, level):
+    # def set_single_color_rgb(self, color: Color, level):
+    def set_single_color_rgb(self, color: Color, key):
         """
-        color_level = 1: primary
-        color_level = 2: secondary
-        color_level = 3: effect
+        color_level_A
+        color_level_B
+        color_level_C
         """
-        self.color_pids[level - 1].set_rgb_target(color)
+        self.color_pids[key].set_rgb_target(color)
 
     def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
@@ -150,8 +153,9 @@ class ColorPID:
     one pid is used for each channel (r,g,b)
     """
 
-    def __init__(self, init_color_rgb: Color):
-        # r, g, b
+    def __init__(self, init_color_rgb: Optional[Color] = None):
+        if init_color_rgb is None:
+            init_color_rgb = Color(1.0, 0.0, 0.0)
         self.pids = [PIDController(start_val=val) for val in init_color_rgb]
 
     def run_pid_step(self):
