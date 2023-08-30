@@ -95,7 +95,7 @@ class ColorEngine:
         gives the list of colors [color_1, color_2, color_effect] in the correct order.
         color_1 and color_2 may be interchanged depending on the level
         """
-        print(self.settings.color_mapping)
+
         color_key_prim = self.settings.color_mapping[str(timeline_level)]["prim"]
         if self.color_overwrite[color_key_prim] is not None:
             color_prim = self.color_overwrite[color_key_prim]
