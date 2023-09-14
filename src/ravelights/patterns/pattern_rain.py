@@ -1,5 +1,5 @@
 import random
-from typing import Type
+from typing import Any, Type
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
@@ -26,13 +26,13 @@ class PatternRain(Pattern):
         for _ in range(3):
             if p(0.3):
                 ran = random.randint(3, 9)
-                flashes = [x for _ in range(ran) for x in [True, False]]
+                flashes: list[bool] = [x for _ in range(ran) for x in [True, False]]
                 self.queue_element(cls=self.lightcls, flashes=flashes)
 
     def add_element(self, light_id: int, element: LightObject):
         self.queues[light_id].append(element)
 
-    def queue_element(self, cls: Type[LightObject], **kwargs: int):
+    def queue_element(self, cls: Type[LightObject], **kwargs: dict[str, Any]):
         self.lights = self.pixelmatrix.get_lights(self.kwargs["light_selection"])
         for light_id in self.lights:
             ele = cls(self.root, self.device, **kwargs)

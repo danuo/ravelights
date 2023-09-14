@@ -4,12 +4,12 @@ import random
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat, ArrayInt
 from ravelights.core.generator_super import Pattern
 
 
 class ModdedInerseSquare:
-    def __init__(self, n_leds):
+    def __init__(self, n_leds: int):
         self.n_leds = n_leds
         self.square_baselength = 20
         self.arm_length = 25
@@ -18,7 +18,7 @@ class ModdedInerseSquare:
         self.anker_positions = np.linspace(self.anker_gap, self.n_leds - self.anker_gap, self.n_anker)  # have many
         self.influence = 20
 
-    def render_matrix(self, pos):
+    def render_matrix(self, pos: int | float):
         pos = int(round(pos))
 
         matrix = np.zeros(self.n_leds)
@@ -75,14 +75,16 @@ class PatternSinwaveSquares(Pattern):
             energy_factor = 0.5 + (energy_factor - 0.5) * 5
         return energy_factor
 
-    def get_square_positions(self):
+    def get_square_positions(self) -> ArrayInt:
         self.static_x += 5
         if self.static_x < -self.bounds:
             self.static_x = self.static_x + self.n_leds + 2 * self.bounds
         if self.static_x > self.n_leds + self.bounds:
             self.static_x = self.static_x - self.n_leds - 2 * self.bounds
 
-        out = self.factors[0] * np.sin(0.25 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
+        out: ArrayFloat = self.factors[0] * np.sin(
+            0.25 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy
+        )
         out += self.factors[1] * np.sin(0.5 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
         out += self.factors[2] * np.sin(1 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
         out += self.factors[3] * np.sin(2 * self.eval_points + self.settings.timehandler.time_0 * 2 * self.energy)
@@ -90,10 +92,9 @@ class PatternSinwaveSquares(Pattern):
         out = out * self.n_leds * 0.5 + self.n_leds * 0.5
         if self.use_static:
             out += self.static_x
-        out = np.round(out).astype(int)
-        return out
+        return np.round(out).astype(int)
 
-    def render(self, colors: list[Color]) -> ArrayNx3:
+    def render(self, colors: list[Color]):
         out = self.get_square_positions()
         matrix = self.get_float_matrix_2d_mono()
         for i in range(self.n_lights):

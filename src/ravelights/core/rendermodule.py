@@ -1,8 +1,11 @@
 import logging
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Any, Optional, Type
+
+import numpy as np
+from numpy.typing import NDArray
 
 from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.custom_typing import ArrayNx3
+from ravelights.core.custom_typing import ArrayNx3, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.settings import Settings
@@ -24,10 +27,6 @@ class RenderModule:
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
         self.generators_dict: dict[str, Generator] = dict()
-
-    def assert_dims(self, in_matrix):
-        """checks if shape is (n_leds, n_lights, 3). this is a debug function"""
-        assert in_matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
     def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
@@ -111,11 +110,11 @@ class RenderModule:
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern.render(colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
         matrix = self.apply_frameskip(matrix)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
         matrix_sec = pattern_sec.render(colors=colors[::-1])  # todo
@@ -123,15 +122,15 @@ class RenderModule:
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
         matrix = vfilter.render(matrix, colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER THINNER ──────────────────────────────────────────────
         matrix = thinner.render(matrix, colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
         matrix = dimmer.render(matrix, colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
@@ -147,7 +146,7 @@ class RenderModule:
         # global thing
         if self.settings.global_effect_draw_mode == "overlay":
             matrix = Generator.merge_matrices(in_matrix, matrix)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────
         self.pixelmatrix.set_matrix_float(matrix)

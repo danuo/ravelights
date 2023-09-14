@@ -1,9 +1,11 @@
 import random
+from typing import Any
 
 import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
 
@@ -85,8 +87,9 @@ class PatternMeteor(Pattern):
         # only export light_selection
         return dict(light_selection=self.light_selection)
 
-    def sync_load(self, in_dict: dict):
+    def sync_load(self, in_dict: dict[str, Any]):
         super().sync_load(in_dict=in_dict)
+        # todo: fix pixelmatrix light_selection. do i need this?
         self.lights = self.pixelmatrix.get_lights(self.light_selection)
 
     def reset(self):
@@ -142,7 +145,7 @@ class PatternMeteor(Pattern):
 
             # calculate new intensity
             # intensity = np.multiply(np.random.uniform(0, 1), spawn_chance_np_new)  # flicker mode
-            intensity = np.multiply(np.random.uniform(0, 1, size=self.n_leds), spawn_chance_np_new)
+            intensity: ArrayFloat = np.multiply(np.random.uniform(0, 1, size=self.n_leds), spawn_chance_np_new)
             intensity = np.clip(intensity, 0, 1)
 
             # add to matrix

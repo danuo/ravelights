@@ -3,12 +3,11 @@ import logging
 import threading
 from dataclasses import asdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from flask import Flask, jsonify, make_response, request, send_from_directory
 from flask_restful import Api, Resource, fields, marshal_with
 
-from ravelights.core.custom_typing import T_JSON
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
@@ -26,7 +25,7 @@ class RestAPI:
         self,
         root: "RaveLightsApp",
         port: int = 80,
-        serve_static_files=True,
+        serve_static_files: bool = True,
         static_files_dir: Optional[Path] = None,
     ):
         self.root = root
@@ -97,7 +96,7 @@ class RaveAPIResource(Resource):
         return make_response(jsonify(data), 200)
 
     def put(self):
-        receive_data: T_JSON = request.get_json()
+        receive_data: dict[str, Any] = request.get_json()
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
@@ -150,11 +149,11 @@ class ColorAPIResource(Resource):
 
     def put(self):
         """directly apply color so that resulting colors can be returned"""
-        receive_data: T_JSON = request.get_json()
-        print(receive_data)
+        receive_data: dict[str, Any] = request.get_json()
+        logger.info(receive_data)
         if receive_data.get("action") == "set_color":
             color_rgb = receive_data.get("color")
-            color_key = receive_data.get("color_key")  # + 1 done
+            color_key = receive_data.get("color_key")
             self.settings.color_engine.set_color_with_rule(color=color_rgb, color_key=color_key)
         colors = self.settings.color_engine.get_colors_rgb_target()
         return make_response(jsonify(colors), 201)
@@ -182,7 +181,7 @@ class EffectAPIResource(Resource):
         return self.effecthandler.effect_queues, 200
 
     def put(self):
-        receive_data: T_JSON = request.get_json()
+        receive_data: dict[str, Any] = request.get_json()
         print(receive_data)
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)

@@ -1,11 +1,11 @@
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer
 from ravelights.core.utils import cos_mapper
 
 
 class DimmerSine(Dimmer):
-    def init(self, frequency=1):
+    def init(self, frequency: int = 1):
         self.frequency = frequency
 
     def alternate(self):
@@ -17,8 +17,8 @@ class DimmerSine(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]):
         x = self.settings.bpmhandler.get_beat_progress_n(self.frequency)
         intensity = cos_mapper(x)
-        matrix: ArrayNx3 = in_matrix * intensity
+        matrix = in_matrix * intensity
         return matrix

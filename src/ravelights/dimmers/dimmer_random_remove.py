@@ -1,7 +1,7 @@
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer
 from ravelights.core.utils import p
 
@@ -33,7 +33,7 @@ class DimmerRandomRemove(Dimmer):
                 self.mask[i] = False
         self.counter_frames += 1
 
-    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]):
         self.step()  # todo: set this to seperate trigger
         matrix = self.apply_mask(in_matrix=self.intensity * in_matrix, mask=self.mask.reshape(self.n_leds, -1))
         return matrix

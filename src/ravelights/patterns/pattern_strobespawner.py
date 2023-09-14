@@ -1,11 +1,10 @@
 import random
 from typing import Type
 
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
-from ravelights.lights.lights_super import FallingSmallBlock, LightObject, Meteor, Sine, Slideblock, SlideStrobe, SymmetricalStrobe
+from ravelights.lights.lights_super import LightObject, SlideStrobe
 
 
 class PatternStrobeSpawner(Pattern):

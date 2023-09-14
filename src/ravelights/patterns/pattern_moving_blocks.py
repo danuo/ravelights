@@ -5,7 +5,7 @@ import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx1
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
 
@@ -76,7 +76,7 @@ class PatternMovingBlocks(Pattern):
                 num = int(num + num / self.length_step_factor)
 
         n_items = [next(sequence_func(4)) for _ in range(self.n_lengths)]
-        self.prerendered_matrices: list[ArrayNx1] = []
+        self.prerendered_matrices: list[ArrayFloat] = []
         for length in n_items:
             matrix = np.zeros(shape=(self.matrix_length))
             a = int(self.matrix_length / 2 - length / 2)
@@ -104,7 +104,7 @@ class PatternMovingBlocks(Pattern):
         matrix = np.zeros((self.n_leds))
         for state in self.states:
             item_id, bright, pos, speed = state
-            rolled_view = np.roll(self.prerendered_matrices[item_id], shift=int(pos))
+            rolled_view: ArrayFloat = np.roll(self.prerendered_matrices[item_id], shift=int(pos))
             matrix[:] = matrix + self.brightness * bright * rolled_view[: self.pixelmatrix.n_leds]
             state.pos = state.pos + speed
         matrix = self.pixelmatrix.clip_matrix_to_1(matrix)

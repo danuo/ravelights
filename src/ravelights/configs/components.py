@@ -1,5 +1,5 @@
 from enum import auto
-from typing import NamedTuple, Type, overload
+from typing import Any, NamedTuple, Optional, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
 from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
@@ -278,18 +278,18 @@ blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list
 
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintGen], kwargs) -> list[Generator]: ...
+def create_from_blueprint(blueprints: list[BlueprintGen], kwargs: Optional[dict[str, Any]]=None) -> list[Generator]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintEffect], kwargs) -> list[Effect]: ...
+def create_from_blueprint(blueprints: list[BlueprintEffect], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintSel], kwargs) -> list[GenSelector]: ...  # noqa
+def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...  # noqa
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs) -> list[GenPlacing | EffectSelectorPlacing]: ...  # noqa
+def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...  # noqa
 
-def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs=None):
+def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs: Optional[dict[str, Any]]=None):
     if kwargs is None:
         kwargs = dict()
     items = [cls(**args, **kwargs) for cls, args in blueprints]

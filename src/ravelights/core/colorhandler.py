@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
 
 import numpy as np
 
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pid import PIDController, PIDSpeeds
 from ravelights.core.utils import StrEnum
 
@@ -54,7 +55,10 @@ class ColorEngine:
         self.settings = settings
         self._internal_color_transition_speed: str = ""
         default_colors = [DefaultColors.RED.value, DefaultColors.BLUE.value, DefaultColors.GREEN.value]
-        self.color_pids: dict[str, ColorPID] = {key: ColorPID(init_color_rgb=color) for key, color in zip("ABC", default_colors)}
+        self.color_pids: dict[str, ColorPID] = {
+            key: ColorPID(init_color_rgb=color) for key, color in zip("ABC", default_colors)
+        }
+        # todo: make color_overwrite private
         self.color_overwrite: dict[str, Optional[Color]] = {key: None for key in "ABC"}
 
     def before(self):
@@ -73,7 +77,7 @@ class ColorEngine:
         for color_pid in self.color_pids.values():
             color_pid.run_pid_step()
 
-    def set_color_with_rule(self, color: list | Color, color_key: str):
+    def set_color_with_rule(self, color: list[float] | Color, color_key: str):
         assert len(color) == 3
         logger.info(f"set color with rule {self.settings.color_sec_mode} and level {color_key=}")
         color = ColorHandler.convert_to_color(color)
@@ -85,7 +89,7 @@ class ColorEngine:
                 if sec_color is not None:
                     self.set_single_color_rgb(sec_color, key)
 
-    def set_single_color_rgb(self, color: Color, color_key):
+    def set_single_color_rgb(self, color: Color, color_key: str):
         """
         color_level_A
         color_level_B
@@ -98,23 +102,21 @@ class ColorEngine:
         color_key_sec = self.settings.color_mapping[str(timeline_level)]["sec"]
         return color_key_prim, color_key_sec
 
-    def get_colors_rgb(self, timeline_level: int) -> tuple[Color, Color]:
+    def get_colors_rgb(self, timeline_level: int) -> list[Color]:
         """
         gives the tuple of colors (color_prim, color_sec) in the correct order.
         color_1 and color_2 may be interchanged depending on the level
         """
 
         color_key_prim, color_key_sec = self.get_color_keys(timeline_level=timeline_level)
-        if self.color_overwrite[color_key_prim] is not None:
-            color_prim = self.color_overwrite[color_key_prim]
-        else:
+        color_prim = self.color_overwrite[color_key_prim]
+        if color_prim is None:
             color_prim = self.color_pids[color_key_prim].get_rgb()
-        if self.color_overwrite[color_key_sec] is not None:
-            color_sec = self.color_overwrite[color_key_sec]
-        else:
+        color_sec = self.color_overwrite[color_key_sec]
+        if color_sec is None:
             color_sec = self.color_pids[color_key_sec].get_rgb()
 
-        return color_prim, color_sec
+        return [color_prim, color_sec]
 
     def get_colors_rgb_target(self) -> dict[str, Color]:
         return {k: v.get_rgb_target() for k, v in self.color_pids.items()}
@@ -234,13 +236,13 @@ class ColorHandler:
         return cls.get_color_from_hue(hue_new)
 
     @staticmethod
-    def get_hue_from_rgb(rgb_values: Sequence[float]):
+    def get_hue_from_rgb(rgb_values: Sequence[float]) -> float:
         """rgb values need to be in the range [0,1]"""
-        hue, lightness, saturnation = colorsys.rgb_to_hls(*rgb_values)
+        hue, _, _ = colorsys.rgb_to_hls(*rgb_values)
         return hue
 
     @staticmethod
-    def rgb_to_brightness(in_matrix: np.ndarray):
+    def rgb_to_brightness(in_matrix: ArrayFloat) -> float:
         """
         in_matrix: (nx3) with [r,g,b] for each row
         algorithm from colorsys.rgb_to_hsv()

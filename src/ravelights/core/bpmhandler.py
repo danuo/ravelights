@@ -1,8 +1,7 @@
 import logging
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from ravelights.core.custom_typing import T_JSON
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
@@ -121,7 +120,7 @@ class BeatStatePattern:
     def __repr__(self):
         return f"n_beats: {len(self.beats)}, quarters: {self.quarters}, loop_length: {self.loop_length}, p: {self.p}"
 
-    def update_from_dict(self, update_dict: T_JSON):
+    def update_from_dict(self, update_dict: dict[str, Any]):
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):

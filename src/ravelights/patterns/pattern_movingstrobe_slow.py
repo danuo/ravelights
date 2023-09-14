@@ -4,14 +4,14 @@ from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
-from ravelights.lights.lights_super import FallingSmallBlock, OneThing
+from ravelights.lights.lights_super import FallingSmallBlock, LightObject, OneThing
 
 
 class PatternMovingStrobeSlow(Pattern):
     """pattern name: p_moving_strobe"""
 
     def init(self):
-        self.queues = [[] for _ in range(self.n_lights)]
+        self.queues: list[list[LightObject]] = [[] for _ in range(self.n_lights)]
         # self.possible_triggers = ["0", "0,2"]
         self.possible_triggers = [
             BeatStatePattern(beats=[0], quarters="A", loop_length=1),
@@ -43,7 +43,7 @@ class PatternMovingStrobeSlow(Pattern):
         # todo: not implemented
         self.lights = self.pixelmatrix.get_lights(self.kwargs["light_selection"])
 
-    def add_element(self, light_id, element):
+    def add_element(self, light_id: int, element: LightObject):
         self.queues[light_id].append(element)
 
     def queue_elements_one(self):

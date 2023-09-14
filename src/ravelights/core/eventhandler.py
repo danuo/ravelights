@@ -1,7 +1,6 @@
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ravelights.core.custom_typing import T_JSON
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings, get_default_color_mappings
@@ -19,15 +18,15 @@ class EventHandler:
         self.devices = self.root.devices
         self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.effecthandler: EffectHandler = self.root.effecthandler
-        self.modification_queue: list[T_JSON] = []
+        self.modification_queue: list[dict[str, Any]] = []
 
-    def add_to_modification_queue(self, receive_data: T_JSON) -> None:
+    def add_to_modification_queue(self, receive_data: dict[str, Any]) -> None:
         """Queue incomming api calls here to be processed later at the beginning of a frame cycle."""
         self.modification_queue.append(receive_data)
 
     def apply_settings_modifications_queue(self) -> None:
         while self.modification_queue:
-            receive_data: T_JSON = self.modification_queue.pop()
+            receive_data: dict[str, Any] = self.modification_queue.pop()
             match receive_data:
                 case {"action": "gen_command", "gen_type": gen_type, "timeline_level": timeline_level, "command": "renew_trigger"}:
                     logger.info(f"gen_command with {gen_type} at level {timeline_level} and command renew_trigger")

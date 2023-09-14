@@ -54,7 +54,7 @@ class PIDController:
         self._dx = (self._dx + self._ddx * self.dt) * 0.7
         self._ddx = self.force / self.m
 
-    def load_parameter_preset(self, preset):
+    def load_parameter_preset(self, preset: str):
         match preset:
             case PIDSpeeds.INSTANT.value:
                 self.instant = True
@@ -108,3 +108,6 @@ class PIDController:
                 self.kd = 0.1
                 self.ki = 0.0
                 self.dt = 1 / 100
+
+            case _:
+                pass

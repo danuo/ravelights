@@ -1,7 +1,7 @@
 import logging
 from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Any, Optional, Type
 
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
@@ -13,7 +13,6 @@ from ravelights.effects.effect_super import Effect
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
-T_JSON = dict[str, str | float | int | bool]
 logger = logging.getLogger(__name__)
 
 
@@ -88,14 +87,14 @@ class Settings:
 
     # ─── Device Configuration ─────────────────────────────────────────────
     root_init: InitVar["RaveLightsApp"]
-    device_config: list[dict]
+    device_config: list[dict[str, Any]]
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
-    color_sec_mode: dict = field(default_factory=get_default_color_sec_modes)
+    color_sec_mode: dict[str, str] = field(default_factory=get_default_color_sec_modes)
     color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
     color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
@@ -138,9 +137,9 @@ class Settings:
     global_manual_timeline_level: int = 1
 
     # ─── Other Settings ───────────────────────────────────────────────────
-    settings_autopilot: dict = field(init=False)
+    settings_autopilot: dict[str, Any] = field(init=False)
 
-    def __post_init__(self, root):
+    def __post_init__(self, root: RaveLightsApp):
         self.root = root
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
@@ -190,7 +189,7 @@ class Settings:
     def frame_time(self) -> float:
         return 1 / self.fps
 
-    def update_from_dict(self, update_dict: T_JSON) -> None:
+    def update_from_dict(self, update_dict: dict[str, Any]) -> None:
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):
@@ -225,7 +224,7 @@ class Settings:
         gen_type: str | Type["Generator"],
         timeline_level: int,
         beatstate_pattern: Optional[BeatStatePattern] = None,
-        **kwargs,
+        **kwargs: dict[str, Any],
     ):
         """triggers can be updated by new BeatStatePattern object or via keywords (kwargs)"""
         if beatstate_pattern is not None:

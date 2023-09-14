@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from ravelights.core.colorhandler import Color, ColorHandler
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Generator
 from ravelights.effects.effect_super import Effect
 
@@ -34,7 +34,7 @@ class EffectColorStrobeRainbowPixel(Effect):
         color_matrix = color_matrix.reshape((self.n_leds, self.n_lights, 3), order="F")
         return color_matrix
 
-    def render_matrix(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         """Called each render cycle"""
         self.color_matrix = np.roll(self.color_matrix, shift=1, axis=0)
 
