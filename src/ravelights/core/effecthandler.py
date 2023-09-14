@@ -1,7 +1,6 @@
 import logging
-import random
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ravelights.configs.components import blueprint_effects, blueprint_generators, create_from_blueprint
 from ravelights.core.generator_super import Vfilter
@@ -116,13 +115,15 @@ class EffectHandler:
             self.apply_effect_instruction(ins)
 
     def apply_effect_instruction(self, instruction: InstructionEffect):
+        # todo: this is not implemented
+        assert False
         effect_name = instruction.effect_name
         if effect_name is None:
             print("todo: implement")
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
-    def load_effect(self, effect_name: str, timeline_level: int, **kwargs):
+    def load_effect(self, effect_name: str, timeline_level: int, **kwargs: dict[str, Any]):
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         effect_wrapper.draw_mode = self.settings.effect_draw_mode
