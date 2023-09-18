@@ -4,12 +4,10 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-from numpy.typing import NDArray
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array, ArrayFloat
-from ravelights.core.pixelmatrix import PixelMatrix
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
@@ -152,8 +150,8 @@ class Generator(ABC):
             matrix_rgb = np.zeros((*matrix_mono.shape, 3))
 
         shape = [1] * matrix_mono.ndim + [3]
-        color: ArrayFloat = np.array(color).reshape(shape)
-        matrix_rgb = matrix_mono[..., None] * color
+        color_array: ArrayFloat = np.array(color).reshape(shape)
+        matrix_rgb = matrix_mono[..., None] * color_array
         return matrix_rgb
 
     @staticmethod
@@ -179,7 +177,7 @@ class Generator(ABC):
         colors do not combine to white"""
 
         matrix_2_max: ArrayFloat = np.max(major, axis=2)
-        matrix_2_max_repeated = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
+        matrix_2_max_repeated: ArrayFloat = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
         return np.where(matrix_2_max_repeated > 0, major, minor)
 
     @staticmethod

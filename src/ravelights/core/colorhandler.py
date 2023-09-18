@@ -242,7 +242,7 @@ class ColorHandler:
         return hue
 
     @staticmethod
-    def rgb_to_brightness(in_matrix: ArrayFloat) -> float:
+    def rgb_to_brightness(in_matrix: ArrayFloat) -> ArrayFloat:
         """
         in_matrix: (nx3) with [r,g,b] for each row
         algorithm from colorsys.rgb_to_hsv()

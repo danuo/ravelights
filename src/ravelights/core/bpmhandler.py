@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from ravelights.core.utils import p
 
@@ -44,8 +44,10 @@ class BeatStatePattern:
     Create Beat Matching Patterns to define beat dependant triggers
 
     beats: list[int] - [0, 4, 5] -> triggers on beats 0, 4 and 5
-    quarters:    str - "AC"      -> triggers on quarters 0 and 2 (a beat has 4 quarters, 0 is exactly on beat, 2 is halfbeat)
-    loop_length: int - 16        -> defines, how long the pattern is. With beats = [0] and loop_length = 16, every 16th beats
+    quarters:    str - "AC"      -> triggers on quarters 0 and 2 (a beat has 4 quarters, 0 is exactly on beat
+                                    , 2 is halfbeat)
+    loop_length: int - 16        -> defines, how long the pattern is. With beats = [0] and loop_length = 16
+                                    , every 16th beats
 
     p: float - 0.5 -> triggers if the above are true, at a chance of 0.5
 
@@ -118,7 +120,7 @@ class BeatStatePattern:
             return False
 
     def __repr__(self):
-        return f"n_beats: {len(self.beats)}, quarters: {self.quarters}, loop_length: {self.loop_length}, p: {self.p}"
+        return f"n_beats: {len(cast(list[Any], self.beats))}, quarters: {self.quarters}, loop_length: {self.loop_length}, p: {self.p}"
 
     def update_from_dict(self, update_dict: dict[str, Any]):
         assert isinstance(update_dict, dict)
@@ -141,7 +143,7 @@ class BPMhandler:
     def bpm_sync(self):
         self.timehandler.bpm_sync()
 
-    def bpm_adjust(self, amount):
+    def bpm_adjust(self, amount: float | int):
         """Shifts the bpm sync point in seconds."""
         self.timehandler.time_sync += amount
 
