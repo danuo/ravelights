@@ -1,14 +1,9 @@
 import math
-import random
 
 import numpy as np
 
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx1, ArrayNx3
 from ravelights.core.generator_super import Pattern
-from ravelights.core.pid import PIDController
-from ravelights.core.utils import lerp
 
 
 class PatternShadowBig(Pattern):

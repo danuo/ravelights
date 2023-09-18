@@ -139,7 +139,7 @@ class Settings:
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)
 
-    def __post_init__(self, root: RaveLightsApp):
+    def __post_init__(self, root: "RaveLightsApp"):
         self.root = root
         self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
@@ -215,7 +215,9 @@ class Settings:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
 
     def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
-        generator = self.root.devices[0].rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
+        generator = self.root.devices[0].rendermodule.get_selected_generator(
+            gen_type=gen_type, timeline_level=timeline_level
+        )
         new_trigger = generator.get_new_trigger()
         self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
 

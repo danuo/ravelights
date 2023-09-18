@@ -1,7 +1,7 @@
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array, ArrayMxKx3, ArrayNx1, ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -18,13 +18,13 @@ class VfilterFlipVer(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         if in_matrix.ndim == 1:
-            matrix: ArrayNx1 = np.flip(in_matrix, axis=0)
+            matrix: ArrayFloat = np.flip(in_matrix, axis=0)  # Nx1
         elif in_matrix.ndim == 2:
             # todo: implement if needed
             assert False
             matrix = np.flip(matrix, axis=0)
         elif in_matrix.ndim == 3:
-            matrix: ArrayMxKx3 = np.flip(in_matrix, axis=0)
+            matrix: ArrayFloat = np.flip(in_matrix, axis=0)  # Nx3
         return matrix

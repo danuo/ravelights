@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -14,9 +14,9 @@ class VfilterReverb(Vfilter):
         self.version = 2
         if self.version == 0:
             self.version = random.choice([1, 2])
-        if self.version == 1:
+        elif self.version == 1:
             self.decay = 0.7
-        if self.version == 2:
+        elif self.version == 2:
             self.decay = 0.85
 
     def alternate(self):
@@ -28,7 +28,7 @@ class VfilterReverb(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         self.out_matrix *= self.decay
         self.out_matrix += in_matrix
 

@@ -5,7 +5,6 @@ import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx3
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
@@ -94,7 +93,7 @@ class PatternShadow(Pattern):
         for index in range(self.n_lights):
             if self.mode == 0:
                 speed = self.speeds[index]
-            elif self.mode == 1:
+            else:  # self.mode == 1
                 speed = self.pids[index].value * 0.1
 
             self.pos[index] += speed
