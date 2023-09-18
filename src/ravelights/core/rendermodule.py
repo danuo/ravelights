@@ -1,5 +1,5 @@
 import logging
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Literal, Optional, Type, overload
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
@@ -30,6 +30,26 @@ class RenderModule:
         if level is None:
             level = self.device_automatic_timeline_level
         return self.settings.triggers[identifier][level]
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Pattern], timeline_level: Optional[int] = None) -> Pattern:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Literal["pattern_sec"], timeline_level: Optional[int] = None) -> Pattern:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Vfilter], timeline_level: Optional[int] = None) -> Vfilter:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Dimmer], timeline_level: Optional[int] = None) -> Dimmer:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Thinner], timeline_level: Optional[int] = None) -> Thinner:
+        ...
 
     def get_selected_generator(
         self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None
@@ -68,14 +88,13 @@ class RenderModule:
         timeline_level_dimmer = 1 if self.settings.global_dimmer else timeline_level
 
         # ------------------------------ get generators ------------------------------ #
+        # fmt: off
         pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
-        pattern_sec: Pattern = self.get_selected_generator(
-            gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec
-        )
+        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
         vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level_vfilter)
         thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level_thinner)
         dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level_dimmer)
-
+        # fmt: on
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
             thinner = self.get_generator_by_name("t_random")
