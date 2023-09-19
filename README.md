@@ -19,7 +19,7 @@ To generate image output, many patterns and effects are implemented already. Mor
 
 
 <div align="center">
-<video src="https://github.com/danuo/ravelights/assets/66017297/dcb5eb48-6dfa-445a-97be-3070aa311c98" width="400" autoplay muted loop />
+<video src="[https://github.com/danuo/ravelights/assets/66017297/dcb5eb48-6dfa-445a-97be-3070aa311c98](https://github.com/danuo/ravelights/assets/66017297/dcb5eb48-6dfa-445a-97be-3070aa311c98)" width="400" autoplay muted loop />
 </div>
 
 # Installation
