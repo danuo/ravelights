@@ -4,7 +4,7 @@ import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -32,7 +32,7 @@ class VfilterRandomBlackout(Vfilter):
         self.limit_frames = int(round(limit_quarters * self.settings.beat_time * self.settings.fps))
         self.source_index = None
 
-    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         out_matrix = self.get_float_matrix_rgb()
         if self.use_devices == "all":
             pass

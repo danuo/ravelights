@@ -1,7 +1,6 @@
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
-from ravelights.core.custom_typing import T_JSON
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings, get_default_color_mappings
@@ -19,28 +18,40 @@ class EventHandler:
         self.devices = self.root.devices
         self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.effecthandler: EffectHandler = self.root.effecthandler
-        self.modification_queue: list[T_JSON] = []
+        self.modification_queue: list[dict[str, Any]] = []
 
-    def add_to_modification_queue(self, receive_data: T_JSON) -> None:
+    def add_to_modification_queue(self, receive_data: dict[str, Any]) -> None:
         """Queue incomming api calls here to be processed later at the beginning of a frame cycle."""
         self.modification_queue.append(receive_data)
 
     def apply_settings_modifications_queue(self) -> None:
         while self.modification_queue:
-            receive_data: T_JSON = self.modification_queue.pop()
+            receive_data: dict[str, Any] = self.modification_queue.pop()
             match receive_data:
-                case {"action": "gen_command", "gen_type": gen_type, "timeline_level": timeline_level, "command": "renew_trigger"}:
+                case {
+                    "action": "gen_command",
+                    "gen_type": gen_type,
+                    "timeline_level": timeline_level,
+                    "command": "renew_trigger",
+                }:
                     logger.info(f"gen_command with {gen_type} at level {timeline_level} and command renew_trigger")
                     device = self.patternscheduler.devices[0]
                     if timeline_level == 0:  # level = 0 means auto
                         timeline_level = device.rendermodule.get_timeline_level()
                     self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
-                case {"action": "gen_command", "gen_type": gen_type, "timeline_level": timeline_level, "command": command}:
+                case {
+                    "action": "gen_command",
+                    "gen_type": gen_type,
+                    "timeline_level": timeline_level,
+                    "command": command,
+                }:
                     logger.info(f"gen_command with {gen_type} at level {timeline_level} and command {command}")
                     for device in self.patternscheduler.devices:
                         if timeline_level == 0:
                             timeline_level = device.rendermodule.get_timeline_level()
-                        generator = device.rendermodule.get_selected_generator(gen_type=gen_type, timeline_level=timeline_level)
+                        generator = device.rendermodule.get_selected_generator(
+                            gen_type=gen_type, timeline_level=timeline_level
+                        )
                         function = getattr(generator, command)
                         function()
                 case {"action": "set_sync"}:
@@ -83,7 +94,12 @@ class EventHandler:
                 case {"action": "set_effect", **other_kwargs}:
                     logger.info(f"set_effect: {other_kwargs}")
                     self.effecthandler.load_effect(**other_kwargs)
-                case {"action": "modify_effect", "operation": operation, "effect_name": effect_name, "timeline_level": timeline_level}:
+                case {
+                    "action": "modify_effect",
+                    "operation": operation,
+                    "effect_name": effect_name,
+                    "timeline_level": timeline_level,
+                }:
                     assert isinstance(effect_name, str)
                     assert isinstance(timeline_level, int)
                     match operation:
@@ -99,6 +115,9 @@ class EventHandler:
                         case "remove":
                             logger.info(f"modify_effect {operation}: {effect_name}")
                             self.effecthandler.effect_remove(effect=effect_name, timeline_level=timeline_level)
+                        case _:
+                            logger.warning("API instruction with 'action': 'modify_effect' not understood")
+
                 case other:
                     logger.warning(other)
                     logger.warning("API instruction not understood")

@@ -1,14 +1,13 @@
 import logging
 import random
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array, ArrayNx1, ArrayNx3
-from ravelights.core.pixelmatrix import PixelMatrix
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
@@ -27,7 +26,7 @@ class Generator(ABC):
         device: "Device",
         name: str = "undefined",
         keywords: Optional[list["Keywords"]] = None,
-        weight=1.0,
+        weight: float = 1.0,
         is_prim: bool = True,
         version: int = 0,
         p_add_dimmer: float = 0.5,
@@ -51,7 +50,7 @@ class Generator(ABC):
         self.p_add_dimmer: float = p_add_dimmer
         self.p_add_thinner: float = p_add_thinner
 
-        self.kwargs: dict = kwargs
+        self.kwargs: dict[str, Any] = kwargs  # is this used?
         self.force_trigger_overwrite: bool = False
         if not hasattr(self, "possible_triggers"):
             self.possible_triggers: list[BeatStatePattern] = [BeatStatePattern()]
@@ -80,13 +79,13 @@ class Generator(ABC):
         ...
 
     @abstractmethod
-    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return in_matrix
 
-    def sync_send(self) -> dict:
+    def sync_send(self) -> Optional[dict[str, Any]]:
         ...
 
-    def sync_load(self, in_dict: dict):
+    def sync_load(self, in_dict: Optional[dict[str, Any]]):
         # after set_kwargs is called
         if not isinstance(in_dict, dict):
             return None
@@ -99,7 +98,7 @@ class Generator(ABC):
     def get_new_trigger(self) -> BeatStatePattern:
         return random.choice(self.possible_triggers)
 
-    def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayNx3:
+    def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayFloat:
         """
         shape: (n_leds, n_lights, 3)
         Returns empty 3-channel color matrix in correct size and dtype float.
@@ -108,7 +107,7 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n_leds, self.n_lights, 3), fill_value=fill_value, dtype=float)
         return matrix
 
-    def get_float_matrix_1d_mono(self, fill_value: float = 0.0) -> ArrayNx1:
+    def get_float_matrix_1d_mono(self, fill_value: float = 0.0) -> ArrayFloat:
         """
         shape: (n_leds * n_lights)
         Returns empty 1-channel monochrome matrix in correct size and dtype float.
@@ -118,7 +117,7 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n), fill_value=fill_value, dtype=float)
         return matrix
 
-    def get_float_matrix_2d_mono(self, fill_value: float = 0.0) -> ArrayNx1:
+    def get_float_matrix_2d_mono(self, fill_value: float = 0.0) -> ArrayFloat:
         """
         shape: (self.n_leds, self.n_lights)
         Returns empty 1-channel monochrome matrix in correct size and dtype float.
@@ -128,8 +127,10 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n_leds, self.n_lights), fill_value=fill_value, dtype=float)
         return matrix
 
-    def colorize_matrix(self, matrix_mono: ArrayNx1, color: Color) -> ArrayNx3:
+    def colorize_matrix(self, matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
         """
+        in:  Nx1
+        out: Nx3
         function to colorize a matrix with a given color
         for colorization, another dimension is added
         special case: input matrix is 1d of size n:
@@ -149,37 +150,44 @@ class Generator(ABC):
             matrix_rgb = np.zeros((*matrix_mono.shape, 3))
 
         shape = [1] * matrix_mono.ndim + [3]
-        color = np.array(color).reshape(shape)
-        matrix_rgb = matrix_mono[..., None] * color
+        color_array: ArrayFloat = np.array(color).reshape(shape)
+        matrix_rgb = matrix_mono[..., None] * color_array
         return matrix_rgb
 
     @staticmethod
-    def bw_matrix(matrix_rgb: ArrayNx3) -> ArrayNx1:
+    def bw_matrix(matrix_rgb: ArrayFloat) -> ArrayFloat:
         """
+        in:  Nx3
+        out: Nx1
         turns a matrix with shape (..., 3) into a black and white matrix of shape (...)
         """
 
         return np.amax(matrix_rgb, axis=-1)
 
     @staticmethod
-    def add_matrices(matrix_1: Array, matrix_2: Array) -> Array:
+    def add_matrices(matrix_1: ArrayFloat, matrix_2: ArrayFloat) -> ArrayFloat:
         """Adds two matrices together and caps the brightness (max value) to 1."""
         return np.fmin(1.0, matrix_1 + matrix_2)
 
     @staticmethod
-    def merge_matrices(minor: Array, major: Array) -> Array:
+    def merge_matrices(minor: ArrayFloat, major: ArrayFloat) -> ArrayFloat:
         """
         Combines two matrices similar to add_matrices. Every pixel with brightness > 0 from matrix 2
         will overwrite matrix 1 at that location. This is superior than add_matrices, as different
         colors do not combine to white"""
 
-        matrix_2_max = np.max(major, axis=2)
-        matrix_2_max_repeated = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
+        matrix_2_max: ArrayFloat = np.max(major, axis=2)
+        matrix_2_max_repeated: ArrayFloat = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
         return np.where(matrix_2_max_repeated > 0, major, minor)
 
     @staticmethod
-    def apply_mask(in_matrix: ArrayNx3, mask: ArrayNx1) -> ArrayNx3:
-        """Applies a mask 1-channel mask array to a 3-channel color matrix by multiplication."""
+    def apply_mask(in_matrix: ArrayFloat, mask: ArrayFloat) -> ArrayFloat:
+        """
+        Applies a mask 1-channel mask array to a 3-channel color matrix by multiplication.
+        in_matrix: Nx3
+        mask: Nx1
+        out: Nx3
+        """
         mask = np.repeat(mask[:, :, None], 3, axis=2)
         return np.multiply(in_matrix, mask)
 
@@ -196,7 +204,7 @@ class Generator(ABC):
 
 
 class Pattern(Generator):
-    def render(self, colors: list[Color]) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         ...
 
 
@@ -215,7 +223,7 @@ class PatternNone(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayNx3:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         return self.get_float_matrix_rgb()
 
 
@@ -238,7 +246,7 @@ class VfilterNone(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return in_matrix
 
 
@@ -263,7 +271,7 @@ class ThinnerNone(Thinner):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return in_matrix
 
 
@@ -286,5 +294,5 @@ class DimmerNone(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return in_matrix

@@ -1,5 +1,5 @@
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from ravelights.core.instructionhandler import InstructionHandler
 from ravelights.core.pixelmatrix import PixelMatrix
@@ -43,7 +43,7 @@ class Device:
     def get_device_objects(self) -> dict[str, Settings | TimeHandler | PixelMatrix]:
         return dict(settings=self.settings, pixelmatrix=self.pixelmatrix)
 
-    def update_from_dict(self, update_dict):
+    def update_from_dict(self, update_dict: dict[str, Any]):
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):

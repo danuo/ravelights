@@ -1,6 +1,7 @@
 import numpy as np
+from numpy.typing import NDArray
 
-X_SPACINGS = dict()
+X_SPACINGS: dict[int, NDArray[np.float_]] = dict()
 for i in range(1, 11):
     X_SPACINGS[i] = np.linspace(0.2, 0.8, i)
 

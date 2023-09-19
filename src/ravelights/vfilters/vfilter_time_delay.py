@@ -1,7 +1,7 @@
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array, ArrayMxKx3, ArrayNx1
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -23,7 +23,7 @@ class VfilterTimeDelay(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         self.memory_matrix[..., self.zero_index] = in_matrix
 
         out_matrix = self.get_float_matrix_rgb()

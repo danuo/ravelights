@@ -1,6 +1,6 @@
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer
 
 
@@ -26,7 +26,7 @@ class DimmerDecayVeryFast(Dimmer):
     def on_trigger(self):
         self.decay_ref = self.timehandler.time_0
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]):
         decay: float = 1 + (self.timehandler.time_0 - self.decay_ref) * self.decay_factor
-        matrix: ArrayNx3 = in_matrix * (1 / decay)
+        matrix = in_matrix * (1 / decay)
         return matrix

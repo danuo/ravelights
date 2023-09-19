@@ -2,10 +2,10 @@ import random
 from typing import TYPE_CHECKING
 
 import numpy as np
-import numpy.typing as npt
+from numpy.typing import NDArray
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3, ArrayNx1, ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
@@ -24,9 +24,9 @@ class PixelMatrix:
         self.reset()
 
     def reset(self):
-        self.matrix_float: ArrayMxKx3 = np.zeros(shape=(self.n_lights, self.n_leds, 3))
+        self.matrix_float: ArrayFloat = np.zeros(shape=(self.n_lights, self.n_leds, 3))
 
-    def set_matrix_float(self, matrix: ArrayMxKx3):
+    def set_matrix_float(self, matrix: ArrayFloat):
         """
         matrix with:
         shape: (self.n_leds, self.n_lights, 3)
@@ -38,7 +38,7 @@ class PixelMatrix:
         assert matrix.shape == (self.n_leds, self.n_lights, 3)
         self.matrix_float = matrix
 
-    def get_matrix_int(self, brightness: float = 1.0) -> npt.NDArray[np.uint8]:
+    def get_matrix_int(self, brightness: float = 1.0) -> NDArray[np.uint8]:
         return (self.matrix_float * 255 * brightness).astype(np.uint8)
 
     def get_ledid_lightid_from_index(self, index: int):
@@ -54,10 +54,10 @@ class PixelMatrix:
         return divmod(index, self.n_leds)
 
     @staticmethod
-    def clip_matrix_to_1(matrix: ArrayNx1) -> ArrayNx1:
+    def clip_matrix_to_1(matrix: ArrayFloat) -> ArrayFloat:
         return np.fmin(1.0, matrix)
 
-    def get_lights(self, light_selection: str = "") -> npt.NDArray[np.int_]:
+    def get_lights(self, light_selection: str = "") -> NDArray[np.int_]:
         if light_selection == "":
             light_selection = random.choice(["half", "random", "random_v2", "full"])
         if light_selection == "half":
@@ -73,13 +73,13 @@ class PixelMatrix:
         else:  # full
             return np.arange(self.n_lights)
 
-    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: list[Color]) -> ArrayNx1:
+    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: list[Color]) -> ArrayFloat:
         """Renders lists of LightObjects (one queue per light) to a blank matrix."""
 
         matrix = np.zeros(shape=(self.n_leds, self.n_lights))
         for light_id in range(self.n_lights):
             matrix_view = matrix[:, light_id]
-            elements_for_deletion = set()
+            elements_for_deletion: set[LightObject] = set()
             for ele in queues[light_id]:
                 ele_matrix, done = ele.render_super(colors)
                 if done is True:
@@ -91,7 +91,7 @@ class PixelMatrix:
         matrix = np.fmin(1, matrix)
         return matrix
 
-    def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayNx3:
+    def get_float_matrix_rgb(self, fill_value: float = 0.0) -> ArrayFloat:
         # todo: this is duplicate. move all these functions here
         """
         shape: (n_leds, n_lights, 3)

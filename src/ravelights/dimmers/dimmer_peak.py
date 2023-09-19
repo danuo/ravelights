@@ -1,10 +1,10 @@
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer
 
 
 class DimmerPeak(Dimmer):
-    def init(self, frequency=1):
+    def init(self, frequency: int = 1):
         self.frequency = frequency
 
     def alternate(self):
@@ -16,9 +16,9 @@ class DimmerPeak(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]):
         x = self.settings.bpmhandler.get_beat_progress_n(self.frequency)
         x_shift = abs((x - 0.5) * 2)
         intensity = max(x_shift**2 * 0.3, x_shift**5)
-        matrix: ArrayNx3 = in_matrix * intensity
+        matrix = in_matrix * intensity
         return matrix

@@ -1,7 +1,5 @@
 import logging
-import random
-from dataclasses import asdict
-from typing import TYPE_CHECKING, Iterable, Type, cast
+from typing import TYPE_CHECKING, cast
 
 from ravelights.configs.components import (
     BlueprintPlace,
@@ -14,13 +12,12 @@ from ravelights.configs.components import (
 )
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
-from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
+from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.instruction import InstructionDevice, InstructionEffect
 from ravelights.core.settings import Settings
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import p
-from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp

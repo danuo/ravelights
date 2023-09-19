@@ -1,12 +1,13 @@
 import random
+from typing import Optional
 
 from ravelights.core.colorhandler import Color, ColorHandler
-from ravelights.core.custom_typing import Array
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.effects.effect_super import Effect
 
 
 class EffectColorStrobe(Effect):
-    def reset(self, hue_range=None):
+    def reset(self, hue_range: Optional[float] = None):
         # todo: many versions, rainbow, strobe, random, etc pp
         """
         hue_range in (0,1]
@@ -19,17 +20,17 @@ class EffectColorStrobe(Effect):
         self.hue_range = 0.1
 
     def run_before(self):
-        for index in range(0, 2):  # 1, 2
+        for index in "ABC":  # A, B, C
             random_hue_shift = random.uniform(0, self.hue_range)
             new_hue = (self.base_hue + self.sign * random_hue_shift) % 1
             random_color = ColorHandler.get_color_from_hue(new_hue)
             self.settings.color_engine.color_overwrite[index] = random_color
 
     def run_after(self):
-        for index in range(0, 2):  # 1, 2
+        for index in "ABC":
             self.settings.color_engine.color_overwrite[index] = None
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         """Called each render cycle"""
         return in_matrix
 

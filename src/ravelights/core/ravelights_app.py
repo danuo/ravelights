@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
@@ -17,8 +18,10 @@ def create_devices(root: "RaveLightsApp") -> list[Device]:
     settings: Settings = root.settings
     devices: list[Device] = []
     for device_id, config in enumerate(settings.device_config):
-        n_leds = config["n_leds"]
-        n_lights = config["n_lights"]
+        n_leds: int = config["n_leds"]
+        assert isinstance(n_leds, int)
+        n_lights: int = config["n_lights"]
+        assert isinstance(n_lights, int)
         prim = True if device_id == 0 else False
         devices.append(Device(root=root, device_id=device_id, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
     return devices
@@ -28,12 +31,12 @@ class RaveLightsApp:
     def __init__(
         self,
         *,
-        fps=20,
+        fps: int = 20,
         device_config: list[dict[str, int]],
-        data_routers_configs: list[dict],
-        webserver_port=80,
-        serve_webinterface=True,
-        visualizer=True,
+        data_routers_configs: list[dict[str, Any]],
+        webserver_port: int = 80,
+        serve_webinterface: bool = True,
+        visualizer: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
         self.devices = create_devices(root=self)
@@ -58,8 +61,8 @@ class RaveLightsApp:
         )
         self.rest_api.start_threaded(debug=True)
 
-    def initiate_data_routers(self, data_routers_configs: list[dict]) -> list[DataRouter]:
-        data_routers = []
+    def initiate_data_routers(self, data_routers_configs: list[dict[str, Any]]) -> list[DataRouter]:
+        data_routers: list[DataRouter] = []
         for config in data_routers_configs:
             data_routers.append(DataRouter(root=self, **config))
 

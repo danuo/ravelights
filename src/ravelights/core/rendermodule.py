@@ -1,8 +1,8 @@
 import logging
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Literal, Optional, Type, overload
 
 from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.custom_typing import ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.settings import Settings
@@ -23,11 +23,7 @@ class RenderModule:
         self.device_automatic_timeline_level = 0
         self.counter_frame = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
-        self.generators_dict: dict[str, Generator] = dict()
-
-    def assert_dims(self, in_matrix):
-        """checks if shape is (n_leds, n_lights, 3). this is a debug function"""
-        assert in_matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        self.generators_dict: dict[str, Pattern | Vfilter | Thinner | Dimmer] = dict()
 
     def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
@@ -35,14 +31,36 @@ class RenderModule:
             level = self.device_automatic_timeline_level
         return self.settings.triggers[identifier][level]
 
-    def get_selected_generator(self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None) -> Generator:
+    @overload
+    def get_selected_generator(self, gen_type: Type[Pattern], timeline_level: Optional[int] = None) -> Pattern:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Literal["pattern_sec"], timeline_level: Optional[int] = None) -> Pattern:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Vfilter], timeline_level: Optional[int] = None) -> Vfilter:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Dimmer], timeline_level: Optional[int] = None) -> Dimmer:
+        ...
+
+    @overload
+    def get_selected_generator(self, gen_type: Type[Thinner], timeline_level: Optional[int] = None) -> Thinner:
+        ...
+
+    def get_selected_generator(
+        self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None
+    ) -> Pattern | Vfilter | Thinner | Dimmer:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         gen_name = self.settings.selected[identifier][timeline_level]
         return self.get_generator_by_name(gen_name)
 
-    def get_generator_by_name(self, gen_name: str) -> Generator:
+    def get_generator_by_name(self, gen_name: str) -> Pattern | Vfilter | Thinner | Dimmer:
         return self.generators_dict[gen_name]
 
     def get_timeline_level(self) -> int:
@@ -70,12 +88,13 @@ class RenderModule:
         timeline_level_dimmer = 1 if self.settings.global_dimmer else timeline_level
 
         # ------------------------------ get generators ------------------------------ #
+        # fmt: off
         pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
         pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
         vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level_vfilter)
         thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level_thinner)
         dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level_dimmer)
-
+        # fmt: on
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
             thinner = self.get_generator_by_name("t_random")
@@ -111,11 +130,11 @@ class RenderModule:
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern.render(colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
         matrix = self.apply_frameskip(matrix)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
         matrix_sec = pattern_sec.render(colors=colors[::-1])  # todo
@@ -123,15 +142,15 @@ class RenderModule:
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
         matrix = vfilter.render(matrix, colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER THINNER ──────────────────────────────────────────────
         matrix = thinner.render(matrix, colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
         matrix = dimmer.render(matrix, colors=colors)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
@@ -147,7 +166,7 @@ class RenderModule:
         # global thing
         if self.settings.global_effect_draw_mode == "overlay":
             matrix = Generator.merge_matrices(in_matrix, matrix)
-        self.assert_dims(matrix)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── Send To Pixelmatrix ──────────────────────────────────────
         self.pixelmatrix.set_matrix_float(matrix)
@@ -159,7 +178,7 @@ class RenderModule:
     def find_generator(self, name: str) -> Generator:
         return self.generators_dict[name]
 
-    def apply_frameskip(self, in_matrix: ArrayNx3) -> ArrayNx3:
+    def apply_frameskip(self, in_matrix: ArrayFloat) -> ArrayFloat:
         self.counter_frame += 1
         frameskip = max(self.settings.global_frameskip, self.device.device_frameskip)
         if self.counter_frame % frameskip != 0:

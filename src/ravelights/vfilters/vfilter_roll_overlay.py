@@ -1,7 +1,7 @@
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -18,7 +18,7 @@ class VfilterRollOverlay(Vfilter):
     def on_trigger(self):
         self.roll_amount = 0
 
-    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         self.roll_amount += self.roll_speed
         out_matrix = in_matrix.copy()
         out_matrix += np.roll(in_matrix, shift=self.roll_amount, axis=0)

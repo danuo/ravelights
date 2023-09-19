@@ -1,12 +1,12 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array, ArrayNx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pixelmatrix import PixelMatrix
 
 if TYPE_CHECKING:
@@ -19,6 +19,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+# todo: move to core
 class EffectWrapper:
     """
     Wrapper class for Effect objects. One EffectWrapper object will be created for each Effect class in Effecthandler object.
@@ -32,7 +33,7 @@ class EffectWrapper:
         self.name = effect_objects[0].name
         self.keywords = effect_objects[0].keywords
         self.weight = effect_objects[0].weight
-        self.mode = "frames"
+        self.mode = "frames"  # todo: make EnumStr
         self.draw_mode = "overlay"  # "overlay", "normal"
         self.active = False
         self.trigger: Optional[BeatStatePattern] = None
@@ -40,7 +41,7 @@ class EffectWrapper:
 
         # mode == "frames"
         self.counter_frames: int = 0
-        self.limit_frames: int = 0
+        self.limit_frames: int | str = 0
         self.frames_pattern_binary: list[bool] = [True]
 
         # mode == "quarters"
@@ -49,7 +50,7 @@ class EffectWrapper:
         # mode == "loopquarters"
         self.counter_quarters: int = 0
         self.limit_loopquarters: int = 0
-        self.limit_loopquarters_loop: int = 0
+        self.limit_loopquarters_loop: int | str = 0
         self.counter_quarters_loop: int = 0
         self.loop_length_beats: int = 1
 
@@ -146,7 +147,9 @@ class EffectWrapper:
             self.counter_quarters = 0
             self.counter_quarters_loop = 0
             self.quarters_pattern_binary = get_quarters_pattern_binary(
-                quarters_pattern=quarters_pattern, loop_length_beats=loop_length_beats, limit_loopquarters=limit_loopquarters
+                quarters_pattern=quarters_pattern,
+                loop_length_beats=loop_length_beats,
+                limit_loopquarters=limit_loopquarters,
             )
             self.limit_loopquarters = limit_quarters  # in quarters
             self.loop_length_beats = loop_length_beats  # in beats
@@ -155,7 +158,7 @@ class EffectWrapper:
         for effect in self.effects:
             effect.reset()
 
-    def render(self, in_matrix: ArrayNx3, colors: list[Color], device_id: int):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color], device_id: int) -> ArrayFloat:
         if self.active:
             effect = self.effects[device_id]
             return effect.render_matrix(in_matrix=in_matrix, colors=colors)
@@ -198,6 +201,7 @@ class EffectWrapper:
                 return False
 
         # after start, effect is potentially active
+        assert isinstance(self.limit_frames, int)
         if self.counter_frames < self.limit_frames:
             index = self.counter_frames % len(self.frames_pattern_binary)
             if self.frames_pattern_binary[index]:
@@ -250,11 +254,15 @@ class EffectWrapper:
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
         if self.mode == "frames" or self.mode == "quarters":
-            if self.limit_frames != "inf" and self.counter_frames >= self.limit_frames:
-                return True
+            if self.limit_frames != "inf":
+                assert isinstance(self.limit_frames, int)
+                if self.counter_frames >= self.limit_frames:
+                    return True
         elif self.mode == "loopquarters":
-            if self.limit_loopquarters_loop != "inf" and self.counter_quarters_loop >= self.limit_loopquarters_loop:
-                return True
+            if self.limit_loopquarters_loop != "inf":
+                assert isinstance(self.limit_loopquarters_loop, int)
+                if self.counter_quarters_loop >= self.limit_loopquarters_loop:
+                    return True
         return False
 
     def get_identifier(self):
@@ -276,7 +284,7 @@ class Effect(ABC):
         device: "Device",
         name: str,
         keywords: Optional[list["Keywords"]] = None,
-        weight=1.0,
+        weight: float = 1.0,
         **kwargs: dict[str, str | int | float],
     ):
         self.root = root
@@ -306,7 +314,7 @@ class Effect(ABC):
         ...
 
     @abstractmethod
-    def render_matrix(self, in_matrix: ArrayNx3, colors: list[Color]) -> ArrayNx3:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         """Called inside each render cycle, between vfilter and dimmer"""
         ...
 
@@ -320,10 +328,10 @@ class Effect(ABC):
     def get_identifier():
         return "effect"
 
-    def sync_send(self) -> dict:
+    def sync_send(self) -> Optional[dict[str, Any]]:
         ...
 
-    def sync_load(self, in_dict: dict):
+    def sync_load(self, in_dict: Optional[dict[str, Any]]):
         if not isinstance(in_dict, dict):
             return None
         for key, value in in_dict.items():
@@ -341,7 +349,7 @@ class Effect(ABC):
     def on_trigger(self):
         ...
 
-    def colorize_matrix(self, matrix_mono: Array, color: Color) -> ArrayNx3:
+    def colorize_matrix(self, matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
         """
         function to colorize a matrix with a given color
         for colorization, another dimension is added

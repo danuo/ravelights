@@ -30,11 +30,13 @@ class EffectColorShift(Effect):
             new_hue = (base_hue + self.sign * self.hue_slide_speed) % 1
             self.base_hue[index] = new_hue
             new_color = ColorHandler.get_color_from_hue(new_hue)
-            self.settings.color_engine.color_overwrite[index] = new_color
+            color_key = "ABC"[index]
+            self.settings.color_engine.color_overwrite[color_key] = new_color
 
     def run_after(self):
         for index in range(2):
-            self.settings.color_engine.color_overwrite[index] = None
+            color_key = "ABC"[index]
+            self.settings.color_engine.color_overwrite[color_key] = None
 
     def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
         """Called each render cycle"""

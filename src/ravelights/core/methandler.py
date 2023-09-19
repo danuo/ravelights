@@ -1,5 +1,4 @@
-from collections import namedtuple
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS
@@ -8,7 +7,11 @@ from ravelights.core.templateobjects import GenPlacing
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
-Item = namedtuple("Item", field_names="timing level")
+
+class Item(NamedTuple):
+    timing: int
+    level: int
+
 
 TIMELINE_COLORS = {
     1: "rgb(113,231,255)",
@@ -25,7 +28,7 @@ class MetaHandler:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings = root.settings
-        self.api_content = dict()
+        self.api_content: dict[str, Any] = dict()
         self.api_content["available_timelines"] = self.get_meta_available_timelines()
         self.api_content["available_keywords"] = self.get_meta_available_keywords()
         self.api_content["available_generators"] = self.get_meta_available_generators()
@@ -36,10 +39,10 @@ class MetaHandler:
         self.api_content["controls_autopilot"] = self.root.autopilot.get_autopilot_controls()
         self.api_content["controls_color_palette"] = self.root.autopilot.get_color_palette()
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str):
         return self.api_content[key]
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any):
         self.api_content[key] = value
 
     def get_meta_available_timelines(self) -> list[str]:
@@ -127,8 +130,8 @@ class MetaHandler:
             if placement.cls != GenPlacing:
                 continue
 
-            level = placement.args["level"]
-            timings = placement.args["timings"]
+            level: list[int] = placement.args["level"]
+            timings: list[int] = placement.args["timings"]
             for t in timings:
                 item = Item(t, level)
                 items.append(item)

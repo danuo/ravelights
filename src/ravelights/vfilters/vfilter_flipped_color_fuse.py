@@ -1,7 +1,7 @@
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -18,7 +18,7 @@ class VfilterFlippedColorFuse(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         flipped_matrix = self.bw_matrix(in_matrix)
         flipped_matrix = np.flip(flipped_matrix, axis=0)
         # todo: improve color handling

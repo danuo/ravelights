@@ -1,5 +1,5 @@
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.effects.effect_super import Effect
 
 
@@ -19,5 +19,5 @@ class EffectColorSwap(Effect):
     def run_after(self):
         self.settings.color_engine.reset_color_overwrite()
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return in_matrix

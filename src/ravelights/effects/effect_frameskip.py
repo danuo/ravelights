@@ -1,5 +1,5 @@
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.effects.effect_super import Effect
 
 
@@ -18,7 +18,7 @@ class EffectFrameskip(Effect):
     def run_after(self):
         self.device.device_frameskip = self.frameskip_before
 
-    def render_matrix(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return in_matrix
 
     def on_delete(self):

@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayMxKx3
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -31,7 +31,7 @@ class VfilterRgbShift(Vfilter):
         self.shift = self.init_shift
         random.shuffle(self.order)
 
-    def render(self, in_matrix: ArrayMxKx3, colors: list[Color]) -> ArrayMxKx3:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         if self.settings.beat_state.is_beat:
             self.on_trigger()
         if self.shift > self.limit:

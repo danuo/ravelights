@@ -1,12 +1,12 @@
 import math
 import random
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import T_ALL, ArrayNx1
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.utils import cos_mapper, p, sign
 from ravelights.vfilters.filter_flimmering import VfilterFlimmering
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class LightObject(ABC):
-    def __init__(self, root: "RaveLightsApp", device: "Device", **kwargs: T_ALL):
+    def __init__(self, root: "RaveLightsApp", device: "Device", **kwargs: dict[str, Any]):
         self.root = root
         self.device = device
         self.settings: "Settings" = self.root.settings
@@ -31,10 +31,10 @@ class LightObject(ABC):
 
         self.lifetime_beats: Optional[int] = kwargs.get("lifetime_beats", None)
         self.lifetime_frames: Optional[int] = kwargs.get("lifetime_frames", None)
-        self.init(**kwargs)
+        self.init_kwargs(**kwargs)
 
     @abstractmethod
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         ...
 
     @abstractmethod
@@ -43,7 +43,7 @@ class LightObject(ABC):
         ...
 
     @abstractmethod
-    def render(self, colors: list[Color]) -> ArrayNx1:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         ...
 
     def increase_counters(self):
@@ -66,19 +66,23 @@ class LightObject(ABC):
         else:
             return self.is_done()
 
-    def render_super(self, colors: list[Color]) -> tuple[ArrayNx1, bool]:
+    def render_super(self, colors: list[Color]) -> tuple[ArrayFloat, bool]:
+        """
+        out: NDArray[float] Nx1 | out_matrix
+        out: bool               | done
+        """
         self.increase_counters()
         matrix = self.render(colors)
         done = self.is_done_super()
         return matrix, done
 
-    def get_float_matrix(self) -> ArrayNx1:
+    def get_float_matrix(self) -> ArrayFloat:
         return np.zeros(shape=(self.n_leds), dtype=float)
 
 
 class FallingSmallBlock(LightObject):
     # formerly TwoThing
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         if "flip" in kwargs:
             self.flip = kwargs["flip"]
         else:
@@ -91,8 +95,8 @@ class FallingSmallBlock(LightObject):
     def is_done(self) -> bool:
         return True if self.pos > self.n_leds + 30 else False
 
-    def render(self, colors: list[Color]):
-        matrix: ArrayNx1 = self.get_float_matrix()
+    def render(self, colors: list[Color]) -> ArrayFloat:
+        matrix: ArrayFloat = self.get_float_matrix()
         a = int(max(0, self.pos))
         b = int(self.pos + self.length)
         matrix[a:b] = 1
@@ -107,7 +111,7 @@ class FallingSmallBlock(LightObject):
 
 class Slideblock(LightObject):
     # todo: slideblock with only the edges visible
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         self.lifetime_beats: Optional[int] = None
         self.lifetime_frames: int = random.randrange(start=5, stop=40)
 
@@ -132,8 +136,8 @@ class Slideblock(LightObject):
 
 
 class SlideStrobe(Slideblock):
-    def init(self, **kwargs: str):
-        super().init(**kwargs)
+    def init_kwargs(self, **kwargs: dict[str, Any]):
+        super().init_kwargs(**kwargs)
         self.done = False
         if "flashes" in kwargs:
             self.flashes = kwargs["flashes"]
@@ -160,8 +164,8 @@ class SlideStrobe(Slideblock):
 # class SymmetricalStrobe(SlideStrobe):
 class SymmetricalStrobe(Slideblock):
     # todo: do not have this class, have vfilters for pattern sec instead
-    def init(self, **kwargs: T_ALL):
-        super().init(**kwargs)
+    def init_kwargs(self, **kwargs: dict[str, Any]):
+        super().init_kwargs(**kwargs)
         self.mirror = VfilterMirrorVer(**self.gen_args)
 
     def render(self, colors: list[Color]):
@@ -171,7 +175,7 @@ class SymmetricalStrobe(Slideblock):
 
 
 class Sine(LightObject):
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         matrix = self.get_float_matrix()
         size = 60
         pos_mid = (self.n_leds - size) // 2
@@ -192,7 +196,7 @@ class Sine(LightObject):
 
 
 class Square(LightObject):
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         matrix = self.get_float_matrix()
         size = 60
         pos_mid = (self.n_leds - size) // 2
@@ -214,11 +218,11 @@ class Square(LightObject):
 
 
 class OneThing(LightObject):
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         if "flip" in kwargs:
             self.flip = kwargs["flip"]
         self.n_leds = self.pixelmatrix.n_leds
-        self.lifetime_frames = random.randrange(start=5, stop=40)  # prev: 5, 30
+        self.lifetime_frames: int = random.randrange(start=5, stop=40)  # prev: 5, 30
         self.counter_frame = 0
         self.error: int = 0
         self.pos = int(abs(random.gauss(mu=0, sigma=1) * self.n_leds))
@@ -231,10 +235,10 @@ class OneThing(LightObject):
     def is_done(self) -> bool:
         return True if self.counter_frame > self.lifetime_frames else False
 
-    def render(self, colors: list[Color]) -> ArrayNx1:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         # lifetime
         self.counter_frame += 1
-        matrix: ArrayNx1 = np.zeros(shape=(self.n_leds), dtype=float)
+        matrix: ArrayFloat = np.zeros(shape=(self.n_leds), dtype=float)
         direction = 1 if p(0.5) else -1
 
         # update position
@@ -258,7 +262,7 @@ class OneThing(LightObject):
 
 
 class Meteor(LightObject):
-    def init(self, **kwargs: T_ALL):
+    def init_kwargs(self, **kwargs: dict[str, Any]):
         """speed formular
         speed [px/frame] = 144 px/b * 80 b/min * 1/60 min/s * 1/20 s/f
         """
@@ -276,7 +280,7 @@ class Meteor(LightObject):
     def is_done(self) -> bool:
         return self.pos > 2 * self.n_leds
 
-    def render(self, colors: list[Color]) -> ArrayNx1:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         decay = np.random.uniform(0.85, 1.0, size=self.n_leds) * self.decay_factor
         decay = np.where(np.random.uniform(0, 1, size=self.n_leds) < 0.05, decay * 0.5, decay)
         self.matrix[:] = np.multiply(self.matrix, decay)

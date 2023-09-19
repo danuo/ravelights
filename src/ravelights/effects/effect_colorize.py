@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import Array
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.effects.effect_super import Effect
 
 
@@ -13,7 +13,8 @@ class EffectColorize(Effect):
         hue_range controls the color variation for each frame
         """
 
-        def get_color_matrix(k):
+        def get_color_matrix(k: float):
+            """generates random matrix with 0 and 1 to colorize in_matrix"""
             color_matrix = np.zeros(shape=(self.n_leds * self.n_lights), dtype=int)
             index = 0
             while index < self.n:
@@ -33,7 +34,7 @@ class EffectColorize(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         # bw filter
         in_matrix_bw = np.max(in_matrix, axis=-1)
 
