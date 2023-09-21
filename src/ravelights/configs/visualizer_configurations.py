@@ -91,6 +91,38 @@ configurations = [
         ],
     ),
     dict(
+        name="10 top, 10 bottom",
+        device_config=[dict(n_lights=10, n_leds=144), dict(n_lights=10, n_leds=144)],
+        visualizer_config=[
+            # ─── DEVICE 1 ────────────────────────────────────────────────────
+            [
+                dict(x=X_SPACINGS[10][0], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][1], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][2], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][3], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][4], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][5], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][6], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][7], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][8], y=0.3, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][9], y=0.3, rot=0.0, scale=1.0),
+            ],
+            # ─── DEVICE 2 ────────────────────────────────────────────────────
+            [
+                dict(x=X_SPACINGS[10][0], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][1], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][2], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][3], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][4], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][5], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][6], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][7], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][8], y=0.7, rot=0.0, scale=1.0),
+                dict(x=X_SPACINGS[10][9], y=0.7, rot=0.0, scale=1.0),
+            ],
+        ],
+    ),
+    dict(
         name="6 top, 10 bottom, laser",
         device_config=[dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144), dict(n_lights=1, n_leds=44)],
         visualizer_config=[
