@@ -178,7 +178,7 @@ class Generator(ABC):
 
         matrix_2_max: ArrayFloat = np.max(major, axis=2)
         matrix_2_max_repeated: ArrayFloat = np.repeat(matrix_2_max[..., None], repeats=3, axis=2)
-        return np.where(matrix_2_max_repeated > 0, major, minor)
+        return np.where(matrix_2_max_repeated > 5 / 100, major, minor)
 
     @staticmethod
     def apply_mask(in_matrix: ArrayFloat, mask: ArrayFloat) -> ArrayFloat:
