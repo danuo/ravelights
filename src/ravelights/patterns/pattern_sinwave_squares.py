@@ -99,5 +99,5 @@ class PatternSinwaveSquares(Pattern):
         matrix = self.get_float_matrix_2d_mono()
         for i in range(self.n_lights):
             matrix[..., i] = self.renderer.render_matrix(out[i])
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

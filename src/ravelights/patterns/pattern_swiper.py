@@ -6,7 +6,15 @@ from ravelights.core.colorhandler import Color
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
 from ravelights.dimmers.dimmer_sine import DimmerSine
-from ravelights.lights.lights_super import FallingSmallBlock, LightObject, Meteor, Sine, Slideblock, SlideStrobe, SymmetricalStrobe
+from ravelights.lights.lights_super import (
+    FallingSmallBlock,
+    LightObject,
+    Meteor,
+    Sine,
+    Slideblock,
+    SlideStrobe,
+    SymmetricalStrobe,
+)
 
 
 class PatternSwiper(Pattern):
@@ -48,5 +56,5 @@ class PatternSwiper(Pattern):
     def render(self, colors: list[Color]):
         matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, colors=colors)
         matrix = self.dimmer.render(matrix, colors=colors)
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

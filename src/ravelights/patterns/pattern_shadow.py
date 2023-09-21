@@ -106,5 +106,5 @@ class PatternShadow(Pattern):
             matrix[:, index] = self.render_shadow(pos)
 
         matrix = np.fmin(1.0, matrix)
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

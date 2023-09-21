@@ -27,5 +27,5 @@ class PatternRandomStripes(Pattern):
             if p(0.05):
                 intensity = random.uniform(0, 1)
             matrix[i] = intensity
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

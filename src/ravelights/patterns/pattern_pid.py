@@ -49,5 +49,5 @@ class PatternPID(Pattern):
             end = np.clip(pos + self.width // 2, 0, self.n_leds)
 
             matrix[start:end, index] = 1
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

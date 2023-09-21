@@ -67,5 +67,5 @@ class PatternSinwave(Pattern):
             pos = out[i]
             if pos > 0:
                 matrix[pos : pos + self.width, i] = 1
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

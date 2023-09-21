@@ -35,4 +35,4 @@ class PatternHorStripes(Pattern):
         for item in self.items:
             item.pos += item.speed
             matrix[item.pos : item.pos + item.height, item.light : item.light + item.width] = 1.0
-        return self.colorize_matrix(matrix, color=colors[1])
+        return self.colorize_matrix(matrix, color=colors[0])

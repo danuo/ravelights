@@ -30,7 +30,7 @@ class PatternStrobeSpawner(Pattern):
     def render(self, colors: list[Color]):
         # ─── Render Queue ─────────────────────────────────────────────
         matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, colors=colors)
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb
 
     def add_element(self, light_id: int, element: LightObject):

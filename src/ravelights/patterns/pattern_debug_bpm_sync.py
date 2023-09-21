@@ -36,7 +36,7 @@ class PatternDebugBPMSync(Pattern):
         b = min(b, self.n_leds)
         matrix[a:b, :] = 1.0
 
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
 
         if self.settings.beat_state.is_beat:
             mid = self.n_leds // 2

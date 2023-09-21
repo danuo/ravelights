@@ -72,4 +72,4 @@ class PatternInerseSquare(Pattern):
                     pos = self.n_leds - self.pos
             matrix[:, index] = self.render_thing(pos)
 
-        return self.colorize_matrix(matrix, color=colors[1])
+        return self.colorize_matrix(matrix, color=colors[0])
