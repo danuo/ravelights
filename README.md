@@ -1,7 +1,7 @@
 # Ravelights
 
 <div align="center">
-<video src="[https://github.com/danuo/ravelights/assets/66017297/75b52407-68e9-4218-82d1-06dd37acaf54](https://github.com/danuo/ravelights/assets/66017297/75b52407-68e9-4218-82d1-06dd37acaf54)" width="600" autoplay muted loop />
+<video src="https://github.com/danuo/ravelights/assets/66017297/75b52407-68e9-4218-82d1-06dd37acaf54" width="600" autoplay muted loop />
 </div>
 
 Ravelights is a library for LED stripes or similar light fixtures. It aims to offer more interesting and advanced visual patterns than similar libraries such as [LedFx](https://github.com/LedFx/LedFx) and [ColorChord](https://github.com/cnlohr/colorchord). This is achieved by providing a rendering pipeline that is used to chain together visual generators. Through variation of the generators used and other settings, endless different visual performances can be achieved. The visual output can by synchronized with the music by using bpm (beats per minute) system.
@@ -23,7 +23,7 @@ To generate image output, many patterns and effects are implemented already. Mor
 
 
 <div align="center">
-<video src="[https://github.com/danuo/ravelights/assets/66017297/dcb5eb48-6dfa-445a-97be-3070aa311c98](https://github.com/danuo/ravelights/assets/66017297/dcb5eb48-6dfa-445a-97be-3070aa311c98)" width="600" autoplay muted loop />
+<video src="https://github.com/danuo/ravelights/assets/66017297/dcb5eb48-6dfa-445a-97be-3070aa311c98" width="600" autoplay muted loop />
 </div>
 
 # Installation
