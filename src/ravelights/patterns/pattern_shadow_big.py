@@ -77,6 +77,6 @@ class PatternShadowBig(Pattern):
 
         matrix = np.fmin(1.0, matrix)
         return matrix
-        # matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        # matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         # matrix[start:end, :] = 1
         # return matrix_rgb

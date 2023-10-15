@@ -50,5 +50,5 @@ class PatternPIDInverse(Pattern):
             end = np.clip(pos + width // 2, 0, self.n_leds)
 
             matrix[start:end, index] = 0
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

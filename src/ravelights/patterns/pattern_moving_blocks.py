@@ -116,5 +116,5 @@ class PatternMovingBlocks(Pattern):
             for index in range(self.n_lights):
                 roll = int(round(self.rolls[index]))
                 matrix[:, index] = np.roll(matrix[:, index], axis=0, shift=roll)
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

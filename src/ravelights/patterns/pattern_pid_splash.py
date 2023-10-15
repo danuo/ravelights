@@ -68,5 +68,5 @@ class PatternPidSplash(Pattern):
 
         matrix = self.get_float_matrix_2d_mono()
         matrix[start:end, :] = intensity
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

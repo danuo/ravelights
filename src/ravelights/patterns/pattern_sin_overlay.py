@@ -53,5 +53,5 @@ class PatternSinOverlay(Pattern):
         b = int(b + self.dist3 * abs(math.sin(30 * time)))
         matrix[a : a + self.width, :] = 0.2
         matrix[b : b + self.width, :] = 0.2
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb

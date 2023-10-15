@@ -158,5 +158,5 @@ class PatternMeteor(Pattern):
         self.matrix = matrix
 
         # ─── PASS MATRIX ─────────────────────────────────────────────────
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[1])
+        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb
