@@ -1,11 +1,12 @@
 import importlib.resources
 import logging
 import threading
+import time
 from dataclasses import asdict
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
-from flask import Flask, jsonify, make_response, request, send_from_directory
+from flask import Flask, Response, jsonify, make_response, request, send_from_directory
 from flask_restful import Api, Resource, fields, marshal_with
 
 from ravelights.core.eventhandler import EventHandler
@@ -31,9 +32,13 @@ class RestAPI:
         self.root = root
         self.port = port
 
+        self.unblock_event = threading.Event()
+
         static_files_dir = self.check_static_files_dir(static_files_dir)
 
         self._flask_app = Flask(__name__)
+
+        # ─── Static Files ─────────────────────────────────────────────
 
         if serve_static_files:
             if len(list(static_files_dir.iterdir())) < 5:
@@ -49,9 +54,25 @@ class RestAPI:
             def serve_static(path):
                 return send_from_directory(static_files_dir, path)
 
+        # ─── SSE ──────────────────────────────────────────────────────
+
+        @self._flask_app.route("/feed")
+        def stream():
+            def event_stream():
+                while True:
+                    self.block_once()
+                    yield "data: none \n\n"
+
+            return Response(event_stream(), 200, content_type="text/event-stream")
+
         # add rest api
         self._api = Api(self._flask_app)
         self._setup_resource_routing()
+
+    def block_once(self):
+        """this could be any function that blocks until data is ready"""
+        self.unblock_event.wait()
+        self.unblock_event.clear()
 
     def check_static_files_dir(self, static_files_dir: Optional[Path] = None) -> Path:
         """Hacky way to obtain an actual str/path object of the directory. Methods such as str() do not work."""
@@ -70,7 +91,7 @@ class RestAPI:
         return static_files_dir
 
     def _setup_resource_routing(self):
-        self._api.add_resource(RaveAPIResource, "/rest/settings", resource_class_args=(self.root,))
+        self._api.add_resource(SettingsAPIResource, "/rest/settings", resource_class_args=(self.root,))
         self._api.add_resource(TriggersAPIResource, "/rest/triggers", resource_class_args=(self.root,))
         self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root,))
         self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.root,))
@@ -85,7 +106,7 @@ class RestAPI:
         ).start()
 
 
-class RaveAPIResource(Resource):
+class SettingsAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
         self.eventhandler = root.eventhandler
@@ -94,6 +115,7 @@ class RaveAPIResource(Resource):
 
     def get(self):
         data = asdict(self.settings)
+        # ic(data)
         return make_response(jsonify(data), 200)
 
     def put(self):
