@@ -96,7 +96,7 @@ class RaveLightsApp:
         # ----------------------------------- sync ----------------------------------- #
         self.sync_generators(["pattern", "vfilter"])
         # ---------------------------------- render ---------------------------------- #
-        for i, device in enumerate(self.devices):
+        for device in self.devices:
             device.render()
         # ------------------------------- effect after ------------------------------- #
         self.effecthandler.run_after()
