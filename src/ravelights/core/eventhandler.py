@@ -121,3 +121,4 @@ class EventHandler:
                 case other:
                     logger.warning(other)
                     logger.warning("API instruction not understood")
+            self.root.refresh_ui()

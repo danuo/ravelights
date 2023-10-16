@@ -69,6 +69,8 @@ class RestAPI:
         self._api = Api(self._flask_app)
         self._setup_resource_routing()
 
+        self.start_threaded()
+
     def block_once(self):
         """this could be any function that blocks until data is ready"""
         self.unblock_event.wait()
@@ -121,6 +123,7 @@ class SettingsAPIResource(Resource):
     def put(self):
         receive_data: dict[str, Any] = request.get_json()
         if isinstance(receive_data, dict):
+            print(receive_data)
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
 

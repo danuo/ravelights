@@ -154,6 +154,7 @@ class Settings:
     def clear_selected(self):
         """resets selected generators to default state"""
         self.selected = get_default_selected_dict()
+        self.root.refresh_ui()
 
     @property
     def bpm(self) -> float:
@@ -199,6 +200,7 @@ class Settings:
                 logger.info(f"successfully set {key} with {value}")
             else:
                 logger.warning(f"key {key} does not exist in settings")
+        self.root.refresh_ui()
 
     def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool):
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
@@ -215,6 +217,7 @@ class Settings:
         self.selected[gen_type][timeline_level] = gen_name
         if renew_trigger:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+        self.root.refresh_ui()
 
     def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
         generator = self.root.devices[0].rendermodule.get_selected_generator(
@@ -222,6 +225,7 @@ class Settings:
         )
         new_trigger = generator.get_new_trigger()
         self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
+        self.root.refresh_ui()
 
     def set_trigger(
         self,
@@ -236,6 +240,7 @@ class Settings:
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         logger.debug(f"set_trigger with {gen_type} {timeline_level}")
         self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
+        self.root.refresh_ui()
 
     def before(self):
         self.timehandler.before()
