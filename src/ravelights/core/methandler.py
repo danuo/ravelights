@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS
+from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
 from ravelights.core.templateobjects import GenPlacing
 
 if TYPE_CHECKING:
@@ -38,6 +38,7 @@ class MetaHandler:
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
         self.api_content["controls_autopilot"] = self.root.autopilot.get_autopilot_controls()
         self.api_content["controls_color_palette"] = self.root.autopilot.get_color_palette()
+        self.api_content["color_sec_mode_names"] = [mode.value for mode in SecondaryColorModes]
 
     def __getitem__(self, key: str):
         return self.api_content[key]
@@ -85,7 +86,9 @@ class MetaHandler:
 
         keys = self.settings.generator_classes_identifiers
         meta_available_generators: dict[str, list[dict[str, str | list[str] | float]]] = {key: [] for key in keys}
-        generators_and_effects = self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
+        generators_and_effects = (
+            self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
+        )
         for generator_name, gen in generators_and_effects.items():
             class_identifier = gen.get_identifier()
             generator_keywords: list[str] = gen.keywords
