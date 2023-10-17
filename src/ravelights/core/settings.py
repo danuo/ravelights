@@ -131,7 +131,7 @@ class Settings:
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
-    triggers: dict[str, list[BeatStatePattern]] = field(default_factory=get_default_triggers)
+
     active_timeline_index: int = 0  # default timeline index
     use_manual_timeline: bool = True
     global_manual_timeline_level: int = 1
@@ -141,13 +141,15 @@ class Settings:
 
     def __post_init__(self, root: "RaveLightsApp"):
         self.root = root
-        self.color_engine = ColorEngine(settings=self)
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
         self.generator_classes_identifiers = [c.get_identifier() for c in self.generator_classes]
         self.generator_classes_identifiers.insert(1, self.generator_classes[0].get_identifier() + "_sec")
 
         self.timehandler = TimeHandler(settings=self)
         self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
+
+        self.color_engine = ColorEngine(settings=self)
+        self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()
 
     def clear_selected(self):
         """resets selected generators to default state"""

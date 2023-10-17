@@ -71,6 +71,7 @@ class RestAPI:
 
     def _setup_resource_routing(self):
         self._api.add_resource(RaveAPIResource, "/rest/settings", resource_class_args=(self.root,))
+        self._api.add_resource(TriggersAPIResource, "/rest/triggers", resource_class_args=(self.root,))
         self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root,))
         self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.root,))
         self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.root,))
@@ -100,6 +101,16 @@ class RaveAPIResource(Resource):
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
+
+
+class TriggersAPIResource(Resource):
+    def __init__(self, root: "RaveLightsApp"):
+        super().__init__()
+        self.settings: Settings = root.settings
+
+    def get(self):
+        data = self.settings.triggers
+        return make_response(jsonify(data), 200)
 
 
 resource_fields_devices = {
