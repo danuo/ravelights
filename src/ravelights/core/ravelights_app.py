@@ -59,7 +59,6 @@ class RaveLightsApp:
             serve_static_files=serve_webinterface,
             port=webserver_port,
         )
-        self.rest_api.start_threaded(debug=True)
 
     def initiate_data_routers(self, data_routers_configs: list[dict[str, Any]]) -> list[DataRouter]:
         data_routers: list[DataRouter] = []
@@ -96,7 +95,7 @@ class RaveLightsApp:
         # ----------------------------------- sync ----------------------------------- #
         self.sync_generators(["pattern", "vfilter"])
         # ---------------------------------- render ---------------------------------- #
-        for i, device in enumerate(self.devices):
+        for device in self.devices:
             device.render()
         # ------------------------------- effect after ------------------------------- #
         self.effecthandler.run_after()
@@ -112,3 +111,7 @@ class RaveLightsApp:
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_int)
         self.settings.after()
+
+    def refresh_ui(self):
+        if hasattr(self, "rest_api"):
+            self.rest_api.unblock_event.set()
