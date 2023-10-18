@@ -97,7 +97,6 @@ class RestAPI:
         self._api.add_resource(TriggersAPIResource, "/rest/triggers", resource_class_args=(self.root,))
         self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root,))
         self._api.add_resource(MetaAPIResource, "/rest/meta", resource_class_args=(self.root,))
-        self._api.add_resource(ColorAPIResource, "/rest/color", resource_class_args=(self.root,))
         self._api.add_resource(EffectAPIResource, "/rest/effect", resource_class_args=(self.root,))
 
     def start_threaded(self, debug: bool = False):
@@ -117,6 +116,7 @@ class SettingsAPIResource(Resource):
 
     def get(self):
         data = asdict(self.settings)
+        data["colors"] = self.settings.color_engine.get_colors_rgb_target()
         # ic(data)
         return make_response(jsonify(data), 200)
 
@@ -170,29 +170,6 @@ class MetaAPIResource(Resource):
         if self.data is None:
             self.data = jsonify(self.metahandler.api_content)
         return make_response(self.data, 200)
-
-
-class ColorAPIResource(Resource):
-    def __init__(self, root: "RaveLightsApp"):
-        super().__init__()
-        self.settings: Settings = root.settings
-        self.eventhandler: EventHandler = root.eventhandler
-        self.patternscheduler: PatternScheduler = root.patternscheduler
-
-    def get(self):
-        colors = self.settings.color_engine.get_colors_rgb_target()
-        return make_response(jsonify(colors), 200)
-
-    def put(self):
-        """directly apply color so that resulting colors can be returned"""
-        receive_data: dict[str, Any] = request.get_json()
-        logger.info(receive_data)
-        if receive_data.get("action") == "set_color":
-            color_rgb = receive_data.get("color")
-            color_key = receive_data.get("color_key")
-            self.settings.color_engine.set_color_with_rule(color=color_rgb, color_key=color_key)
-        colors = self.settings.color_engine.get_colors_rgb_target()
-        return make_response(jsonify(colors), 201)
 
 
 resource_fields_effect = {

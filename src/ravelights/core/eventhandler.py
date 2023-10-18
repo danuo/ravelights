@@ -117,6 +117,12 @@ class EventHandler:
                             self.effecthandler.effect_remove(effect=effect_name, timeline_level=timeline_level)
                         case _:
                             logger.warning("API instruction with 'action': 'modify_effect' not understood")
+                case {
+                    "action": "set_color",
+                    "color_rgb": color_rgb,
+                    "color_key": color_key,
+                }:
+                    self.settings.color_engine.set_color_with_rule(color=color_rgb, color_key=color_key)
 
                 case other:
                     logger.warning(other)

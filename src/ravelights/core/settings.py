@@ -95,7 +95,6 @@ class Settings:
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
     color_sec_mode: dict[str, str] = field(default_factory=get_default_color_sec_modes)
-    color_sec_mode_names: list[str] = field(default_factory=lambda: [mode.value for mode in SecondaryColorModes])
     color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
     global_thinning_ratio: float = 0.5
