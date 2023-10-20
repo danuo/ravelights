@@ -32,7 +32,8 @@ class RestAPI:
         self.root = root
         self.port = port
 
-        self.unblock_event = threading.Event()
+        self.sse_event: str = ""
+        self.sse_unblock_event = threading.Event()
 
         static_files_dir = self.check_static_files_dir(static_files_dir)
 
@@ -56,12 +57,12 @@ class RestAPI:
 
         # ─── SSE ──────────────────────────────────────────────────────
 
-        @self._flask_app.route("/feed")
+        @self._flask_app.route("/sse")
         def stream():
             def event_stream():
                 while True:
                     self.block_once()
-                    yield "data: none \n\n"
+                    yield f"data: {self.sse_event}\n\n"
 
             return Response(event_stream(), 200, content_type="text/event-stream")
 
@@ -73,8 +74,8 @@ class RestAPI:
 
     def block_once(self):
         """this could be any function that blocks until data is ready"""
-        self.unblock_event.wait()
-        self.unblock_event.clear()
+        self.sse_unblock_event.wait()
+        self.sse_unblock_event.clear()
 
     def check_static_files_dir(self, static_files_dir: Optional[Path] = None) -> Path:
         """Hacky way to obtain an actual str/path object of the directory. Methods such as str() do not work."""

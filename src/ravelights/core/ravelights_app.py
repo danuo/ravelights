@@ -112,6 +112,7 @@ class RaveLightsApp:
             datarouter.transmit_matrix(matrices_int)
         self.settings.after()
 
-    def refresh_ui(self):
+    def refresh_ui(self, sse_event: str):
         if hasattr(self, "rest_api"):
-            self.rest_api.unblock_event.set()
+            self.rest_api.sse_event = sse_event
+            self.rest_api.sse_unblock_event.set()

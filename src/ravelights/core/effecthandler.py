@@ -131,6 +131,7 @@ class EffectHandler:
         print(self.effect_queues)
         self.effect_queues[timeline_level].append(effect_wrapper)
         print(self.effect_queues)
+        self.root.refresh_ui(sse_event="effect")
 
     def effect_change_draw(self, effect: str | EffectWrapper, timeline_level: int):
         if isinstance(effect, str):
