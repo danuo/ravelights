@@ -22,7 +22,7 @@ Ravelights also features a user interface written in Quasar (vue.js / rest api) 
 To generate image output, many patterns and effects are implemented already. More so called generators can easily be added (see usage).
 
 <div align="center">
-<video src="https://github.com/danuo/ravelights/assets/66017297/3502b754-dfd2-4569-a13e-f70bcf7aa8ac" width="600" autoplay muted loop />
+<video src="https://github.com/danuo/ravelights/assets/66017297/939be6d3-719e-4f0e-82e8-510bf6928826" width="600" autoplay muted loop />
 </div>
 
 # Installation
