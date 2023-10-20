@@ -149,7 +149,7 @@ class ColorEngine:
                     pid.load_parameter_preset(speed_str)
         else:
             logger.warning("set_color_speed() called with invalid speed")
-        self.root.refresh_ui(sse_event="settings")
+        self.settings.root.refresh_ui(sse_event="settings")
 
 
 class ColorPID:
