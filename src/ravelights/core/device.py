@@ -50,3 +50,4 @@ class Device:
                 setattr(self, key, value)
             else:
                 logger.warning(f"key {key} does not exist in settings")
+        self.root.refresh_ui(sse_event="devices")

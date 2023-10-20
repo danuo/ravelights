@@ -88,6 +88,7 @@ class ColorEngine:
                 logger.info(f"set sec_color: {key=} {sec_color=}")
                 if sec_color is not None:
                     self.set_single_color_rgb(sec_color, key)
+        self.settings.root.refresh_ui(sse_event="settings")
 
     def set_single_color_rgb(self, color: Color, color_key: str):
         """
@@ -96,6 +97,7 @@ class ColorEngine:
         color_level_C
         """
         self.color_pids[color_key].set_rgb_target(color)
+        self.settings.root.refresh_ui(sse_event="test")
 
     def get_color_keys(self, timeline_level: int) -> tuple[str, str]:
         color_key_prim = self.settings.color_mapping[str(timeline_level)]["prim"]
@@ -147,6 +149,7 @@ class ColorEngine:
                     pid.load_parameter_preset(speed_str)
         else:
             logger.warning("set_color_speed() called with invalid speed")
+        self.settings.root.refresh_ui(sse_event="settings")
 
 
 class ColorPID:
