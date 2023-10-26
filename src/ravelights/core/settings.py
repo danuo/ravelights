@@ -218,7 +218,7 @@ class Settings:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
         self.root.refresh_ui(sse_event="settings")
 
-    def renew_trigger(self, gen_type: str | Type["Generator"], timeline_level: int):
+    def renew_trigger(self, gen_type: str | Type["Pattern"], timeline_level: int):
         generator = self.root.devices[0].rendermodule.get_selected_generator(
             gen_type=gen_type, timeline_level=timeline_level
         )
