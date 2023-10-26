@@ -51,8 +51,16 @@ class RenderModule:
     def get_selected_generator(self, gen_type: Type[Thinner], timeline_level: Optional[int] = None) -> Thinner:
         ...
 
+    @overload
     def get_selected_generator(
-        self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None
+        self, gen_type: str, timeline_level: Optional[int] = None
+    ) -> Pattern | Vfilter | Dimmer | Thinner:
+        ...
+
+    def get_selected_generator(
+        self,
+        gen_type: str | Type[Pattern] | Type[Vfilter] | Type[Dimmer] | Type[Thinner],
+        timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
