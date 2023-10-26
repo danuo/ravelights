@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ravelights.core.custom_typing import ArrayInt, TransmitDict
+from ravelights.core.custom_typing import ArrayUInt8, TransmitDict
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
@@ -33,7 +33,7 @@ class DataRouter:
             self.leds_per_output.append(n)
         self.n = sum(self.leds_per_output)
 
-    def transmit_matrix(self, out_matrices_int: ArrayInt):
+    def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
         index = 0
         for out_light in self.out_lights:
             matrix_view = out_matrices_int[out_light["device"]][:, out_light["light"], :]

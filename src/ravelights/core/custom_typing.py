@@ -11,6 +11,7 @@ T_BLUEPRINTS = list["BlueprintGen"] | list["BlueprintEffect"] | list["BlueprintS
 Array = NDArray[Any]
 ArrayFloat = NDArray[np.float_]
 ArrayInt = NDArray[np.int_]
+ArrayUInt8 = NDArray[np.uint8]
 
 
 def assert_dims(in_matrix: NDArray[Any], *dims: int):
