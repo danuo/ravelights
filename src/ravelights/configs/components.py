@@ -2,7 +2,15 @@ from enum import auto
 from typing import Any, NamedTuple, Optional, Type, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
-from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
+from ravelights.core.generator_super import (
+    DimmerNone,
+    Generator,
+    Pattern,
+    PatternNone,
+    ThinnerNone,
+    Vfilter,
+    VfilterNone,
+)
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
@@ -289,7 +297,7 @@ def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[
 @overload
 def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...  # noqa
 
-def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs: Optional[dict[str, Any]]=None):
+def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs: Optional[dict[str, Any]]=None) -> Any:
     if kwargs is None:
         kwargs = dict()
     items = [cls(**args, **kwargs) for cls, args in blueprints]
