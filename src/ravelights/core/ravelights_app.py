@@ -2,6 +2,7 @@ import logging
 from typing import Any
 
 from ravelights.core.autopilot import AutoPilot
+from ravelights.core.custom_typing import DeviceDict
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
@@ -30,11 +31,11 @@ def create_devices(root: "RaveLightsApp") -> list[Device]:
 class RaveLightsApp:
     def __init__(
         self,
+        device_config: list[DeviceDict],
         *,
         fps: int = 20,
         webserver_port: int = 80,
         serve_webinterface: bool = True,
-        device_config: list[dict[str, int]] = [],
         data_routers_configs: list[dict[str, Any]] = [],
         visualizer: bool = False,
     ):
