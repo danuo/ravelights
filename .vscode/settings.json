@@ -3,5 +3,5 @@
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
   "editor.rulers": [120],
-  "python.analysis.typeCheckingMode": "strict",
+  "python.analysis.typeCheckingMode": "off",
 }
