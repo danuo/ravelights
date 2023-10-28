@@ -1,8 +1,8 @@
 import logging
 from typing import Any
 
+from ravelights import DeviceDict
 from ravelights.core.autopilot import AutoPilot
-from ravelights.core.custom_typing import DeviceDict
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
@@ -38,6 +38,7 @@ class RaveLightsApp:
         serve_webinterface: bool = True,
         data_routers_configs: list[dict[str, Any]] = [],
         visualizer: bool = False,
+        run: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
         self.devices = create_devices(root=self)
@@ -60,6 +61,9 @@ class RaveLightsApp:
             serve_static_files=serve_webinterface,
             port=webserver_port,
         )
+
+        if run:
+            self.run()
 
     def initiate_data_routers(self, data_routers_configs: list[dict[str, Any]]) -> list[DataRouter]:
         data_routers: list[DataRouter] = []
