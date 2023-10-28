@@ -16,7 +16,7 @@ class Profiler:
         self.time_0 = 0
         self.time_sync = 0
         self.n_quarters_long_memory = 0
-        self.data = dict()
+        self.data: dict[str, float] = dict()
 
     def run(self):
         for gen_name, gen in self.app.devices[0].rendermodule.generators_dict.items():
@@ -27,7 +27,7 @@ class Profiler:
             dtime_ms = self.profile_generator(effect)
             self.data[effect_name] = dtime_ms
 
-    def profile_generator(self, generator: Generator):
+    def profile_generator(self, generator: Generator | EffectWrapper):
         logger.info(generator.name)
         colors = self.app.settings.color_engine.get_colors_rgb(1)
         matrix = self.app.devices[0].pixelmatrix.get_float_matrix_rgb()
