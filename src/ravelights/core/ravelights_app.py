@@ -36,7 +36,7 @@ class RaveLightsApp:
         data_routers_configs: list[dict[str, Any]],
         webserver_port: int = 80,
         serve_webinterface: bool = True,
-        visualizer: bool = True,
+        visualizer: bool = False,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
         self.devices = create_devices(root=self)
