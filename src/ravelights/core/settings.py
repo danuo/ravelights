@@ -3,6 +3,7 @@ from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
+from ravelights import DeviceDict
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -87,7 +88,7 @@ class Settings:
 
     # ─── Device Configuration ─────────────────────────────────────────────
     root_init: InitVar["RaveLightsApp"]
-    device_config: list[dict[str, Any]]
+    device_config: list[DeviceDict]
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
