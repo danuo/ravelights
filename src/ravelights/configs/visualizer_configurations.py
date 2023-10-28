@@ -1,3 +1,5 @@
+from typing import TypedDict
+
 import numpy as np
 from numpy.typing import NDArray
 
@@ -5,7 +7,13 @@ X_SPACINGS: dict[int, NDArray[np.float_]] = dict()
 for i in range(1, 11):
     X_SPACINGS[i] = np.linspace(0.2, 0.8, i)
 
-configurations = [
+
+class VisualizerConfig(TypedDict):
+    name: str
+    device_config: list[dict[str,int]]
+    visualizer_config: list[list[dict[str, float]]]
+
+configurations: list[VisualizerConfig] = [
     # ─── CONFIGURATION 1 ─────────────────────────────────────────────────
     # this is the default configuration with 2 devices n_leds=144 and
     # n_lights=5 each. All lights are vertically oriented.
@@ -13,7 +21,7 @@ configurations = [
     # | | | | |
     # | | | | |
     #
-    dict(
+    VisualizerConfig(
         name="5 top, 5 bottom",
         device_config=[dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)],
         visualizer_config=[
@@ -35,7 +43,7 @@ configurations = [
             ],
         ],
     ),
-    dict(
+    VisualizerConfig(
         name="5 top, 10 bottom",
         device_config=[dict(n_lights=5, n_leds=144), dict(n_lights=10, n_leds=144)],
         visualizer_config=[
@@ -62,7 +70,7 @@ configurations = [
             ],
         ],
     ),
-    dict(
+    VisualizerConfig(
         name="6 top, 10 bottom",
         device_config=[dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144)],
         visualizer_config=[
@@ -90,7 +98,7 @@ configurations = [
             ],
         ],
     ),
-    dict(
+    VisualizerConfig(
         name="10 top, 10 bottom",
         device_config=[dict(n_lights=10, n_leds=144), dict(n_lights=10, n_leds=144)],
         visualizer_config=[
@@ -122,7 +130,7 @@ configurations = [
             ],
         ],
     ),
-    dict(
+    VisualizerConfig(
         name="6 top, 10 bottom, laser",
         device_config=[dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144), dict(n_lights=1, n_leds=44)],
         visualizer_config=[
