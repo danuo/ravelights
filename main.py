@@ -2,8 +2,7 @@ import argparse
 import logging
 from typing import Any
 
-from ravelights import RaveLightsApp
-from ravelights.core.custom_typing import DeviceDict, TransmitDict
+from ravelights import DeviceDict, RaveLightsApp, TransmitDict
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 
@@ -92,12 +91,13 @@ if args.artnet_serial:
     data_routers_configs.append(dict(transmitter=transmitter, transmitter_config=transmitter_config_example))
 
 app = RaveLightsApp(
+    device_config=device_config,
     fps=args.fps,
     webserver_port=webserver_port,
     serve_webinterface=args.webui,
-    device_config=device_config,
     data_routers_configs=data_routers_configs,
     visualizer=visualizer,
+    run=False,
 )
 
 if args.profiling:
