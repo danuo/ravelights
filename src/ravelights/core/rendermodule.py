@@ -183,7 +183,7 @@ class RenderModule:
         for g in generators:
             self.generators_dict.update({g.name: g})
 
-    def find_generator(self, name: str) -> Generator:
+    def find_generator(self, name: str) -> Pattern | Vfilter | Dimmer | Thinner:
         return self.generators_dict[name]
 
     def apply_frameskip(self, in_matrix: ArrayFloat) -> ArrayFloat:
