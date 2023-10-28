@@ -78,7 +78,7 @@ class Visualizer:
                 surf_small = self.surfaces_small[device_id][light_id]
                 surf_big = self.surfaces_big[device_id][light_id]
                 array = np.expand_dims(matrix_int_view, 0)
-                pygame.surfarray.blit_array(surf_small, array)
+                pygame.surfarray.blit_array(surf_small, array)  # type: ignore
                 pygame.transform.scale(surf_small, surf_big.get_size(), surf_big)
 
                 # GET POSITIONS FROM CONFIG
