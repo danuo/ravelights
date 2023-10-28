@@ -2,7 +2,7 @@ import logging
 import math
 import random
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Sequence, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, Sequence, Type, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -26,7 +26,7 @@ class StrEnum(str, Enum):
         member._value_ = value
         return member
 
-    __str__ = str.__str__
+    __str__ = str.__str__  # type: ignore
 
     @staticmethod
     def _generate_next_value_(name: str, start: int, count: int, last_values: list[Any]) -> str:
@@ -40,7 +40,7 @@ def p(chance: float) -> bool:
     return random.random() < chance
 
 
-def get_random_from_weights(names: list[T], weights: list[float]) -> T:
+def get_random_from_weights(names: list[T], weights: list[float]) -> Optional[T]:
     """Return a random item from the list with respect to the weights"""
     if not len(names) > 0:
         logger.warning("called get_random_from_weights() with empty list")
@@ -107,7 +107,7 @@ def cos_mapper(x: float, out_lower: float = 0.0, out_upper: float = 1.0) -> floa
 t_num = int | float
 
 
-def map_value(x, out_range: tuple[t_num, t_num], in_range: tuple[t_num, t_num] = (0, 1)) -> float:
+def map_value(x: t_num, out_range: tuple[t_num, t_num], in_range: tuple[t_num, t_num] = (0, 1)) -> float:
     """maps x to the range (A,B), with x being in the range (a,b)
 
     in_range : (a, b)
