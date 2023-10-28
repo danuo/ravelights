@@ -104,10 +104,10 @@ def cos_mapper(x: float, out_lower: float = 0.0, out_upper: float = 1.0) -> floa
     return out_value
 
 
-t_num = int | float
+T_NUM = float | int
 
 
-def map_value(x: t_num, out_range: tuple[t_num, t_num], in_range: tuple[t_num, t_num] = (0, 1)) -> float:
+def map_value(x: T_NUM, out_range: tuple[T_NUM, T_NUM], in_range: tuple[T_NUM, T_NUM] = (0, 1)) -> float:
     """maps x to the range (A,B), with x being in the range (a,b)
 
     in_range : (a, b)
@@ -136,14 +136,3 @@ def invlerp(v: float, a: float, b: float) -> float:
 def remap(v: float, o_min: float, o_max: float, i_min: float = 0.0, i_max: float = 1.0):
     t = invlerp(v, i_min, i_max)
     return lerp(t, o_min, o_max)
-
-
-if __name__ == "__main__":
-    print(map_value(4, (0, 2), (4, 5)))
-    print(map_value(4.5, (0, 2), (4, 5)))
-    print(map_value(5.0, (0, 2), (4, 5)))
-    print(map_value(0, (0, 2)))
-    print(map_value(0.5, (0, 2)))
-    print(map_value(1.0, (0, 2)))
-
-    # run with python -m core.utils
