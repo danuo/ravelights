@@ -31,11 +31,11 @@ def create_devices(root: "RaveLightsApp") -> list[Device]:
 class RaveLightsApp:
     def __init__(
         self,
-        device_config: list[DeviceDict],
         *,
         fps: int = 20,
         webserver_port: int = 80,
         serve_webinterface: bool = True,
+        device_config: list[DeviceDict] = [DeviceDict(n_lights=2, n_leds=100)],
         data_routers_configs: list[dict[str, Any]] = [],
         visualizer: bool = False,
         run: bool = True,
