@@ -27,7 +27,7 @@ def get_names_and_weights(generators: list[str], keywords: Optional[list[str]] =
         gen_keywords: list[str] = cast(list[str], gen["generator_keywords"])
         all_keywords_in_generator = all([k in gen_keywords for k in keywords])
         if all_keywords_in_generator:
-            names.append(cast(str, gen["generator_name"]))
+            names.append(gen["generator_name"])
             weights.append(cast(float, gen["generator_weight"]))
     return names, weights
 
@@ -56,14 +56,13 @@ class GenSelector:
     thinner_name: Optional[str] = None
 
     name: Optional[str] = None
-    keywords: list[str] = field(default_factory=list)
+    keywords: list["Keywords"] = field(default_factory=list)
     level: int = 1
     p: float = 1.0  # if chance is not met, set pattern to p_none (black)
     trigger_on_change: bool = True
 
     def __post_init__(self):
         self.settings: Settings = self.root.settings
-        self.keywords = [k.value for k in self.keywords]
 
         # ─── Pattern ──────────────────────────────────────────────────
         if self.gen_type is Pattern:
@@ -73,9 +72,7 @@ class GenSelector:
             else:
                 self.pattern_name = self.get_random_generator(gen_type=Pattern)
             pattern = self.root.devices[0].rendermodule.find_generator(name=self.pattern_name)
-            assert isinstance(pattern, Generator)
-
-            # todo:
+            assert isinstance(pattern, Pattern)
             self.set_dimmer_thinner(pattern)
 
         # ─── Vfilter ──────────────────────────────────────────────────
@@ -94,7 +91,7 @@ class GenSelector:
             else:
                 self.dimmer_name = self.get_random_generator(gen_type=Dimmer)
 
-    def set_dimmer_thinner(self, pattern) -> None:
+    def set_dimmer_thinner(self, pattern: Pattern) -> None:
         # ─── Vfilter ──────────────────────────────────────────────────
         # * not related to pattern, add vfilter purely random
 
