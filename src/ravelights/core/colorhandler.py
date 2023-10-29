@@ -5,7 +5,6 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
 
 import numpy as np
-
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pid import PIDController, PIDSpeeds
 from ravelights.core.utils import StrEnum
@@ -141,6 +140,8 @@ class ColorEngine:
                 return ColorHandler.get_complementary_66(in_color)
             case SecondaryColorModes.RANDOM:
                 return ColorHandler.get_random_color()
+            case _:
+                return None
 
     def set_color_speed(self, speed_str: str):
         if speed_str in COLOR_TRANSITION_SPEEDS:
