@@ -189,7 +189,7 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
 ]
 
-class BlueprintTimeline(TypedDict):
+class BlueprintTimeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
     selectors: list[BlueprintSel]
     placements: list[BlueprintPlace]
