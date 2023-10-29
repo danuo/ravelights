@@ -124,7 +124,7 @@ class MetaHandler:
             svgs.append(self.get_svg_for_timeline(timeline))
         return dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
-    def get_svg_for_timeline(self, timeline):
+    def get_svg_for_timeline(self, timeline) -> None:
         SVG_HEIGHT = 70
 
         placements = timeline["placements"]
