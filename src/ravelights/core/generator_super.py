@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
@@ -204,6 +203,7 @@ class Generator(ABC):
 
 
 class Pattern(Generator):
+    @abstractmethod
     def render(self, colors: list[Color]) -> ArrayFloat:
         ...
 
