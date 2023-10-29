@@ -82,7 +82,7 @@ class RestAPI:
             if isinstance(lib_path, Path):
                 static_files_dir = lib_path
             else:
-                static_files_dir = Path(lib_path._paths[0])
+                static_files_dir = Path(lib_path._paths[0])  # type: ignore
 
         if not (static_files_dir / "index.html").is_file():
             logger.warning("warning, static UI files could not be found")
