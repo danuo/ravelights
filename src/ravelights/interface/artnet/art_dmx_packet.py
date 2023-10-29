@@ -6,7 +6,7 @@ from plum.structure import Structure, member, sized_member
 from plum.utilities import pack, pack_and_dump
 
 
-class ArtDmxPacket(Structure):
+class ArtDmxPacketPlum(Structure):
     """
     Structure representing an ArtDMX packet
     (https://art-net.org.uk/how-it-works/streaming-packets/artdmx-packet-definition/)
@@ -46,10 +46,12 @@ class ArtDmxPacket(Structure):
         print(dump)
 
 
-if __name__ == "__main__":
-    packet = ArtDmxPacket(universe=0, data=[1, 2, 3])
-    # Print string representation (dump) and raw bytes of the packet
-    packet.output_data()
-    # The raw bytes to be sent using UDP
-    buffer = packet.get_bytes()
-    print(buffer)
+class ArtDmxPacket(ArtDmxPacketPlum):
+    """
+    Structure representing an ArtDMX packet
+    (https://art-net.org.uk/how-it-works/streaming-packets/artdmx-packet-definition/)
+    """
+
+    def __init__(self, **args):
+        args["length"] = len(args["data"])
+        super().__init__(**args)
