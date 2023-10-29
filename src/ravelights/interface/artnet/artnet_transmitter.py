@@ -2,7 +2,6 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 import numpy.typing as npt
-
 from ravelights.interface.artnet.art_dmx_packet import ArtDmxPacket
 
 
@@ -48,7 +47,7 @@ class ArtnetTransmitter(metaclass=ABCMeta):
 
     def _send_universe(self, universe: int, data: npt.NDArray[np.uint8]):
         data_bytes = data.tobytes()
-        artnet_packet = ArtDmxPacket(universe=universe, data=data_bytes, length=len(data_bytes))
+        artnet_packet = ArtDmxPacket(universe=universe, length=len(data_bytes), data=data_bytes)
 
         if self._debug:
             artnet_packet.output_data()
