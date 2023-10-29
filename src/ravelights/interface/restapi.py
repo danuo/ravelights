@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
 from flask import Flask, Response, jsonify, make_response, request, send_from_directory
-from flask_restful import Api, Resource, fields, marshal_with
+from flask_restful import Api, Resource, fields, marshal_with  # type: ignore
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
