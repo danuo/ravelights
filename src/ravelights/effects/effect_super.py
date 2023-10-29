@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
@@ -84,13 +83,17 @@ class EffectWrapper:
 
         def get_frames_pattern_binary(frames_pattern: list[str | int], multi: int = 1):
             """
+            example input:
             frames_pattern = ["L4", 0]
             multi = 2
             -> [True, True, False, False, False, False, False, False]
             """
 
-            assert frames_pattern[0][0] == "L"
-            pattern_length = int(frames_pattern[0][1:])
+            string_part = frames_pattern[0]
+            assert isinstance(string_part, str)
+            assert string_part[0] == "L"
+            pattern_length = int(string_part[1:])
+
             pattern = frames_pattern[1:]
             frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
             return frames_pattern_binary
