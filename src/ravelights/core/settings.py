@@ -139,8 +139,8 @@ class Settings:
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)
 
-    def __post_init__(self, root: "RaveLightsApp"):
-        self.root = root
+    def __post_init__(self, root_init: "RaveLightsApp"):
+        self.root = root_init
         self.generator_classes = [Pattern, Vfilter, Thinner, Dimmer, Effect]
         self.generator_classes_identifiers = [c.get_identifier() for c in self.generator_classes]
         self.generator_classes_identifiers.insert(1, self.generator_classes[0].get_identifier() + "_sec")
