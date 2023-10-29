@@ -297,10 +297,10 @@ def create_from_blueprint(blueprints: list[BlueprintGen], kwargs: Optional[dict[
 def create_from_blueprint(blueprints: list[BlueprintEffect], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...  # noqa
+def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...  # noqa
+def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...
 
 def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs: Optional[dict[str, Any]]=None) -> Any:
     if kwargs is None:
