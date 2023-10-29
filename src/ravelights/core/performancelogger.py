@@ -20,4 +20,4 @@ class PerformanceLogger:
 
             # Reset interval
             self._last_log_seconds = time.time()
-            self._last_delayed_frame_count = stats["delayed_frame_counter"]
+            self._last_delayed_frame_count = int(stats["delayed_frame_counter"])
