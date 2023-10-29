@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from numpy.typing import NDArray
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.utils import p
@@ -23,7 +22,7 @@ class PixelMatrix:
         self.is_prim: bool = is_prim
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.matrix_float: ArrayFloat = np.zeros(shape=(self.n_lights, self.n_leds, 3))
 
     def set_matrix_float(self, matrix: ArrayFloat):
