@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
+from ravelights.core.custom_typing import AvailableGenerators
 from ravelights.core.templateobjects import GenPlacing
 
 if TYPE_CHECKING:
@@ -59,7 +60,7 @@ class MetaHandler:
                     available_keywords.add(keyword.value)
         return list(available_keywords)
 
-    def get_meta_available_generators(self) -> dict[str, list[dict[str, str | list[str] | float]]]:
+    def get_meta_available_generators(self) -> AvailableGenerators:
         """Creates a dictionary containing all available Effects, Vfilters, Dimmers, Thinners and GlobalEffects
 
         Structure is as follows
@@ -85,7 +86,7 @@ class MetaHandler:
         }"""
 
         keys = self.settings.generator_classes_identifiers
-        meta_available_generators: dict[str, list[dict[str, str | list[str] | float]]] = {key: [] for key in keys}
+        meta_available_generators: AvailableGenerators = {key: [] for key in keys}
         generators_and_effects = (
             self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
         )

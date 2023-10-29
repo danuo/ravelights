@@ -28,3 +28,17 @@ class TransmitDict(TypedDict):
 class DeviceDict(TypedDict):
     n_lights: int
     n_leds: int
+
+
+class GeneratorMeta(TypedDict):
+    generator_name: str
+    generator_keywords: list[str]
+    generator_weight: float
+
+
+class AvailableGenerators(TypedDict):
+    pattern: list[GeneratorMeta]
+    vfilter: list[GeneratorMeta]
+    thinner: list[GeneratorMeta]
+    dimmer: list[GeneratorMeta]
+    effect: list[GeneratorMeta]

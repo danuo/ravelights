@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Type, cast
 
+from ravelights.core.custom_typing import GeneratorMeta
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
 from ravelights.core.utils import get_random_from_weights, p
@@ -132,7 +133,7 @@ class GenSelector:
         # backup
         return gen_type.get_identifier()[0] + "_none"
 
-    def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[dict[str, str | list[str] | float]]:
+    def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[GeneratorMeta]:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if hasattr(self.root, "metahandler"):
             return self.root.metahandler["available_generators"][identifier]
