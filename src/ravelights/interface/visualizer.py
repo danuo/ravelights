@@ -51,7 +51,7 @@ class Visualizer:
             if event.type == pygame.QUIT:
                 exit()
 
-    def create_surfaces(self):
+    def create_surfaces(self) -> None:
         self.surfaces_small: list[list[pygame.Surface]] = []
         self.surfaces_big: list[list[pygame.Surface]] = []
         for device in self.devices:
