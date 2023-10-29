@@ -1,5 +1,5 @@
 from enum import auto
-from typing import Any, NamedTuple, Optional, Type, overload
+from typing import Any, NamedTuple, Optional, Type, TypedDict, overload
 
 from ravelights.core.custom_typing import T_BLUEPRINTS
 from ravelights.core.generator_super import (
@@ -189,8 +189,13 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
 ]
 
+class BlueprintTimeline(TypedDict):
+    meta: dict[str, str]
+    selectors: list[BlueprintSel]
+    placements: list[BlueprintPlace]
+
 # todo: effects need length, patterns do not
-blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list[BlueprintSel]]] = [
+blueprint_timelines: list[BlueprintTimeline] = [
     {
         "meta": {
             "name": "all 1 level",
