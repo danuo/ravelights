@@ -1,7 +1,14 @@
 from enum import auto
-from typing import Any, NamedTuple, Optional, Type, TypedDict, overload
+from typing import Any, Optional, overload
 
-from ravelights.core.custom_typing import T_BLUEPRINTS
+from ravelights.core.custom_typing import (
+    T_BLUEPRINTS,
+    BlueprintEffect,
+    BlueprintGen,
+    BlueprintPlace,
+    BlueprintSel,
+    BlueprintTimeline,
+)
 from ravelights.core.generator_super import (
     DimmerNone,
     Generator,
@@ -87,29 +94,7 @@ class Keywords(StrEnum):
     LONG = auto()  # patterns that only work when showed for 4 beats or longer
 
 
-class Blueprint(NamedTuple):
-    cls: Type[Generator] | Type[Effect] | Type[EffectSelectorPlacing] | Type[GenPlacing] | Type[GenSelector]
-    args: dict[str, str | float | int | list[Keywords] | Type[Generator] | list[int]]
-
-
-class BlueprintGen(Blueprint):
-    ...
-
-
-class BlueprintEffect(Blueprint):
-    ...
-
-
-class BlueprintSel(Blueprint):
-    ...
-
-
-class BlueprintPlace(Blueprint):
-    ...
-
-
 # ─── Blueprint Section ────────────────────────────────────────────────────────
-# flake8: noqa E501
 # fmt: off
 
 K = Keywords
@@ -173,7 +158,6 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(DimmerDecayVerySlow, dict(name="d_decay_very_slow", weight=1)),
     BlueprintGen(DimmerSideswipe, dict(name="d_sideswipe_1", weight=1, version=0)),
     BlueprintGen(DimmerSideswipe, dict(name="d_sideswipe_2", weight=1, version=1)),
-
     BlueprintGen(DimmerSine, dict(name="d_sine", weight=1)),
     BlueprintGen(DimmerPeak, dict(name="d_peak", weight=1)),
 ]
@@ -189,10 +173,6 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
 ]
 
-class BlueprintTimeline(TypedDict):  # todo: move to custom typing
-    meta: dict[str, str]
-    selectors: list[BlueprintSel]
-    placements: list[BlueprintPlace]
 
 # todo: effects need length, patterns do not
 blueprint_timelines: list[BlueprintTimeline] = [

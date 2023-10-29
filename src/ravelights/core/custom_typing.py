@@ -1,7 +1,12 @@
-from typing import TYPE_CHECKING, Any, TypedDict
+# ruff: noqa: F811
+from typing import TYPE_CHECKING, Any, NamedTuple, Type, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
+from ravelights.configs.components import Keywords
+from ravelights.core.generator_super import Generator
+from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
+from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.configs.components import BlueprintEffect, BlueprintGen, BlueprintPlace, BlueprintSel
@@ -42,3 +47,30 @@ class AvailableGenerators(TypedDict):
     thinner: list[GeneratorMeta]
     dimmer: list[GeneratorMeta]
     effect: list[GeneratorMeta]
+
+
+class Blueprint(NamedTuple):
+    cls: Type[Generator] | Type[Effect] | Type[EffectSelectorPlacing] | Type[GenPlacing] | Type[GenSelector]
+    args: dict[str, str | float | int | list[Keywords] | Type[Generator] | list[int]]
+
+
+class BlueprintGen(Blueprint):
+    ...
+
+
+class BlueprintEffect(Blueprint):
+    ...
+
+
+class BlueprintSel(Blueprint):
+    ...
+
+
+class BlueprintPlace(Blueprint):
+    ...
+
+
+class BlueprintTimeline(TypedDict):  # todo: move to custom typing
+    meta: dict[str, str]
+    selectors: list[BlueprintSel]
+    placements: list[BlueprintPlace]
