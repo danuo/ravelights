@@ -4,8 +4,7 @@ from typing import TYPE_CHECKING, cast
 from ravelights.configs.components import (
     BlueprintPlace,
     BlueprintSel,
-    Keywords,
-    blueprint_effects,
+    BlueprintTimeline,
     blueprint_generators,
     blueprint_timelines,
     create_from_blueprint,
@@ -49,12 +48,14 @@ class PatternScheduler:
         self.settings.active_timeline_index = index
         self.load_timeline(self.blueprint_timelines[index])
 
-    def load_timeline(self, timeline: dict[str, dict[str, str] | list[BlueprintSel] | list[BlueprintPlace]]):
+    def load_timeline(self, timeline: BlueprintTimeline):
         self.clear_instruction_queues()
 
         blueprints_selectors: list[BlueprintSel] = cast(list[BlueprintSel], timeline["selectors"])
         kwargs = dict(root=self.root)
-        self.timeline_selectors: list[GenSelector] = create_from_blueprint(blueprints=blueprints_selectors, kwargs=kwargs)
+        self.timeline_selectors: list[GenSelector] = create_from_blueprint(
+            blueprints=blueprints_selectors, kwargs=kwargs
+        )
         self.process_timeline_selectors()
 
         blueprints_placements: list[BlueprintPlace] = cast(list[BlueprintPlace], timeline["placements"])
@@ -88,16 +89,24 @@ class PatternScheduler:
         # load each generator that is defined inside of the GenSelector Object
         renew_trigger = self.settings.renew_trigger_from_timeline
         if obj.pattern_name:
-            self.settings.set_generator(gen_type=Pattern, timeline_level=obj.level, gen_name=obj.pattern_name, renew_trigger=renew_trigger)
+            self.settings.set_generator(
+                gen_type=Pattern, timeline_level=obj.level, gen_name=obj.pattern_name, renew_trigger=renew_trigger
+            )
 
         if obj.vfilter_name:
-            self.settings.set_generator(gen_type=Vfilter, timeline_level=obj.level, gen_name=obj.vfilter_name, renew_trigger=renew_trigger)
+            self.settings.set_generator(
+                gen_type=Vfilter, timeline_level=obj.level, gen_name=obj.vfilter_name, renew_trigger=renew_trigger
+            )
 
         if obj.dimmer_name:
-            self.settings.set_generator(gen_type=Dimmer, timeline_level=obj.level, gen_name=obj.dimmer_name, renew_trigger=renew_trigger)
+            self.settings.set_generator(
+                gen_type=Dimmer, timeline_level=obj.level, gen_name=obj.dimmer_name, renew_trigger=renew_trigger
+            )
 
         if obj.thinner_name:
-            self.settings.set_generator(gen_type=Thinner, timeline_level=obj.level, gen_name=obj.thinner_name, renew_trigger=renew_trigger)
+            self.settings.set_generator(
+                gen_type=Thinner, timeline_level=obj.level, gen_name=obj.thinner_name, renew_trigger=renew_trigger
+            )
 
     def process_generator_placement_object(self, obj: GenPlacing):
         instruction = InstructionDevice(level=obj.level)
