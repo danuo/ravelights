@@ -87,7 +87,7 @@ class RenderModule:
         else:
             return self.device_automatic_timeline_level
 
-    def render(self):
+    def render(self) -> None:
         # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.get_timeline_level()
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
