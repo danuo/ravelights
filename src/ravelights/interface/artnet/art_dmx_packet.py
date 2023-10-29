@@ -37,14 +37,6 @@ class ArtDmxPacketPlum(Structure):
     # The bytes representing the DMX channels
     data: bytes = sized_member(fmt=BytesX(), size=length)
 
-    def get_bytes(self) -> bytes:
-        return pack(self)
-
-    def output_data(self):
-        buffer, dump = pack_and_dump(self)
-        print(buffer)
-        print(dump)
-
 
 class ArtDmxPacket(ArtDmxPacketPlum):
     """
@@ -55,3 +47,11 @@ class ArtDmxPacket(ArtDmxPacketPlum):
     def __init__(self, **args):
         args["length"] = len(args["data"])
         super().__init__(**args)
+
+    def get_bytes(self) -> bytes:
+        return pack(self)
+
+    def output_data(self):
+        buffer, dump = pack_and_dump(self)
+        print(buffer)
+        print(dump)
