@@ -75,7 +75,7 @@ class EffectWrapper:
         loop_length_beats: int,
         limit_quarters_loop: int,
         frames_pattern: list[str | int],
-        quarters_pattern: list[str | int],
+        quarters_pattern: list[str],
     ):
         """
         reset effects in effectwrapper
