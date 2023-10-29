@@ -21,7 +21,7 @@ class PatternDebugBPMSync(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         # matrix = self.get_float_matrix_rgb()
         matrix = self.get_float_matrix_2d_mono()
 

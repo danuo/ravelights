@@ -35,7 +35,7 @@ class PatternDoubleStrobe(Pattern):
     def on_trigger(self):
         self.counter = -1
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         self.counter += 1
         # ─── GENERATE PATTERN ────────────────────────────────────────────
         if self.counter in [0, 4]:

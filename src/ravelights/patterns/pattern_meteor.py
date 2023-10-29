@@ -2,7 +2,6 @@ import random
 from typing import Any
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
@@ -104,7 +103,7 @@ class PatternMeteor(Pattern):
         if p(0.2):
             self.alternate()
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         matrix = self.matrix
         # ! cannot execute before reset() is called
         # ─── CALCULATE POSITION FROM BEAT STATE ──────────────────────────

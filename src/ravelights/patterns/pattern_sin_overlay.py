@@ -25,7 +25,7 @@ class PatternSinOverlay(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         time = self.settings.timehandler.time_0
         matrix = self.get_float_matrix_2d_mono()
         self.pos = (self.pos + self.vel) % self.n_leds

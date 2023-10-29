@@ -2,7 +2,6 @@ import random
 from dataclasses import astuple, dataclass
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
@@ -99,7 +98,7 @@ class PatternMovingBlocks(Pattern):
     def on_trigger(self):
         self.reset()
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         matrix = self.get_float_matrix_2d_mono()
         matrix = np.zeros((self.n_leds))
         for state in self.states:

@@ -2,7 +2,6 @@ import math
 import random
 
 import numpy as np
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.generator_super import Pattern
 
@@ -54,7 +53,7 @@ class PatternInerseSquare(Pattern):
             matrix[a:b] = intensity
         return matrix
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         self.pos += self.speed
         if self.pos < -self.bounds:
             self.pos = self.pos + self.n_leds + 2 * self.bounds

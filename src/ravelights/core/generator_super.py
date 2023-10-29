@@ -204,7 +204,7 @@ class Generator(ABC):
 
 class Pattern(Generator):
     @abstractmethod
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, *, colors: list[Color]) -> ArrayFloat:
         ...
 
 
@@ -223,7 +223,7 @@ class PatternNone(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, *, colors: list[Color]) -> ArrayFloat:
         return self.get_float_matrix_rgb()
 
 

@@ -1,7 +1,6 @@
 import random
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.generator_super import Pattern
@@ -40,7 +39,7 @@ class PatternPID(Pattern):
             pid.kd = lerp(self.settings.global_energy, 0.05, 0.15)
             pid.perform_pid_step()
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono()
         for index in range(self.n_lights):

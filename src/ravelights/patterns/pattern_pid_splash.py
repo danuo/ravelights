@@ -1,7 +1,6 @@
 import random
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.generator_super import Pattern
@@ -46,7 +45,7 @@ class PatternPidSplash(Pattern):
         self.pid.target = end_pos
         self.pid._previous_error = (error) * 1.5
 
-    def render(self, colors: list[Color]):
+    def render(self, *, colors: list[Color]):
         if self.counter_frames == 0:
             intensity = 0.2
         elif self.counter_frames == 1:
