@@ -7,7 +7,7 @@ from ravelights.effects.effect_super import Effect
 
 
 class EffectColorShift(Effect):
-    def reset(self, hue_range=None):
+    def reset(self, hue_range=None) -> None:
         """
         starts at the current primary color and ramps from there, then jumps back to the color before
 
