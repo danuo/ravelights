@@ -32,7 +32,7 @@ class EffectHandler:
     instruction_queue: InstructionQueue = field(init=False)
     effect_queues: list[list[EffectWrapper]] = field(default_factory=lambda: [[] for _ in range(4)])
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.settings = self.root.settings
         self.timehandler = self.root.settings.timehandler
         self.devices: list[Device] = self.root.devices
