@@ -4,4 +4,8 @@
   "files.trimFinalNewlines": true,
   "editor.rulers": [120],
   "python.analysis.typeCheckingMode": "off",
+  "workbench.colorCustomizations": {
+    "minimap.background": "#00000000",
+    "scrollbar.shadow": "#00000000"
+  },
 }
