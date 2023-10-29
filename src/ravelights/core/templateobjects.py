@@ -47,7 +47,7 @@ class GenSelector:
     thinner_name
     """
 
-    gen_type: Type[Generator]
+    gen_type: Type[Pattern | Vfilter | Dimmer | Thinner]
     root: "RaveLightsApp"
 
     pattern_name: Optional[str] = None
