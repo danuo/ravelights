@@ -1,5 +1,5 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, NamedTuple, Type, TypedDict
+from typing import Any, NamedTuple, Type, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -7,9 +7,6 @@ from ravelights.configs.components import Keywords
 from ravelights.core.generator_super import Generator
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.effects.effect_super import Effect
-
-# if TYPE_CHECKING:
-# from ravelights.configs.components import BlueprintEffect, BlueprintGen, BlueprintPlace, BlueprintSel
 
 T_BLUEPRINTS = list["BlueprintGen"] | list["BlueprintEffect"] | list["BlueprintSel"] | list["BlueprintPlace"]
 
