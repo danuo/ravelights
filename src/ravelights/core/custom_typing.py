@@ -8,8 +8,8 @@ from ravelights.core.generator_super import Generator
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.effects.effect_super import Effect
 
-if TYPE_CHECKING:
-    from ravelights.configs.components import BlueprintEffect, BlueprintGen, BlueprintPlace, BlueprintSel
+# if TYPE_CHECKING:
+# from ravelights.configs.components import BlueprintEffect, BlueprintGen, BlueprintPlace, BlueprintSel
 
 T_BLUEPRINTS = list["BlueprintGen"] | list["BlueprintEffect"] | list["BlueprintSel"] | list["BlueprintPlace"]
 
@@ -74,3 +74,9 @@ class BlueprintTimeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
     selectors: list[BlueprintSel]
     placements: list[BlueprintPlace]
+
+
+class VisualizerConfig(TypedDict):
+    name: str
+    device_config: list[dict[str, int]]
+    visualizer_config: list[list[dict[str, float]]]

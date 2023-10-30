@@ -1,17 +1,11 @@
-from typing import TypedDict
-
 import numpy as np
 from numpy.typing import NDArray
+from ravelights.core.custom_typing import VisualizerConfig
 
 X_SPACINGS: dict[int, NDArray[np.float_]] = dict()
 for i in range(1, 11):
     X_SPACINGS[i] = np.linspace(0.2, 0.8, i)
 
-
-class VisualizerConfig(TypedDict):
-    name: str
-    device_config: list[dict[str,int]]
-    visualizer_config: list[list[dict[str, float]]]
 
 configurations: list[VisualizerConfig] = [
     # ─── CONFIGURATION 1 ─────────────────────────────────────────────────
