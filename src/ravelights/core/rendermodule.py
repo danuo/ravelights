@@ -1,6 +1,7 @@
 import logging
 from typing import TYPE_CHECKING, Literal, Optional, Type, cast, overload
 
+import numpy as np
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -135,9 +136,10 @@ class RenderModule:
         # primary color: dominant color in pattern
         # secondary color: optional supplementary color
         colors = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
+        black_matrix = pattern.get_float_matrix_rgb()
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
-        matrix = pattern.render(colors=colors)
+        matrix = pattern.render(in_matrix=black_matrix, colors=colors)
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
@@ -145,7 +147,7 @@ class RenderModule:
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
-        matrix_sec = pattern_sec.render(colors=colors[::-1])  # todo
+        matrix_sec = pattern_sec.render(in_matrix=black_matrix, colors=colors[::-1])
         matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
