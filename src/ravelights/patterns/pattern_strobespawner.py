@@ -2,6 +2,7 @@ import random
 from typing import Type
 
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
 from ravelights.lights.lights_super import LightObject, SlideStrobe
@@ -27,7 +28,7 @@ class PatternStrobeSpawner(Pattern):
                 flashes = [x for _ in range(ran) for x in [True, False]]
                 self.queue_element(cls=SlideStrobe, flashes=flashes)
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         # ─── Render Queue ─────────────────────────────────────────────
         matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, colors=colors)
         matrix_rgb = self.colorize_matrix(matrix, color=colors[0])

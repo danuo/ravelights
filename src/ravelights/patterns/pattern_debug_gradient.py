@@ -2,6 +2,7 @@ from itertools import product
 
 import numpy as np
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
 
@@ -29,5 +30,5 @@ class PatternDebugGradient(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return self.matrix

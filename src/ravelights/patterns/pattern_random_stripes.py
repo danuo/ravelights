@@ -1,6 +1,7 @@
 import random
 
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.utils import p
 
@@ -20,7 +21,7 @@ class PatternRandomStripes(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         matrix = self.get_float_matrix_1d_mono()
         intensity = random.uniform(0, 1)
         for i in range(self.n_lights * self.n_leds):

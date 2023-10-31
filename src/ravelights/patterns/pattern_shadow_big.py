@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
 
@@ -35,7 +36,7 @@ class PatternShadowBig(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         self.pos = self.pos + self.vel
         if self.pos > self.n_leds + self.max_dist:
             self.pos = -self.max_dist

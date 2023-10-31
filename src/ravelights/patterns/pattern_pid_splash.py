@@ -3,6 +3,7 @@ import random
 import numpy as np
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
@@ -45,7 +46,7 @@ class PatternPidSplash(Pattern):
         self.pid.target = end_pos
         self.pid._previous_error = (error) * 1.5
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         if self.counter_frames == 0:
             intensity = 0.2
         elif self.counter_frames == 1:

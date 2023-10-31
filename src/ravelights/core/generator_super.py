@@ -203,9 +203,7 @@ class Generator(ABC):
 
 
 class Pattern(Generator):
-    @abstractmethod
-    def render(self, *, colors: list[Color]) -> ArrayFloat:
-        ...
+    ...
 
 
 class PatternNone(Pattern):
@@ -223,17 +221,17 @@ class PatternNone(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, *, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         return self.get_float_matrix_rgb()
 
 
 class Vfilter(Generator):
-    """Default vfilter with blank output"""
-
     ...
 
 
 class VfilterNone(Vfilter):
+    """Default vfilter with blank output"""
+
     def init(self):
         ...
 

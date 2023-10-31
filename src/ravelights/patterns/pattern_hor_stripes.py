@@ -1,6 +1,7 @@
 import random
 
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
 
@@ -30,7 +31,7 @@ class PatternHorStripes(Pattern):
         for _ in range(random.randrange(1, 4)):
             self.items.append(Horbar(self))
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         matrix = self.get_float_matrix_2d_mono()
         for item in self.items:
             item.pos += item.speed

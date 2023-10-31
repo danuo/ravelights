@@ -1,4 +1,5 @@
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
 
@@ -18,7 +19,7 @@ class PatternDebugLinearBlock(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, *, colors: list[Color]):
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         self.pos = (self.pos + self.vel) % self.n_leds
         matrix = self.get_float_matrix_2d_mono()
         matrix[self.pos : self.pos + self.size, :] = 1
