@@ -85,7 +85,7 @@ class MetaHandler:
             ]
         }"""
 
-        keys = self.settings.generator_classes_identifiers
+        keys = ["pattern", "vfilter", "thinner", "dimmer", "effect"]
         meta_available_generators: AvailableGenerators = {key: [] for key in keys}
         generators_and_effects = (
             self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
