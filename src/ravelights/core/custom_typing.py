@@ -6,7 +6,7 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
-    from ravelights.core.generator_super import Generator
+    from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
     from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
     from ravelights.effects.effect_super import Effect
 
@@ -49,7 +49,9 @@ class AvailableGenerators(TypedDict):
 
 
 class Blueprint(NamedTuple):
-    cls: Type["Generator"] | Type["Effect"] | Type["EffectSelectorPlacing"] | Type["GenPlacing"] | Type["GenSelector"]
+    cls: Type["Pattern"] | Type["Vfilter"] | Type["Dimmer"] | Type["Thinner"] | Type["Effect"] | Type[
+        "EffectSelectorPlacing"
+    ] | Type["GenPlacing"] | Type["GenSelector"]
     args: dict[str, str | float | int | list["Keywords"] | Type["Generator"] | list[int]]
 
 

@@ -2,7 +2,6 @@ from enum import auto
 from typing import Any, Optional, overload
 
 from ravelights.core.custom_typing import (
-    T_BLUEPRINTS,
     BlueprintEffect,
     BlueprintGen,
     BlueprintPlace,
@@ -282,7 +281,7 @@ def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[
 @overload
 def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...
 
-def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs: Optional[dict[str, Any]]=None) -> Any:
+def create_from_blueprint(blueprints, kwargs: Optional[dict[str, Any]]=None) -> Any:
     if kwargs is None:
         kwargs = dict()
     items = [cls(**args, **kwargs) for cls, args in blueprints]
