@@ -29,7 +29,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
+    <script type="module">
       // three
 
       import * as THREE from "three";
@@ -90,7 +90,7 @@
         return texture;
       }
 
-      function init() {
+      function initWebGL() {
         const container = document.getElementById("container");
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -166,8 +166,6 @@
         renderer.render(scene, camera);
       }
 
-      init();
-
       // websocket
       const apiUrl = "/rest/settings";
       async function fetchData() {
@@ -192,19 +190,22 @@
           });
       }
 
-      async function init() {
+      async function initWebsocket() {
         const data = await fetchData();
+        console.log("here");
+        console.log(data);
+        initWebGL();
+        const socket = io();
+        socket.on("message", (data) => {
+          console.log("Received message: ", data);
+        });
       }
 
+      initWebsocket();
+
       // Call the async function to fetch the data
-      console.log(data);
     </script>
 
-    <script>
-      const socket = io();
-      socket.on("message", (data) => {
-        console.log("Received message: ", data);
-      });
-    </script>
+    <script></script>
   </body>
 </html>
