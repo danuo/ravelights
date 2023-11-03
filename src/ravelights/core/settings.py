@@ -136,6 +136,8 @@ class Settings:
     use_manual_timeline: bool = True
     global_manual_timeline_level: int = 1
 
+    websocket_data: tuple[int, ...] = (30, 10, 10)
+
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)
 
