@@ -7,6 +7,7 @@ dependencies = [
     "plum-py == 0.8.5",
     "Flask == 2.2.2",
     "Flask-RESTful == 0.3.9",
+    "flask-socketio == 5.3.6",
 ]
 
 [project.optional-dependencies]
