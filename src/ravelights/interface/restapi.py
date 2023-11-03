@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from flask import Flask, Response, jsonify, make_response, request, send_from_directory
 from flask_restful import Api, Resource, fields, marshal_with  # type: ignore
+from flask_socketio import SocketIO, emit
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
@@ -35,27 +36,37 @@ class RestAPI:
 
         static_files_dir = self.check_static_files_dir(static_files_dir)
 
-        self._flask_app = Flask(__name__)
+        self.websocket_html = self.get_websocket_html()
+
+        self.flask_app = Flask(__name__)
+        self.socketio = SocketIO(self.flask_app)
 
         # ─── Static Files ─────────────────────────────────────────────
+
+        self.get_websocket_html()
 
         if serve_static_files:
             if len(list(static_files_dir.iterdir())) < 5:
                 logger.warning(f"Could not find static files for webui in {static_files_dir=}")
 
             # serve index.html
-            @self._flask_app.route("/")
+            @self.flask_app.route("/")
             def serve_index():
                 return send_from_directory(static_files_dir, "index.html")
 
+            # serve index.html
+            @self.flask_app.route("/websocket")
+            def serve_websocket():
+                return self.websocket_html
+
             # serve any other file in static_dir
-            @self._flask_app.route("/<path:path>")
+            @self.flask_app.route("/<path:path>")
             def serve_static(path):
                 return send_from_directory(static_files_dir, path)
 
         # ─── SSE ──────────────────────────────────────────────────────
 
-        @self._flask_app.route("/sse")
+        @self.flask_app.route("/sse")
         def stream():
             def event_stream():
                 while True:
@@ -64,9 +75,17 @@ class RestAPI:
 
             return Response(event_stream(), 200, content_type="text/event-stream")
 
-        # add rest api
-        self._api = Api(self._flask_app)
-        self._setup_resource_routing()
+        # ─── REST ─────────────────────────────────────────────────────
+        self.setup_resource_routing()
+
+        # ─── Websocket ────────────────────────────────────────────────
+        @self.socketio.event
+        def my_event(message):
+            emit("my response", {"data": "got it!"})
+
+        @self.socketio.on("connect")
+        def handle_connect():
+            print("socket stuff is happening")
 
         self.start_threaded()
 
@@ -91,7 +110,12 @@ class RestAPI:
 
         return static_files_dir
 
-    def _setup_resource_routing(self):
+    def get_websocket_html(self):
+        MODULE_PATH = importlib.resources.files(__package__)
+        return (MODULE_PATH / "websocket_assets" / "websocket_ui.html").read_text()
+
+    def setup_resource_routing(self):
+        self._api = Api(self.flask_app)
         self._api.add_resource(SettingsAPIResource, "/rest/settings", resource_class_args=(self.root,))
         self._api.add_resource(TriggersAPIResource, "/rest/triggers", resource_class_args=(self.root,))
         self._api.add_resource(DevicesAPIResource, "/rest/devices", resource_class_args=(self.root,))
@@ -100,8 +124,14 @@ class RestAPI:
 
     def start_threaded(self, debug: bool = False):
         logger.info("Starting REST API thread...")
+        # threading.Thread(
+        #     target=lambda: self.flask_app.run(host="0.0.0.0", port=self.port, debug=debug, use_reloader=False),
+        #     daemon=True,
+        # ).start()
         threading.Thread(
-            target=lambda: self._flask_app.run(host="0.0.0.0", port=self.port, debug=debug, use_reloader=False),
+            target=lambda: self.socketio.run(
+                app=self.flask_app, host="0.0.0.0", port=self.port, debug=debug, use_reloader=False
+            ),
             daemon=True,
         ).start()
 
