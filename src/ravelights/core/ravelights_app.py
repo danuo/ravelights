@@ -115,6 +115,10 @@ class RaveLightsApp:
         matrices_int = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_int)
+        # ─── Websocket ────────────────────────────────────────────────
+        # print(self.rest_api.websocket_num_clients, "clients connected")
+        self.rest_api.socketio.send("teststring")
+
         self.settings.after()
 
     def refresh_ui(self, sse_event: str):
