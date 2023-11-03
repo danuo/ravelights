@@ -5,8 +5,8 @@ requires-python = "~=3.10"
 dependencies = [
     "numpy == 1.26.1",
     "plum-py == 0.8.5",
-    "Flask == 2.2.2",
-    "Flask-RESTful == 0.3.9",
+    "Flask == 2.3.3",
+    "Flask-RESTful == 0.3.10",
     "flask-socketio == 5.3.6",
 ]
 
