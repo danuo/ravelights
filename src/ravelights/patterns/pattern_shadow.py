@@ -2,9 +2,9 @@ import math
 import random
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
 from ravelights.core.utils import lerp
@@ -87,7 +87,7 @@ class PatternShadow(Pattern):
                 matrix[pax_int : pbx_int + 1] += 1 / (dist * 0.1)
         return matrix
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: list[Color]) -> ArrayFloat:
         self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono()
         for index in range(self.n_lights):

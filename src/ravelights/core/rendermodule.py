@@ -1,6 +1,7 @@
 import logging
-from typing import TYPE_CHECKING, Literal, Optional, Type, overload
+from typing import TYPE_CHECKING, Literal, Optional, Type, cast, overload
 
+import numpy as np
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -51,8 +52,16 @@ class RenderModule:
     def get_selected_generator(self, gen_type: Type[Thinner], timeline_level: Optional[int] = None) -> Thinner:
         ...
 
+    @overload
     def get_selected_generator(
-        self, gen_type: str | Type[Generator], timeline_level: Optional[int] = None
+        self, gen_type: str, timeline_level: Optional[int] = None
+    ) -> Pattern | Vfilter | Dimmer | Thinner:
+        ...
+
+    def get_selected_generator(
+        self,
+        gen_type: str | Type[Pattern] | Type[Vfilter] | Type[Dimmer] | Type[Thinner],
+        timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
@@ -79,7 +88,7 @@ class RenderModule:
         else:
             return self.device_automatic_timeline_level
 
-    def render(self):
+    def render(self) -> None:
         # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.get_timeline_level()
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
@@ -97,18 +106,18 @@ class RenderModule:
         # fmt: on
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
-            thinner = self.get_generator_by_name("t_random")
+            thinner = cast(Thinner, self.get_generator_by_name("t_random"))
             if self.settings.beat_state.is_beat:
                 thinner.on_trigger()
         if pattern.p_add_thinner == 0.0:
-            thinner = self.get_generator_by_name("t_none")
+            thinner = cast(Thinner, self.get_generator_by_name("t_none"))
 
         if pattern.p_add_dimmer == 1.0 and dimmer.name == "d_none":
-            dimmer = self.get_generator_by_name("d_decay_fast")
+            dimmer = cast(Dimmer, self.get_generator_by_name("d_decay_fast"))
             if self.settings.beat_state.is_beat:
                 dimmer.on_trigger()
         if pattern.p_add_dimmer == 0.0:
-            dimmer = self.get_generator_by_name("d_none")
+            dimmer = cast(Dimmer, self.get_generator_by_name("d_none"))
 
         # ------------------------------- check trigger ------------------------------ #
         if self.get_selected_trigger(gen_type=Pattern).is_match(self.settings.beat_state, self.device):
@@ -137,7 +146,7 @@ class RenderModule:
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
-        matrix_sec = pattern_sec.render(colors=colors[::-1])  # todo
+        matrix_sec = pattern_sec.render(colors=colors[::-1])
         matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
@@ -171,11 +180,11 @@ class RenderModule:
         # ─── Send To Pixelmatrix ──────────────────────────────────────
         self.pixelmatrix.set_matrix_float(matrix)
 
-    def register_generators(self, generators: list[Generator]):
+    def register_generators(self, generators: list[Pattern | Vfilter | Dimmer | Thinner]):
         for g in generators:
             self.generators_dict.update({g.name: g})
 
-    def find_generator(self, name: str) -> Generator:
+    def find_generator(self, name: str) -> Pattern | Vfilter | Dimmer | Thinner:
         return self.generators_dict[name]
 
     def apply_frameskip(self, in_matrix: ArrayFloat) -> ArrayFloat:

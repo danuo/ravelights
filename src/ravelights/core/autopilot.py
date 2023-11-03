@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color, ColorHandler
 from ravelights.core.device import Device
@@ -23,7 +22,7 @@ class AutoPilot:
 
     root: "RaveLightsApp"
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
 

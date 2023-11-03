@@ -21,15 +21,15 @@ class InstructionQueue:
     def get_instructions(self) -> list[Instruction]:
         """will return all instructions that have not been executed"""
         if self.just_initialized is True:
-            self.out = self._get_instructions_till(self.settings.n_quarters_long)
             self.just_initialized = False
+            return self._get_instructions_till(self.settings.n_quarters_long)
         elif self.settings.beat_state.is_quarter:
-            self.out = self._instruction_queue[self.settings.n_quarters_long]
-        return self.out
+            return self._instruction_queue[self.settings.n_quarters_long]
+        return []
 
     def _get_instructions_till(self, till_n_quarters: int) -> list[Instruction]:
         """will return all instructions from timerange [0 to till_n_quarters]"""
-        self.out: list[Instruction] = []
+        out: list[Instruction] = []
         for i in range(till_n_quarters + 1):
-            self.out += self._instruction_queue[i]
-        return self.out
+            out += self._instruction_queue[i]
+        return out

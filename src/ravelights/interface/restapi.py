@@ -1,14 +1,12 @@
 import importlib.resources
 import logging
 import threading
-import time
 from dataclasses import asdict
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
 from flask import Flask, Response, jsonify, make_response, request, send_from_directory
-from flask_restful import Api, Resource, fields, marshal_with
-
+from flask_restful import Api, Resource, fields, marshal_with  # type: ignore
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
@@ -84,7 +82,7 @@ class RestAPI:
             if isinstance(lib_path, Path):
                 static_files_dir = lib_path
             else:
-                static_files_dir = Path(lib_path._paths[0])
+                static_files_dir = Path(lib_path._paths[0])  # type: ignore
 
         if not (static_files_dir / "index.html").is_file():
             logger.warning("warning, static UI files could not be found")
@@ -195,7 +193,7 @@ class EffectAPIResource(Resource):
         return self.effecthandler.effect_queues, 200
 
     def put(self):
-        receive_data: dict[str, Any] = request.get_json()
+        receive_data = request.get_json()
         print(receive_data)
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)

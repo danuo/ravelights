@@ -8,9 +8,9 @@ class PerformanceLogger:
     def __init__(self, log_interval_seconds: int = 5) -> None:
         self._log_interval_seconds = log_interval_seconds
         self._last_log_seconds = time.time()
-        self._last_delayed_frame_count = 0
+        self._last_delayed_frame_count: int = 0
 
-    def notify(self, stats: dict[str, float]) -> None:
+    def notify(self, stats: dict[str, float | int]) -> None:
         if time.time() - self._last_log_seconds >= self._log_interval_seconds:
             logger.debug(f"Stats: {stats}")
 
@@ -20,4 +20,4 @@ class PerformanceLogger:
 
             # Reset interval
             self._last_log_seconds = time.time()
-            self._last_delayed_frame_count = stats["delayed_frame_counter"]
+            self._last_delayed_frame_count = int(stats["delayed_frame_counter"])

@@ -1,4 +1,5 @@
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
 
@@ -18,7 +19,7 @@ class PatternSolidColor(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: list[Color]) -> ArrayFloat:
         matrix = self.get_float_matrix_1d_mono()
         matrix[:] = 1.0
         matrix_rgb = self.colorize_matrix(matrix, color=colors[0])

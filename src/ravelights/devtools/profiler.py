@@ -16,7 +16,7 @@ class Profiler:
         self.time_0 = 0
         self.time_sync = 0
         self.n_quarters_long_memory = 0
-        self.data = dict()
+        self.data: dict[str, float] = dict()
 
     def run(self):
         for gen_name, gen in self.app.devices[0].rendermodule.generators_dict.items():
@@ -27,16 +27,16 @@ class Profiler:
             dtime_ms = self.profile_generator(effect)
             self.data[effect_name] = dtime_ms
 
-    def profile_generator(self, generator: Generator):
+    def profile_generator(self, generator: Generator | EffectWrapper):
         logger.info(generator.name)
         colors = self.app.settings.color_engine.get_colors_rgb(1)
         matrix = self.app.devices[0].pixelmatrix.get_float_matrix_rgb()
         if isinstance(generator, Pattern):
-            args = (colors,)
+            args = dict(colors=colors)
         elif isinstance(generator, EffectWrapper):
-            args = (matrix, colors, 0)
+            args = dict(in_matrix=matrix, colors=colors, device_id=0)
         else:
-            args = (matrix, colors)
+            args = dict(in_matrix=matrix, colors=colors)
         t0 = time.time_ns()
         for i in range(self.samples):
             if i % 200 == 0:  # alternate every 200 frames
@@ -74,7 +74,7 @@ class Profiler:
             ax.xaxis.grid(True)
             plt.tight_layout()
             f.savefig("profiling_results.png")
-        except:
+        except Exception:
             logger.warning("could not load seaborn. output results as text instead:")
             self.write_data()
 

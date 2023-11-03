@@ -32,7 +32,7 @@ class EffectHandler:
     instruction_queue: InstructionQueue = field(init=False)
     effect_queues: list[list[EffectWrapper]] = field(default_factory=lambda: [[] for _ in range(4)])
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.settings = self.root.settings
         self.timehandler = self.root.settings.timehandler
         self.devices: list[Device] = self.root.devices
@@ -127,7 +127,7 @@ class EffectHandler:
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         effect_wrapper.draw_mode = self.settings.effect_draw_mode
-        effect_wrapper.reset(**kwargs)
+        effect_wrapper.reset(**kwargs)  # type: ignore
         print(self.effect_queues)
         self.effect_queues[timeline_level].append(effect_wrapper)
         print(self.effect_queues)

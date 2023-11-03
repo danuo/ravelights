@@ -3,7 +3,6 @@ import queue
 import threading
 
 import serial
-
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 logger = logging.getLogger(__name__)
@@ -19,7 +18,7 @@ class ArtnetSerialTransmitter(ArtnetTransmitter):
     ):
         super().__init__(start_universe=start_universe, debug=debug)
         self._serial_port = serial.Serial(port=serial_port_address, baudrate=baud_rate)
-        self._output_queue = queue.Queue()
+        self._output_queue: queue.Queue[bytes] = queue.Queue()
 
         threading.Thread(target=self._send_thread, daemon=True).start()
 

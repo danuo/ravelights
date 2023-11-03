@@ -3,9 +3,8 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from numpy.typing import NDArray
-
 from ravelights.core.colorhandler import Color
-from ravelights.core.custom_typing import ArrayFloat
+from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
@@ -23,7 +22,7 @@ class PixelMatrix:
         self.is_prim: bool = is_prim
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         self.matrix_float: ArrayFloat = np.zeros(shape=(self.n_lights, self.n_leds, 3))
 
     def set_matrix_float(self, matrix: ArrayFloat):
@@ -38,7 +37,7 @@ class PixelMatrix:
         assert matrix.shape == (self.n_leds, self.n_lights, 3)
         self.matrix_float = matrix
 
-    def get_matrix_int(self, brightness: float = 1.0) -> NDArray[np.uint8]:
+    def get_matrix_int(self, brightness: float = 1.0) -> ArrayUInt8:
         return (self.matrix_float * 255 * brightness).astype(np.uint8)
 
     def get_ledid_lightid_from_index(self, index: int):

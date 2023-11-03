@@ -1,6 +1,7 @@
 import random
 
 from ravelights.core.colorhandler import Color
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
 
@@ -21,7 +22,7 @@ class PatternDebugBPMSync(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: list[Color]) -> ArrayFloat:
         # matrix = self.get_float_matrix_rgb()
         matrix = self.get_float_matrix_2d_mono()
 

@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
@@ -205,7 +204,7 @@ class Generator(ABC):
 
 class Pattern(Generator):
     def render(self, colors: list[Color]) -> ArrayFloat:
-        ...
+        return self.get_float_matrix_rgb()
 
 
 class PatternNone(Pattern):
@@ -228,12 +227,12 @@ class PatternNone(Pattern):
 
 
 class Vfilter(Generator):
-    """Default vfilter with blank output"""
-
     ...
 
 
 class VfilterNone(Vfilter):
+    """Default vfilter with blank output"""
+
     def init(self):
         ...
 

@@ -2,6 +2,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Type, cast
 
+from ravelights.core.custom_typing import GeneratorMeta
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
 from ravelights.core.utils import get_random_from_weights, p
@@ -27,7 +28,7 @@ def get_names_and_weights(generators: list[str], keywords: Optional[list[str]] =
         gen_keywords: list[str] = cast(list[str], gen["generator_keywords"])
         all_keywords_in_generator = all([k in gen_keywords for k in keywords])
         if all_keywords_in_generator:
-            names.append(cast(str, gen["generator_name"]))
+            names.append(gen["generator_name"])
             weights.append(cast(float, gen["generator_weight"]))
     return names, weights
 
@@ -47,7 +48,7 @@ class GenSelector:
     thinner_name
     """
 
-    gen_type: Type[Generator]
+    gen_type: Type[Pattern | Vfilter | Dimmer | Thinner]
     root: "RaveLightsApp"
 
     pattern_name: Optional[str] = None
@@ -56,14 +57,13 @@ class GenSelector:
     thinner_name: Optional[str] = None
 
     name: Optional[str] = None
-    keywords: list[str] = field(default_factory=list)
+    keywords: list["Keywords"] = field(default_factory=list)
     level: int = 1
     p: float = 1.0  # if chance is not met, set pattern to p_none (black)
     trigger_on_change: bool = True
 
     def __post_init__(self):
         self.settings: Settings = self.root.settings
-        self.keywords = [k.value for k in self.keywords]
 
         # ─── Pattern ──────────────────────────────────────────────────
         if self.gen_type is Pattern:
@@ -73,9 +73,7 @@ class GenSelector:
             else:
                 self.pattern_name = self.get_random_generator(gen_type=Pattern)
             pattern = self.root.devices[0].rendermodule.find_generator(name=self.pattern_name)
-            assert isinstance(pattern, Generator)
-
-            # todo:
+            assert isinstance(pattern, Pattern)
             self.set_dimmer_thinner(pattern)
 
         # ─── Vfilter ──────────────────────────────────────────────────
@@ -94,7 +92,7 @@ class GenSelector:
             else:
                 self.dimmer_name = self.get_random_generator(gen_type=Dimmer)
 
-    def set_dimmer_thinner(self, pattern) -> None:
+    def set_dimmer_thinner(self, pattern: Pattern) -> None:
         # ─── Vfilter ──────────────────────────────────────────────────
         # * not related to pattern, add vfilter purely random
 
@@ -135,7 +133,7 @@ class GenSelector:
         # backup
         return gen_type.get_identifier()[0] + "_none"
 
-    def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[dict[str, str | list[str] | float]]:
+    def get_gen_list(self, gen_type: str | Type[Generator] | Type[Effect]) -> list[GeneratorMeta]:
         identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if hasattr(self.root, "metahandler"):
             return self.root.metahandler["available_generators"][identifier]

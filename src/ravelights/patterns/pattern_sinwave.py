@@ -1,7 +1,6 @@
 import random
 
 import numpy as np
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat, ArrayInt
 from ravelights.core.generator_super import Pattern
@@ -60,7 +59,7 @@ class PatternSinwave(Pattern):
             out += self.static_x
         return np.round(out).astype(int)
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: list[Color]) -> ArrayFloat:
         out = self.get_square_positions()
         matrix = self.get_float_matrix_2d_mono()
         for i in range(self.n_lights):

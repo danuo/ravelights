@@ -1,9 +1,7 @@
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 import numpy as np
-import numpy.typing as npt
 import pygame
-
 from ravelights.configs.visualizer_configurations import configurations
 from ravelights.core.bpmhandler import BeatStatePattern, BPMhandler
 from ravelights.core.device import Device
@@ -53,7 +51,7 @@ class Visualizer:
             if event.type == pygame.QUIT:
                 exit()
 
-    def create_surfaces(self):
+    def create_surfaces(self) -> None:
         self.surfaces_small: list[list[pygame.Surface]] = []
         self.surfaces_big: list[list[pygame.Surface]] = []
         for device in self.devices:
@@ -79,8 +77,8 @@ class Visualizer:
                 # RENDER AND SCALE
                 surf_small = self.surfaces_small[device_id][light_id]
                 surf_big = self.surfaces_big[device_id][light_id]
-                array = np.expand_dims(cast(npt.NDArray[np.uint8], matrix_int_view), 0)
-                pygame.surfarray.blit_array(surf_small, array)  # typing: ignore
+                array = np.expand_dims(matrix_int_view, 0)
+                pygame.surfarray.blit_array(surf_small, array)  # type: ignore
                 pygame.transform.scale(surf_small, surf_big.get_size(), surf_big)
 
                 # GET POSITIONS FROM CONFIG

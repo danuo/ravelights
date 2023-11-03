@@ -1,8 +1,22 @@
 from enum import auto
-from typing import Any, NamedTuple, Optional, Type, overload
+from typing import Any, Optional, overload
 
-from ravelights.core.custom_typing import T_BLUEPRINTS
-from ravelights.core.generator_super import Dimmer, DimmerNone, Generator, Pattern, PatternNone, Thinner, ThinnerNone, Vfilter, VfilterNone
+from ravelights.core.custom_typing import (
+    BlueprintEffect,
+    BlueprintGen,
+    BlueprintPlace,
+    BlueprintSel,
+    BlueprintTimeline,
+)
+from ravelights.core.generator_super import (
+    DimmerNone,
+    Generator,
+    Pattern,
+    PatternNone,
+    ThinnerNone,
+    Vfilter,
+    VfilterNone,
+)
 from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
 from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
@@ -79,29 +93,7 @@ class Keywords(StrEnum):
     LONG = auto()  # patterns that only work when showed for 4 beats or longer
 
 
-class Blueprint(NamedTuple):
-    cls: Type[Generator] | Type[Effect] | Type[EffectSelectorPlacing] | Type[GenPlacing] | Type[GenSelector]
-    args: dict[str, str | float | int | list[Keywords] | Type[Generator] | list[int]]
-
-
-class BlueprintGen(Blueprint):
-    ...
-
-
-class BlueprintEffect(Blueprint):
-    ...
-
-
-class BlueprintSel(Blueprint):
-    ...
-
-
-class BlueprintPlace(Blueprint):
-    ...
-
-
 # ─── Blueprint Section ────────────────────────────────────────────────────────
-# flake8: noqa E501
 # fmt: off
 
 K = Keywords
@@ -165,7 +157,6 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(DimmerDecayVerySlow, dict(name="d_decay_very_slow", weight=1)),
     BlueprintGen(DimmerSideswipe, dict(name="d_sideswipe_1", weight=1, version=0)),
     BlueprintGen(DimmerSideswipe, dict(name="d_sideswipe_2", weight=1, version=1)),
-
     BlueprintGen(DimmerSine, dict(name="d_sine", weight=1)),
     BlueprintGen(DimmerPeak, dict(name="d_peak", weight=1)),
 ]
@@ -181,8 +172,9 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
 ]
 
+
 # todo: effects need length, patterns do not
-blueprint_timelines: list[dict[str, dict[str, str] | list[BlueprintPlace] | list[BlueprintSel]]] = [
+blueprint_timelines: list[BlueprintTimeline] = [
     {
         "meta": {
             "name": "all 1 level",
@@ -284,12 +276,12 @@ def create_from_blueprint(blueprints: list[BlueprintGen], kwargs: Optional[dict[
 def create_from_blueprint(blueprints: list[BlueprintEffect], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...  # noqa
+def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...  # noqa
+def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...
 
-def create_from_blueprint(blueprints: T_BLUEPRINTS, kwargs: Optional[dict[str, Any]]=None):
+def create_from_blueprint(blueprints, kwargs: Optional[dict[str, Any]]=None) -> Any:
     if kwargs is None:
         kwargs = dict()
     items = [cls(**args, **kwargs) for cls, args in blueprints]

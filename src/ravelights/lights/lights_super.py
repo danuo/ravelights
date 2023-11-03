@@ -4,7 +4,6 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.utils import cos_mapper, p, sign
@@ -63,8 +62,7 @@ class LightObject(ABC):
             if self.counter_frame > self.lifetime_frames:
                 if self.settings.beat_state.is_beat:
                     return True
-        else:
-            return self.is_done()
+        return self.is_done()
 
     def render_super(self, colors: list[Color]) -> tuple[ArrayFloat, bool]:
         """
