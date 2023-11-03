@@ -59,7 +59,7 @@ class PatternSinwave(Pattern):
             out += self.static_x
         return np.round(out).astype(int)
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         out = self.get_square_positions()
         matrix = self.get_float_matrix_2d_mono()
         for i in range(self.n_lights):

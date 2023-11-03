@@ -19,7 +19,7 @@ class PatternDebugSolidColor(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         matrix = self.get_float_matrix_1d_mono()
         matrix[:] = 1.0
         matrix_rgb = self.colorize_matrix(matrix, color=colors[0])

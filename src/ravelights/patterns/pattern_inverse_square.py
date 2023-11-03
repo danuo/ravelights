@@ -54,7 +54,7 @@ class PatternInerseSquare(Pattern):
             matrix[a:b] = intensity
         return matrix
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: list[Color]) -> ArrayFloat:
         self.pos += self.speed
         if self.pos < -self.bounds:
             self.pos = self.pos + self.n_leds + 2 * self.bounds
