@@ -37,6 +37,7 @@ class RestAPI:
         static_files_dir = self.check_static_files_dir(static_files_dir)
 
         self.websocket_html = self.get_websocket_html()
+        self.websocket_num_clients: int = 0
 
         self.flask_app = Flask(__name__)
         self.socketio = SocketIO(self.flask_app)
@@ -57,7 +58,8 @@ class RestAPI:
             # serve index.html
             @self.flask_app.route("/websocket")
             def serve_websocket():
-                return self.websocket_html
+                # return self.websocket_html
+                return self.get_websocket_html()
 
             # serve any other file in static_dir
             @self.flask_app.route("/<path:path>")
@@ -85,7 +87,16 @@ class RestAPI:
 
         @self.socketio.on("connect")
         def handle_connect():
-            print("socket stuff is happening")
+            self.websocket_num_clients += 1
+            print(self.websocket_num_clients)
+            print("connected - socket stuff is happening")
+            emit("my response", {"data": "Connected"})
+
+        @self.socketio.on("disconnect")
+        def handle_disconnect():
+            self.websocket_num_clients -= 1
+            print(self.websocket_num_clients)
+            print("disconnected - socket stuff is happening")
 
         self.start_threaded()
 
