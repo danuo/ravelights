@@ -1,6 +1,7 @@
 import logging
 from typing import Any
 
+import numpy as np
 from ravelights import DeviceDict
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
@@ -116,8 +117,11 @@ class RaveLightsApp:
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_int)
         # ─── Websocket ────────────────────────────────────────────────
-        # print(self.rest_api.websocket_num_clients, "clients connected")
-        self.rest_api.socketio.send("teststring")
+        # send rgba data
+        matrix_int = matrices_int[0]
+        matrix_int_padded = np.pad(matrix_int, pad_width=((0, 0), (0, 0), (0, 1)), constant_values=255)
+        data = matrix_int_padded.flatten().tobytes()
+        self.rest_api.socketio.send(data)
 
         self.settings.after()
 
