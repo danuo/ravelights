@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from ravelights.core.custom_typing import ArrayUInt8, TransmitDict, Transmitter
+from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
@@ -26,6 +27,7 @@ class DataRouterTransmitter(DataRouter):
         self.devices = self.root.devices
 
     def apply_transmitter_receipt(self, transmitter: Transmitter, transmitter_config: list[list[TransmitDict]]):
+        assert isinstance(transmitter, ArtnetTransmitter)
         self.transmitter = transmitter
         self.leds_per_output, self.out_lights, self.n = self.process_transmitter_config(transmitter_config)
         self.transmitter.transmit_output_config(self.leds_per_output)
