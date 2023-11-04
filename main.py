@@ -2,7 +2,7 @@ import argparse
 import logging
 from typing import Any
 
-from ravelights import DeviceDict, RaveLightsApp, TransmitDict
+from ravelights import DeviceLightConfig, RaveLightsApp, TransmitDict
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 
