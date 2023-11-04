@@ -112,17 +112,11 @@ function deviceConfigToNLEDS(deviceConfig) {
 async function initWebsocket() {
   const apiData = await fetchData();
   const deviceConfig = apiData.device_config;
-  console.log(deviceConfig);
   const NLEDS = deviceConfigToNLEDS(deviceConfig);
   const NLIGHTS = NLEDS.length;
   const SIZE = sum(NLEDS);
-
   var data = new Uint8Array(4 * SIZE);
-  for (let i = 0; i < data.length; i++) {
-    data[i] = 255;
-  }
   const texture = initTexture(data, SIZE);
-
   initWebGL(NLEDS, NLIGHTS, SIZE, texture);
   const socket = io();
   socket.on("message", (in_data) => {
