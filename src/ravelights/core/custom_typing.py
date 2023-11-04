@@ -34,12 +34,9 @@ class TransmitDict(TypedDict):
     flip: bool
 
 
-TransmitterConfig = list[list[TransmitDict]]
-
-
 class TransmitterReceipt(TypedDict):
     transmitter: Transmitter
-    transmitter_config: TransmitterConfig
+    transmitter_config: list[list[TransmitDict]]
 
 
 class DeviceLightConfig(TypedDict):
