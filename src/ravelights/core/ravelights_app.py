@@ -10,7 +10,7 @@ from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.interface.datarouter import DataRouter
+from ravelights.interface.datarouter import DataRouter, DataRouterWebsocket
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
@@ -67,7 +67,7 @@ class RaveLightsApp:
             self.run()
 
     def initiate_data_routers(self, data_routers_configs: list[dict[str, Any]]) -> list[DataRouter]:
-        data_routers: list[DataRouter] = []
+        data_routers: list[DataRouter] = [DataRouterWebsocket(root=self)]
         for config in data_routers_configs:
             data_routers.append(DataRouter(root=self, **config))
 
@@ -116,12 +116,6 @@ class RaveLightsApp:
         matrices_int = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_int)
-        # ─── Websocket ────────────────────────────────────────────────
-        # send rgba data
-        matrix_int = matrices_int[0]
-        matrix_int_padded = np.pad(matrix_int, pad_width=((0, 0), (0, 0), (0, 1)), constant_values=255)
-        data = matrix_int_padded.flatten().tobytes()
-        self.rest_api.socketio.send(data)
 
         self.settings.after()
 
