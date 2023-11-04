@@ -29,7 +29,7 @@ class TransmitDict(TypedDict):
     flip: bool
 
 
-class DeviceDict(TypedDict):
+class DeviceLightConfig(TypedDict):
     n_lights: int
     n_leds: int
 
@@ -79,5 +79,5 @@ class BlueprintTimeline(TypedDict):  # todo: move to custom typing
 
 class VisualizerConfig(TypedDict):
     name: str
-    device_config: list[dict[str, int]]
+    device_config: list[DeviceLightConfig]
     visualizer_config: list[list[dict[str, float]]]

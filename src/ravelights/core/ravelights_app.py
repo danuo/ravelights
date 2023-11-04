@@ -2,7 +2,7 @@ import logging
 from typing import Any
 
 import numpy as np
-from ravelights import DeviceDict
+from ravelights import DeviceLightConfig
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
@@ -36,7 +36,7 @@ class RaveLightsApp:
         fps: int = 20,
         webserver_port: int = 80,
         serve_webinterface: bool = True,
-        device_config: list[DeviceDict] = [DeviceDict(n_lights=2, n_leds=100)],
+        device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
         data_routers_configs: list[dict[str, Any]] = [],
         visualizer: bool = False,
         run: bool = True,

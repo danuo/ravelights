@@ -1,12 +1,12 @@
 from collections import Counter
 
 import matplotlib.pyplot as plt
-from ravelights import DeviceDict, RaveLightsApp
+from ravelights import DeviceLightConfig, RaveLightsApp
 from ravelights.configs.components import Keywords as K
 from ravelights.core.generator_super import Pattern
 from ravelights.core.templateobjects import GenSelector
 
-app = RaveLightsApp(device_config=[DeviceDict(n_lights=10, n_leds=144)], run=False)
+app = RaveLightsApp(device_config=[DeviceLightConfig(n_lights=10, n_leds=144)], run=False)
 
 names: list[str] = []
 
