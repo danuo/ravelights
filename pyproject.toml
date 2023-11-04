@@ -26,10 +26,13 @@ serial = [
 [tool.setuptools]
 package-dir = {"" = "src"}
 
+# include package data
+# https://setuptools.pypa.io/en/latest/userguide/datafiles.html
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
+# include all files, this is also the default
 "*" = ["*"]
 
 [build-system]
