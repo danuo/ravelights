@@ -4,3 +4,4 @@
 launch.json
 *egg-info
 /build
+/.vscode
