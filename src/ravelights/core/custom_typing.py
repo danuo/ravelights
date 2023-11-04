@@ -28,7 +28,7 @@ class Transmitter(Protocol):
         ...
 
 
-class TransmitDict(TypedDict):
+class LightIdentifierDict(TypedDict):
     device: int
     light: int
     flip: bool
@@ -36,7 +36,7 @@ class TransmitDict(TypedDict):
 
 class TransmitterReceipt(TypedDict):
     transmitter: Transmitter
-    transmitter_config: list[list[TransmitDict]]
+    light_mapping_config: list[list[LightIdentifierDict]]
 
 
 class DeviceLightConfig(TypedDict):

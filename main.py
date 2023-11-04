@@ -1,7 +1,7 @@
 import argparse
 import logging
 
-from ravelights import DeviceLightConfig, RaveLightsApp, TransmitDict, TransmitterReceipt
+from ravelights import DeviceLightConfig, LightIdentifierDict, RaveLightsApp, TransmitterReceipt
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 
@@ -44,8 +44,11 @@ device_config = [DeviceLightConfig(n_lights=9, n_leds=144)]
 
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
-transmitter_config_example: list[list[TransmitDict]] = [
-    [],
+light_mapping_config_example: list[list[LightIdentifierDict]] = [
+    [
+        LightIdentifierDict(device=0, light=0, flip=False),
+        LightIdentifierDict(device=0, light=1, flip=False),
+    ],
     [],
     [],
     [],
@@ -58,12 +61,12 @@ if args.artnet_wifi:
 
     transmitter_receipts.append(
         TransmitterReceipt(
-            transmitter=ArtnetUdpTransmitter(ip_address=ip_laser), transmitter_config=transmitter_config_example
+            transmitter=ArtnetUdpTransmitter(ip_address=ip_laser), light_mapping_config=light_mapping_config_example
         )
     )
     transmitter_receipts.append(
         TransmitterReceipt(
-            transmitter=ArtnetUdpTransmitter(ip_address=ip_box), transmitter_config=transmitter_config_example
+            transmitter=ArtnetUdpTransmitter(ip_address=ip_box), light_mapping_config=light_mapping_config_example
         )
     )
 
@@ -76,7 +79,7 @@ if args.artnet_serial:
         serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
     )
     transmitter_receipts.append(
-        TransmitterReceipt(transmitter=transmitter, transmitter_config=transmitter_config_example)
+        TransmitterReceipt(transmitter=transmitter, light_mapping_config=light_mapping_config_example)
     )
 
 

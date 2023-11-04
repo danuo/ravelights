@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import numpy as np
-from ravelights.core.custom_typing import ArrayUInt8, TransmitDict, Transmitter
+from ravelights.core.custom_typing import ArrayUInt8, LightIdentifierDict, Transmitter
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 if TYPE_CHECKING:
@@ -26,25 +26,28 @@ class DataRouterTransmitter(DataRouter):
         self.settings = self.root.settings
         self.devices = self.root.devices
 
-    def apply_transmitter_receipt(self, transmitter: Transmitter, transmitter_config: list[list[TransmitDict]]):
+    def apply_transmitter_receipt(
+        self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifierDict]]
+    ):
         assert isinstance(transmitter, ArtnetTransmitter)
         self.transmitter = transmitter
-        self.leds_per_output, self.out_lights, self.n = self.process_transmitter_config(transmitter_config)
+        self.leds_per_output, self.out_lights, self.n = self.process_light_mapping_config(light_mapping_config)
         self.transmitter.transmit_output_config(self.leds_per_output)
         # one out matrix per datarouter / transmitter
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
 
-    def process_transmitter_config(self, output_config: list[list[TransmitDict]]):
+    def process_light_mapping_config(self, light_mapping_config: list[list[LightIdentifierDict]]):
         leds_per_output: list[int] = []
-        out_lights: list[TransmitDict] = []
-        for conf in output_config:
-            n: int = 0
-            for out_light in conf:
-                out_lights.append(out_light)
-                n += self.devices[out_light["device"]].n_leds
-            leds_per_output.append(n)
-        n = self.leds_per_output
-        return leds_per_output, out_lights, n
+        out_lights: list[LightIdentifierDict] = []
+        for transmitter_output in light_mapping_config:
+            n_output: int = 0
+            light_identifier: LightIdentifierDict
+            for light_identifier in transmitter_output:
+                out_lights.append(light_identifier)
+                n_output += self.devices[light_identifier["device"]].n_leds
+            leds_per_output.append(n_output)
+        n_total = sum(leds_per_output)
+        return leds_per_output, out_lights, n_total
 
     def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
         index = 0

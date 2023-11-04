@@ -67,6 +67,7 @@ class RaveLightsApp:
     def initiate_data_routers(self, transmitter_receipts: list[TransmitterReceipt]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterWebsocket(root=self)]
         for receipt in transmitter_receipts:
+            # at the moment, all datarouters created from receipts are DataRouterTransmitter
             data_router_transmitter = DataRouterTransmitter(root=self)
             data_router_transmitter.apply_transmitter_receipt(**receipt)
             data_routers.append(data_router_transmitter)
