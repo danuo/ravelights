@@ -3,7 +3,7 @@ from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
-from ravelights import DeviceDict
+from ravelights import DeviceLightConfig
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -88,7 +88,7 @@ class Settings:
 
     # ─── Device Configuration ─────────────────────────────────────────────
     root_init: InitVar["RaveLightsApp"]
-    device_config: list[DeviceDict]
+    device_config: list[DeviceLightConfig]
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: list[str] = field(init=False)
@@ -135,6 +135,8 @@ class Settings:
     active_timeline_index: int = 0  # default timeline index
     use_manual_timeline: bool = True
     global_manual_timeline_level: int = 1
+
+    websocket_data: tuple[int, ...] = (30, 10, 10)
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)

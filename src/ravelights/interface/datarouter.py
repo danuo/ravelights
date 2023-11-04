@@ -1,37 +1,53 @@
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import numpy as np
-
-from ravelights.core.custom_typing import ArrayUInt8, TransmitDict
+from ravelights.core.custom_typing import ArrayUInt8, LightIdentifierDict, Transmitter
+from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
-    from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 
-class DataRouter:
-    def __init__(
-        self, root: "RaveLightsApp", transmitter: "ArtnetTransmitter", transmitter_config: list[list[TransmitDict]]
-    ):
+class DataRouter(ABC):
+    def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings = self.root.settings
         self.devices = self.root.devices
+
+    @abstractmethod
+    def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
+        ...
+
+
+class DataRouterTransmitter(DataRouter):
+    def __init__(self, root: "RaveLightsApp"):
+        self.root = root
+        self.settings = self.root.settings
+        self.devices = self.root.devices
+
+    def apply_transmitter_receipt(
+        self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifierDict]]
+    ):
+        assert isinstance(transmitter, ArtnetTransmitter)
         self.transmitter = transmitter
-        self.process_transmitter_config(transmitter_config)
+        self.leds_per_output, self.out_lights, self.n = self.process_light_mapping_config(light_mapping_config)
         self.transmitter.transmit_output_config(self.leds_per_output)
         # one out matrix per datarouter / transmitter
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
 
-    def process_transmitter_config(self, output_config: list[list[TransmitDict]]):
-        self.leds_per_output: list[int] = []
-        self.out_lights: list[TransmitDict] = []
-        for out_lights in output_config:
-            n: int = 0
-            for out_light in out_lights:
-                self.out_lights.append(out_light)
-                n += self.devices[out_light["device"]].n_leds
-            self.leds_per_output.append(n)
-        self.n = sum(self.leds_per_output)
+    def process_light_mapping_config(self, light_mapping_config: list[list[LightIdentifierDict]]):
+        leds_per_output: list[int] = []
+        out_lights: list[LightIdentifierDict] = []
+        for transmitter_output in light_mapping_config:
+            n_output: int = 0
+            light_identifier: LightIdentifierDict
+            for light_identifier in transmitter_output:
+                out_lights.append(light_identifier)
+                n_output += self.devices[light_identifier["device"]].n_leds
+            leds_per_output.append(n_output)
+        n_total = sum(leds_per_output)
+        return leds_per_output, out_lights, n_total
 
     def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
         index = 0
@@ -44,3 +60,15 @@ class DataRouter:
             index += length
 
         self.transmitter.transmit_matrix(matrix=self.out_matrix)
+
+
+class DataRouterWebsocket(DataRouter):
+    def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
+        if hasattr(self.root, "rest_api"):
+            matrix_int = out_matrices_int[0]
+            matrix_int = matrix_int.reshape((-1, 3), order="F")
+
+            # turn into rgba
+            matrix_int_padded = np.pad(matrix_int, pad_width=((0, 0), (0, 1)), constant_values=255)
+            data = matrix_int_padded.flatten().tobytes()
+            self.root.rest_api.socketio.send(data)

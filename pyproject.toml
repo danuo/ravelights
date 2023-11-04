@@ -5,8 +5,9 @@ requires-python = "~=3.10"
 dependencies = [
     "numpy == 1.26.1",
     "plum-py == 0.8.5",
-    "Flask == 2.2.2",
-    "Flask-RESTful == 0.3.9",
+    "Flask == 2.3.3",
+    "Flask-RESTful == 0.3.10",
+    "flask-socketio == 5.3.6",
 ]
 
 [project.optional-dependencies]
@@ -25,10 +26,13 @@ serial = [
 [tool.setuptools]
 package-dir = {"" = "src"}
 
+# include package data
+# https://setuptools.pypa.io/en/latest/userguide/datafiles.html
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
+# include all files, this is also the default
 "*" = ["*"]
 
 [build-system]

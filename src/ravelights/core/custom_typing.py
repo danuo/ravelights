@@ -1,5 +1,5 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, NamedTuple, Type, TypedDict
+from typing import TYPE_CHECKING, Any, NamedTuple, Protocol, Type, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -23,13 +23,23 @@ def assert_dims(in_matrix: NDArray[Any], *dims: int):
     assert in_matrix.shape == dims
 
 
-class TransmitDict(TypedDict):
+class Transmitter(Protocol):
+    def _send_bytes(self, data) -> None:
+        ...
+
+
+class LightIdentifierDict(TypedDict):
     device: int
     light: int
     flip: bool
 
 
-class DeviceDict(TypedDict):
+class TransmitterReceipt(TypedDict):
+    transmitter: Transmitter
+    light_mapping_config: list[list[LightIdentifierDict]]
+
+
+class DeviceLightConfig(TypedDict):
     n_lights: int
     n_leds: int
 
@@ -79,5 +89,5 @@ class BlueprintTimeline(TypedDict):  # todo: move to custom typing
 
 class VisualizerConfig(TypedDict):
     name: str
-    device_config: list[dict[str, int]]
+    device_config: list[DeviceLightConfig]
     visualizer_config: list[list[dict[str, float]]]
