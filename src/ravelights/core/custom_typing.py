@@ -1,5 +1,5 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, NamedTuple, Type, TypedDict
+from typing import TYPE_CHECKING, Any, NamedTuple, Protocol, Type, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -23,10 +23,23 @@ def assert_dims(in_matrix: NDArray[Any], *dims: int):
     assert in_matrix.shape == dims
 
 
+class Transmitter(Protocol):
+    def _send_bytes(self, data) -> None:
+        ...
+
+
 class TransmitDict(TypedDict):
     device: int
     light: int
     flip: bool
+
+
+TransmitterConfig = list[list[TransmitDict]]
+
+
+class TransmitterReceipt(TypedDict):
+    transmitter: Transmitter
+    transmitter_config: TransmitterConfig
 
 
 class DeviceLightConfig(TypedDict):
