@@ -47,17 +47,22 @@ class RestAPI:
 
             # serve index at root
             @self.flask_app.route("/websocket")
-            def serve_websocket():
+            def serve_websocket_index():
                 return send_from_directory(self.websocket_dir, "websocket_ui.html")
+
+            # serve any other file in static_dir
+            @self.flask_app.route("/websocket/<path:path>")
+            def serve_websocket_static(path):
+                return send_from_directory(self.websocket_dir, path)
 
             # serve index at root
             @self.flask_app.route("/")
-            def serve_index():
+            def serve_qusar_index():
                 return send_from_directory(self.quasar_dir, "index.html")
 
             # serve any other file in static_dir
             @self.flask_app.route("/<path:path>")
-            def serve_static(path):
+            def serve_quasar_static(path):
                 return send_from_directory(self.quasar_dir, path)
 
         # ─── SSE ──────────────────────────────────────────────────────
