@@ -38,10 +38,29 @@ class Visualizer:
 
     def get_visualizer_config(self):
         device_config_string = str(self.settings.device_config)
+        # load config from configuration file if available
         for configuration in configurations:
             if device_config_string == str(configuration["device_config"]):
                 return configuration["visualizer_config"]
-        raise Exception("could not find matching visualizer_configuration")
+
+        # try to generate config automatically
+        if len(self.settings.device_config) <= 3:
+            return self.generate_visualizer_config(self.settings.device_config)
+        raise Exception("could neither find nor generate matching visualizer_configuration")
+
+    def generate_visualizer_config(self, device_vis_config: list[dict[str, int]]):
+        """
+        generates visualizer config for one device
+        """
+        full_vis_config = []
+        for device in device_vis_config:
+            device_vis_config = []
+            n_lights = device["n_lights"]
+            spacings = np.linspace(0.2, 0.8, n_lights)
+            for light_id in range(n_lights):
+                device_vis_config.append(dict(x=spacings[light_id], y=0.5, rot=0.0, scale=1.0))
+            full_vis_config.append(device_vis_config)
+        return full_vis_config
 
     def send_inputs_to_eventhandler(self):
         for event in pygame.event.get():
