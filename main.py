@@ -78,7 +78,7 @@ if args.artnet_wifi:
 
 if args.artnet_serial:
     # import here because of serial dependency
-    from ravelights.interface.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter
+    from ravelights import ArtnetSerialTransmitter
 
     transmitter = ArtnetSerialTransmitter(
         serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
