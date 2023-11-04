@@ -1,20 +1,31 @@
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import numpy as np
-from ravelights.core.custom_typing import ArrayUInt8, TransmitDict
+from ravelights.core.custom_typing import ArrayUInt8, TransmitDict, Transmitter
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
-    from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 
-class DataRouter:
-    def __init__(
-        self, root: "RaveLightsApp", transmitter: "ArtnetTransmitter", transmitter_config: list[list[TransmitDict]]
-    ):
+class DataRouter(ABC):
+    def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings = self.root.settings
         self.devices = self.root.devices
+
+    @abstractmethod
+    def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
+        ...
+
+
+class DataRouterTransmitter(DataRouter):
+    def __init__(self, root: "RaveLightsApp"):
+        self.root = root
+        self.settings = self.root.settings
+        self.devices = self.root.devices
+
+    def apply_transmitter_receipt(self, transmitter: Transmitter, transmitter_config: list[list[TransmitDict]]):
         self.transmitter = transmitter
         self.leds_per_output, self.out_lights, self.n = self.process_transmitter_config(transmitter_config)
         self.transmitter.transmit_output_config(self.leds_per_output)
@@ -46,12 +57,7 @@ class DataRouter:
         self.transmitter.transmit_matrix(matrix=self.out_matrix)
 
 
-class DataRouterWebsocket:
-    def __init__(self, root: "RaveLightsApp"):
-        self.root = root
-        self.settings = self.root.settings
-        self.devices = self.root.devices
-
+class DataRouterWebsocket(DataRouter):
     def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "rest_api"):
             matrix_int = out_matrices_int[0]
