@@ -1,24 +1,16 @@
 import argparse
 import logging
 
-from ravelights import DeviceLightConfig, RaveLightsApp, TransmitterConfig, TransmitterReceipt
+from ravelights import DeviceLightConfig, RaveLightsApp, TransmitDict, TransmitterReceipt
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
-# for devices in ravelights app
-# device_config = [DeviceDict(n_lights=10, n_leds=144), DeviceDict(n_lights=10, n_leds=144)]
-device_config = [DeviceLightConfig(n_lights=9, n_leds=144)]
-
-# one output_config for each transmitter, defines which lights are broadcasted on which output
-transmitter_config_example: TransmitterConfig = [
-    [],
-    [],
-    [],
-    [],
-]
+# ─── Argparse ─────────────────────────────────────────────────────────────────
 
 
 def parse_args():
@@ -41,29 +33,23 @@ def parse_args():
 args = parse_args()
 visualizer = args.visualizer if not args.profiling else False
 
-# ------------------------------ port selection ------------------------------ #
 
-"""
-Case A (default)
---webui
-web static via flask @ port 80
-rest via flask @ port 80
+# ─── Device Config ────────────────────────────────────────────────────────────
 
-Case B
---no-webui
-web dynamic via quasar dev @ port 80
-rest via flask @ port 5000
+# for devices in ravelights app
+# device_config = [DeviceDict(n_lights=10, n_leds=144), DeviceDict(n_lights=10, n_leds=144)]
+device_config = [DeviceLightConfig(n_lights=9, n_leds=144)]
 
-Case C
---no-webui
-web static via nginx @ port 80
-rest via flask @ port 5000
-"""
+# ─── Transmitters ─────────────────────────────────────────────────────────────
 
-webserver_port = 80
-if not args.webui:
-    webserver_port = 5000
-    logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
+
+# one output_config for each transmitter, defines which lights are broadcasted on which output
+transmitter_config_example: list[list[TransmitDict]] = [
+    [],
+    [],
+    [],
+    [],
+]
 
 transmitter_receipts: list[TransmitterReceipt] = []
 if args.artnet_wifi:
@@ -93,11 +79,38 @@ if args.artnet_serial:
         TransmitterReceipt(transmitter=transmitter, transmitter_config=transmitter_config_example)
     )
 
+
+# ─── Webui Port ───────────────────────────────────────────────────────────────
+
+
+"""
+Case A (default)
+--webui
+web static via flask @ port 80
+rest via flask @ port 80
+
+Case B
+--no-webui
+web dynamic via quasar dev @ port 80
+rest via flask @ port 5000
+
+Case C
+--no-webui
+web static via nginx @ port 80
+rest via flask @ port 5000
+"""
+
+webui_port = 80
+if not args.webui:
+    webui_port = 5000
+    logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
+
+
 app = RaveLightsApp(
     device_config=device_config,
     fps=args.fps,
-    webserver_port=webserver_port,
-    serve_webinterface=args.webui,
+    webui_port=webui_port,
+    serve_webui=args.webui,
     transmitter_receipts=transmitter_receipts,
     visualizer=visualizer,
     run=False,

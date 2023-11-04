@@ -32,8 +32,8 @@ class RaveLightsApp:
         self,
         *,
         fps: int = 20,
-        webserver_port: int = 80,
-        serve_webinterface: bool = True,
+        webui_port: int = 80,
+        serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
         transmitter_receipts: list[TransmitterReceipt] = [],
         visualizer: bool = False,
@@ -57,8 +57,8 @@ class RaveLightsApp:
 
         self.rest_api = RestAPI(
             root=self,
-            serve_static_files=serve_webinterface,
-            port=webserver_port,
+            serve_webui=serve_webui,
+            port=webui_port,
         )
 
         if run:

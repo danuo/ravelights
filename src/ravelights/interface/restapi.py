@@ -25,7 +25,7 @@ class RestAPI:
         self,
         root: "RaveLightsApp",
         port: int = 80,
-        serve_static_files: bool = True,
+        serve_webui: bool = True,
     ):
         self.root = root
         self.port = port
@@ -40,7 +40,7 @@ class RestAPI:
 
         # ─── Static Files ─────────────────────────────────────────────
 
-        if serve_static_files:
+        if serve_webui:
             self.websocket_dir = self.get_websocket_ui_dir()
             print(self.websocket_dir)
             self.quasar_dir = self.get_quasar_ui_dir()
