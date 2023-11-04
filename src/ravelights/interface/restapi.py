@@ -144,7 +144,12 @@ class RestAPI:
         # ).start()
         threading.Thread(
             target=lambda: self.socketio.run(
-                app=self.flask_app, host="0.0.0.0", port=self.port, debug=debug, use_reloader=False
+                app=self.flask_app,
+                host="0.0.0.0",
+                port=self.port,
+                debug=debug,
+                use_reloader=False,
+                allow_unsafe_werkzeug=True,
             ),
             daemon=True,
         ).start()
