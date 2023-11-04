@@ -244,6 +244,10 @@ class Settings:
         self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
         self.root.refresh_ui(sse_event="triggers")
 
+    def set_settings_autopilot(self, in_dict):
+        self.settings_autopilot.update(in_dict)
+        self.root.refresh_ui(sse_event="settings")
+
     def before(self):
         self.timehandler.before()
         self.color_engine.before()
