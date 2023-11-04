@@ -47,12 +47,6 @@ class RaveLightsApp:
         self.metahandler = MetaHandler(root=self)
         self.eventhandler = EventHandler(root=self)
 
-        self.visualizer = None
-        if visualizer:
-            from ravelights.interface.visualizer import Visualizer
-
-            self.visualizer = Visualizer(root=self)
-
         self.data_routers = self.initiate_data_routers(transmitter_receipts)
 
         self.rest_api = RestAPI(
@@ -61,7 +55,12 @@ class RaveLightsApp:
             port=webui_port,
         )
 
+        self.visualizer = None
         if run:
+            if visualizer:
+                from ravelights.interface.visualizer import Visualizer
+
+                self.visualizer = Visualizer(root=self)
             self.run()
 
     def initiate_data_routers(self, transmitter_receipts: list[TransmitterReceipt]) -> list[DataRouter]:
