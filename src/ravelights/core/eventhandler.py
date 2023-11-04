@@ -71,7 +71,7 @@ class EventHandler:
                     self.settings.update_from_dict(other_kwargs)
                 case {"action": "set_settings_autopilot", **other_kwargs}:
                     logger.info("set_settings_autopilot (...)")
-                    self.settings.settings_autopilot.update(other_kwargs)
+                    self.settings.set_settings_autopilot(other_kwargs)
                 case {"action": "set_device_settings", "device_id": device_id, **other_kwargs}:
                     assert isinstance(device_id, int)
                     self.devices[device_id].update_from_dict(other_kwargs)
