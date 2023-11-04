@@ -92,26 +92,26 @@ class RaveLightsApp:
 
     def render_frame(self):
         self.settings.before()
-        # ------------------------------- apply inputs ------------------------------- #
+        # ─── Apply Inputs ─────────────────────────────────────────────
         self.eventhandler.apply_settings_modifications_queue()
-        # ---------------------------------- prepare --------------------------------- #
+        # ─── Prepare ──────────────────────────────────────────────────
         self.autopilot.randomize()
         for device in self.devices:
             device.instructionhandler.load_and_apply_instructions()
         self.effecthandler.run_before()
-        # ----------------------------------- sync ----------------------------------- #
+        # ─── Sync ─────────────────────────────────────────────────────
         self.sync_generators(["pattern", "vfilter"])
-        # ---------------------------------- render ---------------------------------- #
+        # ─── Render ───────────────────────────────────────────────────
         for device in self.devices:
             device.render()
-        # ------------------------------- effect after ------------------------------- #
+        # ─── Effect After ─────────────────────────────────────────────
         self.effecthandler.run_after()
-        # ---------------------------------- output ---------------------------------- #
+        # ─── Output ───────────────────────────────────────────────────
         if self.visualizer:
             self.visualizer.render()
         else:
             self.settings.timehandler.print_performance_stats()
-        # --------------------------------- send data -------------------------------- #
+        # ─── Send Data ────────────────────────────────────────────────
         brightness = self.settings.global_brightness
         brightness = min(brightness, 0.5)
         matrices_int = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
