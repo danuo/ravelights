@@ -33,7 +33,6 @@ class RestAPI:
         self.sse_event: str = ""
         self.sse_unblock_event = threading.Event()
 
-        self.websocket_html = self.get_websocket_html()
         self.websocket_num_clients: int = 0
 
         self.flask_app = Flask(__name__)
@@ -41,26 +40,25 @@ class RestAPI:
 
         # ─── Static Files ─────────────────────────────────────────────
 
-        self.get_websocket_html()
-
         if serve_static_files:
-            self.static_files_dir = self.get_ravelights_ui_static_dir()
+            self.websocket_dir = self.get_websocket_ui_dir()
+            print(self.websocket_dir)
+            self.quasar_dir = self.get_quasar_ui_dir()
 
-            # serve index.html
-            @self.flask_app.route("/")
-            def serve_index():
-                return send_from_directory(self.static_files_dir, "index.html")
-
-            # serve index.html
+            # serve index at root
             @self.flask_app.route("/websocket")
             def serve_websocket():
-                # return self.websocket_html
-                return self.get_websocket_html()
+                return send_from_directory(self.websocket_dir, "websocket_ui.html")
+
+            # serve index at root
+            @self.flask_app.route("/")
+            def serve_index():
+                return send_from_directory(self.quasar_dir, "index.html")
 
             # serve any other file in static_dir
             @self.flask_app.route("/<path:path>")
             def serve_static(path):
-                return send_from_directory(self.static_files_dir, path)
+                return send_from_directory(self.quasar_dir, path)
 
         # ─── SSE ──────────────────────────────────────────────────────
 
@@ -101,21 +99,29 @@ class RestAPI:
         self.sse_unblock_event.wait()
         self.sse_unblock_event.clear()
 
-    def get_ravelights_ui_static_dir(self) -> Path:
-        """get ravelights_ui dir"""
+    def get_quasar_ui_dir(self) -> Path:
+        """get quasar (ravelights_ui) dir"""
         path_manager = importlib.resources.path("ravelights_ui", "index.html")
         with path_manager as path:
             if path.is_file():
                 return path.parent
             else:
-                logger.warning("warning, static UI files could not be found")
+                logger.warning("quasar ui files could not be found")
                 logger.warning("trying to find the ui at path:")
                 logger.warning(path)
                 raise FileNotFoundError
 
-    def get_websocket_html(self):
-        MODULE_PATH = importlib.resources.files(__package__)
-        return (MODULE_PATH / "websocket_assets" / "websocket_ui.html").read_text()
+    def get_websocket_ui_dir(self) -> Path:
+        """get websocket ui dir"""
+        path_manager = importlib.resources.path("websocket_ui", "websocket_ui.html")
+        with path_manager as path:
+            if path.is_file():
+                return path.parent
+            else:
+                logger.warning("websockets ui files could not be found")
+                logger.warning("trying to find the ui at path:")
+                logger.warning(path)
+                raise FileNotFoundError
 
     def setup_resource_routing(self):
         self._api = Api(self.flask_app)
