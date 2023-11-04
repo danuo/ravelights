@@ -1,8 +1,6 @@
 import logging
-from typing import Any
 
-import numpy as np
-from ravelights import DeviceLightConfig
+from ravelights import DeviceLightConfig, TransmitterReceipt
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
@@ -10,7 +8,7 @@ from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.interface.datarouter import DataRouter, DataRouterWebsocket
+from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterWebsocket
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
@@ -37,7 +35,7 @@ class RaveLightsApp:
         webserver_port: int = 80,
         serve_webinterface: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
-        data_routers_configs: list[dict[str, Any]] = [],
+        transmitter_receipts: list[TransmitterReceipt] = [],
         visualizer: bool = False,
         run: bool = True,
     ):
@@ -55,7 +53,7 @@ class RaveLightsApp:
 
             self.visualizer = Visualizer(root=self)
 
-        self.data_routers = self.initiate_data_routers(data_routers_configs)
+        self.data_routers = self.initiate_data_routers(transmitter_receipts)
 
         self.rest_api = RestAPI(
             root=self,
@@ -66,10 +64,12 @@ class RaveLightsApp:
         if run:
             self.run()
 
-    def initiate_data_routers(self, data_routers_configs: list[dict[str, Any]]) -> list[DataRouter]:
+    def initiate_data_routers(self, transmitter_receipts: list[TransmitterReceipt]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterWebsocket(root=self)]
-        for config in data_routers_configs:
-            data_routers.append(DataRouter(root=self, **config))
+        for receipt in transmitter_receipts:
+            data_router_transmitter = DataRouterTransmitter(root=self)
+            data_router_transmitter.apply_transmitter_receipt(**receipt)
+            data_routers.append(data_router_transmitter)
 
         return data_routers
 
