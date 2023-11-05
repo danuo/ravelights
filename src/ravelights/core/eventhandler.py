@@ -60,7 +60,7 @@ class EventHandler:
                     assert isinstance(value, float)
                     self.settings.timehandler.time_sync += value
                 case {"action": "reset_color_mappings"}:
-                    self.settings.color_mapping = get_default_color_mappings()
+                    self.settings.reset_color_mapping()
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
                     logger.info(f"set_settings color_transition_speed {speed_str}")
                     if isinstance(speed_str, str):

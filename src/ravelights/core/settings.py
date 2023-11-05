@@ -248,6 +248,10 @@ class Settings:
         self.settings_autopilot.update(in_dict)
         self.root.refresh_ui(sse_event="settings")
 
+    def reset_color_mapping(self):
+        self.color_mapping = get_default_color_mappings()
+        self.root.refresh_ui(sse_event="settings")
+
     def set_color_transition_speed(self, speed: str):
         self.color_transition_speed = speed
         self.color_engine.set_color_speed(speed)
