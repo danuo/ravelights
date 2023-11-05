@@ -8,7 +8,7 @@ ColorMapping = Callable[[ArrayFloat], ArrayFloat]
 
 
 def linear_color_mapping(in_matrix: ArrayFloat) -> ArrayFloat:
-    print("linear_color_mapping()")
+    # print("linear_color_mapping()")
     return in_matrix
 
 
@@ -31,7 +31,7 @@ xp, fp = zip(*LUM_DATA_WS2815)
 
 
 def ws2815_color_mapping(in_matrix: ArrayFloat) -> ArrayFloat:
-    print("ws2815_color_mapping()", in_matrix.shape)
+    # print("ws2815_color_mapping()", in_matrix.shape)
     # shape is (144, 9, 3)
     return np.interp(in_matrix, fp, xp)
 
