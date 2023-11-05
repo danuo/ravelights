@@ -7,7 +7,7 @@ from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.rendermodule import RenderModule
 from ravelights.core.settings import Settings
 from ravelights.core.timehandler import TimeHandler
-from ravelights.interface.color_remap import ColorProfiles
+from ravelights.interface.color_remap import ColorProfiles, ColorProfilesFunctions
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -53,7 +53,8 @@ class Device:
     def get_matrix_processed_float(self) -> ArrayFloat:
         matrix_float = self.pixelmatrix.get_matrix_float()
         brightness = min(self.settings.global_brightness, self.device_brightness)
-        return self.color_profile(matrix_float * brightness)
+        color_map_function = ColorProfilesFunctions[self.color_profile]
+        return color_map_function(matrix_float * brightness)
 
     def get_matrix_int(self) -> ArrayUInt8:
         return self.pixelmatrix.get_matrix_int()

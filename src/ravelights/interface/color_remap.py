@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import StrEnum, auto
 from typing import Callable
 
 from ravelights.core.custom_typing import ArrayFloat
@@ -16,6 +16,12 @@ def ws2815_color_mapping(in_matrix: ArrayFloat) -> ArrayFloat:
     return in_matrix
 
 
-class ColorProfiles(Enum):
-    LINEAR: ColorMapping = linear_color_mapping
-    WS2815: ColorMapping = ws2815_color_mapping
+class ColorProfiles(StrEnum):
+    LINEAR = auto()
+    WS2815 = auto()
+
+
+ColorProfilesFunctions: dict[str, ColorMapping] = {
+    ColorProfiles.LINEAR.value: linear_color_mapping,
+    ColorProfiles.WS2815.value: ws2815_color_mapping,
+}
