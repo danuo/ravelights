@@ -8,7 +8,7 @@ from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterWebsocket
+from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterVisualizer, DataRouterWebsocket
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,6 @@ class RaveLightsApp:
             port=webui_port,
         )
 
-        self.visualizer = None
         if run:
             if visualizer:
                 from ravelights.interface.visualizer import Visualizer
@@ -64,7 +63,7 @@ class RaveLightsApp:
             self.run()
 
     def initiate_data_routers(self, transmitter_receipts: list[TransmitterConfig]) -> list[DataRouter]:
-        data_routers: list[DataRouter] = [DataRouterWebsocket(root=self)]
+        data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
         for receipt in transmitter_receipts:
             # at the moment, all datarouters created from receipts are DataRouterTransmitter
             data_router_transmitter = DataRouterTransmitter(root=self)
@@ -108,9 +107,8 @@ class RaveLightsApp:
         # ─── Output ───────────────────────────────────────────────────
         matrices_float = [device.pixelmatrix.matrix_float for device in self.devices]
         matrices_int = [device.pixelmatrix.get_matrix_int(brightness=1.0) for device in self.devices]
-        if self.visualizer:
-            self.visualizer.render(matrices_int)
-        else:
+
+        if not self.visualizer:
             self.settings.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
         # for device in self.devices:
@@ -119,8 +117,9 @@ class RaveLightsApp:
         # brightness = self.settings.global_brightness
         # brightness = min(brightness, 0.5)
         # matrices_int = []
-        # for datarouter in self.data_routers:
-        #     datarouter.transmit_matrix(matrices_int)
+
+        for datarouter in self.data_routers:
+            datarouter.transmit_matrix(matrices_int)
 
         self.settings.after()
 

@@ -70,3 +70,9 @@ class DataRouterWebsocket(DataRouter):
             matrix_int_padded = np.pad(matrix_int, pad_width=((0, 0), (0, 1)), constant_values=255)
             data = matrix_int_padded.flatten().tobytes()
             self.root.rest_api.socketio.send(data)
+
+
+class DataRouterVisualizer(DataRouter):
+    def transmit_matrix(self, out_matrices_int: list[ArrayUInt8]):
+        if hasattr(self.root, "visualizer"):
+            self.root.visualizer.render(out_matrices_int)
