@@ -118,5 +118,5 @@ app = RaveLightsApp(
     webui_port=webui_port,
     serve_webui=args.webui,
     transmitter_receipts=transmitter_receipts,
-    visualizer=args.visualizer,
+    use_visualizer=args.visualizer,
 )

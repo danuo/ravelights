@@ -24,7 +24,8 @@ class RaveLightsApp:
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
         transmitter_receipts: list[TransmitterConfig] = [],
-        visualizer: bool = False,
+        use_visualizer: bool = False,
+        print_stats: bool = False,
         run: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
@@ -43,8 +44,11 @@ class RaveLightsApp:
             port=webui_port,
         )
 
+        self.use_visualizer = use_visualizer
+        self.print_stats = print_stats
+
         if run:
-            if visualizer:
+            if self.use_visualizer:
                 from ravelights.interface.visualizer import Visualizer
 
                 self.visualizer = Visualizer(root=self)
@@ -93,7 +97,7 @@ class RaveLightsApp:
         # ─── Effect After ─────────────────────────────────────────────
         self.effecthandler.run_after()
         # ─── Output ───────────────────────────────────────────────────
-        if not self.visualizer:
+        if self.print_stats:
             self.settings.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
         matrices_processed_float = [device.get_matrix_processed_float() for device in self.devices]
