@@ -1,7 +1,9 @@
-from ravelights.core.custom_typing import DeviceLightConfig, LightIdentifierDict, TransmitterReceipt
+from ravelights.core.custom_typing import LightIdentifier, TransmitterConfig
+from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
+from ravelights.interface.color_remap import ColorProfiles
 
 try:
     from ravelights.interface.artnet.artnet_serial_transmitter import ArtnetSerialTransmitter
@@ -11,9 +13,10 @@ except Exception:
 __all__ = [
     "RaveLightsApp",
     "DeviceLightConfig",
-    "LightIdentifierDict",
+    "LightIdentifier",
     "Profiler",
-    "TransmitterReceipt",
+    "TransmitterConfig",
     "ArtnetUdpTransmitter",
     "ArtnetSerialTransmitter",
+    "ColorProfiles",
 ]

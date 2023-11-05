@@ -3,9 +3,9 @@ from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
-from ravelights import DeviceLightConfig
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
+from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import StrEnum
@@ -246,6 +246,15 @@ class Settings:
 
     def set_settings_autopilot(self, in_dict):
         self.settings_autopilot.update(in_dict)
+        self.root.refresh_ui(sse_event="settings")
+
+    def reset_color_mapping(self):
+        self.color_mapping = get_default_color_mappings()
+        self.root.refresh_ui(sse_event="settings")
+
+    def set_color_transition_speed(self, speed: str):
+        self.color_transition_speed = speed
+        self.color_engine.set_color_speed(speed)
         self.root.refresh_ui(sse_event="settings")
 
     def before(self):

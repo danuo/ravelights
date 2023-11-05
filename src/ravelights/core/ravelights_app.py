@@ -1,6 +1,7 @@
 import logging
+from dataclasses import asdict
 
-from ravelights import DeviceLightConfig, TransmitterReceipt
+from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
@@ -8,23 +9,10 @@ from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterWebsocket
+from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterVisualizer, DataRouterWebsocket
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
-
-
-def create_devices(root: "RaveLightsApp") -> list[Device]:
-    settings: Settings = root.settings
-    devices: list[Device] = []
-    for device_id, config in enumerate(settings.device_config):
-        n_leds: int = config["n_leds"]
-        assert isinstance(n_leds, int)
-        n_lights: int = config["n_lights"]
-        assert isinstance(n_lights, int)
-        prim = True if device_id == 0 else False
-        devices.append(Device(root=root, device_id=device_id, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
-    return devices
 
 
 class RaveLightsApp:
@@ -35,12 +23,13 @@ class RaveLightsApp:
         webui_port: int = 80,
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
-        transmitter_receipts: list[TransmitterReceipt] = [],
-        visualizer: bool = False,
+        transmitter_receipts: list[TransmitterConfig] = [],
+        use_visualizer: bool = False,
+        print_stats: bool = False,
         run: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
-        self.devices = create_devices(root=self)
+        self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
@@ -55,16 +44,18 @@ class RaveLightsApp:
             port=webui_port,
         )
 
-        self.visualizer = None
+        self.use_visualizer = use_visualizer
+        self.print_stats = print_stats
+
         if run:
-            if visualizer:
+            if self.use_visualizer:
                 from ravelights.interface.visualizer import Visualizer
 
                 self.visualizer = Visualizer(root=self)
             self.run()
 
-    def initiate_data_routers(self, transmitter_receipts: list[TransmitterReceipt]) -> list[DataRouter]:
-        data_routers: list[DataRouter] = [DataRouterWebsocket(root=self)]
+    def initiate_data_routers(self, transmitter_receipts: list[TransmitterConfig]) -> list[DataRouter]:
+        data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
         for receipt in transmitter_receipts:
             # at the moment, all datarouters created from receipts are DataRouterTransmitter
             data_router_transmitter = DataRouterTransmitter(root=self)
@@ -106,17 +97,14 @@ class RaveLightsApp:
         # ─── Effect After ─────────────────────────────────────────────
         self.effecthandler.run_after()
         # ─── Output ───────────────────────────────────────────────────
-        if self.visualizer:
-            self.visualizer.render()
-        else:
+        if self.print_stats:
             self.settings.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
-        brightness = self.settings.global_brightness
-        brightness = min(brightness, 0.5)
-        matrices_int = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
+        matrices_processed_int = [device.get_matrix_processed_int() for device in self.devices]
+        matrices_int = [device.get_matrix_int() for device in self.devices]
         for datarouter in self.data_routers:
-            datarouter.transmit_matrix(matrices_int)
-
+            datarouter.transmit_matrix(matrices_processed_int, matrices_int)
+        # ─── After ────────────────────────────────────────────────────
         self.settings.after()
 
     def refresh_ui(self, sse_event: str):

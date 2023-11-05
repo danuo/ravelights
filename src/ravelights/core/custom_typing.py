@@ -6,6 +6,7 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
+    from ravelights.core.device_shared import DeviceLightConfig
     from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
     from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
     from ravelights.effects.effect_super import Effect
@@ -28,26 +29,27 @@ class Transmitter(Protocol):
         ...
 
 
-class LightIdentifierDict(TypedDict):
+class LightIdentifier(TypedDict):
     device: int
     light: int
     flip: bool
 
 
-class TransmitterReceipt(TypedDict):
+class TransmitterConfig(TypedDict):
     transmitter: Transmitter
-    light_mapping_config: list[list[LightIdentifierDict]]
-
-
-class DeviceLightConfig(TypedDict):
-    n_lights: int
-    n_leds: int
+    light_mapping_config: list[list[LightIdentifier]]
 
 
 class GeneratorMeta(TypedDict):
     generator_name: str
     generator_keywords: list[str]
     generator_weight: float
+
+
+class VisualizerConfig(TypedDict):
+    name: str
+    device_config: list["DeviceLightConfig"]
+    visualizer_config: list[list[dict[str, float]]]
 
 
 class AvailableGenerators(TypedDict):
@@ -85,9 +87,3 @@ class BlueprintTimeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
     selectors: list[BlueprintSel]
     placements: list[BlueprintPlace]
-
-
-class VisualizerConfig(TypedDict):
-    name: str
-    device_config: list[DeviceLightConfig]
-    visualizer_config: list[list[dict[str, float]]]

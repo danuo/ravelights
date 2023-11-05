@@ -5,6 +5,7 @@ import pygame
 from ravelights.configs.visualizer_configurations import configurations
 from ravelights.core.bpmhandler import BeatStatePattern, BPMhandler
 from ravelights.core.device import Device
+from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.settings import Settings
 from ravelights.core.timehandler import TimeHandler
@@ -48,14 +49,14 @@ class Visualizer:
             return self.generate_visualizer_config(self.settings.device_config)
         raise Exception("could neither find nor generate matching visualizer_configuration")
 
-    def generate_visualizer_config(self, device_vis_config: list[dict[str, int]]):
+    def generate_visualizer_config(self, device_light_config: list[DeviceLightConfig]):
         """
         generates visualizer config for one device
         """
         full_vis_config = []
-        for device in device_vis_config:
+        for device in device_light_config:
             device_vis_config = []
-            n_lights = device["n_lights"]
+            n_lights = device.n_lights
             spacings = np.linspace(0.2, 0.8, n_lights)
             for light_id in range(n_lights):
                 device_vis_config.append(dict(x=spacings[light_id], y=0.5, rot=0.0, scale=1.0))
@@ -86,10 +87,11 @@ class Visualizer:
             self.surfaces_small.append(s_list_small)
             self.surfaces_big.append(s_list_big)
 
-    def render(self):
+    def render(self, matrices_int):
         self.surface.fill(C_BLACK)
-        for device_id, device in enumerate(self.devices):
-            matrix_int = device.pixelmatrix.get_matrix_int()
+        for device_id, matrix_int in enumerate(matrices_int):
+            device = self.root.devices[device_id]
+            # matrix_int = device.pixelmatrix.get_matrix_int()
             for light_id in range(device.pixelmatrix.n_lights):
                 matrix_int_view = matrix_int[:, light_id, :]
 
