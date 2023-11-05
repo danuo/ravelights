@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import numpy as np
-from ravelights.core.custom_typing import ArrayUInt8, LightIdentifierDict, Transmitter
+from ravelights.core.custom_typing import ArrayUInt8, LightIdentifier, Transmitter
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 if TYPE_CHECKING:
@@ -26,9 +26,7 @@ class DataRouterTransmitter(DataRouter):
         self.settings = self.root.settings
         self.devices = self.root.devices
 
-    def apply_transmitter_receipt(
-        self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifierDict]]
-    ):
+    def apply_transmitter_receipt(self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifier]]):
         assert isinstance(transmitter, ArtnetTransmitter)
         self.transmitter = transmitter
         self.leds_per_output, self.out_lights, self.n = self.process_light_mapping_config(light_mapping_config)
@@ -36,12 +34,12 @@ class DataRouterTransmitter(DataRouter):
         # one out matrix per datarouter / transmitter
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
 
-    def process_light_mapping_config(self, light_mapping_config: list[list[LightIdentifierDict]]):
+    def process_light_mapping_config(self, light_mapping_config: list[list[LightIdentifier]]):
         leds_per_output: list[int] = []
-        out_lights: list[LightIdentifierDict] = []
+        out_lights: list[LightIdentifier] = []
         for transmitter_output in light_mapping_config:
             n_output: int = 0
-            light_identifier: LightIdentifierDict
+            light_identifier: LightIdentifier
             for light_identifier in transmitter_output:
                 out_lights.append(light_identifier)
                 n_output += self.devices[light_identifier["device"]].n_leds

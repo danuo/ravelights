@@ -4,10 +4,10 @@ import logging
 from ravelights import (
     ArtnetUdpTransmitter,
     DeviceLightConfig,
-    LightIdentifierDict,
+    LightIdentifier,
     Profiler,
     RaveLightsApp,
-    TransmitterReceipt,
+    TransmitterConfig,
 )
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
@@ -29,14 +29,12 @@ def parse_args():
     parser.add_argument("--artnet-serial-baudrate", type=int, default=3_000_000)
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
-    parser.add_argument("--profiling", default=False, action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
     parser.print_usage()
     return args
 
 
 args = parse_args()
-visualizer = args.visualizer if not args.profiling else False
 
 
 # ─── Device Config ────────────────────────────────────────────────────────────
@@ -49,28 +47,28 @@ device_config = [DeviceLightConfig(n_lights=9, n_leds=144)]
 
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
-light_mapping_config_example: list[list[LightIdentifierDict]] = [
+light_mapping_config_example: list[list[LightIdentifier]] = [
     [
-        LightIdentifierDict(device=0, light=0, flip=False),
-        LightIdentifierDict(device=0, light=1, flip=False),
+        LightIdentifier(device=0, light=0, flip=False),
+        LightIdentifier(device=0, light=1, flip=False),
     ],
     [],
     [],
     [],
 ]
 
-transmitter_receipts: list[TransmitterReceipt] = []
+transmitter_receipts: list[TransmitterConfig] = []
 if args.artnet_wifi:
     ip_laser = "192.168.188.30"
     ip_box = "192.168.188.23"
 
     transmitter_receipts.append(
-        TransmitterReceipt(
+        TransmitterConfig(
             transmitter=ArtnetUdpTransmitter(ip_address=ip_laser), light_mapping_config=light_mapping_config_example
         )
     )
     transmitter_receipts.append(
-        TransmitterReceipt(
+        TransmitterConfig(
             transmitter=ArtnetUdpTransmitter(ip_address=ip_box), light_mapping_config=light_mapping_config_example
         )
     )
@@ -84,7 +82,7 @@ if args.artnet_serial:
         serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
     )
     transmitter_receipts.append(
-        TransmitterReceipt(transmitter=transmitter, light_mapping_config=light_mapping_config_example)
+        TransmitterConfig(transmitter=transmitter, light_mapping_config=light_mapping_config_example)
     )
 
 

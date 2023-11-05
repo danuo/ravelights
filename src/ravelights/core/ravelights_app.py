@@ -1,6 +1,6 @@
 import logging
 
-from ravelights import DeviceLightConfig, TransmitterReceipt
+from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
@@ -35,7 +35,7 @@ class RaveLightsApp:
         webui_port: int = 80,
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
-        transmitter_receipts: list[TransmitterReceipt] = [],
+        transmitter_receipts: list[TransmitterConfig] = [],
         visualizer: bool = False,
         run: bool = True,
     ):
@@ -63,7 +63,7 @@ class RaveLightsApp:
                 self.visualizer = Visualizer(root=self)
             self.run()
 
-    def initiate_data_routers(self, transmitter_receipts: list[TransmitterReceipt]) -> list[DataRouter]:
+    def initiate_data_routers(self, transmitter_receipts: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterWebsocket(root=self)]
         for receipt in transmitter_receipts:
             # at the moment, all datarouters created from receipts are DataRouterTransmitter

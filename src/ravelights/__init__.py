@@ -1,4 +1,4 @@
-from ravelights.core.custom_typing import DeviceLightConfig, LightIdentifierDict, TransmitterReceipt
+from ravelights.core.custom_typing import DeviceLightConfig, LightIdentifier, TransmitterConfig
 from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
@@ -11,9 +11,9 @@ except Exception:
 __all__ = [
     "RaveLightsApp",
     "DeviceLightConfig",
-    "LightIdentifierDict",
+    "LightIdentifier",
     "Profiler",
-    "TransmitterReceipt",
+    "TransmitterConfig",
     "ArtnetUdpTransmitter",
     "ArtnetSerialTransmitter",
 ]
