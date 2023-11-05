@@ -1,4 +1,5 @@
 import logging
+from dataclasses import asdict
 
 from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.core.autopilot import AutoPilot
@@ -14,19 +15,6 @@ from ravelights.interface.restapi import RestAPI
 logger = logging.getLogger(__name__)
 
 
-def create_devices(root: "RaveLightsApp") -> list[Device]:
-    settings: Settings = root.settings
-    devices: list[Device] = []
-    for device_id, config in enumerate(settings.device_config):
-        n_leds: int = config["n_leds"]
-        assert isinstance(n_leds, int)
-        n_lights: int = config["n_lights"]
-        assert isinstance(n_lights, int)
-        prim = True if device_id == 0 else False
-        devices.append(Device(root=root, device_id=device_id, n_leds=n_leds, n_lights=n_lights, is_prim=prim))
-    return devices
-
-
 class RaveLightsApp:
     def __init__(
         self,
@@ -40,7 +28,7 @@ class RaveLightsApp:
         run: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
-        self.devices = create_devices(root=self)
+        self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
@@ -105,22 +93,14 @@ class RaveLightsApp:
         # ─── Effect After ─────────────────────────────────────────────
         self.effecthandler.run_after()
         # ─── Output ───────────────────────────────────────────────────
-        matrices_float = [device.pixelmatrix.matrix_float for device in self.devices]
-        matrices_int = [device.pixelmatrix.get_matrix_int(brightness=1.0) for device in self.devices]
-
         if not self.visualizer:
             self.settings.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
-        # for device in self.devices:
-        #     brightness = min(self.settings.global_brightness, device.device_brightness)
-
-        # brightness = self.settings.global_brightness
-        # brightness = min(brightness, 0.5)
-        # matrices_int = []
-
+        matrices_processed_float = [device.get_matrix_processed_float() for device in self.devices]
+        matrices_int = [device.get_matrix_int() for device in self.devices]
         for datarouter in self.data_routers:
-            datarouter.transmit_matrix(matrices_int)
-
+            datarouter.transmit_matrix(matrices_processed_float, matrices_int)
+        # ─── After ────────────────────────────────────────────────────
         self.settings.after()
 
     def refresh_ui(self, sse_event: str):
