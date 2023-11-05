@@ -248,6 +248,11 @@ class Settings:
         self.settings_autopilot.update(in_dict)
         self.root.refresh_ui(sse_event="settings")
 
+    def set_color_transition_speed(self, speed: str):
+        self.color_transition_speed = speed
+        self.color_engine.set_color_speed(speed)
+        self.root.refresh_ui(sse_event="settings")
+
     def before(self):
         self.timehandler.before()
         self.color_engine.before()

@@ -63,9 +63,10 @@ class EventHandler:
                     self.settings.color_mapping = get_default_color_mappings()
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
                     logger.info(f"set_settings color_transition_speed {speed_str}")
-                    assert isinstance(speed_str, str)
-                    self.settings.color_transition_speed = speed_str
-                    self.settings.color_engine.set_color_speed(speed_str)
+                    if isinstance(speed_str, str):
+                        self.settings.set_color_transition_speed(speed_str)
+                    else:
+                        logger.error("could not apply color_transition_speed, value is not a string")
                 case {"action": "set_settings", **other_kwargs}:
                     logger.info(f"set_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
