@@ -106,16 +106,21 @@ class RaveLightsApp:
         # ─── Effect After ─────────────────────────────────────────────
         self.effecthandler.run_after()
         # ─── Output ───────────────────────────────────────────────────
+        matrices_float = [device.pixelmatrix.matrix_float for device in self.devices]
+        matrices_int = [device.pixelmatrix.get_matrix_int(brightness=1.0) for device in self.devices]
         if self.visualizer:
-            self.visualizer.render()
+            self.visualizer.render(matrices_int)
         else:
             self.settings.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
-        brightness = self.settings.global_brightness
-        brightness = min(brightness, 0.5)
-        matrices_int = [device.pixelmatrix.get_matrix_int(brightness=brightness) for device in self.devices]
-        for datarouter in self.data_routers:
-            datarouter.transmit_matrix(matrices_int)
+        # for device in self.devices:
+        #     brightness = min(self.settings.global_brightness, device.device_brightness)
+
+        # brightness = self.settings.global_brightness
+        # brightness = min(brightness, 0.5)
+        # matrices_int = []
+        # for datarouter in self.data_routers:
+        #     datarouter.transmit_matrix(matrices_int)
 
         self.settings.after()
 

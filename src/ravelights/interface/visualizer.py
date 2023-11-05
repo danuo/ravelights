@@ -86,10 +86,11 @@ class Visualizer:
             self.surfaces_small.append(s_list_small)
             self.surfaces_big.append(s_list_big)
 
-    def render(self):
+    def render(self, matrices_int):
         self.surface.fill(C_BLACK)
-        for device_id, device in enumerate(self.devices):
-            matrix_int = device.pixelmatrix.get_matrix_int()
+        for device_id, matrix_int in enumerate(matrices_int):
+            device = self.root.devices[device_id]
+            # matrix_int = device.pixelmatrix.get_matrix_int()
             for light_id in range(device.pixelmatrix.n_lights):
                 matrix_int_view = matrix_int[:, light_id, :]
 
