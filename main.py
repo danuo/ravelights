@@ -5,7 +5,6 @@ from ravelights import (
     ArtnetUdpTransmitter,
     DeviceLightConfig,
     LightIdentifier,
-    Profiler,
     RaveLightsApp,
     TransmitterConfig,
 )
@@ -118,13 +117,5 @@ app = RaveLightsApp(
     webui_port=webui_port,
     serve_webui=args.webui,
     transmitter_receipts=transmitter_receipts,
-    visualizer=visualizer,
-    run=False,
+    visualizer=args.visualizer,
 )
-
-if args.profiling:
-    profiler = Profiler(app=app)
-    profiler.run()
-    profiler.plot()
-else:
-    app.run()
