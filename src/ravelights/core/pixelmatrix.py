@@ -37,6 +37,9 @@ class PixelMatrix:
         assert matrix.shape == (self.n_leds, self.n_lights, 3)
         self.matrix_float = matrix
 
+    def get_matrix_float(self) -> ArrayFloat:
+        return self.matrix_float
+
     def get_matrix_int(self, brightness: float = 1.0) -> ArrayUInt8:
         return (self.matrix_float * 255 * brightness).astype(np.uint8)
 
