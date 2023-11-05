@@ -1,6 +1,7 @@
 import logging
 from typing import TYPE_CHECKING, Any
 
+import numpy as np
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.instructionhandler import InstructionHandler
 from ravelights.core.pixelmatrix import PixelMatrix
@@ -50,11 +51,16 @@ class Device:
     def render(self):
         self.rendermodule.render()
 
-    def get_matrix_processed_float(self) -> ArrayFloat:
+    def get_matrix_float(self) -> ArrayFloat:
+        return self.pixelmatrix.get_matrix_float()
+
+    def get_matrix_processed_int(self) -> ArrayUInt8:
         matrix_float = self.pixelmatrix.get_matrix_float()
         brightness = min(self.settings.global_brightness, self.device_brightness)
         color_map_function = ColorProfilesFunctions[self.color_profile]
-        return color_map_function(matrix_float * brightness)
+        matrix_processed_float = color_map_function(matrix_float * brightness)
+        assert np.max(matrix_processed_float <= 255)
+        return matrix_processed_float.astype(np.uint8)
 
     def get_matrix_int(self) -> ArrayUInt8:
         return self.pixelmatrix.get_matrix_int()

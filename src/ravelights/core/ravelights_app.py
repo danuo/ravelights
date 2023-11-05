@@ -100,10 +100,10 @@ class RaveLightsApp:
         if self.print_stats:
             self.settings.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
-        matrices_processed_float = [device.get_matrix_processed_float() for device in self.devices]
+        matrices_processed_int = [device.get_matrix_processed_int() for device in self.devices]
         matrices_int = [device.get_matrix_int() for device in self.devices]
         for datarouter in self.data_routers:
-            datarouter.transmit_matrix(matrices_processed_float, matrices_int)
+            datarouter.transmit_matrix(matrices_processed_int, matrices_int)
         # ─── After ────────────────────────────────────────────────────
         self.settings.after()
 

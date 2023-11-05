@@ -16,7 +16,7 @@ class DataRouter(ABC):
         self.devices = self.root.devices
 
     @abstractmethod
-    def transmit_matrix(self, matrices_float: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
         ...
 
 
@@ -32,7 +32,6 @@ class DataRouterTransmitter(DataRouter):
         self.leds_per_output, self.out_lights, self.n = self.process_light_mapping_config(light_mapping_config)
         self.transmitter.transmit_output_config(self.leds_per_output)
         # one out matrix per datarouter / transmitter
-        self.out_matrix_float = np.zeros((self.n, 3))
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
 
     def process_light_mapping_config(self, light_mapping_config: list[list[LightIdentifier]]):
@@ -48,14 +47,14 @@ class DataRouterTransmitter(DataRouter):
         n_total = sum(leds_per_output)
         return leds_per_output, out_lights, n_total
 
-    def transmit_matrix(self, matrices_processed_float: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
         index = 0
         for out_light in self.out_lights:
-            matrix_view = matrices_processed_float[out_light["device"]][:, out_light["light"], :]
+            matrix_view = matrices_processed_int[out_light["device"]][:, out_light["light"], :]
             length = matrix_view.shape[0]
             if "flip" in out_light and out_light["flip"]:
                 matrix_view = np.flip(matrix_view, axis=0)
-            self.out_matrix_float[index : index + length] = matrix_view
+            self.out_matrix[index : index + length] = matrix_view
             index += length
         self.transmitter.transmit_matrix(matrix=self.out_matrix)
 
@@ -63,7 +62,7 @@ class DataRouterTransmitter(DataRouter):
 class DataRouterWebsocket(DataRouter):
     """sends matrices_int at full brightness to websocket"""
 
-    def transmit_matrix(self, matrices_float: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "rest_api"):
             if self.root.rest_api.websocket_num_clients > 0:
                 matrix_int = matrices_int[0]
@@ -78,6 +77,6 @@ class DataRouterWebsocket(DataRouter):
 class DataRouterVisualizer(DataRouter):
     """sends matrices_int at full brightness to pygame visualizer"""
 
-    def transmit_matrix(self, matrices_float: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "visualizer"):
             self.root.visualizer.render(matrices_int)
