@@ -1,18 +1,17 @@
 from enum import Enum
-from typing import TYPE_CHECKING, Callable
+from typing import Callable
 
-if TYPE_CHECKING:
-    from ravelights.core.custom_typing import ArrayFloat
+from ravelights.core.custom_typing import ArrayFloat
 
-ColorMapping = Callable[["ArrayFloat"], "ArrayFloat"]
+ColorMapping = Callable[[ArrayFloat], ArrayFloat]
 
 
-def linear_color_mapping(in_matrix: "ArrayFloat") -> "ArrayFloat":
+def linear_color_mapping(in_matrix: ArrayFloat) -> ArrayFloat:
     print("linear_color_mapping()")
     return in_matrix
 
 
-def ws2815_color_mapping(in_matrix: "ArrayFloat") -> "ArrayFloat":
+def ws2815_color_mapping(in_matrix: ArrayFloat) -> ArrayFloat:
     print("ws2815_color_mapping()")
     return in_matrix
 
