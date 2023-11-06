@@ -44,19 +44,7 @@ class RestAPI:
         # ─── Static Files ─────────────────────────────────────────────
 
         if serve_webui:
-            self.websocket_dir = self.get_websocket_ui_dir()
-            print(self.websocket_dir)
             self.quasar_dir = self.get_quasar_ui_dir()
-
-            # serve index at root
-            @self.flask_app.route("/websocket")
-            def serve_websocket_index():
-                return send_from_directory(self.websocket_dir, "websocket_ui.html")
-
-            # serve any other file in static_dir
-            @self.flask_app.route("/websocket/<path:path>")
-            def serve_websocket_static(path):
-                return send_from_directory(self.websocket_dir, path)
 
             # serve index at root
             @self.flask_app.route("/")
@@ -115,18 +103,6 @@ class RestAPI:
                 return path.parent
             else:
                 logger.warning("quasar ui files could not be found")
-                logger.warning("trying to find the ui at path:")
-                logger.warning(path)
-                raise FileNotFoundError
-
-    def get_websocket_ui_dir(self) -> Path:
-        """get websocket ui dir"""
-        path_manager = importlib.resources.path("websocket_ui", "websocket_ui.html")
-        with path_manager as path:
-            if path.is_file():
-                return path.parent
-            else:
-                logger.warning("websockets ui files could not be found")
                 logger.warning("trying to find the ui at path:")
                 logger.warning(path)
                 raise FileNotFoundError
