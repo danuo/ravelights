@@ -36,7 +36,10 @@ class RestAPI:
         self.websocket_num_clients: int = 0
 
         self.flask_app = Flask(__name__)
-        self.socketio = SocketIO(self.flask_app)
+        self.socketio = SocketIO(
+            self.flask_app,
+            cors_allowed_origins="*",
+        )
 
         # ─── Static Files ─────────────────────────────────────────────
 
