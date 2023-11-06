@@ -113,10 +113,6 @@ class RestAPI:
 
     def start_threaded(self, debug: bool = False):
         logger.info("Starting REST API thread...")
-        # threading.Thread(
-        #     target=lambda: self.flask_app.run(host="0.0.0.0", port=self.port, debug=debug, use_reloader=False),
-        #     daemon=True,
-        # ).start()
         threading.Thread(
             target=lambda: self.socketio.run(
                 app=self.flask_app,
