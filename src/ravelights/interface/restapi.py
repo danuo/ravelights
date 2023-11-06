@@ -71,10 +71,6 @@ class RestAPI:
         self.setup_resource_routing()
 
         # ─── Websocket ────────────────────────────────────────────────
-        @self.socketio.event
-        def my_event(message):
-            emit("my response", {"data": "got it!"})
-
         @self.socketio.on("connect")
         def handle_connect():
             self.websocket_num_clients += 1
