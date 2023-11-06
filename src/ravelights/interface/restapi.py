@@ -74,15 +74,15 @@ class RestAPI:
         @self.socketio.on("connect")
         def handle_connect():
             self.websocket_num_clients += 1
-            print(self.websocket_num_clients)
-            print("connected - socket stuff is happening")
+            logger.info("connected - new websocket client connected")
+            logger.info(f"{self.websocket_num_clients} connected in total")
             emit("my response", {"data": "Connected"})
 
         @self.socketio.on("disconnect")
         def handle_disconnect():
             self.websocket_num_clients -= 1
-            print(self.websocket_num_clients)
-            print("disconnected - socket stuff is happening")
+            logger.info("disconnected - websocket client connected")
+            logger.info(f"{self.websocket_num_clients} connected in total")
 
         self.start_threaded()
 
