@@ -36,24 +36,15 @@ class RestAPI:
         self.websocket_num_clients: int = 0
 
         self.flask_app = Flask(__name__)
-        self.socketio = SocketIO(self.flask_app)
+        self.socketio = SocketIO(
+            self.flask_app,
+            cors_allowed_origins="*",
+        )
 
         # ─── Static Files ─────────────────────────────────────────────
 
         if serve_webui:
-            self.websocket_dir = self.get_websocket_ui_dir()
-            print(self.websocket_dir)
             self.quasar_dir = self.get_quasar_ui_dir()
-
-            # serve index at root
-            @self.flask_app.route("/websocket")
-            def serve_websocket_index():
-                return send_from_directory(self.websocket_dir, "websocket_ui.html")
-
-            # serve any other file in static_dir
-            @self.flask_app.route("/websocket/<path:path>")
-            def serve_websocket_static(path):
-                return send_from_directory(self.websocket_dir, path)
 
             # serve index at root
             @self.flask_app.route("/")
@@ -80,22 +71,18 @@ class RestAPI:
         self.setup_resource_routing()
 
         # ─── Websocket ────────────────────────────────────────────────
-        @self.socketio.event
-        def my_event(message):
-            emit("my response", {"data": "got it!"})
-
         @self.socketio.on("connect")
         def handle_connect():
             self.websocket_num_clients += 1
-            print(self.websocket_num_clients)
-            print("connected - socket stuff is happening")
+            logger.info("connected - new websocket client connected")
+            logger.info(f"{self.websocket_num_clients} connected in total")
             emit("my response", {"data": "Connected"})
 
         @self.socketio.on("disconnect")
         def handle_disconnect():
             self.websocket_num_clients -= 1
-            print(self.websocket_num_clients)
-            print("disconnected - socket stuff is happening")
+            logger.info("disconnected - websocket client connected")
+            logger.info(f"{self.websocket_num_clients} connected in total")
 
         self.start_threaded()
 
@@ -116,18 +103,6 @@ class RestAPI:
                 logger.warning(path)
                 raise FileNotFoundError
 
-    def get_websocket_ui_dir(self) -> Path:
-        """get websocket ui dir"""
-        path_manager = importlib.resources.path("websocket_ui", "websocket_ui.html")
-        with path_manager as path:
-            if path.is_file():
-                return path.parent
-            else:
-                logger.warning("websockets ui files could not be found")
-                logger.warning("trying to find the ui at path:")
-                logger.warning(path)
-                raise FileNotFoundError
-
     def setup_resource_routing(self):
         self._api = Api(self.flask_app)
         self._api.add_resource(SettingsAPIResource, "/rest/settings", resource_class_args=(self.root,))
@@ -138,10 +113,6 @@ class RestAPI:
 
     def start_threaded(self, debug: bool = False):
         logger.info("Starting REST API thread...")
-        # threading.Thread(
-        #     target=lambda: self.flask_app.run(host="0.0.0.0", port=self.port, debug=debug, use_reloader=False),
-        #     daemon=True,
-        # ).start()
         threading.Thread(
             target=lambda: self.socketio.run(
                 app=self.flask_app,
