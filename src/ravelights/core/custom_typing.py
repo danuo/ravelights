@@ -1,5 +1,5 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, NamedTuple, Protocol, Type, TypedDict
+from typing import TYPE_CHECKING, Any, NamedTuple, Protocol, Type, TypedDict, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
     from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
     from ravelights.effects.effect_super import Effect
+    from ravelights.interface.rest_client import RestClient
 
 T_BLUEPRINTS = list["BlueprintGen"] | list["BlueprintEffect"] | list["BlueprintSel"] | list["BlueprintPlace"]
 
@@ -38,6 +39,7 @@ class LightIdentifier(TypedDict):
 class TransmitterConfig(TypedDict):
     transmitter: Transmitter
     light_mapping_config: list[list[LightIdentifier]]
+    rest_client: Optional["RestClient"]
 
 
 class GeneratorMeta(TypedDict):

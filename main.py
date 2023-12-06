@@ -7,6 +7,7 @@ from ravelights import (
     DeviceLightConfig,
     LightIdentifier,
     RaveLightsApp,
+    RestClient,
     TransmitterConfig,
 )
 
@@ -47,31 +48,52 @@ device_config = [DeviceLightConfig(n_lights=9, n_leds=144, color_profile=ColorPr
 # ─── Transmitters ─────────────────────────────────────────────────────────────
 
 # one output_config for each transmitter, defines which lights are broadcasted on which output
-light_mapping_config_example: list[list[LightIdentifier]] = [
+
+ravelights_box_light_mapping: list[list[LightIdentifier]] = [
+    # Output 1
     [
         LightIdentifier(device=0, light=0, flip=False),
         LightIdentifier(device=0, light=1, flip=False),
+        LightIdentifier(device=0, light=2, flip=False),
+        LightIdentifier(device=0, light=3, flip=False),
+        LightIdentifier(device=0, light=4, flip=False),
+    ],
+    # Output 2
+    [],
+    # Output 3
+    [],
+    # Output 4
+    [],
+]
+
+laser_cage_light_mapping: list[list[LightIdentifier]] = [
+    [
+        LightIdentifier(device=0, light=0, flip=False),
     ],
     [],
     [],
     [],
 ]
 
-transmitter_receipts: list[TransmitterConfig] = []
+transmitter_recipes: list[TransmitterConfig] = []
 if args.artnet_wifi:
-    ip_laser = "192.168.188.30"
-    ip_box = "192.168.188.23"
+    # Ravelights
+    ip_ravelights_box = "192.168.248.254"
+    ravelights_box_recipe = TransmitterConfig(
+        transmitter=ArtnetUdpTransmitter(ip_address=ip_ravelights_box),
+        rest_client=RestClient(ip_address=ip_ravelights_box),
+        light_mapping_config=ravelights_box_light_mapping,
+    )
+    transmitter_recipes.append(ravelights_box_recipe)
 
-    transmitter_receipts.append(
-        TransmitterConfig(
-            transmitter=ArtnetUdpTransmitter(ip_address=ip_laser), light_mapping_config=light_mapping_config_example
-        )
+    # Laser Cage
+    ip_laser_cage = "192.168.188.30"
+    laser_cage_recipe = TransmitterConfig(
+        transmitter=ArtnetUdpTransmitter(ip_address=ip_laser_cage),
+        light_mapping_config=laser_cage_light_mapping,
+        rest_client=RestClient(ip_address=ip_laser_cage),
     )
-    transmitter_receipts.append(
-        TransmitterConfig(
-            transmitter=ArtnetUdpTransmitter(ip_address=ip_box), light_mapping_config=light_mapping_config_example
-        )
-    )
+    # transmitter_recipes.append(laser_cage_recipe)
 
 
 if args.artnet_serial:
@@ -81,8 +103,8 @@ if args.artnet_serial:
     transmitter = ArtnetSerialTransmitter(
         serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
     )
-    transmitter_receipts.append(
-        TransmitterConfig(transmitter=transmitter, light_mapping_config=light_mapping_config_example)
+    transmitter_recipes.append(
+        TransmitterConfig(transmitter=transmitter, light_mapping_config=ravelights_box_light_mapping)
     )
 
 
@@ -116,6 +138,6 @@ app = RaveLightsApp(
     fps=args.fps,
     webui_port=webui_port,
     serve_webui=args.webui,
-    transmitter_receipts=transmitter_receipts,
+    transmitter_recipes=transmitter_recipes,
     use_visualizer=args.visualizer,
 )

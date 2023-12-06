@@ -23,7 +23,7 @@ class RaveLightsApp:
         webui_port: int = 80,
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
-        transmitter_receipts: list[TransmitterConfig] = [],
+        transmitter_recipes: list[TransmitterConfig] = [],
         use_visualizer: bool = False,
         print_stats: bool = False,
         run: bool = True,
@@ -36,7 +36,7 @@ class RaveLightsApp:
         self.metahandler = MetaHandler(root=self)
         self.eventhandler = EventHandler(root=self)
 
-        self.data_routers = self.initiate_data_routers(transmitter_receipts)
+        self.data_routers = self.initiate_data_routers(transmitter_recipes)
 
         self.rest_api = RestAPI(
             root=self,
@@ -54,9 +54,9 @@ class RaveLightsApp:
                 self.visualizer = Visualizer(root=self)
             self.run()
 
-    def initiate_data_routers(self, transmitter_receipts: list[TransmitterConfig]) -> list[DataRouter]:
+    def initiate_data_routers(self, transmitter_recipes: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
-        for receipt in transmitter_receipts:
+        for receipt in transmitter_recipes:
             # at the moment, all datarouters created from receipts are DataRouterTransmitter
             data_router_transmitter = DataRouterTransmitter(root=self)
             data_router_transmitter.apply_transmitter_receipt(**receipt)
