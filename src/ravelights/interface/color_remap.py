@@ -1,8 +1,9 @@
-from enum import StrEnum, auto
+from enum import auto
 from typing import Callable
 
 import numpy as np
 from ravelights.core.custom_typing import ArrayFloat
+from ravelights.core.utils import StrEnum
 
 ColorMapping = Callable[[ArrayFloat], ArrayFloat]
 

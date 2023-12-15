@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.typing import NDArray
+from ravelights import DeviceLightConfig
 from ravelights.core.custom_typing import VisualizerConfig
 
 X_SPACINGS: dict[int, NDArray[np.float_]] = dict()
@@ -17,7 +18,7 @@ configurations: list[VisualizerConfig] = [
     #
     VisualizerConfig(
         name="5 top, 5 bottom",
-        device_config=[dict(n_lights=5, n_leds=144), dict(n_lights=5, n_leds=144)],
+        device_config=[DeviceLightConfig(n_lights=5, n_leds=144), DeviceLightConfig(n_lights=5, n_leds=144)],
         visualizer_config=[
             # ─── DEVICE 1 ────────────────────────────────────────────────────
             [
@@ -39,7 +40,7 @@ configurations: list[VisualizerConfig] = [
     ),
     VisualizerConfig(
         name="5 top, 10 bottom",
-        device_config=[dict(n_lights=5, n_leds=144), dict(n_lights=10, n_leds=144)],
+        device_config=[DeviceLightConfig(n_lights=5, n_leds=144), DeviceLightConfig(n_lights=10, n_leds=144)],
         visualizer_config=[
             # ─── DEVICE 1 ────────────────────────────────────────────────────
             [
@@ -66,7 +67,7 @@ configurations: list[VisualizerConfig] = [
     ),
     VisualizerConfig(
         name="6 top, 10 bottom",
-        device_config=[dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144)],
+        device_config=[DeviceLightConfig(n_lights=6, n_leds=144), DeviceLightConfig(n_lights=10, n_leds=144)],
         visualizer_config=[
             # ─── DEVICE 1 ────────────────────────────────────────────────────
             [
@@ -93,27 +94,8 @@ configurations: list[VisualizerConfig] = [
         ],
     ),
     VisualizerConfig(
-        name="10 middle",
-        device_config=[dict(n_lights=10, n_leds=144)],
-        visualizer_config=[
-            # ─── DEVICE 1 ────────────────────────────────────────────────────
-            [
-                dict(x=X_SPACINGS[10][0], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][1], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][2], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][3], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][4], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][5], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][6], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][7], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][8], y=0.5, rot=0.0, scale=1.0),
-                dict(x=X_SPACINGS[10][9], y=0.5, rot=0.0, scale=1.0),
-            ],
-        ],
-    ),
-    VisualizerConfig(
         name="10 top, 10 bottom",
-        device_config=[dict(n_lights=10, n_leds=144), dict(n_lights=10, n_leds=144)],
+        device_config=[DeviceLightConfig(n_lights=10, n_leds=144), DeviceLightConfig(n_lights=10, n_leds=144)],
         visualizer_config=[
             # ─── DEVICE 1 ────────────────────────────────────────────────────
             [
@@ -145,7 +127,11 @@ configurations: list[VisualizerConfig] = [
     ),
     VisualizerConfig(
         name="6 top, 10 bottom, laser",
-        device_config=[dict(n_lights=6, n_leds=144), dict(n_lights=10, n_leds=144), dict(n_lights=1, n_leds=44)],
+        device_config=[
+            DeviceLightConfig(n_lights=6, n_leds=144),
+            DeviceLightConfig(n_lights=10, n_leds=144),
+            DeviceLightConfig(n_lights=1, n_leds=44),
+        ],
         visualizer_config=[
             # ─── DEVICE 1 ────────────────────────────────────────────────────
             [
