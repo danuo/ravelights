@@ -9,6 +9,7 @@ dependencies = [
     "Flask-RESTful == 0.3.10",
     "flask-socketio == 5.3.6",
     "requests == 2.31.0",
+    "zeroconf == 0.128.0"
 ]
 
 [project.optional-dependencies]

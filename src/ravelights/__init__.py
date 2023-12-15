@@ -4,6 +4,7 @@ from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.devtools.profiler import Profiler
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 from ravelights.interface.color_remap import ColorProfiles
+from ravelights.interface.discovery import discover_pixeldrivers
 from ravelights.interface.rest_client import RestClient
 
 try:
@@ -19,6 +20,7 @@ __all__ = [
     "TransmitterConfig",
     "ArtnetUdpTransmitter",
     "ArtnetSerialTransmitter",
+    "discover_pixeldrivers",
     "RestClient",
     "ColorProfiles",
 ]
