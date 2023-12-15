@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8, LightIdentifier, Transmitter
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
+from ravelights.interface.rest_client import RestClient
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
@@ -26,11 +27,15 @@ class DataRouterTransmitter(DataRouter):
         self.settings = self.root.settings
         self.devices = self.root.devices
 
-    def apply_transmitter_receipt(self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifier]]):
+    def apply_transmitter_receipt(
+        self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifier]], rest_client:RestClient | None
+    ):
         assert isinstance(transmitter, ArtnetTransmitter)
         self.transmitter = transmitter
+        self.rest_client = rest_client
         self.leds_per_output, self.out_lights, self.n = self.process_light_mapping_config(light_mapping_config)
-        self.transmitter.transmit_output_config(self.leds_per_output)
+        if rest_client is not None:
+            rest_client.set_output_config(self.leds_per_output)
         # one out matrix per datarouter / transmitter
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
 
