@@ -10,6 +10,7 @@ from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterVisualizer, DataRouterWebsocket
+from ravelights.interface.discovery import discovery_service
 from ravelights.interface.restapi import RestAPI
 
 logger = logging.getLogger(__name__)
@@ -46,6 +47,8 @@ class RaveLightsApp:
 
         self.use_visualizer = use_visualizer
         self.print_stats = print_stats
+
+        discovery_service.start()
 
         if run:
             if self.use_visualizer:

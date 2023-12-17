@@ -7,9 +7,7 @@ from ravelights import (
     DeviceLightConfig,
     LightIdentifier,
     RaveLightsApp,
-    RestClient,
     TransmitterConfig,
-    discover_pixeldrivers,
 )
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
@@ -76,37 +74,25 @@ laser_cage_light_mapping: list[list[LightIdentifier]] = [
 
 transmitter_recipes: list[TransmitterConfig] = []
 
-discovered_pixeldrivers = discover_pixeldrivers()
-logger.info(f"Discovered {len(discovered_pixeldrivers)} pixeldriver(s): {discovered_pixeldrivers}")
 
 if args.artnet_wifi:
     # Ravelights
     box_hostname = "pixeldriver-box"
-    if box_hostname in discovered_pixeldrivers:
-        box_ip = discovered_pixeldrivers[box_hostname]
-        ravelights_box_recipe = TransmitterConfig(
-            transmitter=ArtnetUdpTransmitter(ip_address=box_ip),
-            rest_client=RestClient(ip_address=box_ip),
-            light_mapping_config=ravelights_box_light_mapping,
-        )
-        transmitter_recipes.append(ravelights_box_recipe)
-        logger.info(f"Added transmitter recipe for pixeldriver with hostname {box_hostname}")
-    else:
-        logger.warning(f"Could not find pixeldriver with hostname {box_hostname}")
+    ravelights_box_recipe = TransmitterConfig(
+        transmitter=ArtnetUdpTransmitter(ip_address=None),
+        light_mapping_config=ravelights_box_light_mapping,
+        hostname=box_hostname,
+    )
+    transmitter_recipes.append(ravelights_box_recipe)
 
     # Laser Cage
     lasercage_hostname = "pixeldriver-lasercage"
-    if lasercage_hostname in discovered_pixeldrivers:
-        lasercage_ip = discovered_pixeldrivers[lasercage_hostname]
-        laser_cage_recipe = TransmitterConfig(
-            transmitter=ArtnetUdpTransmitter(ip_address=lasercage_ip),
-            light_mapping_config=laser_cage_light_mapping,
-            rest_client=RestClient(ip_address=lasercage_ip),
-        )
-        transmitter_recipes.append(laser_cage_recipe)
-        logger.info(f"Added transmitter recipe for pixeldriver with hostname {box_hostname}")
-    else:
-        logger.warning(f"Could not find pixeldriver with hostname {lasercage_hostname}")
+    laser_cage_recipe = TransmitterConfig(
+        transmitter=ArtnetUdpTransmitter(ip_address=None),
+        light_mapping_config=laser_cage_light_mapping,
+        hostname=lasercage_hostname,
+    )
+    transmitter_recipes.append(laser_cage_recipe)
 
 
 if args.artnet_serial:
@@ -114,19 +100,14 @@ if args.artnet_serial:
     from ravelights import ArtnetSerialTransmitter
 
     box_hostname = "ravelights-box"
-    if box_hostname in discovered_pixeldrivers:
-        box_ip = discovered_pixeldrivers[box_hostname]
-        transmitter_recipe = TransmitterConfig(
-            transmitter=ArtnetSerialTransmitter(
-                serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
-            ),
-            light_mapping_config=ravelights_box_light_mapping,
-            rest_client=RestClient(ip_address=box_ip),
-        )
-        transmitter_recipes.append(transmitter_recipe)
-        logger.info(f"Added transmitter recipe for pixeldriver with hostname {box_hostname}")
-    else:
-        logger.warning(f"Could not find pixeldriver with hostname {box_hostname}")
+    transmitter_recipe = TransmitterConfig(
+        transmitter=ArtnetSerialTransmitter(
+            serial_port_address=args.artnet_serial_port, baud_rate=args.artnet_serial_baudrate
+        ),
+        light_mapping_config=ravelights_box_light_mapping,
+        hostname=box_hostname,
+    )
+    transmitter_recipes.append(transmitter_recipe)
 
 
 # ─── Webui Port ───────────────────────────────────────────────────────────────

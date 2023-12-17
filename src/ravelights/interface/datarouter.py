@@ -1,13 +1,19 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import numpy as np
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8, LightIdentifier, Transmitter
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
+from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
+from ravelights.interface.discovery import discovery_service
 from ravelights.interface.rest_client import RestClient
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp
+
+
+logger = logging.getLogger(__name__)
 
 
 class DataRouter(ABC):
@@ -26,18 +32,34 @@ class DataRouterTransmitter(DataRouter):
         self.root = root
         self.settings = self.root.settings
         self.devices = self.root.devices
+        self._ip_address: str | None = None
+
+    def _on_discovery_update(self, hostname: str, new_ip_address: str | None):
+        if new_ip_address != self._ip_address:
+            if new_ip_address is not None:
+                rest_client = RestClient(ip_address=new_ip_address)
+                rest_client.set_output_config(self.leds_per_output)
+                logger.info(f"Set output config for {hostname} ({new_ip_address}) to {self.leds_per_output}")
+
+            if isinstance(self.transmitter, ArtnetUdpTransmitter):
+                self.transmitter.update_ip_address(new_ip_address)
+
+            self._ip_address = new_ip_address
 
     def apply_transmitter_receipt(
-        self, transmitter: Transmitter, light_mapping_config: list[list[LightIdentifier]], rest_client:RestClient | None
+        self,
+        transmitter: Transmitter,
+        light_mapping_config: list[list[LightIdentifier]],
+        hostname: str,
     ):
         assert isinstance(transmitter, ArtnetTransmitter)
         self.transmitter = transmitter
-        self.rest_client = rest_client
         self.leds_per_output, self.out_lights, self.n = self.process_light_mapping_config(light_mapping_config)
-        if rest_client is not None:
-            rest_client.set_output_config(self.leds_per_output)
         # one out matrix per datarouter / transmitter
         self.out_matrix = np.zeros((self.n, 3), dtype=np.uint8)
+
+        discovery_service.register_callback(hostname, self._on_discovery_update)
+        logger.info(f"Initialized transmitter for device {hostname}. Waiting for IP address to be discovered...")
 
     def process_light_mapping_config(self, light_mapping_config: list[list[LightIdentifier]]):
         leds_per_output: list[int] = []
