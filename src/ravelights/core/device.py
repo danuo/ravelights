@@ -60,7 +60,7 @@ class Device:
         color_map_function = ColorProfilesFunctions[self.color_profile]
         matrix_processed_float = color_map_function(matrix_float * brightness)
         assert np.max(matrix_processed_float <= 255)
-        return matrix_processed_float.astype(np.uint8)
+        return (matrix_processed_float * 255).astype(np.uint8)
 
     def get_matrix_int(self) -> ArrayUInt8:
         return self.pixelmatrix.get_matrix_int()
