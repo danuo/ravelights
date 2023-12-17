@@ -163,7 +163,7 @@ class AutoPilot:
             return None
 
         beat_pattern = BeatStatePattern(loop_length=self.settings.settings_autopilot["autopilot_loop_length"])
-        if not beat_pattern.is_match(self.settings.beat_state):
+        if not beat_pattern.is_match(self.timehandler.beat_state):
             return None
 
         logger.info("run randomize routine")

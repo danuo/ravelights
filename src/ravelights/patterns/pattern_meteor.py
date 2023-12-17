@@ -112,9 +112,9 @@ class PatternMeteor(Pattern):
         # -> 1 | 1 | 0.5
         #    40% | 40 % | 20 %
         # n_beats * 1/2.5 + self.beat_progress / 2.5
-        if BeatStatePattern(loop_length=1).is_match(self.settings.beat_state):
+        if BeatStatePattern(loop_length=1).is_match(self.timehandler.beat_state):
             self.n_beats += 1
-        self.pos = int((self.n_leds - self.width) * (self.n_beats + self.settings.beat_progress) / self.travel_time)
+        self.pos = int((self.n_leds - self.width) * (self.n_beats + self.timehandler.beat_progress) / self.travel_time)
 
         # decay
         decay = np.random.uniform(0.85, 1.0, size=(self.n_leds, self.n_lights)) * self.decay_factor

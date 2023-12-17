@@ -174,7 +174,7 @@ class EffectWrapper:
         """
 
         if self.has_started and self.mode == "loopquarters":
-            if self.settings.beat_state.is_quarter:
+            if self.timehandler.beat_state.is_quarter:
                 if self.quarters_pattern_binary[self.counter_quarters]:
                     self.counter_frames = 0
 
@@ -198,7 +198,7 @@ class EffectWrapper:
     def checkactive_matrix_loopquarters(self) -> bool:
         # search first beat before start
         if not self.has_started:
-            if self.settings.beat_state.is_beat:
+            if self.timehandler.beat_state.is_beat:
                 self.has_started = True
             else:
                 return False
@@ -218,7 +218,7 @@ class EffectWrapper:
 
         if self.has_started:
             self.counter_frames += 1
-            if self.settings.beat_state.is_quarter:
+            if self.timehandler.beat_state.is_quarter:
                 self.counter_quarters += 1
                 counter_beats = self.counter_quarters // 4
                 if counter_beats > 0 and counter_beats % self.loop_length_beats == 0:

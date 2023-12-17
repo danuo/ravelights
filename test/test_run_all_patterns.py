@@ -24,8 +24,8 @@ def test_all_patterns():
 
     # app = RaveLightsApp(fps=FPS, visualizer=False, restapi=False)
     app = RaveLightsApp(run=False)
-    app.settings.timehandler.get_current_time = get_global_time
-    app.settings.timehandler.after = increase_globaltime
+    app.timehandler.get_current_time = get_global_time
+    app.timehandler.after = increase_globaltime
     app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
 
     counter_frame = 0
@@ -46,7 +46,7 @@ def test_all_patterns():
 
     done = False
     while not done:
-        if beat_matcher.is_match(app.settings.beat_state):
+        if beat_matcher.is_match(app.timehandler.beat_state):
             counter_generators += 1
             gen_type, gen_name = next(it, (None, None))
             if gen_type is None:

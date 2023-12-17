@@ -83,7 +83,7 @@ class EffectHandler:
         for effect_wrapper in self.effective_effect_queue:
             # ---------------------------------- trigger --------------------------------- #
             if effect_wrapper.trigger:
-                if effect_wrapper.trigger.is_match(self.settings.beat_state):
+                if effect_wrapper.trigger.is_match(self.timehandler.beat_state):
                     effect_wrapper.on_trigger()
             # ----------------------------------- sync ----------------------------------- #
             effect_wrapper.sync_effects()
