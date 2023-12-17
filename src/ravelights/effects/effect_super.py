@@ -137,7 +137,7 @@ class EffectWrapper:
             if isinstance(limit_quarters, str):
                 self.limit_frames = limit_quarters
             else:
-                self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.settings.fps)
+                self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.timehandler.fps)
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
         if self.mode == "loopquarters":

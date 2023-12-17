@@ -270,7 +270,7 @@ class Meteor(LightObject):
         self.travel_time = 1
         self.decay_factor = 0.8
         self.width = 20
-        self.speed = self.n_leds * self.settings.bpm / 60 / self.settings.fps / self.travel_time
+        self.speed = self.n_leds * self.timehandler.bpm / 60 / self.timehandler.fps / self.travel_time
         # ! this spawns inside the domain, good for swiper, bad for "random meteor"
         self.pos = abs(random.gauss(0.1, 0.2)) * self.n_leds
         self.matrix = self.get_float_matrix()

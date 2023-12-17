@@ -201,8 +201,8 @@ class TimeHandler:
         |           frame          |
         | render |      sleep      |
         """
-        self.avg_time_excess = self.stats["avg_frame_time"] - self.settings.frame_time, 0
-        self.dynamic_sleep_time = self.settings.frame_time - self.render_time - self.dynamic_sleep_time_correction
+        self.avg_time_excess = self.stats["avg_frame_time"] - self.frame_time, 0
+        self.dynamic_sleep_time = self.frame_time - self.render_time - self.dynamic_sleep_time_correction
         if self.dynamic_sleep_time > 0:
             time.sleep(self.dynamic_sleep_time)
         else:
@@ -244,7 +244,7 @@ class TimeHandler:
         """Calibrates sleep_dynamic, so that resulting frame time is accurate.
         This is the integral part of a pid feedback loop control"""
         correction_tuning = 0.02
-        excess = (self.time_2 - self.time_0) - self.settings.frame_time
+        excess = (self.time_2 - self.time_0) - self.frame_time
         self.dynamic_sleep_time_correction += excess * correction_tuning
 
     # bpmhandler
@@ -263,7 +263,7 @@ class TimeHandler:
         return: current time position within interval, as float from 0 to 1"""
 
         n_beats_till = self.n_quarters_long_memory // 4
-        return (n_beats_till % n_beats + self.settings.beat_progress) / n_beats
+        return (n_beats_till % n_beats + self.beat_progress) / n_beats
 
     @property
     def beat_state(self):
@@ -277,10 +277,50 @@ class TimeHandler:
 
     def _get_beat_state(self):
         time_since_sync = self.time_0 - self.time_sync
-        time_since_quarter = time_since_sync % self.settings.quarter_time
-        n_quarters_long = int((time_since_sync // self.settings.quarter_time) % self.settings.queue_length)
+        time_since_quarter = time_since_sync % self.quarter_time
+        n_quarters_long = int((time_since_sync // self.quarter_time) % self.queue_length)
         is_quarterbeat = n_quarters_long != self.n_quarters_long_memory  # this frame is beginninf of new quarter beat
-        beat_progress = (n_quarters_long % 4 + time_since_quarter / self.settings.quarter_time) * 0.25
+        beat_progress = (n_quarters_long % 4 + time_since_quarter / self.quarter_time) * 0.25
         beat_state = BeatState(self.root, is_quarterbeat, beat_progress, n_quarters_long)
         self.n_quarters_long_memory = n_quarters_long
         return beat_state
+
+    @property
+    def bpm(self) -> float:
+        return self.settings.bpm_multiplier * self.settings.bpm_base
+
+    @property
+    def beat_time(self) -> float:
+        """time of a beat in seconds"""
+        return 60 / self.bpm
+
+    @property
+    def quarter_time(self) -> float:
+        """time of a quarter in seconds"""
+        return 60 / (self.bpm * 4)
+
+    @property
+    def n_quarters(self) -> int:
+        """self.n_quarters: will always represent current quarter number [0,15]"""
+        return self.n_quarters_long % 16
+
+    @property
+    def n_quarters_long(self) -> int:
+        """self.n_quarters: will always represent current quarter number [0,127]"""
+        return self.beat_state.n_quarters_long
+
+    @property
+    def beat_progress(self) -> float:
+        return self.beat_state.beat_progress
+
+    @property
+    def frame_time(self) -> float:
+        return 1 / self.fps
+
+    @property
+    def fps(self) -> float:
+        return self.settings.fps
+
+    @property
+    def queue_length(self) -> int:
+        return self.settings.queue_length

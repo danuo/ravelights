@@ -122,7 +122,7 @@ class Visualizer:
         self._draw_stats()
 
     def _draw_beat_progress(self):
-        beat_progress = self.settings.beat_progress
+        beat_progress = self.timehandler.beat_progress
         beat_progress_adjusted = (0.5 + beat_progress) % 1
         color = (0, 255, 0)
         square_w = 50
@@ -179,7 +179,7 @@ class Visualizer:
         bpm = "".join(
             [
                 "bpm:",
-                str(self.settings.bpm),
+                str(self.timehandler.bpm),
             ]
         )
         brightthinningenergy = "".join(
@@ -192,7 +192,7 @@ class Visualizer:
                 str(self.settings.global_energy),
             ]
         )
-        n_quarters_long = "nql: " + str(self.settings.n_quarters_long).zfill(3)
+        n_quarters_long = "nql: " + str(self.timehandler.n_quarters_long).zfill(3)
 
         self._draw_text(text=fps, x=10, y=10)
         self._draw_text(text=render_time, x=250, y=10)

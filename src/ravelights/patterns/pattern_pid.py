@@ -14,7 +14,7 @@ class PatternPID(Pattern):
 
     def init(self):
         self.width = 20
-        self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.settings.frame_time) for _ in range(self.n_lights)]
+        self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.timehandler.frame_time) for _ in range(self.n_lights)]
 
     @property
     def possible_triggers(self) -> list[BeatStatePattern]:

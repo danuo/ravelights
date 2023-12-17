@@ -172,7 +172,7 @@ class EffectSelectorPlacing:
         else:
             self.effect_name = self.get_random_generator(gen_type=Effect)
         self.settings = self.patternscheduler.settings
-        self.effect_length_frames = int(self.settings.fps * self.settings.quarter_time * self.length_q)
+        self.effect_length_frames = int(self.timehandler.fps * self.timehandler.quarter_time * self.length_q)
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)

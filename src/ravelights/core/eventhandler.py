@@ -55,7 +55,7 @@ class EventHandler:
                         function = getattr(generator, command)
                         function()
                 case {"action": "set_sync"}:
-                    self.settings.bpmhandler.bpm_sync()
+                    self.timehandler.bpm_sync()
                 case {"action": "adjust_sync", "value": value}:
                     assert isinstance(value, float)
                     self.settings.timehandler.time_sync += value

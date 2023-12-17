@@ -17,7 +17,7 @@ class DimmerPeak(Dimmer):
         ...
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]):
-        x = self.settings.bpmhandler.get_beat_progress_n(self.frequency)
+        x = self.timehandler.get_beat_progress_n(self.frequency)
         x_shift = abs((x - 0.5) * 2)
         intensity = max(x_shift**2 * 0.3, x_shift**5)
         matrix = in_matrix * intensity

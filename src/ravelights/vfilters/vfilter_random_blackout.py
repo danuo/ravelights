@@ -28,7 +28,7 @@ class VfilterRandomBlackout(Vfilter):
     def on_trigger(self):
         self.counter_frames = 0
         limit_quarters = random.choice([1, 2, 3, 4, 6, 8])
-        self.limit_frames = int(round(limit_quarters * self.settings.beat_time * self.settings.fps))
+        self.limit_frames = int(round(limit_quarters * self.timehandler.beat_time * self.timehandler.fps))
         self.source_index = None
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
