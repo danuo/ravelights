@@ -1,11 +1,10 @@
 import random
 
 import numpy as np
-
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
+from ravelights.core.timehandler import BeatStatePattern
 
 
 class VfilterRandomBlackout(Vfilter):

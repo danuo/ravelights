@@ -2,15 +2,16 @@ import logging
 from typing import TYPE_CHECKING, Literal, Optional, Type, cast, overload
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.settings import Settings
+from ravelights.core.timehandler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
+
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ class RenderModule:
     def __init__(self, root: "RaveLightsApp", device: "Device"):
         self.root = root
         self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.timehandler
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
         self.device_automatic_timeline_level = 0
@@ -107,28 +109,28 @@ class RenderModule:
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
             thinner = cast(Thinner, self.get_generator_by_name("t_random"))
-            if self.settings.beat_state.is_beat:
+            if self.timehandler.beat_state.is_beat:
                 thinner.on_trigger()
         if pattern.p_add_thinner == 0.0:
             thinner = cast(Thinner, self.get_generator_by_name("t_none"))
 
         if pattern.p_add_dimmer == 1.0 and dimmer.name == "d_none":
             dimmer = cast(Dimmer, self.get_generator_by_name("d_decay_fast"))
-            if self.settings.beat_state.is_beat:
+            if self.timehandler.beat_state.is_beat:
                 dimmer.on_trigger()
         if pattern.p_add_dimmer == 0.0:
             dimmer = cast(Dimmer, self.get_generator_by_name("d_none"))
 
         # ------------------------------- check trigger ------------------------------ #
-        if self.get_selected_trigger(gen_type=Pattern).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type=Pattern).is_match(self.timehandler.beat_state, self.device):
             pattern.on_trigger()
-        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.timehandler.beat_state, self.device):
             pattern_sec.on_trigger()
-        if self.get_selected_trigger(gen_type=Vfilter).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type=Vfilter).is_match(self.timehandler.beat_state, self.device):
             vfilter.on_trigger()
-        if self.get_selected_trigger(gen_type=Thinner).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type=Thinner).is_match(self.timehandler.beat_state, self.device):
             thinner.on_trigger()
-        if self.get_selected_trigger(gen_type=Dimmer).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type=Dimmer).is_match(self.timehandler.beat_state, self.device):
             dimmer.on_trigger()
 
         # ---------------------------------- colors ---------------------------------- #

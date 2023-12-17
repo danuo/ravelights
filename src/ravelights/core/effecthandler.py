@@ -34,7 +34,7 @@ class EffectHandler:
 
     def __post_init__(self) -> None:
         self.settings = self.root.settings
-        self.timehandler = self.root.settings.timehandler
+        self.timehandler = self.root.timehandler
         self.devices: list[Device] = self.root.devices
         self.instruction_queue = InstructionQueue(settings=self.settings)
         self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()

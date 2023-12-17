@@ -4,10 +4,9 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.timehandler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
@@ -34,7 +33,7 @@ class Generator(ABC):
     ):
         self.root = root
         self.settings: "Settings" = self.root.settings
-        self.timehandler: "TimeHandler" = self.settings.timehandler
+        self.timehandler: "TimeHandler" = self.root.timehandler
         self.device: "Device" = device
         self.n_devices = len(self.root.devices)
         self.pixelmatrix = self.device.pixelmatrix

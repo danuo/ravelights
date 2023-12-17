@@ -3,10 +3,10 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color, ColorHandler
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
+from ravelights.core.timehandler import BeatStatePattern
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:

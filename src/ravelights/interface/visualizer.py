@@ -3,12 +3,11 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pygame
 from ravelights.configs.visualizer_configurations import configurations
-from ravelights.core.bpmhandler import BeatStatePattern, BPMhandler
 from ravelights.core.device import Device
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.timehandler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -27,14 +26,13 @@ class Visualizer:
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
         self.eventhandler: EventHandler = self.root.eventhandler
-        self.bpmhandler: BPMhandler = self.settings.bpmhandler
-        self.timehandler: TimeHandler = self.settings.timehandler
+        self.timehandler: TimeHandler = self.root.timehandler
         self.visualizer_config = self.get_visualizer_config()
         pygame.init()
         pygame.display.set_caption("ravelights")
         self.surface = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
         self.surface.fill(C_BLACK)
-        self.bpmhandler.bpm_sync()
+        self.timehandler.bpm_sync()
         self.create_surfaces()
 
     def get_visualizer_config(self):
@@ -67,7 +65,7 @@ class Visualizer:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.bpmhandler.bpm_sync()
+                    self.timehandler.bpm_sync()
             if event.type == pygame.QUIT:
                 exit()
 
@@ -135,7 +133,7 @@ class Visualizer:
 
     def _draw_beat_state(self):
         """Draws blue rectangle on frames with beat."""
-        if BeatStatePattern(loop_length=1).is_match(self.settings.beat_state):
+        if BeatStatePattern(loop_length=1).is_match(self.timehandler.beat_state):
             color = (0, 255, 255)
             square_w = 50
             square_h = 60

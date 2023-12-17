@@ -3,11 +3,10 @@ from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
-from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.timehandler import BeatStatePattern
 from ravelights.core.utils import StrEnum
 from ravelights.effects.effect_super import Effect
 
@@ -145,9 +144,6 @@ class Settings:
         self.root = root_init
         self.generator_classes_identifiers = ["pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect"]
 
-        self.timehandler = TimeHandler(settings=self)
-        self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
-
         self.color_engine = ColorEngine(settings=self)
         self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()
 
@@ -159,10 +155,6 @@ class Settings:
     @property
     def bpm(self) -> float:
         return self.bpm_multiplier * self.bpm_base
-
-    @property
-    def beat_state(self) -> BeatState:
-        return self.bpmhandler.beat_state
 
     @property
     def beat_time(self) -> float:
@@ -182,11 +174,11 @@ class Settings:
     @property
     def n_quarters_long(self) -> int:
         """self.n_quarters: will always represent current quarter number [0,127]"""
-        return self.beat_state.n_quarters_long
+        return self.root.timehandler.beat_state.n_quarters_long
 
     @property
     def beat_progress(self) -> float:
-        return self.beat_state.beat_progress
+        return self.root.timehandler.beat_state.beat_progress
 
     @property
     def frame_time(self) -> float:
@@ -254,10 +246,3 @@ class Settings:
         self.color_transition_speed = speed
         self.color_engine.set_color_speed(speed)
         self.root.refresh_ui(sse_event="settings")
-
-    def before(self):
-        self.timehandler.before()
-        self.color_engine.before()
-
-    def after(self):
-        self.timehandler.after()

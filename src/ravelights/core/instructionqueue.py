@@ -1,17 +1,22 @@
+from typing import TYPE_CHECKING
+
 from ravelights.core.instruction import Instruction
-from ravelights.core.settings import Settings
+
+if TYPE_CHECKING:
+    from ravelights import RaveLightsApp
 
 
 class InstructionQueue:
-    def __init__(self, settings: Settings):
-        self.settings = settings
-        self.length_quarters = settings.queue_length
+    def __init__(self, root: "RaveLightsApp"):
+        self.root = root
+        self.settings = self.root.settings
+        self.timehandler = self.root.timehandler
         self._instruction_queue: list[list[Instruction]]
         self.just_initialized: bool
         self.clear()
 
     def clear(self):
-        self._instruction_queue = [[] for _ in range(self.length_quarters)]
+        self._instruction_queue = [[] for _ in range(self.settings.length_quarters)]
         self.just_initialized = True
 
     def add_instruction(self, instruction: Instruction, n_quarter: int):
@@ -23,7 +28,7 @@ class InstructionQueue:
         if self.just_initialized is True:
             self.just_initialized = False
             return self._get_instructions_till(self.settings.n_quarters_long)
-        elif self.settings.beat_state.is_quarter:
+        elif self.timehandler.beat_state.is_quarter:
             return self._instruction_queue[self.settings.n_quarters_long]
         return []
 

@@ -1,8 +1,8 @@
 import logging
 import random
 
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.ravelights_app import RaveLightsApp
+from ravelights.core.timehandler import BeatStatePattern
 
 logger = logging.getLogger(__name__)
 

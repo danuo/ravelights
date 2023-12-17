@@ -3,10 +3,10 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pixelmatrix import PixelMatrix
+from ravelights.core.timehandler import BeatStatePattern
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
@@ -292,7 +292,7 @@ class Effect(ABC):
     ):
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.settings.timehandler
+        self.timehandler: TimeHandler = self.root.timehandler
         self.device = device
         self.device_id = device.device_id
         self.init_pixelmatrix(self.device.pixelmatrix)
