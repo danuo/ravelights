@@ -10,7 +10,6 @@ from ravelights.core.utils import p
 if TYPE_CHECKING:
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
-    from ravelights.core.settings import Settings
 
 logger = logging.getLogger(__name__)
 
@@ -246,10 +245,6 @@ class TimeHandler:
         correction_tuning = 0.02
         excess = (self.time_2 - self.time_0) - self.frame_time
         self.dynamic_sleep_time_correction += excess * correction_tuning
-
-    # bpmhandler
-    # def bpm_sync(self):
-    #     self.timehandler.bpm_sync()
 
     def bpm_adjust(self, amount: float | int):
         """Shifts the bpm sync point in seconds."""
