@@ -9,6 +9,7 @@ from ravelights.core.utils import p
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
+    from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class BeatState:
-    settings: "Settings"
+    root: "RaveLightsApp"
     is_quarter: bool = False
     beat_progress: float = 0.0
     n_quarters_long: int = 0
@@ -98,17 +99,17 @@ class BeatStatePattern:
         # global skip trigger = 4: every fourth trigger works
 
         # determine triggerskip from global and device settings
-        triggerskip = other.settings.global_triggerskip
+        triggerskip = other.root.settings.global_triggerskip
         if device:
             triggerskip = max(triggerskip, device.device_triggerskip)
 
         if is_triggered:
-            if self.previous_triggered_time == other.settings.timehandler.time_0:
+            if self.previous_triggered_time == other.root.timehandler.time_0:
                 # the BeatStatePattern was already triggered within the current frame
                 pass
             else:
                 self.trigger_counter += 1
-                self.previous_triggered_time = other.settings.timehandler.time_0
+                self.previous_triggered_time = other.root.timehandler.time_0
 
             is_triggered = self.trigger_counter % triggerskip == 0
 
@@ -136,8 +137,9 @@ class TimeHandler:
     """This class will handle time related routines. The goal is to produce static fps, given
     processing power of the hardware is sufficient"""
 
-    def __init__(self, settings: "Settings"):
-        self.settings = settings
+    def __init__(self, root: "RaveLightsApp"):
+        self.root = root
+        self.settings = self.root.settings
         self.avg_segment_length = 20
         self.time_0_deque: deque[float] = deque(maxlen=self.avg_segment_length)
         self.render_time_deque: deque[float] = deque(maxlen=self.avg_segment_length)
@@ -154,7 +156,7 @@ class TimeHandler:
         # bpmhandler
         self.n_quarters_long_memory = 0
         self.time_0_cache: float = self.time_0
-        self.beat_state_cache: BeatState = BeatState(self.settings)
+        self.beat_state_cache: BeatState = BeatState(self.root)
 
     def before(self):
         """Abstract function called before rendering"""
@@ -279,6 +281,6 @@ class TimeHandler:
         n_quarters_long = int((time_since_sync // self.settings.quarter_time) % self.settings.queue_length)
         is_quarterbeat = n_quarters_long != self.n_quarters_long_memory  # this frame is beginninf of new quarter beat
         beat_progress = (n_quarters_long % 4 + time_since_quarter / self.settings.quarter_time) * 0.25
-        beat_state = BeatState(self.settings, is_quarterbeat, beat_progress, n_quarters_long)
+        beat_state = BeatState(self.root, is_quarterbeat, beat_progress, n_quarters_long)
         self.n_quarters_long_memory = n_quarters_long
         return beat_state

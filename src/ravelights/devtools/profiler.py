@@ -94,7 +94,7 @@ class Profiler:
         n_quarters_long = int((time_since_sync // self.app.settings.quarter_time) % self.app.settings.queue_length)
         is_quarterbeat = n_quarters_long != self.n_quarters_long_memory  # this frame is beginninf of new quarter beat
         beat_progress = (n_quarters_long % 4 + time_since_quarter / self.app.settings.quarter_time) * 0.25
-        beat_state = BeatState(self.app.settings, is_quarterbeat, beat_progress, n_quarters_long)
+        beat_state = BeatState(self.app, is_quarterbeat, beat_progress, n_quarters_long)
         self.n_quarters_long_memory = n_quarters_long
         return beat_state
 

@@ -36,7 +36,7 @@ class EffectHandler:
         self.settings = self.root.settings
         self.timehandler = self.root.timehandler
         self.devices: list[Device] = self.root.devices
-        self.instruction_queue = InstructionQueue(settings=self.settings)
+        self.instruction_queue = InstructionQueue(root=self.root)
         self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
         self.build_effectwrappers_from_blueprints()
         self.build_effectwrappers_from_vfilters()

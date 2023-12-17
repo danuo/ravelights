@@ -16,7 +16,7 @@ class InstructionQueue:
         self.clear()
 
     def clear(self):
-        self._instruction_queue = [[] for _ in range(self.settings.length_quarters)]
+        self._instruction_queue = [[] for _ in range(self.settings.queue_length)]
         self.just_initialized = True
 
     def add_instruction(self, instruction: Instruction, n_quarter: int):

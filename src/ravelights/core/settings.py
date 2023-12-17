@@ -86,7 +86,7 @@ class Settings:
     """
 
     # ─── Device Configuration ─────────────────────────────────────────────
-    root_init: InitVar["RaveLightsApp"]
+    root_init: InitVar["RaveLightsApp"]  # todo: remove this
     device_config: list[DeviceLightConfig]
 
     # ─── Meta Information ─────────────────────────────────────────────────

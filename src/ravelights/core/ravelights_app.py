@@ -31,7 +31,7 @@ class RaveLightsApp:
         run: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
-        self.timehandler = TimeHandler(settings=self.settings)
+        self.timehandler = TimeHandler(root=self)
         self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
