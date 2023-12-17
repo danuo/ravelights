@@ -1,4 +1,4 @@
-# ChromaLights
+# RaveLights
 
 <div align="center">
 <video src="https://github.com/danuo/ravelights/assets/66017297/5034c1e2-3bce-451d-8af5-c48d52046552" width="600" autoplay muted loop />
