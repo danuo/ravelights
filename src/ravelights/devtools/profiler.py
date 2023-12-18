@@ -17,16 +17,22 @@ class Profiler:
         self.data: dict[str, float] = dict()
 
     def run(self):
+        logger.info("start profiling")
+
+        logger.info("profiling generators:")
         for gen_name, gen in self.app.devices[0].rendermodule.generators_dict.items():
             dtime_ms = self.profile_generator(gen)
             self.data[gen_name] = dtime_ms
 
+        logger.info("profiling effects:")
         for effect_name, effect in self.app.effecthandler.effect_wrappers_dict.items():
             dtime_ms = self.profile_generator(effect)
             self.data[effect_name] = dtime_ms
 
+        logger.info("profiling finished")
+
     def profile_generator(self, generator: Generator | EffectWrapper):
-        logger.info(generator.name)
+        logger.info("generator.name")
         colors = self.app.settings.color_engine.get_colors_rgb(1)
         matrix = self.app.devices[0].pixelmatrix.get_float_matrix_rgb()
         if isinstance(generator, Pattern):
@@ -41,7 +47,7 @@ class Profiler:
                 generator.alternate()
             if i % (4 * self.app.settings.fps):  # on_trigger every 4
                 generator.on_trigger()
-            generator.render(*args)
+            generator.render(**args)
         t1 = time.time_ns()
         dtime_ms = (t1 - t0) / (10**6) / self.samples
         return dtime_ms
