@@ -31,7 +31,7 @@ class Device:
         self.is_prim: bool = True if device_id == 0 else False
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.settings.timehandler
-        self.pixelmatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
+        self.pixelmatrix: PixelMatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
         self.rendermodule = RenderModule(root=root, device=self)
         self.instructionhandler = InstructionHandler(
             pixelmatrix=self.pixelmatrix,
