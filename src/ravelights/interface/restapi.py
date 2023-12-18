@@ -1,5 +1,4 @@
 import importlib.resources
-import logging
 import threading
 from dataclasses import asdict
 from pathlib import Path
@@ -8,6 +7,7 @@ from typing import TYPE_CHECKING, Any
 from flask import Flask, Response, jsonify, make_response, request, send_from_directory
 from flask_restful import Api, Resource, fields, marshal_with  # type: ignore
 from flask_socketio import SocketIO, emit  # type: ignore
+from loguru import logger  # type:ignore
 from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
@@ -16,8 +16,6 @@ from ravelights.core.settings import Settings
 if TYPE_CHECKING:
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
-
-logger = logging.getLogger(__name__)
 
 
 class RestAPI:

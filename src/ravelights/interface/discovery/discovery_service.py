@@ -1,11 +1,7 @@
-import logging
-
+from loguru import logger  # type:ignore
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
 from ravelights.interface.discovery.pixeldriver_service_listener import PixeldriverServiceListener
 from zeroconf import ServiceBrowser, Zeroconf
-
-_logger = logging.getLogger(__name__)
-
 
 _zeroconf: Zeroconf | None = None
 _service_browser: ServiceBrowser | None = None

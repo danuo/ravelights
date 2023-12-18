@@ -1,7 +1,6 @@
-import logging
 from typing import TYPE_CHECKING, Literal, Optional, Type, cast, overload
 
-import numpy as np
+from loguru import logger  # type:ignore
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
@@ -11,8 +10,6 @@ from ravelights.core.settings import Settings
 if TYPE_CHECKING:
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
-
-logger = logging.getLogger(__name__)
 
 
 class RenderModule:
@@ -170,7 +167,7 @@ class RenderModule:
             elif effect_wrapper.draw_mode == "normal":
                 matrix = out_matrix
             else:
-                assert False
+                logger.error("illegal effect_wrapper.draw_mode")
 
         # global thing
         if self.settings.global_effect_draw_mode == "overlay":

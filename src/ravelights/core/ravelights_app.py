@@ -1,6 +1,6 @@
-import logging
 from dataclasses import asdict
 
+from loguru import logger  # type:ignore
 from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
@@ -12,8 +12,6 @@ from ravelights.core.settings import Settings
 from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterVisualizer, DataRouterWebsocket
 from ravelights.interface.discovery import discovery_service
 from ravelights.interface.restapi import RestAPI
-
-logger = logging.getLogger(__name__)
 
 
 class RaveLightsApp:

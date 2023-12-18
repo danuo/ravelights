@@ -1,7 +1,7 @@
-import logging
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
+from loguru import logger  # type:ignore
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.instructionhandler import InstructionHandler
 from ravelights.core.pixelmatrix import PixelMatrix
@@ -12,9 +12,6 @@ from ravelights.interface.color_remap import ColorProfiles, ColorProfilesFunctio
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
-
-
-logger = logging.getLogger(__name__)
 
 
 class Device:

@@ -1,4 +1,3 @@
-import logging
 import math
 import random
 from enum import Enum
@@ -6,11 +5,11 @@ from typing import TYPE_CHECKING, Any, Optional, Sequence, Type, TypeVar
 
 import numpy as np
 import numpy.typing as npt
+from loguru import logger  # type:ignore
 
 if TYPE_CHECKING:
     from ravelights.core.colorhandler import Color
 
-logger = logging.getLogger(__name__)
 T = TypeVar("T")
 _S = TypeVar("_S", bound="StrEnum")
 

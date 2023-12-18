@@ -1,16 +1,13 @@
-import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional, cast
 
+from loguru import logger  # type:ignore
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
     from ravelights.core.settings import Settings
     from ravelights.core.timehandler import TimeHandler
-
-
-logger = logging.getLogger(__name__)
 
 
 @dataclass

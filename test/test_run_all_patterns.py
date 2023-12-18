@@ -1,10 +1,8 @@
-import logging
 import random
 
+from loguru import logger  # type:ignore
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.ravelights_app import RaveLightsApp
-
-logger = logging.getLogger(__name__)
 
 
 def test_all_patterns():

@@ -1,11 +1,9 @@
-import logging
 from collections import defaultdict
 from typing import DefaultDict
 
+from loguru import logger  # type:ignore
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
 from zeroconf import ServiceInfo, ServiceListener, Zeroconf
-
-_logger = logging.getLogger(__name__)
 
 
 class PixeldriverServiceListener(ServiceListener):
@@ -27,7 +25,7 @@ class PixeldriverServiceListener(ServiceListener):
         return None, None
 
     def _notify_listeners(self, hostname: str, ip_address: str | None) -> None:
-        _logger.info(f"Sending discovery update for device {hostname} ({ip_address})...")
+        logger.info(f"Sending discovery update for device {hostname} ({ip_address})...")
         for callback in self._callbacks[hostname]:
             callback(hostname, ip_address)
 
@@ -42,7 +40,7 @@ class PixeldriverServiceListener(ServiceListener):
             return
 
         if hostname not in self._hosts:
-            _logger.warn("Received service update for unknown device. Treating as new device")
+            logger.warning("Received service update for unknown device. Treating as new device")
             self._hosts[hostname] = ip_address
             self._notify_listeners(hostname, ip_address)
             return
@@ -59,7 +57,7 @@ class PixeldriverServiceListener(ServiceListener):
             return
 
         if hostname not in self._hosts:
-            _logger.warn(f"Received service removal for unknown device {hostname} ({ip_address})")
+            logger.warning(f"Received service removal for unknown device {hostname} ({ip_address})")
             return
 
         del self._hosts[hostname]

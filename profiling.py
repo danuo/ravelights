@@ -1,13 +1,14 @@
-import logging
+import sys
 
+from loguru import logger  # type:ignore
 from ravelights import (
     DeviceLightConfig,
     Profiler,
     RaveLightsApp,
 )
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logger.remove()
+logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> <level>{message}</level>")
 
 device_config = [DeviceLightConfig(n_lights=10, n_leds=144), DeviceLightConfig(n_lights=10, n_leds=144)]
 

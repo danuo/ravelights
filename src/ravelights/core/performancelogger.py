@@ -1,7 +1,6 @@
-import logging
 import time
 
-logger = logging.getLogger(__name__)
+from loguru import logger  # type:ignore
 
 
 class PerformanceLogger:
@@ -16,7 +15,9 @@ class PerformanceLogger:
 
             delayed_frames_this_interval = stats["delayed_frame_counter"] - self._last_delayed_frame_count
             if delayed_frames_this_interval > 0:
-                logger.warn(f"{delayed_frames_this_interval} delayed frames in the last {self._log_interval_seconds} s")
+                logger.warning(
+                    f"{delayed_frames_this_interval} delayed frames in the last {self._log_interval_seconds} s"
+                )
 
             # Reset interval
             self._last_log_seconds = time.time()

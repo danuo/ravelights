@@ -1,11 +1,9 @@
-import logging
 import queue
 import threading
 
 import serial
+from loguru import logger  # type:ignore
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
-
-logger = logging.getLogger(__name__)
 
 
 class ArtnetSerialTransmitter(ArtnetTransmitter):

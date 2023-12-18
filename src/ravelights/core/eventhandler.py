@@ -1,14 +1,12 @@
-import logging
 from typing import TYPE_CHECKING, Any
 
+from loguru import logger  # type:ignore
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
-from ravelights.core.settings import Settings, get_default_color_mappings
+from ravelights.core.settings import Settings
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
-
-logger = logging.getLogger(__name__)
 
 
 class EventHandler:

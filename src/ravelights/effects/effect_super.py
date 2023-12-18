@@ -1,8 +1,8 @@
-import logging
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
+from loguru import logger  # type:ignore
 from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
@@ -14,8 +14,6 @@ if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
     from ravelights.core.timehandler import TimeHandler
-
-logger = logging.getLogger(__name__)
 
 
 # todo: move to core

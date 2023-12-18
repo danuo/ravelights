@@ -1,20 +1,17 @@
-import logging
 from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
+from loguru import logger  # type:ignore
 from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
 from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.timehandler import TimeHandler
 from ravelights.core.utils import StrEnum
-from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
-
-logger = logging.getLogger(__name__)
 
 
 class MusicStyles(StrEnum):

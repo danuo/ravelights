@@ -1,12 +1,10 @@
-import logging
 import time
 
+from loguru import logger  # type:ignore
 from ravelights.core.bpmhandler import BeatState
 from ravelights.core.generator_super import Generator, Pattern
 from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.effects.effect_super import EffectWrapper
-
-logger = logging.getLogger(__name__)
 
 
 class Profiler:

@@ -1,7 +1,7 @@
-import logging
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Type, cast
 
+from loguru import logger  # type:ignore
 from ravelights.core.custom_typing import GeneratorMeta
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
@@ -12,8 +12,6 @@ if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
     from ravelights.core.patternscheduler import PatternScheduler
     from ravelights.core.ravelights_app import RaveLightsApp
-
-logger = logging.getLogger(__name__)
 
 
 def get_names_and_weights(generators: list[str], keywords: Optional[list[str]] = None) -> tuple[list[str], list[float]]:
