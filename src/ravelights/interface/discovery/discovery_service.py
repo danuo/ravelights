@@ -1,11 +1,7 @@
-import logging
-
+from loguru import logger  # type:ignore
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
 from ravelights.interface.discovery.pixeldriver_service_listener import PixeldriverServiceListener
 from zeroconf import ServiceBrowser, Zeroconf
-
-_logger = logging.getLogger(__name__)
-
 
 _zeroconf: Zeroconf | None = None
 _service_browser: ServiceBrowser | None = None
@@ -42,14 +38,14 @@ def start() -> None:
     global _zeroconf, _service_browser
 
     if _zeroconf is not None and _service_browser is not None:
-        _logger.warning("Discovery service already running. Stopping first before starting again...")
+        logger.warning("Discovery service already running. Stopping first before starting again...")
         stop()
 
     _zeroconf = Zeroconf()
     _service_browser = ServiceBrowser(
         zc=_zeroconf, type_=["_artnet._udp.local.", "_http._tcp.local."], listener=_service_listener
     )
-    _logger.info("Started pixeldriver discovery service")
+    logger.info("Started pixeldriver discovery service")
 
 
 def stop() -> None:
@@ -64,4 +60,4 @@ def stop() -> None:
     _service_browser = None
     _zeroconf = None
 
-    _logger.info("Stopped pixeldriver discovery service")
+    logger.info("Stopped pixeldriver discovery service")

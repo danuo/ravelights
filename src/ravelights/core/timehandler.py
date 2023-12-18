@@ -1,15 +1,12 @@
-import logging
 import time
 from collections import deque
 from typing import TYPE_CHECKING
 
+from loguru import logger  # type:ignore
 from ravelights.core.performancelogger import PerformanceLogger
 
 if TYPE_CHECKING:
     from ravelights.core.settings import Settings
-
-
-logger = logging.getLogger(__name__)
 
 
 class TimeHandler:

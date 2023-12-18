@@ -1,9 +1,7 @@
-import logging
 import socket
 
+from loguru import logger  # type:ignore
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
-
-logger = logging.getLogger(__name__)
 
 
 class ArtnetUdpTransmitter(ArtnetTransmitter):
@@ -21,6 +19,6 @@ class ArtnetUdpTransmitter(ArtnetTransmitter):
         self._ip_address = ip_address
 
         if ip_address is None:
-            logger.warn("Artnet transmission disabled until valid IP address is set")
+            logger.warning("Artnet transmission disabled until valid IP address is set")
         else:
             logger.info(f"Artnet transmission to {ip_address} enabled")

@@ -1,6 +1,7 @@
 import argparse
-import logging
+import sys
 
+from loguru import logger  # type:ignore
 from ravelights import (
     ArtnetUdpTransmitter,
     ColorProfiles,
@@ -12,8 +13,8 @@ from ravelights import (
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logger.remove()
+logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> <level>{message}</level>")
 
 # ─── Argparse ─────────────────────────────────────────────────────────────────
 

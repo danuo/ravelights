@@ -1,18 +1,16 @@
 import colorsys
-import logging
 import random
 from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
 
 import numpy as np
+from loguru import logger  # type:ignore
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pid import PIDController, PIDSpeeds
 from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:
     from ravelights.core.settings import Settings
-
-logger = logging.getLogger(__name__)
 
 
 COLOR_TRANSITION_SPEEDS = (PIDSpeeds.INSTANT, PIDSpeeds.FAST, PIDSpeeds.MEDIUM, PIDSpeeds.SLOW)

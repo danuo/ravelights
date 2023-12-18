@@ -1,10 +1,8 @@
 import json
-import logging
 from typing import Optional
 
 import requests
-
-logger = logging.getLogger(__name__)
+from loguru import logger  # type:ignore
 
 
 class RestClient:

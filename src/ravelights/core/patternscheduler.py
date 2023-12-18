@@ -1,6 +1,6 @@
-import logging
 from typing import TYPE_CHECKING, cast
 
+from loguru import logger  # type:ignore
 from ravelights.configs.components import (
     BlueprintPlace,
     BlueprintSel,
@@ -20,9 +20,6 @@ from ravelights.core.utils import p
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
-
-
-logger = logging.getLogger(__name__)
 
 
 class PatternScheduler:
