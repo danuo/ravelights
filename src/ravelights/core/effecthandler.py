@@ -117,7 +117,7 @@ class EffectHandler:
         assert False
         effect_name = instruction.effect_name
         if effect_name is None:
-            print("todo: implement")
+            logger.debug("todo: implement")
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
@@ -126,9 +126,9 @@ class EffectHandler:
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         effect_wrapper.draw_mode = self.settings.effect_draw_mode
         effect_wrapper.reset(**kwargs)  # type: ignore
-        print(self.effect_queues)
+        logger.debug(self.effect_queues)
         self.effect_queues[timeline_level].append(effect_wrapper)
-        print(self.effect_queues)
+        logger.debug(self.effect_queues)
         self.root.refresh_ui(sse_event="effect")
 
     def effect_change_draw(self, effect: str | EffectWrapper, timeline_level: int):

@@ -140,7 +140,7 @@ class SettingsAPIResource(Resource):
     def put(self):
         receive_data: dict[str, Any] = request.get_json()
         if isinstance(receive_data, dict):
-            print(receive_data)
+            logger.debug(receive_data)
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204
 
@@ -212,7 +212,7 @@ class EffectAPIResource(Resource):
 
     def put(self):
         receive_data = request.get_json()
-        print(receive_data)
+        logger.debug(receive_data)
         if isinstance(receive_data, dict):
             self.eventhandler.add_to_modification_queue(receive_data=receive_data)
         return "", 204

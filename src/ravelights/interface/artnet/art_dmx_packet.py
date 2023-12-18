@@ -1,3 +1,4 @@
+from loguru import logger
 from plum import bigendian, littleendian
 from plum.bigendian import uint8
 from plum.bytes import BytesX
@@ -53,5 +54,5 @@ class ArtDmxPacket(ArtDmxPacketPlum):
 
     def output_data(self):
         buffer, dump = pack_and_dump(self)
-        print(buffer)
-        print(dump)
+        logger.debug(buffer)
+        logger.debug(dump)
