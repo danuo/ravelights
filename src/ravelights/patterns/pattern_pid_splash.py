@@ -1,11 +1,11 @@
 import random
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
+from ravelights.core.timehandler import BeatStatePattern
 from ravelights.core.utils import lerp
 
 
@@ -52,7 +52,7 @@ class PatternPidSplash(Pattern):
         elif self.counter_frames == 1:
             intensity = 0.6
         else:
-            intensity = 1.0 - self.settings.beat_progress
+            intensity = 1.0 - self.timehandler.beat_progress
         self.counter_frames += 1
         # dynamic kd
         self.pid.kp = lerp(self.settings.global_energy, 0.1, 1.0)

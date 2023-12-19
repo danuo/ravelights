@@ -18,7 +18,7 @@ class DimmerSine(Dimmer):
         ...
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]):
-        x = self.settings.bpmhandler.get_beat_progress_n(self.frequency)
+        x = self.timehandler.get_beat_progress_n(self.frequency)
         intensity = cos_mapper(x)
         matrix = in_matrix * intensity
         return matrix

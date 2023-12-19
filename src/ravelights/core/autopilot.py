@@ -2,11 +2,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import numpy as np
-from loguru import logger  # type:ignore
-from ravelights.core.bpmhandler import BeatStatePattern
+from loguru import logger
 from ravelights.core.colorhandler import Color, ColorHandler
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
+from ravelights.core.timehandler import BeatStatePattern
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
@@ -162,7 +162,7 @@ class AutoPilot:
             return None
 
         beat_pattern = BeatStatePattern(loop_length=self.settings.settings_autopilot["autopilot_loop_length"])
-        if not beat_pattern.is_match(self.settings.beat_state):
+        if not beat_pattern.is_match(self.timehandler.beat_state):
             return None
 
         logger.info("run randomize routine")

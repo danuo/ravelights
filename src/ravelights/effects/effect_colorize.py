@@ -1,7 +1,6 @@
 import random
 
 import numpy as np
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.effects.effect_super import Effect
@@ -43,7 +42,7 @@ class EffectColorize(Effect):
         self.roll += 1
 
         # get index
-        beat_state = self.settings.beat_state
+        beat_state = self.timehandler.beat_state
         n_beats = beat_state.n_beats % 2
         quarter = beat_state.string_quarters
 

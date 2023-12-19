@@ -1,5 +1,4 @@
 import numpy as np
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer
@@ -23,7 +22,7 @@ class DimmerSideswipe(Dimmer):
         ...
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
-        progress = self.settings.bpmhandler.get_beat_progress_n(self.frequency)
+        progress = self.timehandler.get_beat_progress_n(self.frequency)
 
         mask: ArrayFloat = self.get_float_matrix_2d_mono()
         n = int(progress * self.n_leds)
