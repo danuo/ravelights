@@ -55,7 +55,7 @@ class VfilterMapPropagate(Vfilter):
     def reset(self):
         ...
 
-    def on_trigger(self):
+    def on_trigger(self):  #
         if self.mode == 0:
             light_indices_list = LightSequence.left_to_right(self.n_lights)
         elif self.mode == 1:
@@ -70,7 +70,6 @@ class VfilterMapPropagate(Vfilter):
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         total_out_intensity = np.zeros(self.n_lights)
-        # output_intensity[2] = 1.5
 
         for prop in self.props:
             out_intensity = prop.get_output_intensity()
