@@ -5,6 +5,7 @@ from ravelights.core.bpmhandler import BeatStatePattern
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
+from ravelights.core.utils import LightSequence
 
 
 class Propagation:
@@ -29,6 +30,17 @@ class Propagation:
 
 class VfilterMapPropagate(Vfilter):
     def init(self) -> None:
+        if self.version == 0:
+            self.mode = random.choice([0, 1, 2, 3])
+        elif self.version == 1:
+            self.mode = 0
+        elif self.version == 2:
+            self.mode = 1
+        elif self.version == 3:
+            self.mode = 2
+        elif self.version == 4:
+            self.mode = 3
+
         self.possible_triggers = [
             BeatStatePattern(loop_length=1),
         ]
@@ -44,8 +56,17 @@ class VfilterMapPropagate(Vfilter):
         ...
 
     def on_trigger(self):
-        x = Propagation(self.n_lights, list(range(self.n_lights)))
-        self.props.append(x)
+        if self.mode == 0:
+            light_indices_list = LightSequence.left_to_right(self.n_lights)
+        elif self.mode == 1:
+            light_indices_list = LightSequence.left_to_right(self.n_lights, reverse=True)
+        if self.mode == 2:
+            light_indices_list = LightSequence.out_to_mid(self.n_lights)
+        elif self.mode == 3:
+            light_indices_list = LightSequence.out_to_mid(self.n_lights, reverse=True)
+
+        for light_indices in light_indices_list:
+            self.props.append(Propagation(self.n_lights, light_indices))
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         total_out_intensity = np.zeros(self.n_lights)
