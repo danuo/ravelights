@@ -38,11 +38,9 @@ def test_light_sequence_left_to_right():
 
 
 def test_light_sequence_out_to_mid():
-    seq = LightSequence()
-
     # test length
     n_items = 5
-    out_to_mid = seq.out_to_mid(n_items)
+    out_to_mid = LightSequence.out_to_mid(n_items)
     assert len(out_to_mid) == 2
     assert len(out_to_mid[0]) == n_items // 2 + 1
     assert len(out_to_mid[1]) == n_items // 2
@@ -50,7 +48,7 @@ def test_light_sequence_out_to_mid():
     assert out_to_mid[0] == [0, 1, 2]
     assert out_to_mid[1] == [3, 4]
 
-    mid_to_out = seq.out_to_mid(n_items, reverse=True)
+    mid_to_out = LightSequence.out_to_mid(n_items, reverse=True)
     assert len(mid_to_out) == 2
     assert len(mid_to_out[0]) == n_items // 2 + 1
     assert len(mid_to_out[1]) == n_items // 2
