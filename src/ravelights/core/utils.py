@@ -47,9 +47,14 @@ class LightSequence:
     @staticmethod
     def out_to_mid(n_lights: int, reverse=False) -> list[list[int]]:
         middle_index = n_lights // 2
-        out_all = list(range(5))
-        out_left = out_all[: middle_index + 1]
-        out_right = out_all[middle_index + 1 :]
+        out_all = list(range(n_lights))
+        if n_lights % 2 == 0:
+            out_left = out_all[:middle_index]
+            out_right = out_all[middle_index:]
+
+        else:  # uneven
+            out_left = out_all[: middle_index + 1]
+            out_right = out_all[middle_index + 1 :]
 
         if reverse:
             out_left.reverse()
