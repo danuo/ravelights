@@ -1,5 +1,6 @@
-import numpy as np
+import random
 
+import numpy as np
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
@@ -7,14 +8,26 @@ from ravelights.core.generator_super import Vfilter
 
 class VfilterTimeDelay(Vfilter):
     def init(self):
-        self.mode = 3  # modes 1,2,3,4 implemented
+        # get mode. modes 1,2,3,4 implemented
+        if self.version == 0:
+            self.mode = random.choice([0, 1, 2, 3])
+        elif self.version == 1:
+            self.mode = 0
+        elif self.version == 2:
+            self.mode = 1
+        elif self.version == 3:
+            self.mode = 2
+        elif self.version == 4:
+            self.mode = 3
+
         self.delay_steps = 3
         self.mem_length = self.n_lights * self.delay_steps + 1
         self.memory_matrix = np.zeros((self.n_leds, self.n_lights, 3, self.mem_length))  # this is 4d, can be 3d too
         self.zero_index = 0
 
     def alternate(self):
-        ...
+        if self.version == 0:
+            self.mode = random.choice([0, 1, 2, 3])
 
     def reset(self):
         self.memory_matrix[...] = 0.0
