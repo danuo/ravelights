@@ -76,7 +76,7 @@ from ravelights.vfilters.vfilter_random_blackout import VfilterRandomBlackout
 from ravelights.vfilters.vfilter_reverb import VfilterReverb
 from ravelights.vfilters.vfilter_rgb_shift import VfilterRgbShift
 from ravelights.vfilters.vfilter_roll_overlay import VfilterRollOverlay
-from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
+from ravelights.vfilters.vfilter_some_first import VfilterMapSomeFirst
 from ravelights.vfilters.vfilter_time_delay import VfilterTimeDelay
 
 
@@ -138,7 +138,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterFlippedColorFuse, dict(name="v_flipped_color_fuse")),
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
     BlueprintGen(VfilterMapAllFirst, dict(name="v_map_all_first")),
-    BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
+    BlueprintGen(VfilterMapSomeFirst, dict(name="v_map_some_first")),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_1", version=0)),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_3", version=1)),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_5", version=2)),
