@@ -65,18 +65,19 @@ from ravelights.patterns.pattern_swiper import PatternSwiper
 from ravelights.thinners.thinner_equidistant import ThinnerEquidistant
 from ravelights.thinners.thinner_random import ThinnerRandom
 from ravelights.thinners.thinner_random_pattern import ThinnerRandomPattern
-from ravelights.vfilters.vfilter_all_first import VfilterAllFirst
+from ravelights.vfilters.vfilter_all_first import VfilterMapAllFirst
 from ravelights.vfilters.vfilter_bw import VfilterBW
 from ravelights.vfilters.vfilter_edgedetect import VfilterEdgedetect
 from ravelights.vfilters.vfilter_flipped_color_fuse import VfilterFlippedColorFuse
 from ravelights.vfilters.vfilter_flipver import VfilterFlipVer
+from ravelights.vfilters.vfilter_map_propagate import VfilterMapPropagate
 from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 from ravelights.vfilters.vfilter_mirror_hor import VfilterMirrorHor
 from ravelights.vfilters.vfilter_random_blackout import VfilterRandomBlackout
 from ravelights.vfilters.vfilter_reverb import VfilterReverb
 from ravelights.vfilters.vfilter_rgb_shift import VfilterRgbShift
 from ravelights.vfilters.vfilter_roll_overlay import VfilterRollOverlay
-from ravelights.vfilters.vfilter_some_first import VfilterSomeFirst
+from ravelights.vfilters.vfilter_some_first import VfilterMapSomeFirst
 from ravelights.vfilters.vfilter_time_delay import VfilterTimeDelay
 
 
@@ -137,15 +138,24 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(VfilterRgbShift, dict(name="v_rgb_shift")),
     BlueprintGen(VfilterFlippedColorFuse, dict(name="v_flipped_color_fuse")),
     BlueprintGen(VfilterMirrorHor, dict(name="v_mirror_hor")),
-    BlueprintGen(VfilterAllFirst, dict(name="v_all_first")),
-    BlueprintGen(VfilterSomeFirst, dict(name="v_some_first")),
+    BlueprintGen(VfilterMapAllFirst, dict(name="v_map_all_first")),
+    BlueprintGen(VfilterMapSomeFirst, dict(name="v_map_some_first")),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_1", version=0)),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_3", version=1)),
     BlueprintGen(VfilterEdgedetect, dict(name="v_edgedetect_5", version=2)),
-    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay", version=2)),
+    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay_random", version=0)),
+    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay_right", version=1)),
+    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay_left", version=2)),
+    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay_double", version=3)),
+    BlueprintGen(VfilterTimeDelay, dict(name="v_time_delay_doubleinv", version=4)),
     BlueprintGen(VfilterReverb, dict(name="v_reverb")),
     BlueprintGen(VfilterRollOverlay, dict(name="v_roll_overlay")),
     BlueprintGen(VfilterRandomBlackout, dict(name="v_random_blackout")),
+    BlueprintGen(VfilterMapPropagate, dict(name="v_map_propagate_random", version=0)),
+    BlueprintGen(VfilterMapPropagate, dict(name="v_map_propagate_left", version=1)),
+    BlueprintGen(VfilterMapPropagate, dict(name="v_map_propagate_right", version=2)),
+    BlueprintGen(VfilterMapPropagate, dict(name="v_map_propagate_mid", version=3)),
+    BlueprintGen(VfilterMapPropagate, dict(name="v_map_propagate_midinv", version=4)),
     BlueprintGen(ThinnerRandomPattern, dict(name="t_random_pattern")),
     BlueprintGen(ThinnerRandom, dict(name="t_random")),
     BlueprintGen(ThinnerEquidistant, dict(name="t_equidistant", weight=1)),

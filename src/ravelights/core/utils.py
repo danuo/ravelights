@@ -35,6 +35,36 @@ class StrEnum(str, Enum):
         return name.lower()
 
 
+class LightSequence:
+    @staticmethod
+    def left_to_right(n_lights: int, reverse=False) -> list[list[int]]:
+        """return left to right"""
+        out_seq = list(range(n_lights))
+        if reverse:
+            out_seq.reverse()
+        return [out_seq]
+
+    @staticmethod
+    def out_to_mid(n_lights: int, reverse=False) -> list[list[int]]:
+        middle_index = n_lights // 2
+        out_all = list(range(n_lights))
+        if n_lights % 2 == 0:
+            out_left = out_all[:middle_index]
+            out_right = out_all[middle_index:]
+            out_right.reverse()
+
+        else:  # uneven
+            out_left = out_all[: middle_index + 1]
+            out_right = out_all[middle_index + 1 :]
+            out_right.reverse()
+
+        if reverse:
+            out_left.reverse()
+            out_right.reverse()
+
+        return [out_left, out_right]
+
+
 def p(chance: float) -> bool:
     return random.random() < chance
 

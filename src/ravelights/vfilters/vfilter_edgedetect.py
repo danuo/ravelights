@@ -1,5 +1,4 @@
 import numpy as np
-
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
@@ -28,17 +27,23 @@ class VfilterEdgedetect(Vfilter):
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         # bw
-        color = np.asanyarray(colors[0])
         bw_matrix_mono = self.bw_matrix(in_matrix)
 
         # get color
-        # todo: cleanup
         rgb_sum = np.sum(in_matrix, axis=-1).reshape((-1))
         max_id = np.argmax(rgb_sum)
-        if rgb_sum[max_id] > 0:
-            color = in_matrix.reshape(-1, 3, order="F")[max_id]
-            color = color / np.max(color)
-            color = np.fmin(1, color)
+        if rgb_sum[max_id] == 0:
+            ## nothing to see
+            return in_matrix
+
+        color = in_matrix.reshape(-1, 3, order="F")
+
+        color_sum = np.sum(color, axis=1)
+
+        divisor = np.max(color, axis=-1)
+        non_zero_divisor = np.fmax(0.0001, divisor)
+
+        color = color / non_zero_divisor[..., None]
 
         # find edge
         roll = np.roll(bw_matrix_mono, shift=1, axis=0)
@@ -46,7 +51,10 @@ class VfilterEdgedetect(Vfilter):
         diff = np.abs(bw_matrix_mono - roll)
 
         if self.version == 0:
-            return self.colorize_matrix(diff, color)
+            # return self.colorize_matrix(diff, color)
+            color = np.array(colors[0])[None, None, :]
+            # return diff[..., None] * color.reshape((self.n_leds, self.n_lights, 1))
+            return diff[..., None] * color
 
         # expand
         self.expansion_matrix[..., 0] = diff
@@ -59,4 +67,8 @@ class VfilterEdgedetect(Vfilter):
             roll[-1] = 0
             self.expansion_matrix[..., 2 * i + 2] = roll  # 2, 4, 6
 
-        return self.colorize_matrix(np.max(self.expansion_matrix, axis=-1), color)
+        bw_out = np.max(self.expansion_matrix, axis=-1)
+
+        color = np.array(colors[0])[None, None, :]
+        # return bw_out[..., None] * color.reshape((self.n_leds, self.n_lights, 3))
+        return bw_out[..., None] * color

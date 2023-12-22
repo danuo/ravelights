@@ -1,5 +1,5 @@
 import pytest
-from ravelights.core.utils import map_value
+from ravelights.core.utils import LightSequence, map_value
 
 
 @pytest.mark.parametrize(
@@ -15,3 +15,79 @@ from ravelights.core.utils import map_value
 )
 def test_eval(expected: float, test_input):
     assert expected == map_value(*test_input)
+
+
+def test_light_sequence_left_to_right_even():
+    seq = LightSequence()
+
+    # test length
+    n_items = 6
+    left_to_right = seq.left_to_right(n_items)
+    assert len(left_to_right) == 1
+    assert len(left_to_right[0]) == n_items
+
+    right_to_left = seq.left_to_right(n_items, reverse=True)
+    assert len(right_to_left[0]) == n_items
+
+    # test content
+
+    assert left_to_right[0] == [0, 1, 2, 3, 4, 5]
+    assert right_to_left[0] == [5, 4, 3, 2, 1, 0]
+
+
+def test_light_sequence_out_to_mid_even():
+    # test length
+    n_items = 6
+    out_to_mid = LightSequence.out_to_mid(n_items)
+    assert len(out_to_mid) == 2
+    assert len(out_to_mid[0]) == n_items // 2
+    assert len(out_to_mid[1]) == n_items // 2
+
+    assert out_to_mid[0] == [0, 1, 2]
+    assert out_to_mid[1] == [5, 4, 3]
+
+    mid_to_out = LightSequence.out_to_mid(n_items, reverse=True)
+    assert len(mid_to_out) == 2
+    assert len(mid_to_out[0]) == n_items // 2
+    assert len(mid_to_out[1]) == n_items // 2
+
+    assert mid_to_out[0] == [2, 1, 0]
+    assert mid_to_out[1] == [3, 4, 5]
+
+
+def test_light_sequence_left_to_right_uneven():
+    seq = LightSequence()
+
+    # test length
+    n_items = 5
+    left_to_right = seq.left_to_right(n_items)
+    assert len(left_to_right) == 1
+    assert len(left_to_right[0]) == n_items
+
+    right_to_left = seq.left_to_right(n_items, reverse=True)
+    assert len(right_to_left[0]) == n_items
+
+    # test content
+
+    assert left_to_right[0] == [0, 1, 2, 3, 4]
+    assert right_to_left[0] == [4, 3, 2, 1, 0]
+
+
+def test_light_sequence_out_to_mid_uneven():
+    # test length
+    n_items = 5
+    out_to_mid = LightSequence.out_to_mid(n_items)
+    assert len(out_to_mid) == 2
+    assert len(out_to_mid[0]) == n_items // 2 + 1
+    assert len(out_to_mid[1]) == n_items // 2
+
+    assert out_to_mid[0] == [0, 1, 2]
+    assert out_to_mid[1] == [4, 3]
+
+    mid_to_out = LightSequence.out_to_mid(n_items, reverse=True)
+    assert len(mid_to_out) == 2
+    assert len(mid_to_out[0]) == n_items // 2 + 1
+    assert len(mid_to_out[1]) == n_items // 2
+
+    assert mid_to_out[0] == [2, 1, 0]
+    assert mid_to_out[1] == [3, 4]

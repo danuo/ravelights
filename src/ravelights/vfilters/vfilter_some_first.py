@@ -5,7 +5,7 @@ from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Vfilter
 
 
-class VfilterSomeFirst(Vfilter):
+class VfilterMapSomeFirst(Vfilter):
     # todo: possible triggers
     def init(self):
         self.on_trigger()
