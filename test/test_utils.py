@@ -45,7 +45,7 @@ def test_light_sequence_out_to_mid_even():
     assert len(out_to_mid[1]) == n_items // 2
 
     assert out_to_mid[0] == [0, 1, 2]
-    assert out_to_mid[1] == [3, 4, 5]
+    assert mid_to_out[1] == [5, 4, 3]
 
     mid_to_out = LightSequence.out_to_mid(n_items, reverse=True)
     assert len(mid_to_out) == 2
@@ -53,7 +53,7 @@ def test_light_sequence_out_to_mid_even():
     assert len(mid_to_out[1]) == n_items // 2
 
     assert mid_to_out[0] == [2, 1, 0]
-    assert mid_to_out[1] == [5, 4, 3]
+    assert out_to_mid[1] == [3, 4, 5]
 
 
 def test_light_sequence_left_to_right_uneven():

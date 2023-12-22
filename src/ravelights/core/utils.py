@@ -51,10 +51,12 @@ class LightSequence:
         if n_lights % 2 == 0:
             out_left = out_all[:middle_index]
             out_right = out_all[middle_index:]
+            out_right.reverse()
 
         else:  # uneven
             out_left = out_all[: middle_index + 1]
             out_right = out_all[middle_index + 1 :]
+            out_right.reverse()
 
         if reverse:
             out_left.reverse()
