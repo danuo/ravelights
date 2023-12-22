@@ -3,7 +3,7 @@ from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
-class VfilterAllFirst(Vfilter):
+class VfilterMapAllFirst(Vfilter):
     def init(self):
         ...
 
