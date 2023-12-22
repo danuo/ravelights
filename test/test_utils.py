@@ -2,7 +2,6 @@ import pytest
 from ravelights.core.utils import LightSequence, map_value
 
 
-@pytest.mark.skip
 @pytest.mark.parametrize(
     "expected, test_input",
     [
