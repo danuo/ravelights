@@ -1,7 +1,10 @@
+import multiprocessing
 from dataclasses import asdict
 
 from loguru import logger  # type:ignore
 from ravelights import DeviceLightConfig, TransmitterConfig
+from ravelights.audio.audio_analyzer_process import audio_analyzer_process
+from ravelights.audio.audio_data import AudioDataProvider
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
@@ -23,6 +26,7 @@ class RaveLightsApp:
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
         transmitter_recipes: list[TransmitterConfig] = [],
+        use_audio: bool = True,
         use_visualizer: bool = False,
         print_stats: bool = False,
         run: bool = True,
@@ -43,12 +47,21 @@ class RaveLightsApp:
             port=webui_port,
         )
 
+        self.use_audio = use_audio
         self.use_visualizer = use_visualizer
         self.print_stats = print_stats
 
-        discovery_service.start()
-
         if run:
+            discovery_service.start()
+
+            if self.use_audio:
+                sender_connection, receiver_connection = multiprocessing.Pipe()
+                self.audio_analyzer_process = multiprocessing.Process(
+                    target=audio_analyzer_process, args=(sender_connection,)
+                )
+                self.audio_analyzer_process.start()
+                self.audio_data = AudioDataProvider(connection=receiver_connection)
+
             if self.use_visualizer:
                 from ravelights.interface.visualizer import Visualizer
 
@@ -82,6 +95,7 @@ class RaveLightsApp:
                 device.rendermodule.get_selected_generator(gen_type).sync_load(in_dict=sync_dict)
 
     def render_frame(self):
+        self.audio_data.collect_audio_data()
         self.settings.before()
         # ─── Apply Inputs ─────────────────────────────────────────────
         self.eventhandler.apply_settings_modifications_queue()
