@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.utils import cos_mapper, p, sign
 from ravelights.vfilters.filter_flimmering import VfilterFlimmering
@@ -12,10 +12,10 @@ from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
-    from ravelights.core.pixelmatrix import PixelMatrix
+    from ravelights.core.pixel_matrix import PixelMatrix
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
-    from ravelights.core.timehandler import TimeHandler
+    from ravelights.core.time_handler import TimeHandler
 
 
 class LightObject(ABC):

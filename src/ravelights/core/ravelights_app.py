@@ -4,15 +4,20 @@ from loguru import logger
 from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
-from ravelights.core.effecthandler import EffectHandler
-from ravelights.core.eventhandler import EventHandler
+from ravelights.core.effect_handler import EffectHandler
+from ravelights.core.event_handler import EventHandler
 from ravelights.core.meta_handler import MetaHandler
-from ravelights.core.patternscheduler import PatternScheduler
+from ravelights.core.pattern_scheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
-from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterVisualizer, DataRouterWebsocket
+from ravelights.core.time_handler import TimeHandler
+from ravelights.interface.data_router import (
+    DataRouter,
+    DataRouterTransmitter,
+    DataRouterVisualizer,
+    DataRouterWebsocket,
+)
 from ravelights.interface.discovery import discovery_service
-from ravelights.interface.restapi import RestAPI
+from ravelights.interface.rest_api import RestAPI
 
 
 class RaveLightsApp:

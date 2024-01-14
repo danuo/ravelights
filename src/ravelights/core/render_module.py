@@ -3,9 +3,9 @@ from typing import TYPE_CHECKING, Literal, Optional, cast, overload
 from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
-from ravelights.core.pixelmatrix import PixelMatrix
+from ravelights.core.pixel_matrix import PixelMatrix
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import BeatStatePattern, TimeHandler
+from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device

@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, Any
 
 from loguru import logger
-from ravelights.core.effecthandler import EffectHandler
-from ravelights.core.patternscheduler import PatternScheduler
+from ravelights.core.effect_handler import EffectHandler
+from ravelights.core.pattern_scheduler import PatternScheduler
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp

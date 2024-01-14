@@ -3,7 +3,7 @@ import time
 from loguru import logger
 from ravelights.core.generator_super import Generator, Pattern
 from ravelights.core.ravelights_app import RaveLightsApp
-from ravelights.core.timehandler import BeatState
+from ravelights.core.time_handler import BeatState
 from ravelights.effects.effect_super import EffectWrapper
 
 

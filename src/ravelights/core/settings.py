@@ -3,10 +3,10 @@ from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
 from loguru import logger
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
+from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
-from ravelights.core.timehandler import BeatStatePattern
+from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:

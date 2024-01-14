@@ -8,7 +8,7 @@ import numpy.typing as npt
 from loguru import logger
 
 if TYPE_CHECKING:
-    from ravelights.core.colorhandler import Color
+    from ravelights.core.color_handler import Color
 
 T = TypeVar("T")
 _S = TypeVar("_S", bound="StrEnum")

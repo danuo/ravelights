@@ -1,4 +1,4 @@
-from ravelights.core.colorhandler import Color, ColorHandler
+from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import Array
 from ravelights.core.generator_super import Vfilter
 

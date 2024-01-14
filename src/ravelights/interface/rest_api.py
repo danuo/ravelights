@@ -8,9 +8,9 @@ from flask import Flask, Response, jsonify, make_response, request, send_from_di
 from flask_restful import Api, Resource, fields, marshal_with  # type: ignore
 from flask_socketio import SocketIO, emit  # type: ignore
 from loguru import logger
-from ravelights.core.eventhandler import EventHandler
+from ravelights.core.event_handler import EventHandler
 from ravelights.core.meta_handler import MetaHandler
-from ravelights.core.patternscheduler import PatternScheduler
+from ravelights.core.pattern_scheduler import PatternScheduler
 from ravelights.core.settings import Settings
 
 if TYPE_CHECKING:

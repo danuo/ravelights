@@ -3,11 +3,11 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
-from ravelights.core.instructionhandler import InstructionHandler
-from ravelights.core.pixelmatrix import PixelMatrix
-from ravelights.core.rendermodule import RenderModule
+from ravelights.core.instruction_handler import InstructionHandler
+from ravelights.core.pixel_matrix import PixelMatrix
+from ravelights.core.render_module import RenderModule
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import TimeHandler
 from ravelights.interface.color_remap import ColorProfiles, ColorProfilesFunctions
 
 if TYPE_CHECKING:

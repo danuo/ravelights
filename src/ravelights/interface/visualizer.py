@@ -5,9 +5,9 @@ import pygame
 from ravelights.configs.visualizer_configurations import configurations
 from ravelights.core.device import Device
 from ravelights.core.device_shared import DeviceLightConfig
-from ravelights.core.eventhandler import EventHandler
+from ravelights.core.event_handler import EventHandler
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import BeatStatePattern, TimeHandler
+from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp

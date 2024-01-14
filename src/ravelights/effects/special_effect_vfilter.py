@@ -1,7 +1,7 @@
 import random
 from typing import TYPE_CHECKING
 
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import Array
 from ravelights.core.generator_super import Vfilter
 from ravelights.effects.effect_super import Effect

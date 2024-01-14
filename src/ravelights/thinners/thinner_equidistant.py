@@ -1,8 +1,8 @@
 import numpy as np
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import Array
 from ravelights.core.generator_super import Thinner
-from ravelights.core.timehandler import BeatStatePattern
+from ravelights.core.time_handler import BeatStatePattern
 
 
 class ThinnerEquidistant(Thinner):

@@ -3,17 +3,17 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 from loguru import logger
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.core.pixelmatrix import PixelMatrix
-from ravelights.core.timehandler import BeatStatePattern
+from ravelights.core.pixel_matrix import PixelMatrix
+from ravelights.core.time_handler import BeatStatePattern
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
-    from ravelights.core.timehandler import TimeHandler
+    from ravelights.core.time_handler import TimeHandler
 
 
 # todo: move to core

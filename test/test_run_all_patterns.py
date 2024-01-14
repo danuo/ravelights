@@ -2,7 +2,7 @@ import random
 
 from loguru import logger
 from ravelights.core.ravelights_app import RaveLightsApp
-from ravelights.core.timehandler import BeatStatePattern
+from ravelights.core.time_handler import BeatStatePattern
 
 
 def test_all_patterns():

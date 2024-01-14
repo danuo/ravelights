@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from numpy.typing import NDArray
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.utils import p
 

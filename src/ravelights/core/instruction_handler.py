@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, cast
 
 from ravelights.core.instruction import InstructionDevice
-from ravelights.core.instructionqueue import InstructionQueue
-from ravelights.core.pixelmatrix import PixelMatrix
-from ravelights.core.rendermodule import RenderModule
+from ravelights.core.instruction_queue import InstructionQueue
+from ravelights.core.pixel_matrix import PixelMatrix
+from ravelights.core.render_module import RenderModule
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import TimeHandler
 
 if TYPE_CHECKING:
     from ravelights import RaveLightsApp

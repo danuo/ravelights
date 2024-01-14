@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional, cast
 
 from loguru import logger
-from ravelights.core.performancelogger import PerformanceLogger
+from ravelights.core.performance_logger import PerformanceLogger
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:

@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 from loguru import logger
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.core.timehandler import BeatStatePattern, TimeHandler
+from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords

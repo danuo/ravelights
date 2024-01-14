@@ -10,7 +10,7 @@ from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
-    from ravelights.core.patternscheduler import PatternScheduler
+    from ravelights.core.pattern_scheduler import PatternScheduler
     from ravelights.core.ravelights_app import RaveLightsApp
 
 

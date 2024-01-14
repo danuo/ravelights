@@ -5,9 +5,9 @@ from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators, create_from_blueprint
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect
-from ravelights.core.instructionqueue import InstructionQueue
+from ravelights.core.instruction_queue import InstructionQueue
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import TimeHandler
 from ravelights.effects.effect_super import Effect, EffectWrapper
 from ravelights.effects.special_effect_vfilter import SpecialEffectVfilter
 
