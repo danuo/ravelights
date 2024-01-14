@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Type, cast
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import GeneratorMeta
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings

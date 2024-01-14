@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device

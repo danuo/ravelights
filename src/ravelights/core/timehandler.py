@@ -3,7 +3,7 @@ from collections import deque
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional, cast
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.performancelogger import PerformanceLogger
 from ravelights.core.utils import p
 

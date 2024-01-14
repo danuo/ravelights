@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import DefaultDict
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
 from zeroconf import ServiceInfo, ServiceListener, Zeroconf
 

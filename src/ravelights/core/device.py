@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.instructionhandler import InstructionHandler
 from ravelights.core.pixelmatrix import PixelMatrix

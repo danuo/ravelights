@@ -2,7 +2,7 @@ import json
 from typing import Optional
 
 import requests
-from loguru import logger  # type:ignore
+from loguru import logger
 
 
 class RestClient:

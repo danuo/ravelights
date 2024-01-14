@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators, create_from_blueprint
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect

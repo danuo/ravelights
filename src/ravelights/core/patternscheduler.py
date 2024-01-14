@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, cast
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.configs.components import (
     BlueprintPlace,
     BlueprintSel,

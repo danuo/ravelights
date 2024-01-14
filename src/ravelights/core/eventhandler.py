@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings

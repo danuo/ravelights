@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional, Sequence, Type, TypeVar
 
 import numpy as np
 import numpy.typing as npt
-from loguru import logger  # type:ignore
+from loguru import logger
 
 if TYPE_CHECKING:
     from ravelights.core.colorhandler import Color

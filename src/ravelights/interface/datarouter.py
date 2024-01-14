@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 import numpy as np
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8, LightIdentifier, Transmitter
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
