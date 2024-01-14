@@ -1,11 +1,11 @@
-from typing import TYPE_CHECKING, Literal, Optional, Type, cast, overload
+from typing import TYPE_CHECKING, Literal, Optional, cast, overload
 
-from loguru import logger  # type:ignore
-from ravelights.core.bpmhandler import BeatStatePattern
+from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixelmatrix import PixelMatrix
 from ravelights.core.settings import Settings
+from ravelights.core.timehandler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
@@ -13,9 +13,10 @@ if TYPE_CHECKING:
 
 
 class RenderModule:
-    def __init__(self, root: "RaveLightsApp", device: "Device"):
+    def __init__(self, root: "RaveLightsApp", device: "Device") -> None:
         self.root = root
         self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.timehandler
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
         self.device_automatic_timeline_level = 0
@@ -23,14 +24,17 @@ class RenderModule:
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
         self.generators_dict: dict[str, Pattern | Vfilter | Thinner | Dimmer] = dict()
 
-    def get_selected_trigger(self, gen_type: str | Type[Generator], level: Optional[int] = None) -> BeatStatePattern:
-        identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
+    def get_selected_trigger(
+        self,
+        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        level: Optional[int] = None,
+    ) -> BeatStatePattern:
         if level is None:
             level = self.device_automatic_timeline_level
-        return self.settings.triggers[identifier][level]
+        return self.settings.triggers[gen_type][level]
 
     @overload
-    def get_selected_generator(self, gen_type: Type[Pattern], timeline_level: Optional[int] = None) -> Pattern:
+    def get_selected_generator(self, gen_type: Literal["pattern"], timeline_level: Optional[int] = None) -> Pattern:
         ...
 
     @overload
@@ -38,32 +42,26 @@ class RenderModule:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Type[Vfilter], timeline_level: Optional[int] = None) -> Vfilter:
+    def get_selected_generator(self, gen_type: Literal["vfilter"], timeline_level: Optional[int] = None) -> Vfilter:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Type[Dimmer], timeline_level: Optional[int] = None) -> Dimmer:
+    def get_selected_generator(self, gen_type: Literal["dimmer"], timeline_level: Optional[int] = None) -> Dimmer:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Type[Thinner], timeline_level: Optional[int] = None) -> Thinner:
-        ...
-
-    @overload
-    def get_selected_generator(
-        self, gen_type: str, timeline_level: Optional[int] = None
-    ) -> Pattern | Vfilter | Dimmer | Thinner:
+    def get_selected_generator(self, gen_type: Literal["thinner"], timeline_level: Optional[int] = None) -> Thinner:
         ...
 
     def get_selected_generator(
         self,
-        gen_type: str | Type[Pattern] | Type[Vfilter] | Type[Dimmer] | Type[Thinner],
+        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
-        identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        gen_name = self.settings.selected[identifier][timeline_level]
+        # identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
+        gen_name = self.settings.selected[gen_type][timeline_level]
         return self.get_generator_by_name(gen_name)
 
     def get_generator_by_name(self, gen_name: str) -> Pattern | Vfilter | Thinner | Dimmer:
@@ -95,37 +93,37 @@ class RenderModule:
 
         # ------------------------------ get generators ------------------------------ #
         # fmt: off
-        pattern: Pattern = self.get_selected_generator(gen_type=Pattern, timeline_level=timeline_level)
+        pattern: Pattern = self.get_selected_generator(gen_type="pattern", timeline_level=timeline_level) # type: ignore[type-abstract]
         pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
-        vfilter: Vfilter = self.get_selected_generator(gen_type=Vfilter, timeline_level=timeline_level_vfilter)
-        thinner: Thinner = self.get_selected_generator(gen_type=Thinner, timeline_level=timeline_level_thinner)
-        dimmer: Dimmer = self.get_selected_generator(gen_type=Dimmer, timeline_level=timeline_level_dimmer)
+        vfilter: Vfilter = self.get_selected_generator(gen_type="vfilter", timeline_level=timeline_level_vfilter) # type: ignore[type-abstract]
+        thinner: Thinner = self.get_selected_generator(gen_type="thinner", timeline_level=timeline_level_thinner) # type: ignore[type-abstract]
+        dimmer: Dimmer = self.get_selected_generator(gen_type="dimmer", timeline_level=timeline_level_dimmer) # type: ignore[type-abstract]
         # fmt: on
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
             thinner = cast(Thinner, self.get_generator_by_name("t_random"))
-            if self.settings.beat_state.is_beat:
+            if self.timehandler.beat_state.is_beat:
                 thinner.on_trigger()
         if pattern.p_add_thinner == 0.0:
             thinner = cast(Thinner, self.get_generator_by_name("t_none"))
 
         if pattern.p_add_dimmer == 1.0 and dimmer.name == "d_none":
             dimmer = cast(Dimmer, self.get_generator_by_name("d_decay_fast"))
-            if self.settings.beat_state.is_beat:
+            if self.timehandler.beat_state.is_beat:
                 dimmer.on_trigger()
         if pattern.p_add_dimmer == 0.0:
             dimmer = cast(Dimmer, self.get_generator_by_name("d_none"))
 
         # ------------------------------- check trigger ------------------------------ #
-        if self.get_selected_trigger(gen_type=Pattern).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type="pattern").is_match(self.timehandler.beat_state, self.device):
             pattern.on_trigger()
-        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.timehandler.beat_state, self.device):
             pattern_sec.on_trigger()
-        if self.get_selected_trigger(gen_type=Vfilter).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type="vfilter").is_match(self.timehandler.beat_state, self.device):
             vfilter.on_trigger()
-        if self.get_selected_trigger(gen_type=Thinner).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type="thinner").is_match(self.timehandler.beat_state, self.device):
             thinner.on_trigger()
-        if self.get_selected_trigger(gen_type=Dimmer).is_match(self.settings.beat_state, self.device):
+        if self.get_selected_trigger(gen_type="dimmer").is_match(self.timehandler.beat_state, self.device):
             dimmer.on_trigger()
 
         # ---------------------------------- colors ---------------------------------- #
@@ -177,9 +175,9 @@ class RenderModule:
         # ─── Send To Pixelmatrix ──────────────────────────────────────
         self.pixelmatrix.set_matrix_float(matrix)
 
-    def register_generators(self, generators: list[Pattern | Vfilter | Dimmer | Thinner]):
-        for g in generators:
-            self.generators_dict.update({g.name: g})
+    def register_generators(self, generators: list[Pattern | Vfilter | Dimmer | Thinner]) -> None:
+        for generator in generators:
+            self.generators_dict.update({generator.name: generator})
 
     def find_generator(self, name: str) -> Pattern | Vfilter | Dimmer | Thinner:
         return self.generators_dict[name]

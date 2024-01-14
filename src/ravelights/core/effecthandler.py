@@ -32,9 +32,9 @@ class EffectHandler:
 
     def __post_init__(self) -> None:
         self.settings = self.root.settings
-        self.timehandler = self.root.settings.timehandler
+        self.timehandler = self.root.timehandler
         self.devices: list[Device] = self.root.devices
-        self.instruction_queue = InstructionQueue(settings=self.settings)
+        self.instruction_queue = InstructionQueue(root=self.root)
         self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
         self.build_effectwrappers_from_blueprints()
         self.build_effectwrappers_from_vfilters()
@@ -81,7 +81,7 @@ class EffectHandler:
         for effect_wrapper in self.effective_effect_queue:
             # ---------------------------------- trigger --------------------------------- #
             if effect_wrapper.trigger:
-                if effect_wrapper.trigger.is_match(self.settings.beat_state):
+                if effect_wrapper.trigger.is_match(self.timehandler.beat_state):
                     effect_wrapper.on_trigger()
             # ----------------------------------- sync ----------------------------------- #
             effect_wrapper.sync_effects()

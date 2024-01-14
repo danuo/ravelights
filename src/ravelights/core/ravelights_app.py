@@ -9,6 +9,7 @@ from ravelights.core.eventhandler import EventHandler
 from ravelights.core.methandler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
+from ravelights.core.timehandler import TimeHandler
 from ravelights.interface.datarouter import DataRouter, DataRouterTransmitter, DataRouterVisualizer, DataRouterWebsocket
 from ravelights.interface.discovery import discovery_service
 from ravelights.interface.restapi import RestAPI
@@ -28,6 +29,7 @@ class RaveLightsApp:
         run: bool = True,
     ):
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
+        self.timehandler = TimeHandler(root=self)
         self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
@@ -82,7 +84,8 @@ class RaveLightsApp:
                 device.rendermodule.get_selected_generator(gen_type).sync_load(in_dict=sync_dict)
 
     def render_frame(self):
-        self.settings.before()
+        self.timehandler.before()
+        self.settings.color_engine.before()
         # ─── Apply Inputs ─────────────────────────────────────────────
         self.eventhandler.apply_settings_modifications_queue()
         # ─── Prepare ──────────────────────────────────────────────────
@@ -99,14 +102,14 @@ class RaveLightsApp:
         self.effecthandler.run_after()
         # ─── Output ───────────────────────────────────────────────────
         if self.print_stats:
-            self.settings.timehandler.print_performance_stats()
+            self.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
         matrices_processed_int = [device.get_matrix_processed_int() for device in self.devices]
         matrices_int = [device.get_matrix_int() for device in self.devices]
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_processed_int, matrices_int)
         # ─── After ────────────────────────────────────────────────────
-        self.settings.after()
+        self.timehandler.after()
 
     def refresh_ui(self, sse_event: str):
         if hasattr(self, "rest_api"):

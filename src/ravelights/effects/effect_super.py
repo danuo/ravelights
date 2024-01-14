@@ -2,11 +2,11 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-from loguru import logger  # type:ignore
-from ravelights.core.bpmhandler import BeatStatePattern
+from loguru import logger
 from ravelights.core.colorhandler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pixelmatrix import PixelMatrix
+from ravelights.core.timehandler import BeatStatePattern
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
@@ -135,7 +135,7 @@ class EffectWrapper:
             if isinstance(limit_quarters, str):
                 self.limit_frames = limit_quarters
             else:
-                self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.settings.fps)
+                self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.timehandler.fps)
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
         if self.mode == "loopquarters":
@@ -172,7 +172,7 @@ class EffectWrapper:
         """
 
         if self.has_started and self.mode == "loopquarters":
-            if self.settings.beat_state.is_quarter:
+            if self.timehandler.beat_state.is_quarter:
                 if self.quarters_pattern_binary[self.counter_quarters]:
                     self.counter_frames = 0
 
@@ -196,7 +196,7 @@ class EffectWrapper:
     def checkactive_matrix_loopquarters(self) -> bool:
         # search first beat before start
         if not self.has_started:
-            if self.settings.beat_state.is_beat:
+            if self.timehandler.beat_state.is_beat:
                 self.has_started = True
             else:
                 return False
@@ -216,7 +216,7 @@ class EffectWrapper:
 
         if self.has_started:
             self.counter_frames += 1
-            if self.settings.beat_state.is_quarter:
+            if self.timehandler.beat_state.is_quarter:
                 self.counter_quarters += 1
                 counter_beats = self.counter_quarters // 4
                 if counter_beats > 0 and counter_beats % self.loop_length_beats == 0:
@@ -290,7 +290,7 @@ class Effect(ABC):
     ):
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.settings.timehandler
+        self.timehandler: TimeHandler = self.root.timehandler
         self.device = device
         self.device_id = device.device_id
         self.init_pixelmatrix(self.device.pixelmatrix)

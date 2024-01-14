@@ -4,6 +4,7 @@ from loguru import logger  # type:ignore
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
+from ravelights.core.timehandler import TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -13,6 +14,7 @@ class EventHandler:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.timehandler
         self.devices = self.root.devices
         self.patternscheduler: PatternScheduler = self.root.patternscheduler
         self.effecthandler: EffectHandler = self.root.effecthandler
@@ -53,10 +55,10 @@ class EventHandler:
                         function = getattr(generator, command)
                         function()
                 case {"action": "set_sync"}:
-                    self.settings.bpmhandler.bpm_sync()
+                    self.timehandler.bpm_sync()
                 case {"action": "adjust_sync", "value": value}:
                     assert isinstance(value, float)
-                    self.settings.timehandler.time_sync += value
+                    self.timehandler.time_sync += value
                 case {"action": "reset_color_mappings"}:
                     self.settings.reset_color_mapping()
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
