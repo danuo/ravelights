@@ -19,6 +19,20 @@ def list_devices():
     print("\nUse the number in the square brackets as device index")
 
 
+# use this pattern instead of whie True. update with our code:
+def process_audio(in_data, frame_count, time_info, status):
+    signal = np.frombuffer(in_data, dtype=np.float32)
+    beat = tempo_detection(signal)
+    # level = aubio.level_lin(aubio.fvec(signal))
+    dbs = aubio.db_spl(aubio.fvec(signal))
+
+    if beat[0]:
+        pass
+        # send_message(tempo_detection.get_bpm())
+
+    return None, pyaudio.paContinue  # Tell pyAudio to continue
+
+
 # Rate to sample from the audio stream
 sample_rate = 44100
 
@@ -46,6 +60,7 @@ stream = p.open(
     input=True,
     frames_per_buffer=hop_size,
     input_device_index=None,  # make this selectable later
+    # stream_callback=process_audio,  # use this later for cleaner code
 )
 
 print("*** starting recording")
