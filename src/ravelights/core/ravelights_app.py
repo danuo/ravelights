@@ -6,7 +6,7 @@ from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
 from ravelights.core.effecthandler import EffectHandler
 from ravelights.core.eventhandler import EventHandler
-from ravelights.core.methandler import MetaHandler
+from ravelights.core.meta_handler import MetaHandler
 from ravelights.core.patternscheduler import PatternScheduler
 from ravelights.core.settings import Settings
 from ravelights.core.timehandler import TimeHandler
