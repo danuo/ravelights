@@ -1,11 +1,17 @@
 from multiprocessing.connection import PipeConnection
+from typing import Optional
 
 
 class AudioDataProvider:
-    def __init__(self, connection: PipeConnection):
+    connection: Optional[PipeConnection] = None
+
+    def set_connection(self, connection: PipeConnection = None):
         self.connection = connection
 
     def collect_audio_data(self):
+        if self.connection is None:
+            return
+
         # all data in the pipe until pipe is empty
         self.data = []
         while self.connection.poll():
