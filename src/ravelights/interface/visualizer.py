@@ -3,12 +3,11 @@ from typing import TYPE_CHECKING
 import numpy as np
 import pygame
 from ravelights.configs.visualizer_configurations import configurations
-from ravelights.core.bpmhandler import BeatStatePattern, BPMhandler
 from ravelights.core.device import Device
 from ravelights.core.device_shared import DeviceLightConfig
-from ravelights.core.eventhandler import EventHandler
+from ravelights.core.event_handler import EventHandler
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -27,14 +26,13 @@ class Visualizer:
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
         self.eventhandler: EventHandler = self.root.eventhandler
-        self.bpmhandler: BPMhandler = self.settings.bpmhandler
-        self.timehandler: TimeHandler = self.settings.timehandler
+        self.timehandler: TimeHandler = self.root.timehandler
         self.visualizer_config = self.get_visualizer_config()
         pygame.init()
         pygame.display.set_caption("ravelights")
         self.surface = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
         self.surface.fill(C_BLACK)
-        self.bpmhandler.bpm_sync()
+        self.timehandler.bpm_sync()
         self.create_surfaces()
 
     def get_visualizer_config(self):
@@ -67,7 +65,7 @@ class Visualizer:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.bpmhandler.bpm_sync()
+                    self.timehandler.bpm_sync()
             if event.type == pygame.QUIT:
                 exit()
 
@@ -124,7 +122,7 @@ class Visualizer:
         self._draw_stats()
 
     def _draw_beat_progress(self):
-        beat_progress = self.settings.beat_progress
+        beat_progress = self.timehandler.beat_progress
         beat_progress_adjusted = (0.5 + beat_progress) % 1
         color = (0, 255, 0)
         square_w = 50
@@ -135,7 +133,7 @@ class Visualizer:
 
     def _draw_beat_state(self):
         """Draws blue rectangle on frames with beat."""
-        if BeatStatePattern(loop_length=1).is_match(self.settings.beat_state):
+        if BeatStatePattern(loop_length=1).is_match(self.timehandler.beat_state):
             color = (0, 255, 255)
             square_w = 50
             square_h = 60
@@ -181,7 +179,7 @@ class Visualizer:
         bpm = "".join(
             [
                 "bpm:",
-                str(self.settings.bpm),
+                str(self.timehandler.bpm),
             ]
         )
         brightthinningenergy = "".join(
@@ -194,7 +192,7 @@ class Visualizer:
                 str(self.settings.global_energy),
             ]
         )
-        n_quarters_long = "nql: " + str(self.settings.n_quarters_long).zfill(3)
+        n_quarters_long = "nql: " + str(self.timehandler.n_quarters_long).zfill(3)
 
         self._draw_text(text=fps, x=10, y=10)
         self._draw_text(text=render_time, x=250, y=10)

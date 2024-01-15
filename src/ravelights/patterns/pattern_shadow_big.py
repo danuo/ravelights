@@ -1,7 +1,7 @@
 import math
 
 import numpy as np
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 

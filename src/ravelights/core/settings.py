@@ -2,12 +2,11 @@ from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
 from typing import TYPE_CHECKING, Any, Optional, Type
 
-from loguru import logger  # type:ignore
-from ravelights.core.bpmhandler import BeatState, BeatStatePattern, BPMhandler
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
+from loguru import logger
+from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:
@@ -84,7 +83,7 @@ class Settings:
     """
 
     # ─── Device Configuration ─────────────────────────────────────────────
-    root_init: InitVar["RaveLightsApp"]
+    root_init: InitVar["RaveLightsApp"]  # todo: remove this
     device_config: list[DeviceLightConfig]
 
     # ─── Meta Information ─────────────────────────────────────────────────
@@ -142,9 +141,6 @@ class Settings:
         self.root = root_init
         self.generator_classes_identifiers = ["pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect"]
 
-        self.timehandler = TimeHandler(settings=self)
-        self.bpmhandler = BPMhandler(settings=self, timehandler=self.timehandler)
-
         self.color_engine = ColorEngine(settings=self)
         self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()
 
@@ -153,41 +149,37 @@ class Settings:
         self.selected = get_default_selected_dict()
         self.root.refresh_ui(sse_event="settings")
 
-    @property
-    def bpm(self) -> float:
-        return self.bpm_multiplier * self.bpm_base
+    # @property
+    # def bpm(self) -> float:
+    #     return self.bpm_multiplier * self.bpm_base
 
-    @property
-    def beat_state(self) -> BeatState:
-        return self.bpmhandler.beat_state
+    # @property
+    # def beat_time(self) -> float:
+    #     """time of a beat in seconds"""
+    #     return 60 / self.bpm
 
-    @property
-    def beat_time(self) -> float:
-        """time of a beat in seconds"""
-        return 60 / self.bpm
+    # @property
+    # def quarter_time(self) -> float:
+    #     """time of a quarter in seconds"""
+    #     return 60 / (self.bpm * 4)
 
-    @property
-    def quarter_time(self) -> float:
-        """time of a quarter in seconds"""
-        return 60 / (self.bpm * 4)
+    # @property
+    # def n_quarters(self) -> int:
+    #     """self.n_quarters: will always represent current quarter number [0,15]"""
+    #     return self.n_quarters_long % 16
 
-    @property
-    def n_quarters(self) -> int:
-        """self.n_quarters: will always represent current quarter number [0,15]"""
-        return self.n_quarters_long % 16
+    # @property
+    # def n_quarters_long(self) -> int:
+    #     """self.n_quarters: will always represent current quarter number [0,127]"""
+    #     return self.root.timehandler.beat_state.n_quarters_long
 
-    @property
-    def n_quarters_long(self) -> int:
-        """self.n_quarters: will always represent current quarter number [0,127]"""
-        return self.beat_state.n_quarters_long
+    # @property
+    # def beat_progress(self) -> float:
+    #     return self.root.timehandler.beat_state.beat_progress
 
-    @property
-    def beat_progress(self) -> float:
-        return self.beat_state.beat_progress
-
-    @property
-    def frame_time(self) -> float:
-        return 1 / self.fps
+    # @property
+    # def frame_time(self) -> float:
+    #     return 1 / self.fps
 
     def update_from_dict(self, update_dict: dict[str, Any]) -> None:
         assert isinstance(update_dict, dict)
@@ -251,10 +243,3 @@ class Settings:
         self.color_transition_speed = speed
         self.color_engine.set_color_speed(speed)
         self.root.refresh_ui(sse_event="settings")
-
-    def before(self):
-        self.timehandler.before()
-        self.color_engine.before()
-
-    def after(self):
-        self.timehandler.after()

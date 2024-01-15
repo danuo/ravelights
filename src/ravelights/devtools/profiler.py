@@ -1,9 +1,9 @@
 import time
 
-from loguru import logger  # type:ignore
-from ravelights.core.bpmhandler import BeatState
+from loguru import logger
 from ravelights.core.generator_super import Generator, Pattern
 from ravelights.core.ravelights_app import RaveLightsApp
+from ravelights.core.time_handler import BeatState
 from ravelights.effects.effect_super import EffectWrapper
 
 
@@ -45,7 +45,7 @@ class Profiler:
         for i in range(self.samples):
             if i % 200 == 0:  # alternate every 200 frames
                 generator.alternate()
-            if i % (4 * self.app.settings.fps):  # on_trigger every 4
+            if i % (4 * self.app.timehandler.fps):  # on_trigger every 4
                 generator.on_trigger()
             generator.render(**args)
         t1 = time.time_ns()
@@ -89,16 +89,18 @@ class Profiler:
                 f.write(f"{key.ljust(30)} {round(value,5)} ms\n")
 
     def fake_timestep(self):
-        self.time_0 += 1 / self.app.settings.fps
-        self.app.settings.bpmhandler.beat_state_cache = self.get_beat_state()
+        self.time_0 += 1 / self.app.timehandler.fps
+        self.app.beat_state_cache = self.get_beat_state()
 
     def get_beat_state(self):
         time_since_sync = self.time_0 - self.time_sync
-        time_since_quarter = time_since_sync % self.app.settings.quarter_time
-        n_quarters_long = int((time_since_sync // self.app.settings.quarter_time) % self.app.settings.queue_length)
+        time_since_quarter = time_since_sync % self.app.timehandler.quarter_time
+        n_quarters_long = int(
+            (time_since_sync // self.app.timehandler.quarter_time) % self.app.timehandler.queue_length
+        )
         is_quarterbeat = n_quarters_long != self.n_quarters_long_memory  # this frame is beginninf of new quarter beat
-        beat_progress = (n_quarters_long % 4 + time_since_quarter / self.app.settings.quarter_time) * 0.25
-        beat_state = BeatState(self.app.settings, is_quarterbeat, beat_progress, n_quarters_long)
+        beat_progress = (n_quarters_long % 4 + time_since_quarter / self.app.timehandler.quarter_time) * 0.25
+        beat_state = BeatState(self.app, is_quarterbeat, beat_progress, n_quarters_long)
         self.n_quarters_long_memory = n_quarters_long
         return beat_state
 

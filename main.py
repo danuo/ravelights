@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights import (
     ArtnetUdpTransmitter,
     ColorProfiles,

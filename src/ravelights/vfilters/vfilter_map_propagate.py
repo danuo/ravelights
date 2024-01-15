@@ -1,10 +1,10 @@
 import random
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
+from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import LightSequence
 
 

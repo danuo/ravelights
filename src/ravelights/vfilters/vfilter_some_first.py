@@ -1,6 +1,6 @@
 import random
 
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat, assert_dims
 from ravelights.core.generator_super import Vfilter
 

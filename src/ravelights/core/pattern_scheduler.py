@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, cast
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.configs.components import (
     BlueprintPlace,
     BlueprintSel,
@@ -10,12 +10,12 @@ from ravelights.configs.components import (
     create_from_blueprint,
 )
 from ravelights.core.device import Device
-from ravelights.core.effecthandler import EffectHandler
+from ravelights.core.effect_handler import EffectHandler
 from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.instruction import InstructionDevice, InstructionEffect
 from ravelights.core.settings import Settings
-from ravelights.core.templateobjects import EffectSelectorPlacing, GenPlacing, GenSelector
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.template_objects import EffectSelectorPlacing, GenPlacing, GenSelector
+from ravelights.core.time_handler import TimeHandler
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
@@ -26,7 +26,7 @@ class PatternScheduler:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.settings.timehandler
+        self.timehandler: TimeHandler = self.root.timehandler
         self.effecthandler: EffectHandler = self.root.effecthandler
         self.devices: list[Device] = self.root.devices
         self.timeline_selectors: list[GenSelector] = []

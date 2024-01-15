@@ -1,11 +1,10 @@
 import random
 
 import numpy as np
-
-from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
+from ravelights.core.time_handler import BeatStatePattern
 
 
 class VfilterRandomBlackout(Vfilter):
@@ -29,7 +28,7 @@ class VfilterRandomBlackout(Vfilter):
     def on_trigger(self):
         self.counter_frames = 0
         limit_quarters = random.choice([1, 2, 3, 4, 6, 8])
-        self.limit_frames = int(round(limit_quarters * self.settings.beat_time * self.settings.fps))
+        self.limit_frames = int(round(limit_quarters * self.timehandler.beat_time * self.timehandler.fps))
         self.source_index = None
 
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
@@ -37,7 +36,7 @@ class VfilterRandomBlackout(Vfilter):
         if self.use_devices == "all":
             pass
         elif self.use_devices == "one":
-            rng = random.Random(self.settings.timehandler.time_0)
+            rng = random.Random(self.timehandler.time_0)
             active_device_id = rng.randrange(0, self.n_devices)
             if active_device_id != self.device.device_id:
                 return out_matrix

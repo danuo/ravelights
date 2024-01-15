@@ -1,7 +1,7 @@
 import random
 from typing import Optional
 
-from ravelights.core.colorhandler import Color, ColorHandler
+from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.effects.effect_super import Effect
 

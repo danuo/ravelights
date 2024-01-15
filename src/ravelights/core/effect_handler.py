@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators, create_from_blueprint
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect
-from ravelights.core.instructionqueue import InstructionQueue
+from ravelights.core.instruction_queue import InstructionQueue
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import TimeHandler
 from ravelights.effects.effect_super import Effect, EffectWrapper
 from ravelights.effects.special_effect_vfilter import SpecialEffectVfilter
 
@@ -32,14 +32,14 @@ class EffectHandler:
 
     def __post_init__(self) -> None:
         self.settings = self.root.settings
-        self.timehandler = self.root.settings.timehandler
+        self.timehandler = self.root.timehandler
         self.devices: list[Device] = self.root.devices
-        self.instruction_queue = InstructionQueue(settings=self.settings)
+        self.instruction_queue = InstructionQueue(root=self.root)
         self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
         self.build_effectwrappers_from_blueprints()
         self.build_effectwrappers_from_vfilters()
 
-    def build_effectwrappers_from_blueprints(self):
+    def build_effectwrappers_from_blueprints(self) -> None:
         effects_per_device: list[list[Effect]] = []
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
@@ -49,7 +49,7 @@ class EffectHandler:
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
-    def build_effectwrappers_from_vfilters(self):
+    def build_effectwrappers_from_vfilters(self) -> None:
         for blueprint in blueprint_generators:
             if not issubclass(blueprint.cls, Vfilter) or "none" in blueprint.args["name"]:
                 continue
@@ -62,7 +62,7 @@ class EffectHandler:
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effects)
             self.effect_wrappers_dict[effect_wrapper.name] = effect_wrapper
 
-    def run_before(self):
+    def run_before(self) -> None:
         self.load_and_apply_instructions()
 
         # ---------------------------------- remove ---------------------------------- #
@@ -81,7 +81,7 @@ class EffectHandler:
         for effect_wrapper in self.effective_effect_queue:
             # ---------------------------------- trigger --------------------------------- #
             if effect_wrapper.trigger:
-                if effect_wrapper.trigger.is_match(self.settings.beat_state):
+                if effect_wrapper.trigger.is_match(self.timehandler.beat_state):
                     effect_wrapper.on_trigger()
             # ----------------------------------- sync ----------------------------------- #
             effect_wrapper.sync_effects()
@@ -98,21 +98,21 @@ class EffectHandler:
             # -------------------------------- run before -------------------------------- #
             effect_wrapper.run_before()
 
-    def run_after(self):
+    def run_after(self) -> None:
         for effect_wrapper in self.effective_effect_queue:
             effect_wrapper.run_after()
 
-    def clear_qeueues(self):
+    def clear_qeueues(self) -> None:
         for queue in self.effect_queues:
             queue.clear()
         self.instruction_queue.clear()
 
-    def load_and_apply_instructions(self):  # before
+    def load_and_apply_instructions(self) -> None:  # before
         instructions_for_frame = self.instruction_queue.get_instructions()
         for ins in instructions_for_frame:
             self.apply_effect_instruction(ins)
 
-    def apply_effect_instruction(self, instruction: InstructionEffect):
+    def apply_effect_instruction(self, instruction: InstructionEffect) -> None:
         # todo: this is not implemented
         assert False
         effect_name = instruction.effect_name
@@ -121,7 +121,7 @@ class EffectHandler:
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
-    def load_effect(self, effect_name: str, timeline_level: int, **kwargs: dict[str, Any]):
+    def load_effect(self, effect_name: str, timeline_level: int, **kwargs: dict[str, Any]) -> None:
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         effect_wrapper.draw_mode = self.settings.effect_draw_mode
@@ -131,28 +131,28 @@ class EffectHandler:
         logger.debug(self.effect_queues)
         self.root.refresh_ui(sse_event="effect")
 
-    def effect_change_draw(self, effect: str | EffectWrapper, timeline_level: int):
+    def effect_change_draw(self, effect: str | EffectWrapper, timeline_level: int) -> None:
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queues[timeline_level]:
             effect.change_draw()
 
-    def effect_renew_trigger(self, effect: str | EffectWrapper, timeline_level: int):
+    def effect_renew_trigger(self, effect: str | EffectWrapper, timeline_level: int) -> None:
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queues[timeline_level]:
             effect.renew_trigger()
 
-    def effect_alternate(self, effect: str | EffectWrapper, timeline_level: int):
+    def effect_alternate(self, effect: str | EffectWrapper, timeline_level: int) -> None:
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)
         if effect in self.effect_queues[timeline_level]:
             effect.alternate()
 
-    def effect_remove(self, effect: str | EffectWrapper, timeline_level: int):
+    def effect_remove(self, effect: str | EffectWrapper, timeline_level: int) -> None:
         if isinstance(effect, str):
             effect = self.find_effect(name=effect)
         assert isinstance(effect, EffectWrapper)

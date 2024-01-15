@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
-from ravelights.core.instructionhandler import InstructionHandler
-from ravelights.core.pixelmatrix import PixelMatrix
-from ravelights.core.rendermodule import RenderModule
+from ravelights.core.instruction_handler import InstructionHandler
+from ravelights.core.pixel_matrix import PixelMatrix
+from ravelights.core.render_module import RenderModule
 from ravelights.core.settings import Settings
-from ravelights.core.timehandler import TimeHandler
+from ravelights.core.time_handler import TimeHandler
 from ravelights.interface.color_remap import ColorProfiles, ColorProfilesFunctions
 
 if TYPE_CHECKING:
@@ -30,13 +30,12 @@ class Device:
         self.color_profile: ColorProfiles = color_profile
         self.is_prim: bool = True if device_id == 0 else False
         self.settings: "Settings" = self.root.settings
-        self.timehandler: "TimeHandler" = self.settings.timehandler
+        self.timehandler: "TimeHandler" = self.root.timehandler
         self.pixelmatrix: PixelMatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
-        self.rendermodule = RenderModule(root=root, device=self)
+        self.rendermodule: RenderModule = RenderModule(root=root, device=self)
         self.instructionhandler = InstructionHandler(
+            root=self.root,
             pixelmatrix=self.pixelmatrix,
-            settings=self.settings,
-            timehandler=self.timehandler,
             rendermodule=self.rendermodule,
         )
 

@@ -1,6 +1,6 @@
 import random
 
-from ravelights.core.colorhandler import Color, ColorHandler
+from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Generator
 from ravelights.effects.effect_super import Effect

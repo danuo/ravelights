@@ -3,7 +3,7 @@ name = "ravelights"
 version = "0.1.0"
 requires-python = "~=3.10"
 dependencies = [
-    "numpy == 1.26.1",
+    "numpy == 1.26.3",
     "plum-py == 0.8.5",
     "Flask == 2.3.3",
     "Flask-RESTful == 0.3.10",
@@ -15,10 +15,10 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest == 7.4.3",
+    "pytest == 7.4.4",
     "pytest-flask == 1.3.0",
-    "mypy == 1.7.0",
-    "ruff >= 0.1.3",
+    "mypy == 1.8.0",
+    "ruff >= 0.1.13",
 ]
 gui = [
     "pygame == 2.5.2",

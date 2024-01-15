@@ -1,11 +1,11 @@
 import random
 
 import numpy as np
-from ravelights.core.bpmhandler import BeatStatePattern
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 from ravelights.core.pid import PIDController
+from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import lerp
 
 
@@ -14,7 +14,7 @@ class PatternPIDInverse(Pattern):
 
     def init(self):
         self.widths = [random.randrange(int(self.n_leds * 0.4), int(self.n_leds * 0.9)) for _ in range(self.n_lights)]
-        self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.settings.frame_time) for _ in range(self.n_lights)]
+        self.pids = [PIDController(kp=0.5, kd=0.1, dt=self.timehandler.frame_time) for _ in range(self.n_lights)]
 
     @property
     def possible_triggers(self) -> list[BeatStatePattern]:

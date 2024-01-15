@@ -1,6 +1,6 @@
 import time
 
-from loguru import logger  # type:ignore
+from loguru import logger
 
 
 class PerformanceLogger:

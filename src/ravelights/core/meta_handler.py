@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
-from ravelights.core.colorhandler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
+from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
 from ravelights.core.custom_typing import AvailableGenerators
-from ravelights.core.templateobjects import GenPlacing
+from ravelights.core.template_objects import GenPlacing
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp

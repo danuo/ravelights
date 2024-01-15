@@ -1,7 +1,7 @@
 import errno
 import socket
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 

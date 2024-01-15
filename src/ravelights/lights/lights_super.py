@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.utils import cos_mapper, p, sign
 from ravelights.vfilters.filter_flimmering import VfilterFlimmering
@@ -12,9 +12,10 @@ from ravelights.vfilters.vfilter_mirror import VfilterMirrorVer
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
-    from ravelights.core.pixelmatrix import PixelMatrix
+    from ravelights.core.pixel_matrix import PixelMatrix
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
+    from ravelights.core.time_handler import TimeHandler
 
 
 class LightObject(ABC):
@@ -22,6 +23,7 @@ class LightObject(ABC):
         self.root = root
         self.device = device
         self.settings: "Settings" = self.root.settings
+        self.timehandler: "TimeHandler" = self.root.timehandler
         self.pixelmatrix: "PixelMatrix" = self.device.pixelmatrix
         self.n_leds = self.pixelmatrix.n_leds
         self.gen_args = [self.root, self.device]
@@ -47,7 +49,7 @@ class LightObject(ABC):
 
     def increase_counters(self):
         self.counter_frame += 1
-        if self.settings.beat_state.is_beat:
+        if self.timehandler.beat_state.is_beat:
             self.counter_beats += 1
 
     def is_done_super(self) -> bool:
@@ -60,7 +62,7 @@ class LightObject(ABC):
                 return True
         elif self.lifetime_frames is not None:
             if self.counter_frame > self.lifetime_frames:
-                if self.settings.beat_state.is_beat:
+                if self.timehandler.beat_state.is_beat:
                     return True
         return self.is_done()
 
@@ -270,7 +272,7 @@ class Meteor(LightObject):
         self.travel_time = 1
         self.decay_factor = 0.8
         self.width = 20
-        self.speed = self.n_leds * self.settings.bpm / 60 / self.settings.fps / self.travel_time
+        self.speed = self.n_leds * self.timehandler.bpm / 60 / self.timehandler.fps / self.travel_time
         # ! this spawns inside the domain, good for swiper, bad for "random meteor"
         self.pos = abs(random.gauss(0.1, 0.2)) * self.n_leds
         self.matrix = self.get_float_matrix()

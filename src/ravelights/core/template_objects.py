@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Optional, Type, cast
 
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import GeneratorMeta
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
@@ -10,7 +10,7 @@ from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
-    from ravelights.core.patternscheduler import PatternScheduler
+    from ravelights.core.pattern_scheduler import PatternScheduler
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
@@ -170,7 +170,7 @@ class EffectSelectorPlacing:
         else:
             self.effect_name = self.get_random_generator(gen_type=Effect)
         self.settings = self.patternscheduler.settings
-        self.effect_length_frames = int(self.settings.fps * self.settings.quarter_time * self.length_q)
+        self.effect_length_frames = int(self.timehandler.fps * self.timehandler.quarter_time * self.length_q)
 
     def get_random_generator(self, gen_type: Type[Generator]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)

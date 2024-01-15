@@ -1,6 +1,6 @@
 import random
 
-from ravelights.core.colorhandler import Color
+from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
@@ -28,7 +28,7 @@ class PatternDebugBPMSync(Pattern):
 
         # draw beat_progress
 
-        beat_progress = self.settings.beat_progress
+        beat_progress = self.timehandler.beat_progress
         # beat_progress_adjusted = (0.5 + beat_progress) % 1
         pos = int(round(self.n_leds * beat_progress))
         a = pos - self.width1
@@ -39,7 +39,7 @@ class PatternDebugBPMSync(Pattern):
 
         matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
 
-        if self.settings.beat_state.is_beat:
+        if self.timehandler.beat_state.is_beat:
             mid = self.n_leds // 2
             matrix_rgb[mid - self.weidth2 : mid + self.weidth2, :] = 1.0
 

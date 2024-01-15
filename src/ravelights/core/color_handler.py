@@ -4,7 +4,7 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING, NamedTuple, Optional, Sequence
 
 import numpy as np
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pid import PIDController, PIDSpeeds
 from ravelights.core.utils import StrEnum

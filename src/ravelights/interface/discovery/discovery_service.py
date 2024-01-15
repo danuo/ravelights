@@ -1,4 +1,4 @@
-from loguru import logger  # type:ignore
+from loguru import logger
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
 from ravelights.interface.discovery.pixeldriver_service_listener import PixeldriverServiceListener
 from zeroconf import ServiceBrowser, Zeroconf
