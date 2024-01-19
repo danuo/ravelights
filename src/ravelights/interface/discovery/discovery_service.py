@@ -1,5 +1,6 @@
 from loguru import logger
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
+from ravelights.interface.discovery import connectivity_check
 from ravelights.interface.discovery.pixeldriver_service_listener import PixeldriverServiceListener
 from zeroconf import ServiceBrowser, Zeroconf
 
@@ -36,6 +37,9 @@ def start() -> None:
     """
 
     global _zeroconf, _service_browser
+
+    if not connectivity_check.is_connected_to_network():
+        raise RuntimeError("Host must be connected to network before discovery service can be started")
 
     if _zeroconf is not None and _service_browser is not None:
         logger.warning("Discovery service already running. Stopping first before starting again...")

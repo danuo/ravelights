@@ -16,7 +16,7 @@ from ravelights.interface.data_router import (
     DataRouterVisualizer,
     DataRouterWebsocket,
 )
-from ravelights.interface.discovery import discovery_service
+from ravelights.interface.discovery import connectivity_check, discovery_service
 from ravelights.interface.rest_api import RestAPI
 
 
@@ -53,6 +53,7 @@ class RaveLightsApp:
         self.use_visualizer = use_visualizer
         self.print_stats = print_stats
 
+        connectivity_check.wait_until_connected_to_network()
         discovery_service.start()
 
         if run:
