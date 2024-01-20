@@ -8,7 +8,8 @@ BANDS = Literal["lows", "mids", "highs"]
 
 
 class PatternAudio(Pattern):
-    DECAY = 0.8
+    def init(self):
+        ...
 
     def alternate(self):
         ...
