@@ -1,9 +1,9 @@
 import random
 import time
-from multiprocessing.connection import PipeConnection
+from multiprocessing.connection import _ConnectionBase
 
 
-def audio_analyzer_process(connection: PipeConnection):
+def audio_analyzer_process(connection: _ConnectionBase):
     while True:
         # send random data at high rate
         random_data = {

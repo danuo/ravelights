@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING, Optional
-
-if TYPE_CHECKING:
-    from multiprocessing.connection import PipeConnection
+from multiprocessing.connection import _ConnectionBase
+from typing import Optional
 
 
 class AudioDataProvider:
-    connection: Optional["PipeConnection"] = None
+    connection: Optional[_ConnectionBase] = None
 
-    def set_connection(self, connection: "PipeConnection" = None):
+    def set_connection(self, connection: _ConnectionBase = None):
         self.connection = connection
 
     def collect_audio_data(self):
