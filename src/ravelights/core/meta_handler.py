@@ -4,7 +4,7 @@ from ravelights.configs.components import Keywords, blueprint_effects, blueprint
 from ravelights.core.blueprints import BlueprintEffect, BlueprintGen
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
 from ravelights.core.custom_typing import AvailableGenerators, Timeline
-from ravelights.core.template_objects import GenPlacing
+from ravelights.core.timeline import GenPlacing
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp

@@ -11,8 +11,8 @@ from ravelights.core.effect_handler import EffectHandler
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.instruction import InstructionDevice, InstructionEffect
 from ravelights.core.settings import Settings
-from ravelights.core.template_objects import EffectSelectorPlacing, GeneratorSet, GenPlacing, GenSelector
 from ravelights.core.time_handler import TimeHandler
+from ravelights.core.timeline import EffectSelectorPlacing, GeneratorSet, GenPlacing, GenSelector
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:

@@ -10,7 +10,7 @@ from ravelights.core.generator_super import (
     Vfilter,
     VfilterNone,
 )
-from ravelights.core.template_objects import GenPlacing, GenSelector
+from ravelights.core.timeline import GenPlacing, GenSelector
 from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
 from ravelights.dimmers.dimmer_decay_medium import DimmerDecayMedium

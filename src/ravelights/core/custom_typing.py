@@ -6,7 +6,7 @@ from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     from ravelights.core.device_shared import DeviceLightConfig
-    from ravelights.core.template_objects import GenPlacing, GenSelector
+    from ravelights.core.timeline import GenPlacing, GenSelector
 
 
 Array = NDArray[Any]
