@@ -1,11 +1,10 @@
 from typing import Literal
 
-import numpy as np
 from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Pattern
 
-BAND: list[Literal[str]] = ["lows", "mids", "highs"]
+BANDS = Literal["lows", "mids", "highs"]
 
 
 class PatternAudio(Pattern):
