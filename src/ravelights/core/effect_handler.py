@@ -51,9 +51,9 @@ class EffectHandler:
 
     def build_effectwrappers_from_vfilters(self) -> None:
         for blueprint in blueprint_generators:
-            if not issubclass(blueprint.cls, Vfilter) or "none" in blueprint.args["name"]:
+            if not issubclass(blueprint.cls, Vfilter) or "none" in blueprint.name:
                 continue
-            vfilter_name: str = blueprint.args["name"]
+            vfilter_name: str = blueprint.name
             effect_name = "e" + vfilter_name
             effects: list[Effect] = []
             for device in self.devices:
