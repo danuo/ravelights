@@ -115,7 +115,7 @@ class GenSelector:
         else:
             out_generator_set.thinner_name = "t_none"
 
-    def get_random_generator(self, gen_type: type[Generator]) -> str:
+    def get_random_generator(self, gen_type: type[Pattern | Vfilter | Dimmer | Thinner]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
         keywords = self.keywords + [self.settings.music_style]
 
@@ -165,7 +165,7 @@ class EffectSelectorPlacing:
 
     effect_name: str = field(init=False)
 
-    gen_type: type[Effect] = Effect
+    # gen_type: type[Effect] = Effect
     name: Optional[str] = None
     keywords: list["Keywords"] = field(default_factory=list)
     length_q: int = 4
