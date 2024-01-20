@@ -14,9 +14,12 @@ class AubioBeatDetector(BeatDetector):
             samplerate=sampling_rate,
         )
 
-    def process_samples(self, samples: NDArray[np.float32]) -> tuple[bool, float]:
-        if self._beat_detector(samples):
-            self._register_beat(time=self._beat_detector.get_last_s())
-            return True, self._compute_bpm()
+    def process_samples(self, samples: NDArray[np.float32]) -> float | None:
+        if not self._beat_detector(samples):
+            return None
 
-        return False, self._compute_bpm()
+        self._register_beat(time=self._beat_detector.get_last_s())
+        bpm = self._compute_bpm()
+        if bpm == 0:
+            return None
+        return bpm

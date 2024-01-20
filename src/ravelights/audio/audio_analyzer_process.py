@@ -1,33 +1,13 @@
 import time
 from multiprocessing.connection import _ConnectionBase
-from typing import Any, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
 from ravelights.audio.aubio_beat_detector import AubioBeatDetector
+from ravelights.audio.audio_data import AudioData
 from ravelights.audio.audio_source import AudioSource
 from ravelights.audio.beat_detector import BeatDetector
 from ravelights.audio.ring_buffer import RingBuffer
-
-
-class AudioData(TypedDict):
-    level: float
-    level_low: float
-    level_mid: float
-    level_high: float
-
-    hits: float
-    hits_low: float
-    hits_mid: float
-    hits_high: float
-
-    presence: float
-    presence_low: float
-    presence_mid: float
-    presence_high: float
-
-    FadeInOut: float
-    is_beat: bool
 
 
 class AudioAnalyzer:
@@ -79,11 +59,11 @@ class AudioAnalyzer:
         highs_mean = self.highs_energies.array.mean()
         all_mean = lows_mean + mids_mean + highs_mean
 
-        print([lows_mean, mids_mean, highs_mean, all_mean])
+        # print([lows_mean, mids_mean, highs_mean, all_mean])
 
         if self.beat_detector is not None:
-            is_beat, bpm = self.beat_detector.process_samples(samples)
-            if is_beat:
+            bpm = self.beat_detector.process_samples(samples)
+            if bpm is not None:
                 print(f"Beat detected! BPM: {bpm}")
 
         self.send_audio_data()
