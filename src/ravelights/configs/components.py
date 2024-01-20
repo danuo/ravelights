@@ -37,6 +37,7 @@ from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_frameskip import EffectFrameskip
 from ravelights.effects.effect_super import Effect
+from ravelights.patterns.pattern_audio import PatternAudio
 from ravelights.patterns.pattern_debug_bpm_sync import PatternDebugBPMSync
 from ravelights.patterns.pattern_debug_gradient import PatternDebugGradient
 from ravelights.patterns.pattern_debug_linear_block import PatternDebugLinearBlock
@@ -108,6 +109,7 @@ blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternDebugBPMSync, dict(name="p_debug_bpm_sync", weight=0)),
     BlueprintGen(PatternDebugSolidColor, dict(name="p_debug_solid_color", weight=0)),
     BlueprintGen(PatternDebugLinearBlock, dict(name="p_debug_linear_block", weight=0)),
+    BlueprintGen(PatternAudio, dict(name="p_audio", weight=0)),
     BlueprintGen(PatternGradient, dict(name="p_graident", weight=0)),
     BlueprintGen(PatternRandomStripes, dict(name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2)),
     BlueprintGen(PatternSolidColor, dict(name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0)),
@@ -185,6 +187,17 @@ blueprint_effects: list[BlueprintEffect] = [
 
 # todo: effects need length, patterns do not
 blueprint_timelines: list[BlueprintTimeline] = [
+    {
+        "meta": {
+            "name": "just one",
+        },
+        "selectors": [
+            BlueprintSel(GenSelector, dict(gen_type="p_audio", level=1)),
+        ],
+        "placements": [
+            BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
+        ],
+    },
     {
         "meta": {
             "name": "all 1 level",
