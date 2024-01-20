@@ -63,29 +63,6 @@ class AvailableGenerators(TypedDict):
     effect: list[GeneratorMeta]
 
 
-class Blueprint(NamedTuple):
-    cls: Type["Pattern"] | Type["Vfilter"] | Type["Dimmer"] | Type["Thinner"] | Type["Effect"] | Type[
-        "EffectSelectorPlacing"
-    ] | Type["GenPlacing"] | Type["GenSelector"]
-    args: dict[str, str | float | int | list["Keywords"] | Type["Generator"] | list[int]]
-
-
-class BlueprintGen(Blueprint):
-    ...
-
-
-class BlueprintEffect(Blueprint):
-    ...
-
-
-class BlueprintSel(Blueprint):
-    ...
-
-
-class BlueprintPlace(Blueprint):
-    ...
-
-
 class BlueprintTimeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
     selectors: list["GenSelector"]

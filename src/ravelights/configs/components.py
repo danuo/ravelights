@@ -1,17 +1,9 @@
 from enum import auto
-from typing import Any, Optional, overload
 
 from ravelights.core.blueprints import BlueprintEffectNew, BlueprintGenNew
-from ravelights.core.custom_typing import (
-    BlueprintEffect,
-    BlueprintGen,
-    BlueprintPlace,
-    BlueprintSel,
-    BlueprintTimeline,
-)
+from ravelights.core.custom_typing import BlueprintTimeline
 from ravelights.core.generator_super import (
     DimmerNone,
-    Generator,
     Pattern,
     PatternNone,
     ThinnerNone,
@@ -291,22 +283,3 @@ blueprint_timelines: list[BlueprintTimeline] = [
         ],
     },
 ]
-
-
-@overload
-def create_from_blueprint(blueprints: list[BlueprintGenNew], kwargs: Optional[dict[str, Any]]=None) -> list[Generator]: ...
-
-@overload
-def create_from_blueprint(blueprints: list[BlueprintEffectNew], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
-
-@overload
-def create_from_blueprint(blueprints: list[GenSelector], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...
-
-@overload
-def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...
-
-def create_from_blueprint(blueprints, kwargs: Optional[dict[str, Any]]=None) -> Any:
-    if kwargs is None:
-        kwargs = dict()
-    items = [cls(**args, **kwargs) for cls, args in blueprints]
-    return items
