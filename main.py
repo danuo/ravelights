@@ -29,6 +29,7 @@ def parse_args():
     parser.add_argument("--artnet-serial-baudrate", type=int, default=3_000_000)
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
+    parser.add_argument("--audio", default=True, action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
     return args
 
@@ -143,4 +144,5 @@ if __name__ == "__main__":
         serve_webui=args.webui,
         transmitter_recipes=transmitter_recipes,
         use_visualizer=args.visualizer,
+        use_audio=args.audio,
     )
