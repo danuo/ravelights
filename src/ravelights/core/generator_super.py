@@ -74,10 +74,6 @@ class Generator(ABC):
         """called, when trigger is satisfied"""
         ...
 
-    @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
-        return in_matrix
-
     def sync_send(self) -> Optional[dict[str, Any]]:
         ...
 
@@ -200,8 +196,9 @@ class Generator(ABC):
 
 
 class Pattern(Generator):
+    @abstractmethod
     def render(self, colors: list[Color]) -> ArrayFloat:
-        return self.get_float_matrix_rgb()
+        ...
 
 
 class PatternNone(Pattern):
@@ -224,7 +221,9 @@ class PatternNone(Pattern):
 
 
 class Vfilter(Generator):
-    ...
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+        ...
 
 
 class VfilterNone(Vfilter):
@@ -247,13 +246,13 @@ class VfilterNone(Vfilter):
 
 
 class Thinner(Generator):
-    """Default thinner with blank output"""
-
-    ...
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+        ...
 
 
 class ThinnerNone(Thinner):
-    """"""
+    """Default thinner with blank output"""
 
     def init(self):
         ...
@@ -272,12 +271,14 @@ class ThinnerNone(Thinner):
 
 
 class Dimmer(Generator):
-    """Default dimmer with blank output"""
-
-    ...
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+        ...
 
 
 class DimmerNone(Dimmer):
+    """Default dimmer with blank output"""
+
     def init(self):
         ...
 
