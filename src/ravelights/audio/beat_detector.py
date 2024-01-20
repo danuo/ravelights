@@ -12,11 +12,11 @@ class BeatDetector(metaclass=ABCMeta):
     def _register_beat(self, time: float) -> None:
         self._beat_times.append(time)
 
-    def _compute_bpm(self) -> float:
+    def _compute_bpm(self) -> float | None:
         inter_beat_times = np.diff(self._beat_times.array)
         median_inter_beat_time = np.median(inter_beat_times)
         if median_inter_beat_time == 0:
-            return 0
+            return None
         return 60 / float(np.median(inter_beat_times))
 
     @abstractmethod
