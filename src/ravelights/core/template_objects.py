@@ -153,7 +153,6 @@ class GenPlacing:
     """places instructions into instruction queue at specific timings, to load specific
     generator levels at that time."""
 
-    root: "RaveLightsApp"
     level: int  # 1, for action="load", only one level makes sense
     timings: list[int]
     p: float = 1.0

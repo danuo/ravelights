@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, NamedTuple, cast
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.blueprints import BlueprintEffectNew, BlueprintGenNew
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators
+from ravelights.core.custom_typing import AvailableGenerators, BlueprintTimeline
 from ravelights.core.template_objects import GenPlacing
 
 if TYPE_CHECKING:
@@ -133,19 +133,19 @@ class MetaHandler:
             svgs.append(self.get_svg_for_timeline(timeline))
         return dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
-    def get_svg_for_timeline(self, timeline) -> None:
+    def get_svg_for_timeline(self, timeline: BlueprintTimeline) -> str:
         SVG_HEIGHT = 70
 
         placements = timeline["placements"]
         items = []
         for placement in placements:
-            if placement.cls != GenPlacing:
+            if not isinstance(placement, GenPlacing):
                 continue
 
-            level: list[int] = placement.args["level"]
-            timings: list[int] = placement.args["timings"]
-            for t in timings:
-                item = Item(t, level)
+            level: int = placement.level
+            timings: list[int] = placement.timings
+            for timing in timings:
+                item = Item(timing, level)
                 items.append(item)
         items.append(Item(128, 1))
         items.sort()

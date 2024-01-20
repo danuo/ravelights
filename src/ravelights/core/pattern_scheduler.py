@@ -30,7 +30,7 @@ class PatternScheduler:
         self.effecthandler: EffectHandler = self.root.effecthandler
         self.devices: list[Device] = self.root.devices
         self.timeline_selectors: list[GenSelector] = []
-        self.timeline_placements: list[BlueprintPlace] = []
+        self.timeline_placements: list[GenPlacing] = []
 
         # ─── GENERATORS ──────────────────────────────────────────────────
         self.blueprint_timelines = blueprint_timelines
@@ -54,10 +54,8 @@ class PatternScheduler:
             selector.set_root(self.root)
         self.process_timeline_selectors(self.timeline_selectors)
 
-        blueprints_placements: list[BlueprintPlace] = cast(list[BlueprintPlace], timeline["placements"])
-        kwargs = dict(root=self.root)
-        self.timeline_placements = create_from_blueprint(blueprints=blueprints_placements, kwargs=kwargs)
-        self.process_timeline_placements()
+        self.timeline_placements = timeline["placements"]
+        self.process_timeline_placements(self.timeline_placements)
 
     def process_timeline_selectors(self, timeline_selectors: list[GenSelector]):
         for selector in timeline_selectors:
@@ -102,8 +100,8 @@ class PatternScheduler:
                 renew_trigger=renew_trigger,
             )
 
-    def process_timeline_placements(self):
-        for placement in self.timeline_placements:
+    def process_timeline_placements(self, timeline_placements: list[GenPlacing]):
+        for placement in timeline_placements:
             if not p(placement.p):
                 continue
             if isinstance(placement, GenPlacing):

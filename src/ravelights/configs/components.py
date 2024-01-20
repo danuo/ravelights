@@ -196,7 +196,7 @@ blueprint_timelines: list[BlueprintTimeline] = [
             GenSelector(gen_type="p_audio", level=1),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
+            GenPlacing(level=1, timings=[0]),
         ],
     },
     {
@@ -207,7 +207,7 @@ blueprint_timelines: list[BlueprintTimeline] = [
             GenSelector(gen_type=Pattern, level=1),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
+            GenPlacing(level=1, timings=[16*x for x in range(128//16)]),
         ],
     },
     {
@@ -220,8 +220,8 @@ blueprint_timelines: list[BlueprintTimeline] = [
             GenSelector(gen_type=Vfilter, level=1, p=0.1),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[16*x + 12 for x in range(128//16)])),
+            GenPlacing(level=1, timings=[16*x for x in range(128//16)]),
+            GenPlacing(level=2, timings=[16*x + 12 for x in range(128//16)]),
         ],
     },
     {
@@ -234,8 +234,8 @@ blueprint_timelines: list[BlueprintTimeline] = [
             GenSelector(gen_type=Vfilter, level=1, p=0.1),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[2*4*x for x in range(128//8)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[2*4*x + 4 for x in range(128//8)])),
+            GenPlacing(level=1, timings=[2*4*x for x in range(128//8)]),
+            GenPlacing(level=2, timings=[2*4*x + 4 for x in range(128//8)]),
         ],
     },
     {
@@ -248,8 +248,8 @@ blueprint_timelines: list[BlueprintTimeline] = [
             GenSelector(gen_type=Vfilter, level=1, p=0.2),
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)])),
+            GenPlacing(level=1, timings=[32*x for x in range(128//32)]),
+            GenPlacing(level=2, timings=[32*x + 28 for x in range(128//32)]),
         ],
     },
     {
@@ -266,9 +266,9 @@ blueprint_timelines: list[BlueprintTimeline] = [
 
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True)),
-            BlueprintPlace(GenPlacing, dict(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True)),
+            GenPlacing(level=1, timings=[32*x for x in range(128//32)]),
+            GenPlacing(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True),
+            GenPlacing(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True),
         ],
     },
     {
@@ -285,9 +285,9 @@ blueprint_timelines: list[BlueprintTimeline] = [
 
         ],
         "placements": [
-            BlueprintPlace(GenPlacing, dict(level=1, timings=[8*x for x in range(128//8)])),
-            BlueprintPlace(GenPlacing, dict(level=2, timings=[8*x + 2 for x in range(128//8)], trigger_on_change=True)),
-            BlueprintPlace(GenPlacing, dict(level=3, timings=[8*x + 4 for x in range(128//8)], trigger_on_change=True)),
+            GenPlacing(level=1, timings=[8*x for x in range(128//8)]),
+            GenPlacing(level=2, timings=[8*x + 2 for x in range(128//8)], trigger_on_change=True),
+            GenPlacing(level=3, timings=[8*x + 4 for x in range(128//8)], trigger_on_change=True),
         ],
     },
 ]
