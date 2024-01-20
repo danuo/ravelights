@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from loguru import logger
-from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8, LightIdentifier, Transmitter
+from ravelights.core.custom_typing import ArrayUInt8, LightIdentifier, Transmitter
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 from ravelights.interface.artnet.artnet_udp_transmitter import ArtnetUdpTransmitter
 from ravelights.interface.discovery import discovery_service
@@ -20,7 +20,7 @@ class DataRouter(ABC):
         self.devices = self.root.devices
 
     @abstractmethod
-    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         ...
 
 
@@ -71,7 +71,7 @@ class DataRouterTransmitter(DataRouter):
         n_total = sum(leds_per_output)
         return leds_per_output, out_lights, n_total
 
-    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         index = 0
         for out_light in self.out_lights:
             matrix_view = matrices_processed_int[out_light["device"]][:, out_light["light"], :]
@@ -86,7 +86,7 @@ class DataRouterTransmitter(DataRouter):
 class DataRouterWebsocket(DataRouter):
     """sends matrices_int at full brightness to websocket"""
 
-    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "rest_api"):
             if self.root.rest_api.websocket_num_clients > 0:
                 matrix_int = matrices_int[0]
@@ -101,6 +101,6 @@ class DataRouterWebsocket(DataRouter):
 class DataRouterVisualizer(DataRouter):
     """sends matrices_int at full brightness to pygame visualizer"""
 
-    def transmit_matrix(self, matrices_processed_int: list[ArrayFloat], matrices_int: list[ArrayUInt8]):
+    def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "visualizer"):
             self.root.visualizer.render(matrices_int)
