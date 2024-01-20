@@ -9,7 +9,6 @@ from ravelights.configs.components import (
     blueprint_timelines,
     create_from_blueprint,
 )
-from ravelights.core.blueprints import create_from_blueprint_new
 from ravelights.core.device import Device
 from ravelights.core.effect_handler import EffectHandler
 from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
@@ -37,7 +36,7 @@ class PatternScheduler:
         self.blueprint_timelines = blueprint_timelines
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
-            generators = create_from_blueprint_new(blueprints=blueprint_generators, kwargs=kwargs)
+            generators = [blueprint.create_instance(kwargs) for blueprint in blueprint_generators]
             device.rendermodule.register_generators(generators=generators)
 
         self.load_timeline_from_index(self.settings.active_timeline_index)

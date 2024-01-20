@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING, Any
 
 from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators
-from ravelights.core.blueprints import create_from_blueprint_new
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect
 from ravelights.core.instruction_queue import InstructionQueue
@@ -44,7 +43,7 @@ class EffectHandler:
         effects_per_device: list[list[Effect]] = []
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
-            effects: list[Effect] = create_from_blueprint_new(blueprints=blueprint_effects, kwargs=kwargs)
+            effects: list[Effect] = [blueprint.create_instance(kwargs) for blueprint in blueprint_effects]
             effects_per_device.append(effects)
         for effect_objects in zip(*effects_per_device):
             effect_wrapper = EffectWrapper(root=self.root, effect_objects=effect_objects)
