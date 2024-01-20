@@ -1,7 +1,7 @@
 from enum import auto
 from typing import Any, Optional, overload
 
-from ravelights.core.blueprints import BlueprintGenNew
+from ravelights.core.blueprints import BlueprintEffectNew, BlueprintGenNew
 from ravelights.core.custom_typing import (
     BlueprintEffect,
     BlueprintGen,
@@ -174,15 +174,15 @@ blueprint_generators: list[BlueprintGenNew] = [
     BlueprintGenNew(DimmerPeak, name="d_peak", weight=1),
 ]
 
-blueprint_effects: list[BlueprintEffect] = [
-    BlueprintEffect(EffectColorStrobe, dict(name="e_color_strobe")),
-    BlueprintEffect(EffectColorStrobeRainbow, dict(name="e_color_strobe_rainbow")),
-    BlueprintEffect(EffectColorStrobeRainbowPixel, dict(name="e_color_strobe_rainbow_pixel")),
-    BlueprintEffect(EffectColorShift, dict(name="e_color_shift")),
-    BlueprintEffect(EffectColorSwap, dict(name="e_color_swap")),
-    BlueprintEffect(EffectColorize, dict(name="e_colorize")),
-    BlueprintEffect(EffectFlicker, dict(name="e_flicker")),
-    BlueprintEffect(EffectFrameskip, dict(name="e_frameskip")),
+blueprint_effects: list[BlueprintEffectNew] = [
+    BlueprintEffectNew(EffectColorStrobe, name="e_color_strobe"),
+    BlueprintEffectNew(EffectColorStrobeRainbow, name="e_color_strobe_rainbow"),
+    BlueprintEffectNew(EffectColorStrobeRainbowPixel, name="e_color_strobe_rainbow_pixel"),
+    BlueprintEffectNew(EffectColorShift, name="e_color_shift"),
+    BlueprintEffectNew(EffectColorSwap, name="e_color_swap"),
+    BlueprintEffectNew(EffectColorize, name="e_colorize"),
+    BlueprintEffectNew(EffectFlicker, name="e_flicker"),
+    BlueprintEffectNew(EffectFrameskip, name="e_frameskip"),
 ]
 
 
@@ -297,7 +297,7 @@ blueprint_timelines: list[BlueprintTimeline] = [
 def create_from_blueprint(blueprints: list[BlueprintGenNew], kwargs: Optional[dict[str, Any]]=None) -> list[Generator]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintEffect], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
+def create_from_blueprint(blueprints: list[BlueprintEffectNew], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
 
 @overload
 def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...

@@ -26,6 +26,7 @@ class EffectWrapper:
     def __init__(self, root: "RaveLightsApp", effect_objects: list["Effect"]):
         self.root = root
         self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.timehandler
         self.effects: list[Effect] = effect_objects
         self.name = effect_objects[0].name
         self.keywords = effect_objects[0].keywords
@@ -135,7 +136,7 @@ class EffectWrapper:
             if isinstance(limit_quarters, str):
                 self.limit_frames = limit_quarters
             else:
-                self.limit_frames = int(limit_quarters * self.settings.quarter_time * self.timehandler.fps)
+                self.limit_frames = int(limit_quarters * self.timehandler.quarter_time * self.timehandler.fps)
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
         if self.mode == "loopquarters":
