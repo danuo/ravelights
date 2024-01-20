@@ -88,5 +88,5 @@ class BlueprintPlace(Blueprint):
 
 class BlueprintTimeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
-    selectors: list[BlueprintSel]
+    selectors: list["GenSelector"]
     placements: list[BlueprintPlace]

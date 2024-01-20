@@ -193,7 +193,7 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "just one",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type="p_audio", level=1)),
+            GenSelector(gen_type="p_audio", level=1),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[0])),
@@ -204,7 +204,7 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "all 1 level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
+            GenSelector(gen_type=Pattern, level=1),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
@@ -215,9 +215,9 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "4beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
+            GenSelector(gen_type=Pattern, level=1),
+            GenSelector(gen_type=Pattern, level=2),
+            GenSelector(gen_type=Vfilter, level=1, p=0.1),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[16*x for x in range(128//16)])),
@@ -229,9 +229,9 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "2beat 2level fast",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.1)),
+            GenSelector(gen_type=Pattern, level=1),
+            GenSelector(gen_type=Pattern, level=2),
+            GenSelector(gen_type=Vfilter, level=1, p=0.1),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[2*4*x for x in range(128//8)])),
@@ -243,9 +243,9 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "8beat 2level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
+            GenSelector(gen_type=Pattern, level=1),
+            GenSelector(gen_type=Pattern, level=2),
+            GenSelector(gen_type=Vfilter, level=1, p=0.2),
         ],
         "placements": [
             BlueprintPlace(GenPlacing, dict(level=1, timings=[32*x for x in range(128//32)])),
@@ -257,12 +257,12 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "8beat 3level",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=3)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=2, p=0.2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=3, p=0.2)),
+            GenSelector(gen_type=Pattern, level=1),
+            GenSelector(gen_type=Pattern, level=2),
+            GenSelector(gen_type=Pattern, level=3),
+            GenSelector(gen_type=Vfilter, level=1, p=0.2),
+            GenSelector(gen_type=Vfilter, level=2, p=0.2),
+            GenSelector(gen_type=Vfilter, level=3, p=0.2),
 
         ],
         "placements": [
@@ -276,12 +276,12 @@ blueprint_timelines: list[BlueprintTimeline] = [
             "name": "8beat 3level fast switching",
         },
         "selectors": [
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=1)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=2)),
-            BlueprintSel(GenSelector, dict(gen_type=Pattern, level=3)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=1, p=0.2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=2, p=0.2)),
-            BlueprintSel(GenSelector, dict(gen_type=Vfilter, level=3, p=0.2)),
+            GenSelector(gen_type=Pattern, level=1),
+            GenSelector(gen_type=Pattern, level=2),
+            GenSelector(gen_type=Pattern, level=3),
+            GenSelector(gen_type=Vfilter, level=1, p=0.2),
+            GenSelector(gen_type=Vfilter, level=2, p=0.2),
+            GenSelector(gen_type=Vfilter, level=3, p=0.2),
 
         ],
         "placements": [
@@ -300,7 +300,7 @@ def create_from_blueprint(blueprints: list[BlueprintGenNew], kwargs: Optional[di
 def create_from_blueprint(blueprints: list[BlueprintEffectNew], kwargs: Optional[dict[str, Any]]=None) -> list[Effect]: ...
 
 @overload
-def create_from_blueprint(blueprints: list[BlueprintSel], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...
+def create_from_blueprint(blueprints: list[GenSelector], kwargs: Optional[dict[str, Any]]=None) -> list[GenSelector]: ...
 
 @overload
 def create_from_blueprint(blueprints: list[BlueprintPlace], kwargs: Optional[dict[str, Any]]=None) -> list[GenPlacing | EffectSelectorPlacing]: ...
