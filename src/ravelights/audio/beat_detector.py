@@ -1,11 +1,11 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 
 import numpy as np
 from numpy.typing import NDArray
 from ravelights.audio.ring_buffer import RingBuffer
 
 
-class BeatDetector(metaclass=ABCMeta):
+class BeatDetector(ABC):
     def __init__(self, bpm_window_size: int = 16):
         self._beat_times = RingBuffer(capacity=bpm_window_size, dtype=np.float32)
 
@@ -17,7 +17,7 @@ class BeatDetector(metaclass=ABCMeta):
         median_inter_beat_time = np.median(inter_beat_times)
         if median_inter_beat_time == 0:
             return None
-        return 60 / float(np.median(inter_beat_times))
+        return 60 / float(median_inter_beat_time)
 
     @abstractmethod
     def process_samples(self, samples: NDArray[np.float32]) -> float | None:
