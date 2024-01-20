@@ -58,7 +58,7 @@ class RaveLightsApp:
         self.use_visualizer = use_visualizer
         self.print_stats = print_stats
 
-        self.audio_data = AudioDataProvider()
+        self.audio_data = AudioDataProvider(root=self)
 
         if run:
             discovery_service.start()
