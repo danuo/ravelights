@@ -59,7 +59,7 @@ class AvailableGenerators(TypedDict):
     effect: list[GeneratorMeta]
 
 
-class BlueprintTimeline(TypedDict):  # todo: move to custom typing
+class Timeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
     selectors: list["GenSelector"]
     placements: list["GenPlacing"]

@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
-from ravelights.core.blueprints import BlueprintEffectNew, BlueprintGenNew
+from ravelights.core.blueprints import BlueprintEffect, BlueprintGen
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators, BlueprintTimeline
+from ravelights.core.custom_typing import AvailableGenerators, Timeline
 from ravelights.core.template_objects import GenPlacing
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ class MetaHandler:
         available_keywords: set[str] = set()
         for item in blueprint_generators + blueprint_effects:
             # todo: only have new stuff
-            if isinstance(item, BlueprintGenNew) or isinstance(item, BlueprintEffectNew):
+            if isinstance(item, BlueprintGen) or isinstance(item, BlueprintEffect):
                 if hasattr(item, "keywords"):
                     keywords: list[Keywords] = item.keywords
                     for keyword in keywords:
@@ -133,7 +133,7 @@ class MetaHandler:
             svgs.append(self.get_svg_for_timeline(timeline))
         return dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
-    def get_svg_for_timeline(self, timeline: BlueprintTimeline) -> str:
+    def get_svg_for_timeline(self, timeline: Timeline) -> str:
         SVG_HEIGHT = 70
 
         placements = timeline["placements"]

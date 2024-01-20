@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from loguru import logger
 from ravelights.configs.components import (
-    BlueprintTimeline,
+    Timeline,
     blueprint_generators,
     blueprint_timelines,
 )
@@ -42,7 +42,7 @@ class PatternScheduler:
         self.settings.active_timeline_index = index
         self.load_timeline(self.blueprint_timelines[index])
 
-    def load_timeline(self, timeline: BlueprintTimeline):
+    def load_timeline(self, timeline: Timeline):
         self.settings.clear_selected()
         self.clear_instruction_queues()
 

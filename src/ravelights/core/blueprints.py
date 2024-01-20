@@ -18,7 +18,7 @@ class BlueprintNew:
 
 
 @dataclass
-class BlueprintGenNew(BlueprintNew):
+class BlueprintGen(BlueprintNew):
     cls: InitVar[type["Generator"]]
     name: str
     weight: float | int = 1.0
@@ -33,7 +33,7 @@ class BlueprintGenNew(BlueprintNew):
 
 
 @dataclass
-class BlueprintEffectNew(BlueprintNew):
+class BlueprintEffect(BlueprintNew):
     cls: InitVar[type["Effect"]]
     name: str
 

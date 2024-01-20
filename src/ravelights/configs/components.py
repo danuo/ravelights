@@ -1,7 +1,7 @@
 from enum import auto
 
-from ravelights.core.blueprints import BlueprintEffectNew, BlueprintGenNew
-from ravelights.core.custom_typing import BlueprintTimeline
+from ravelights.core.blueprints import BlueprintEffect, BlueprintGen
+from ravelights.core.custom_typing import Timeline
 from ravelights.core.generator_super import (
     DimmerNone,
     Pattern,
@@ -10,7 +10,7 @@ from ravelights.core.generator_super import (
     Vfilter,
     VfilterNone,
 )
-from ravelights.core.template_objects import EffectSelectorPlacing, GenPlacing, GenSelector
+from ravelights.core.template_objects import GenPlacing, GenSelector
 from ravelights.core.utils import StrEnum
 from ravelights.dimmers.dimmer_decay_fast import DimmerDecayFast
 from ravelights.dimmers.dimmer_decay_medium import DimmerDecayMedium
@@ -29,7 +29,6 @@ from ravelights.effects.effect_color_swap import EffectColorSwap
 from ravelights.effects.effect_colorize import EffectColorize
 from ravelights.effects.effect_flicker import EffectFlicker
 from ravelights.effects.effect_frameskip import EffectFrameskip
-from ravelights.effects.effect_super import Effect
 from ravelights.patterns.pattern_audio import PatternAudio
 from ravelights.patterns.pattern_debug_bpm_sync import PatternDebugBPMSync
 from ravelights.patterns.pattern_debug_gradient import PatternDebugGradient
@@ -93,93 +92,92 @@ class Keywords(StrEnum):
 
 K = Keywords
 
-blueprint_generators: list[BlueprintGenNew] = [
-    BlueprintGenNew(PatternNone, name="p_none", weight=0),
-    BlueprintGenNew(VfilterNone, name="v_none", weight=0),
-    BlueprintGenNew(ThinnerNone, name="t_none", weight=0),
-    BlueprintGenNew(DimmerNone, name="d_none", weight=0),
-    BlueprintGenNew(PatternDebugGradient, name="p_debug_gradient", weight=0),
-    BlueprintGenNew(PatternDebugBPMSync, name="p_debug_bpm_sync", weight=0),
-    BlueprintGenNew(PatternDebugSolidColor, name="p_debug_solid_color", weight=0),
-    BlueprintGenNew(PatternDebugLinearBlock, name="p_debug_linear_block", weight=0),
-    BlueprintGenNew(PatternAudio, name="p_audio", weight=0),
-    BlueprintGenNew(PatternGradient, name="p_graident", weight=0),
-    BlueprintGenNew(PatternRandomStripes, name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2),
-    BlueprintGenNew(PatternSolidColor, name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0),
-    BlueprintGenNew(PatternMeteor, version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2),
-    BlueprintGenNew(PatternMeteor, version=1, name="p_meteor_fast10", keywords=[K.LONG, K.CHORUS], weight=0.2),
-    BlueprintGenNew(PatternMeteor, version=2, name="p_meteor_fast20", keywords=[K.LONG, K.CHORUS], weight=0.2),
-    BlueprintGenNew(PatternMeteor, version=3, name="p_meteor_slow30", keywords=[K.LONG, K.CHORUS], weight=0.2),
-    BlueprintGenNew(PatternMovingBlocks, name="p_moving_blocks", keywords=[K.SHORT, K.LONG, K.CHORUS]),
-    BlueprintGenNew(PatternSwiper, name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS]),
-    BlueprintGenNew(PatternSinwave, name="s_sinwave", keywords=[K.SHORT, K.LONG, K.CHORUS]),
-    BlueprintGenNew(PatternSinwaveSquares, name="p_sinwave_square", keywords=[K.SHORT, K.LONG, K.CHORUS]),
-    BlueprintGenNew(PatternSinOverlay, name="p_sin_overlay", keywords=[K.SHORT, K.LONG, K.CHORUS]),
-    BlueprintGenNew(PatternRain, name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS]),
-    BlueprintGenNew(PatternInerseSquare, name="p_inverse_square", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS]),
-    BlueprintGenNew(PatternPID, name="p_pid", keywords=[K.SHORT, K.LONG]),
-    BlueprintGenNew(PatternPIDInverse, name="p_pid_inverse", keywords=[K.SHORT, K.LONG]),
-    BlueprintGenNew(PatternPidSplash, name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG]),
-    BlueprintGenNew(PatternHorStripes, name="p_hor_stripes", keywords=[K.SHORT, K.LONG]),
-    BlueprintGenNew(PatternShadow, name="p_shadow", keywords=[K.SHORT, K.LONG]),
-    # BlueprintGenNew(PatternShadowBig, name="p_shadow_big", keywords=[K.SHORT, K.LONG]),  # too
-    BlueprintGenNew(PatternDoubleStrobe, name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE]),
-    BlueprintGenNew(PatternMovingStrobeSlow, name="p_moving_strobe_slow", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE]),
-    BlueprintGenNew(PatternMovingStrobeFast, name="p_moving_strobe_fast", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE]),
-    BlueprintGenNew(PatternStrobeSpawner, name="p_strobe_spawner", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE]),
-    BlueprintGenNew(VfilterFlipVer, name="v_flip_ver"),
-    BlueprintGenNew(VfilterMirrorVer, name="v_mirror_ver"),
-    BlueprintGenNew(VfilterBW, name="v_bw"),
-    BlueprintGenNew(VfilterRgbShift, name="v_rgb_shift"),
-    BlueprintGenNew(VfilterFlippedColorFuse, name="v_flipped_color_fuse"),
-    BlueprintGenNew(VfilterMirrorHor, name="v_mirror_hor"),
-    BlueprintGenNew(VfilterMapAllFirst, name="v_map_all_first"),
-    BlueprintGenNew(VfilterMapSomeFirst, name="v_map_some_first"),
-    BlueprintGenNew(VfilterEdgedetect, name="v_edgedetect_1", version=0),
-    BlueprintGenNew(VfilterEdgedetect, name="v_edgedetect_3", version=1),
-    BlueprintGenNew(VfilterEdgedetect, name="v_edgedetect_5", version=2),
-    BlueprintGenNew(VfilterTimeDelay, name="v_time_delay_random", version=0),
-    BlueprintGenNew(VfilterTimeDelay, name="v_time_delay_right", version=1),
-    BlueprintGenNew(VfilterTimeDelay, name="v_time_delay_left", version=2),
-    BlueprintGenNew(VfilterTimeDelay, name="v_time_delay_double", version=3),
-    BlueprintGenNew(VfilterTimeDelay, name="v_time_delay_doubleinv", version=4),
-    BlueprintGenNew(VfilterReverb, name="v_reverb"),
-    BlueprintGenNew(VfilterRollOverlay, name="v_roll_overlay"),
-    BlueprintGenNew(VfilterRandomBlackout, name="v_random_blackout"),
-    BlueprintGenNew(VfilterMapPropagate, name="v_map_propagate_random", version=0),
-    BlueprintGenNew(VfilterMapPropagate, name="v_map_propagate_left", version=1),
-    BlueprintGenNew(VfilterMapPropagate, name="v_map_propagate_right", version=2),
-    BlueprintGenNew(VfilterMapPropagate, name="v_map_propagate_mid", version=3),
-    BlueprintGenNew(VfilterMapPropagate, name="v_map_propagate_midinv", version=4),
-    BlueprintGenNew(ThinnerRandomPattern, name="t_random_pattern"),
-    BlueprintGenNew(ThinnerRandom, name="t_random"),
-    BlueprintGenNew(ThinnerEquidistant, name="t_equidistant", weight=1),
-    BlueprintGenNew(DimmerRandomRemove, name="d_random_remove"),
-    BlueprintGenNew(DimmerDecayVeryFast, name="d_decay_veryfast", weight=1),
-    BlueprintGenNew(DimmerDecayFast, name="d_decay_fast", weight=1),
-    BlueprintGenNew(DimmerDecayMedium, name="d_decay_medium", weight=1),
-    BlueprintGenNew(DimmerDecaySlow, name="d_decay_slow", weight=1),
-    BlueprintGenNew(DimmerDecayVerySlow, name="d_decay_very_slow", weight=1),
-    BlueprintGenNew(DimmerSideswipe, name="d_sideswipe_1", weight=1, version=0),
-    BlueprintGenNew(DimmerSideswipe, name="d_sideswipe_2", weight=1, version=1),
-    BlueprintGenNew(DimmerSine, name="d_sine", weight=1),
-    BlueprintGenNew(DimmerPeak, name="d_peak", weight=1),
+blueprint_generators: list[BlueprintGen] = [
+    BlueprintGen(PatternNone, name="p_none", weight=0),
+    BlueprintGen(VfilterNone, name="v_none", weight=0),
+    BlueprintGen(ThinnerNone, name="t_none", weight=0),
+    BlueprintGen(DimmerNone, name="d_none", weight=0),
+    BlueprintGen(PatternDebugGradient, name="p_debug_gradient", weight=0),
+    BlueprintGen(PatternDebugBPMSync, name="p_debug_bpm_sync", weight=0),
+    BlueprintGen(PatternDebugSolidColor, name="p_debug_solid_color", weight=0),
+    BlueprintGen(PatternDebugLinearBlock, name="p_debug_linear_block", weight=0),
+    BlueprintGen(PatternAudio, name="p_audio", weight=0),
+    BlueprintGen(PatternGradient, name="p_graident", weight=0),
+    BlueprintGen(PatternRandomStripes, name="p_random_stripes", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.DROP], weight=2),
+    BlueprintGen(PatternSolidColor, name="p_solid_color", keywords=[K.SHORT, K.LONG, K.CHORUS, K.BUILDUP, K.BREAK], weight=0),
+    BlueprintGen(PatternMeteor, version=0, name="p_meteor_fast05", keywords=[K.SHORT, K.LONG, K.CHORUS], weight=0.2),
+    BlueprintGen(PatternMeteor, version=1, name="p_meteor_fast10", keywords=[K.LONG, K.CHORUS], weight=0.2),
+    BlueprintGen(PatternMeteor, version=2, name="p_meteor_fast20", keywords=[K.LONG, K.CHORUS], weight=0.2),
+    BlueprintGen(PatternMeteor, version=3, name="p_meteor_slow30", keywords=[K.LONG, K.CHORUS], weight=0.2),
+    BlueprintGen(PatternMovingBlocks, name="p_moving_blocks", keywords=[K.SHORT, K.LONG, K.CHORUS]),
+    BlueprintGen(PatternSwiper, name="p_swiper", keywords=[K.SHORT, K.LONG, K.CHORUS]),
+    BlueprintGen(PatternSinwave, name="s_sinwave", keywords=[K.SHORT, K.LONG, K.CHORUS]),
+    BlueprintGen(PatternSinwaveSquares, name="p_sinwave_square", keywords=[K.SHORT, K.LONG, K.CHORUS]),
+    BlueprintGen(PatternSinOverlay, name="p_sin_overlay", keywords=[K.SHORT, K.LONG, K.CHORUS]),
+    BlueprintGen(PatternRain, name="p_rain", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS]),
+    BlueprintGen(PatternInerseSquare, name="p_inverse_square", keywords=[K.SHORT, K.LONG, K.AMBIENT, K.CHORUS]),
+    BlueprintGen(PatternPID, name="p_pid", keywords=[K.SHORT, K.LONG]),
+    BlueprintGen(PatternPIDInverse, name="p_pid_inverse", keywords=[K.SHORT, K.LONG]),
+    BlueprintGen(PatternPidSplash, name="p_pid_splash_WIP", keywords=[K.SHORT, K.LONG]),
+    BlueprintGen(PatternHorStripes, name="p_hor_stripes", keywords=[K.SHORT, K.LONG]),
+    BlueprintGen(PatternShadow, name="p_shadow", keywords=[K.SHORT, K.LONG]),
+    BlueprintGen(PatternShadowBig, name="p_shadow_big", keywords=[K.SHORT, K.LONG]),
+    BlueprintGen(PatternDoubleStrobe, name="p_double_strobe", keywords=[K.SHORT, K.LONG, K.STROBE]),
+    BlueprintGen(PatternMovingStrobeSlow, name="p_moving_strobe_slow", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE]),
+    BlueprintGen(PatternMovingStrobeFast, name="p_moving_strobe_fast", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE]),
+    BlueprintGen(PatternStrobeSpawner, name="p_strobe_spawner", keywords=[K.SHORT, K.LONG, K.CHORUS, K.STROBE]),
+    BlueprintGen(VfilterFlipVer, name="v_flip_ver"),
+    BlueprintGen(VfilterMirrorVer, name="v_mirror_ver"),
+    BlueprintGen(VfilterBW, name="v_bw"),
+    BlueprintGen(VfilterRgbShift, name="v_rgb_shift"),
+    BlueprintGen(VfilterFlippedColorFuse, name="v_flipped_color_fuse"),
+    BlueprintGen(VfilterMirrorHor, name="v_mirror_hor"),
+    BlueprintGen(VfilterMapAllFirst, name="v_map_all_first"),
+    BlueprintGen(VfilterMapSomeFirst, name="v_map_some_first"),
+    BlueprintGen(VfilterEdgedetect, name="v_edgedetect_1", version=0),
+    BlueprintGen(VfilterEdgedetect, name="v_edgedetect_3", version=1),
+    BlueprintGen(VfilterEdgedetect, name="v_edgedetect_5", version=2),
+    BlueprintGen(VfilterTimeDelay, name="v_time_delay_random", version=0),
+    BlueprintGen(VfilterTimeDelay, name="v_time_delay_right", version=1),
+    BlueprintGen(VfilterTimeDelay, name="v_time_delay_left", version=2),
+    BlueprintGen(VfilterTimeDelay, name="v_time_delay_double", version=3),
+    BlueprintGen(VfilterTimeDelay, name="v_time_delay_doubleinv", version=4),
+    BlueprintGen(VfilterReverb, name="v_reverb"),
+    BlueprintGen(VfilterRollOverlay, name="v_roll_overlay"),
+    BlueprintGen(VfilterRandomBlackout, name="v_random_blackout"),
+    BlueprintGen(VfilterMapPropagate, name="v_map_propagate_random", version=0),
+    BlueprintGen(VfilterMapPropagate, name="v_map_propagate_left", version=1),
+    BlueprintGen(VfilterMapPropagate, name="v_map_propagate_right", version=2),
+    BlueprintGen(VfilterMapPropagate, name="v_map_propagate_mid", version=3),
+    BlueprintGen(VfilterMapPropagate, name="v_map_propagate_midinv", version=4),
+    BlueprintGen(ThinnerRandomPattern, name="t_random_pattern"),
+    BlueprintGen(ThinnerRandom, name="t_random"),
+    BlueprintGen(ThinnerEquidistant, name="t_equidistant", weight=1),
+    BlueprintGen(DimmerRandomRemove, name="d_random_remove"),
+    BlueprintGen(DimmerDecayVeryFast, name="d_decay_veryfast", weight=1),
+    BlueprintGen(DimmerDecayFast, name="d_decay_fast", weight=1),
+    BlueprintGen(DimmerDecayMedium, name="d_decay_medium", weight=1),
+    BlueprintGen(DimmerDecaySlow, name="d_decay_slow", weight=1),
+    BlueprintGen(DimmerDecayVerySlow, name="d_decay_very_slow", weight=1),
+    BlueprintGen(DimmerSideswipe, name="d_sideswipe_1", weight=1, version=0),
+    BlueprintGen(DimmerSideswipe, name="d_sideswipe_2", weight=1, version=1),
+    BlueprintGen(DimmerSine, name="d_sine", weight=1),
+    BlueprintGen(DimmerPeak, name="d_peak", weight=1),
 ]
 
-blueprint_effects: list[BlueprintEffectNew] = [
-    BlueprintEffectNew(EffectColorStrobe, name="e_color_strobe"),
-    BlueprintEffectNew(EffectColorStrobeRainbow, name="e_color_strobe_rainbow"),
-    BlueprintEffectNew(EffectColorStrobeRainbowPixel, name="e_color_strobe_rainbow_pixel"),
-    BlueprintEffectNew(EffectColorShift, name="e_color_shift"),
-    BlueprintEffectNew(EffectColorSwap, name="e_color_swap"),
-    BlueprintEffectNew(EffectColorize, name="e_colorize"),
-    BlueprintEffectNew(EffectFlicker, name="e_flicker"),
-    BlueprintEffectNew(EffectFrameskip, name="e_frameskip"),
+blueprint_effects: list[BlueprintEffect] = [
+    BlueprintEffect(EffectColorStrobe, name="e_color_strobe"),
+    BlueprintEffect(EffectColorStrobeRainbow, name="e_color_strobe_rainbow"),
+    BlueprintEffect(EffectColorStrobeRainbowPixel, name="e_color_strobe_rainbow_pixel"),
+    BlueprintEffect(EffectColorShift, name="e_color_shift"),
+    BlueprintEffect(EffectColorSwap, name="e_color_swap"),
+    BlueprintEffect(EffectColorize, name="e_colorize"),
+    BlueprintEffect(EffectFlicker, name="e_flicker"),
+    BlueprintEffect(EffectFrameskip, name="e_frameskip"),
 ]
-
 
 # todo: effects need length, patterns do not
-blueprint_timelines: list[BlueprintTimeline] = [
+blueprint_timelines: list[Timeline] = [
     {
         "meta": {
             "name": "just one",
