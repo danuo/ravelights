@@ -26,7 +26,8 @@ class AudioDataProvider:
         while self.connection.poll():
             self.data.append(self.connection.recv())
 
-        self.audio_data = self.data[-1]
+        if self.data:
+            self.audio_data = self.data[-1]
 
         # process data
-        print(f"receiving at fps rate {self.data}")
+        # print(f"receiving at fps rate {self.data}")
