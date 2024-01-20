@@ -36,7 +36,7 @@ class RaveLightsApp:
         use_visualizer: bool = False,
         print_stats: bool = False,
         run: bool = True,
-    ):
+    ) -> None:
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
         self.timehandler = TimeHandler(root=self)
         self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
@@ -90,23 +90,23 @@ class RaveLightsApp:
 
         return data_routers
 
-    def run(self):
+    def run(self) -> None:
         logger.info("Starting main loop...")
         while True:
             self.render_frame()
 
-    def profile(self, n_frames: int = 200):
+    def profile(self, n_frames: int = 200) -> None:
         logger.info(f"Starting profiling of {n_frames} frames...")
         for _ in range(n_frames):
             self.render_frame()
 
-    def sync_generators(self, gen_type_list: list[str]):
+    def sync_generators(self, gen_type_list: list[str]) -> None:
         for gen_type in gen_type_list:
             sync_dict = self.devices[0].rendermodule.get_selected_generator(gen_type).sync_send()
             for device in self.devices[1:]:
                 device.rendermodule.get_selected_generator(gen_type).sync_load(in_dict=sync_dict)
 
-    def render_frame(self):
+    def render_frame(self) -> None:
         self.timehandler.before()
         self.settings.color_engine.before()
         self.audio_data.collect_audio_data()
@@ -135,7 +135,7 @@ class RaveLightsApp:
         # ─── After ────────────────────────────────────────────────────
         self.timehandler.after()
 
-    def refresh_ui(self, sse_event: str):
+    def refresh_ui(self, sse_event: str) -> None:
         if hasattr(self, "rest_api"):
             self.rest_api.sse_event = sse_event
             self.rest_api.sse_unblock_event.set()
