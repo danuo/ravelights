@@ -1,16 +1,17 @@
-import random
 import time
 from multiprocessing.connection import _ConnectionBase
-from typing import TypedDict
+from typing import Any, Mapping, TypedDict
 
 import numpy as np
 import pyaudio
+from numpy.typing import NDArray
+from ravelights.audio.ring_buffer import RingBuffer
 
-SAMPLE_RATE = 44100
+SAMPLING_RATE = 44100
 FFT_WINDOW_SIZE = 1024
-HOP_SIZE = FFT_WINDOW_SIZE // 2
-MEASUREMENTS_PER_SECOND = SAMPLE_RATE // HOP_SIZE
-BANDS = [200, 2000]
+FFT_HOP_SIZE = FFT_WINDOW_SIZE // 2
+MEASUREMENTS_PER_SECOND = SAMPLING_RATE // FFT_HOP_SIZE
+BANDS = [(0, 200), (200, 2000), (2000, SAMPLING_RATE // 2)]
 
 
 class AudioData(TypedDict):
@@ -51,37 +52,35 @@ class AudioAnalyzer:
         is_beat=False,
     )
 
-    lows_energies_queue = np.zeros(shape=MEASUREMENTS_PER_SECOND)
-    mids_energies_queue = np.zeros(shape=MEASUREMENTS_PER_SECOND)
-    highs_energies_queue = np.zeros(shape=MEASUREMENTS_PER_SECOND)
-    queue_index = 0
-
     def __init__(self, connection: _ConnectionBase):
         self.connection = connection
+        self.samples = RingBuffer(capacity=FFT_WINDOW_SIZE, dtype=np.float32)
+        self.lows_energies = RingBuffer(capacity=MEASUREMENTS_PER_SECOND, dtype=np.float64)
+        self.mids_energies = RingBuffer(capacity=MEASUREMENTS_PER_SECOND, dtype=np.float64)
+        self.highs_energies = RingBuffer(capacity=MEASUREMENTS_PER_SECOND, dtype=np.float64)
+        self.all_energies = RingBuffer(capacity=MEASUREMENTS_PER_SECOND, dtype=np.float64)
+        self.last_log_seconds = time.time()
 
-    # use this pattern instead of whie True. update with our code:
-    def process_audio(self, audio_buffer, frame_count, time_info, status):
+    def process_audio(self, audio_buffer: bytes | None, frame_count: int, time_info: Mapping[str, float], status: int):
+        if audio_buffer is None:
+            return None, pyaudio.paContinue
+
         samples = np.frombuffer(audio_buffer, dtype=np.float32)
+        self.samples.append_all(samples)
 
-        audio_fft = np.fft.fft(samples)
-        frequencies = np.fft.fftfreq(HOP_SIZE, 1 / SAMPLE_RATE)
+        spectrum = np.fft.fft(self.samples.array)
+        spectrum_frequencies = np.fft.fftfreq(FFT_WINDOW_SIZE, 1 / SAMPLING_RATE)
 
-        self.lows_energies_queue[self.queue_index] = self.compute_band_energy(audio_fft, frequencies, 0, BANDS[0])
-        self.mids_energies_queue[self.queue_index] = self.compute_band_energy(
-            audio_fft, frequencies, BANDS[0], BANDS[1]
-        )
-        self.highs_energies_queue[self.queue_index] = self.compute_band_energy(
-            audio_fft, frequencies, BANDS[1], SAMPLE_RATE // 2
-        )
+        self.lows_energies.append(self.compute_band_energy(spectrum, spectrum_frequencies, BANDS[0]))
+        self.mids_energies.append(self.compute_band_energy(spectrum, spectrum_frequencies, BANDS[1]))
+        self.highs_energies.append(self.compute_band_energy(spectrum, spectrum_frequencies, BANDS[2]))
 
-        self.queue_index = (self.queue_index + 1) % MEASUREMENTS_PER_SECOND
+        lows_mean = self.lows_energies.array.mean()
+        mids_mean = self.mids_energies.array.mean()
+        highs_mean = self.highs_energies.array.mean()
+        all_mean = lows_mean + mids_mean + highs_mean
 
-        lows_mean = np.array(lows_energies).mean()
-        mids_mean = np.array(mids_energies).mean()
-        highs_mean = np.array(highs_energies).mean()
-        total_mean = lows_energies + mids_energies + highs_energies
-
-        self.send_audio_data()
+        print([lows_mean, mids_mean, highs_mean, all_mean])
 
         return None, pyaudio.paContinue  # Tell pyAudio to continue
 
@@ -89,9 +88,14 @@ class AudioAnalyzer:
         self.connection.send(self.audio_data)
 
     @staticmethod
-    def compute_band_energy(spectrum, frequencies, start_freq, end_freq):
-        amplitudes = spectrum[(frequencies >= start_freq) & (frequencies < end_freq)]
-        return np.sum(np.abs(amplitudes) ** 2)
+    def compute_band_energy(
+        spectrum: NDArray[np.complex128], spectrum_frequencies: NDArray[np.floating[Any]], band: tuple[int, int]
+    ) -> float:
+        band_start, band_end = band
+        band_spectrum = spectrum[(spectrum_frequencies >= band_start) & (spectrum_frequencies < band_end)]
+        band_magnitudes = np.abs(band_spectrum)
+        band_energy = np.sum(band_magnitudes**2)
+        return float(band_energy)
 
 
 def audio_analyzer_process(connection: _ConnectionBase):
@@ -100,8 +104,8 @@ def audio_analyzer_process(connection: _ConnectionBase):
     stream = pyaudio.PyAudio().open(
         format=pyaudio.paFloat32,
         channels=1,
-        rate=SAMPLE_RATE,
+        rate=SAMPLING_RATE,
         input=True,
-        frames_per_buffer=HOP_SIZE,
+        frames_per_buffer=FFT_HOP_SIZE,
         stream_callback=audio_analyzer.process_audio,
     )
