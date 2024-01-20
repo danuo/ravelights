@@ -16,7 +16,12 @@ fft_window_size = 1024
 hop_size = fft_window_size // 2
 
 tempo_detection = aubio.tempo("default", fft_window_size, hop_size, sample_rate)
-onset_detection = aubio.onset("specflux", fft_window_size, hop_size, sample_rate)
+
+onset_size_multiplier = 4
+onset_samples_array = np.zeros(shape=onset_size_multiplier * hop_size, dtype=np.float32)
+onset_fft = int(onset_size_multiplier * fft_window_size)
+onset_hop_size = int(onset_size_multiplier * hop_size)
+onset_detection = aubio.onset("specflux", onset_fft, onset_hop_size, sample_rate)
 
 p = pyaudio.PyAudio()
 stream = p.open(
@@ -45,9 +50,11 @@ while True:
             if len(beat_times) >= 4:
                 print("BPM: %f" % (60 / (np.median(np.diff(beat_times)))))
 
-        # if onset_detection(samples):
-        #     onset_time = onset_detection.get_last_s()
-        #     print(f"Onset detected at {onset_time}")
+        onset_samples_array[:-hop_size] = onset_samples_array[hop_size:]
+        onset_samples_array[-hop_size:] = np.array(samples, dtype=np.float32)
+        if onset_detection(onset_samples_array):
+            onset_time = onset_detection.get_last_s()
+            print(f"Onset detected at {onset_time}")
 
     except KeyboardInterrupt:
         print("*** Ctrl+C pressed, exiting")
