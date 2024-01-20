@@ -19,7 +19,4 @@ class AubioBeatDetector(BeatDetector):
             return None
 
         self._register_beat(time=self._beat_detector.get_last_s())
-        bpm = self._compute_bpm()
-        if bpm == 0:
-            return None
-        return bpm
+        return self._compute_bpm()
