@@ -3,6 +3,15 @@ import time
 from multiprocessing.connection import _ConnectionBase
 from typing import TypedDict
 
+import numpy as np
+import pyaudio
+
+SAMPLE_RATE = 44100
+FFT_WINDOW_SIZE = 1024
+HOP_SIZE = FFT_WINDOW_SIZE // 2
+MEASUREMENTS_PER_SECOND = SAMPLE_RATE // HOP_SIZE
+BANDS = [200, 2000]
+
 
 class AudioData(TypedDict):
     level: float
@@ -42,20 +51,57 @@ class AudioAnalyzer:
         is_beat=False,
     )
 
-    def process_audio(self, audio):
-        pass
+    lows_energies_queue = np.zeros(shape=MEASUREMENTS_PER_SECOND)
+    mids_energies_queue = np.zeros(shape=MEASUREMENTS_PER_SECOND)
+    highs_energies_queue = np.zeros(shape=MEASUREMENTS_PER_SECOND)
+    queue_index = 0
+
+    def __init__(self, connection: _ConnectionBase):
+        self.connection = connection
+
+    # use this pattern instead of whie True. update with our code:
+    def process_audio(self, audio_buffer, frame_count, time_info, status):
+        samples = np.frombuffer(audio_buffer, dtype=np.float32)
+
+        audio_fft = np.fft.fft(samples)
+        frequencies = np.fft.fftfreq(HOP_SIZE, 1 / SAMPLE_RATE)
+
+        self.lows_energies_queue[self.queue_index] = self.compute_band_energy(audio_fft, frequencies, 0, BANDS[0])
+        self.mids_energies_queue[self.queue_index] = self.compute_band_energy(
+            audio_fft, frequencies, BANDS[0], BANDS[1]
+        )
+        self.highs_energies_queue[self.queue_index] = self.compute_band_energy(
+            audio_fft, frequencies, BANDS[1], SAMPLE_RATE // 2
+        )
+
+        self.queue_index = (self.queue_index + 1) % MEASUREMENTS_PER_SECOND
+
+        lows_mean = np.array(lows_energies).mean()
+        mids_mean = np.array(mids_energies).mean()
+        highs_mean = np.array(highs_energies).mean()
+        total_mean = lows_energies + mids_energies + highs_energies
+
+        self.send_audio_data()
+
+        return None, pyaudio.paContinue  # Tell pyAudio to continue
+
+    def send_audio_data(self):
+        self.connection.send(self.audio_data)
+
+    @staticmethod
+    def compute_band_energy(spectrum, frequencies, start_freq, end_freq):
+        amplitudes = spectrum[(frequencies >= start_freq) & (frequencies < end_freq)]
+        return np.sum(np.abs(amplitudes) ** 2)
 
 
 def audio_analyzer_process(connection: _ConnectionBase):
-    audio_analyzer = AudioAnalyzer()
+    audio_analyzer = AudioAnalyzer(connection)
 
-    while True:
-        # send random data at high rate
-        audio_data = {
-            "random_float": random.random(),
-            "random_bool": random.random() > 0.5,
-        }
-
-        audio_analyzer.process_audio(audio_data)
-        connection.send(audio_analyzer.audio_data)
-        time.sleep(1 / 100)
+    stream = pyaudio.PyAudio().open(
+        format=pyaudio.paFloat32,
+        channels=1,
+        rate=SAMPLE_RATE,
+        input=True,
+        frames_per_buffer=HOP_SIZE,
+        stream_callback=audio_analyzer.process_audio,
+    )
