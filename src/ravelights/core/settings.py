@@ -110,7 +110,7 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    music_style: str = MusicStyles.TECHNO.value
+    music_style: Optional[str] = None
 
     # ─── Time Settings ────────────────────────────────────────────────────
     bpm_base: float = 140.0
