@@ -145,15 +145,15 @@ class RenderModule:
         matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
-        matrix = vfilter.render(matrix, colors=colors)
+        matrix = vfilter.render(in_matrix=matrix, colors=colors)
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER THINNER ──────────────────────────────────────────────
-        matrix = thinner.render(matrix, colors=colors)
+        matrix = thinner.render(in_matrix=matrix, colors=colors)
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
-        matrix = dimmer.render(matrix, colors=colors)
+        matrix = dimmer.render(in_matrix=matrix, colors=colors)
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── Render Effects ───────────────────────────────────────────────
