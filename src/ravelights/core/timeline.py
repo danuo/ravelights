@@ -117,7 +117,10 @@ class GenSelector:
 
     def get_random_generator(self, gen_type: type[Pattern | Vfilter | Dimmer | Thinner]) -> str:
         generators = self.get_gen_list(gen_type=gen_type)
-        keywords = self.keywords + [self.settings.music_style]
+        if self.settings.music_style:
+            keywords = self.keywords + [self.settings.music_style]
+        else:
+            keywords = self.keywords
 
         # first try
         names, weights = get_names_and_weights(generators=generators, keywords=keywords)
