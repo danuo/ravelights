@@ -67,7 +67,9 @@ class RaveLightsApp:
             if self.use_audio:
                 sender_connection, receiver_connection = multiprocessing.Pipe()
                 self.audio_analyzer_process = multiprocessing.Process(
-                    target=audio_analyzer_process, args=(sender_connection,)
+                    target=audio_analyzer_process,
+                    args=(sender_connection,),
+                    daemon=True,
                 )
                 self.audio_analyzer_process.start()
             self.audio_data.set_connection(connection=receiver_connection)
