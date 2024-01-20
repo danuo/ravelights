@@ -58,6 +58,8 @@ class RaveLightsApp:
         self.use_visualizer = use_visualizer
         self.print_stats = print_stats
 
+        self.audio_data = AudioDataProvider()
+
         if run:
             connectivity_check.wait_until_connected_to_network()
             discovery_service.start()
@@ -68,7 +70,7 @@ class RaveLightsApp:
                     target=audio_analyzer_process, args=(sender_connection,)
                 )
                 self.audio_analyzer_process.start()
-                self.audio_data = AudioDataProvider(connection=receiver_connection)
+            self.audio_data.set_connection(connection=receiver_connection)
 
             if self.use_visualizer:
                 from ravelights.interface.visualizer import Visualizer
