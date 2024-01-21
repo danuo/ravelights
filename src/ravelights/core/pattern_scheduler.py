@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 class PatternScheduler:
-    def __init__(self, root: "RaveLightsApp"):
+    def __init__(self, root: "RaveLightsApp") -> None:
         self.root = root
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.root.timehandler
@@ -38,7 +38,7 @@ class PatternScheduler:
 
         self.load_timeline_from_index(self.settings.active_timeline_index)
 
-    def load_timeline_from_index(self, index: int):
+    def load_timeline_from_index(self, index: int) -> None:
         self.settings.active_timeline_index = index
         self._load_timeline(self.blueprint_timelines[index])
 
@@ -51,7 +51,7 @@ class PatternScheduler:
                 return
         logger.warning(f"could not find timeline with name {name}")
 
-    def _load_timeline(self, timeline: Timeline):
+    def _load_timeline(self, timeline: Timeline) -> None:
         self.settings.clear_selected()
         self.clear_instruction_queues()
 
@@ -63,13 +63,13 @@ class PatternScheduler:
         self.timeline_placements = timeline["placements"]
         self.process_timeline_placements(self.timeline_placements)
 
-    def process_timeline_selectors(self, timeline_selectors: list[GenSelector]):
+    def process_timeline_selectors(self, timeline_selectors: list[GenSelector]) -> None:
         for selector in timeline_selectors:
             if not p(selector.p):
                 continue
             self.process_generator_selector(selector)
 
-    def process_generator_selector(self, generator_selector: GenSelector):
+    def process_generator_selector(self, generator_selector: GenSelector) -> None:
         # load each generator that is defined inside of the GenSelector Object
         renew_trigger = self.settings.renew_trigger_from_timeline
 
@@ -106,7 +106,7 @@ class PatternScheduler:
                 renew_trigger=renew_trigger,
             )
 
-    def process_timeline_placements(self, timeline_placements: list[GenPlacing]):
+    def process_timeline_placements(self, timeline_placements: list[GenPlacing]) -> None:
         for placement in timeline_placements:
             if not p(placement.p):
                 continue
@@ -115,28 +115,29 @@ class PatternScheduler:
             if isinstance(placement, EffectSelectorPlacing):
                 self.process_effect_placement_object(placement)
 
-    def clear_instruction_queues(self):
+    def clear_instruction_queues(self) -> None:
         """Clears queues for global effects, device effects and instructions"""
         for device in self.devices:
             device.instructionhandler.instruction_queue.clear()
         self.effecthandler.instruction_queue.clear()
 
-    def process_generator_placement_object(self, obj: GenPlacing):
+    def process_generator_placement_object(self, obj: GenPlacing) -> None:
         instruction = InstructionDevice(level=obj.level)
         for timing in obj.timings:
             self.send_to_devices(instruction, timing=timing)
 
-    def process_effect_placement_object(self, obj: EffectSelectorPlacing):
+    def process_effect_placement_object(self, obj: EffectSelectorPlacing) -> None:
         instruction = InstructionEffect(effect_name=obj.effect_name, effect_length_frames=obj.effect_length_frames)
         for timing in obj.timings:
             self.send_to_effect(instruction, timing=timing)
 
-    def send_to_devices(self, ins: InstructionDevice, timing: int):
+    def send_to_devices(self, ins: InstructionDevice, timing: int) -> None:
         for device in self.devices:
             device.instructionhandler.instruction_queue.add_instruction(ins, n_quarter=timing)
 
-    def send_to_effect(self, ins: InstructionEffect, timing: int):
+    def send_to_effect(self, ins: InstructionEffect, timing: int) -> None:
         self.effecthandler.instruction_queue.add_instruction(ins, n_quarter=timing)
 
-    def generate_instructions(self):
+    def generate_instructions(self) -> None:
+        logger.warning("function undefined")
         pass
