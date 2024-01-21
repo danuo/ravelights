@@ -40,9 +40,9 @@ class PatternScheduler:
 
     def load_timeline_from_index(self, index: int):
         self.settings.active_timeline_index = index
-        self.load_timeline(self.blueprint_timelines[index])
+        self._load_timeline(self.blueprint_timelines[index])
 
-    def load_timeline(self, timeline: Timeline):
+    def _load_timeline(self, timeline: Timeline):
         self.settings.clear_selected()
         self.clear_instruction_queues()
 
