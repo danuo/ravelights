@@ -149,38 +149,6 @@ class Settings:
         self.selected = get_default_selected_dict()
         self.root.refresh_ui(sse_event="settings")
 
-    # @property
-    # def bpm(self) -> float:
-    #     return self.bpm_multiplier * self.bpm_base
-
-    # @property
-    # def beat_time(self) -> float:
-    #     """time of a beat in seconds"""
-    #     return 60 / self.bpm
-
-    # @property
-    # def quarter_time(self) -> float:
-    #     """time of a quarter in seconds"""
-    #     return 60 / (self.bpm * 4)
-
-    # @property
-    # def n_quarters(self) -> int:
-    #     """self.n_quarters: will always represent current quarter number [0,15]"""
-    #     return self.n_quarters_long % 16
-
-    # @property
-    # def n_quarters_long(self) -> int:
-    #     """self.n_quarters: will always represent current quarter number [0,127]"""
-    #     return self.root.timehandler.beat_state.n_quarters_long
-
-    # @property
-    # def beat_progress(self) -> float:
-    #     return self.root.timehandler.beat_state.beat_progress
-
-    # @property
-    # def frame_time(self) -> float:
-    #     return 1 / self.fps
-
     def update_from_dict(self, update_dict: dict[str, Any]) -> None:
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
