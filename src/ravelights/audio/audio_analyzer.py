@@ -42,12 +42,10 @@ class AudioAnalyzer:
         self.highs_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
         self.all_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
 
-    def process_audio_callback(self, audio_buffer: bytes) -> None:
+    def process_audio_callback(self, samples: NDArray[np.float32]) -> None:
         # samples
         # range: [-1, 1]
         # shape: (512,)
-        # frombuffer should be here fore satefy, does not require computation
-        samples: NDArray[np.float32] = np.frombuffer(audio_buffer, dtype=np.float32)
         self.samples.append_all(samples)
         spectrum = np.fft.fft(self.samples.array)
 
