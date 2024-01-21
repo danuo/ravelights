@@ -4,29 +4,14 @@ from multiprocessing.connection import _ConnectionBase
 import numpy as np
 from numpy.typing import NDArray
 from ravelights.audio.aubio_beat_detector import AubioBeatDetector
-from ravelights.audio.audio_data import AudioData
+from ravelights.audio.audio_data import DEFAULT_AUDIO_DATA
 from ravelights.audio.audio_source import AudioSource
 from ravelights.audio.beat_detector import BeatDetector
 from ravelights.audio.ring_buffer import RingBuffer
 
 
 class AudioAnalyzer:
-    audio_data = AudioData(
-        level=0,
-        level_low=0,
-        level_mid=0,
-        level_high=0,
-        hits=0,
-        hits_low=0,
-        hits_mid=0,
-        hits_high=0,
-        presence=0,
-        presence_low=0,
-        presence_mid=0,
-        presence_high=0,
-        FadeInOut=0,
-        is_beat=False,
-    )
+    audio_data = DEFAULT_AUDIO_DATA.copy()
 
     def __init__(
         self, connection: _ConnectionBase, audio_source: AudioSource, beat_detector: BeatDetector | None = None
@@ -43,7 +28,7 @@ class AudioAnalyzer:
         self.all_energies = RingBuffer(capacity=self.audio_source.measurements_per_second, dtype=np.float64)
 
     def start(self):
-        self.audio_source.start(self.process_audio)
+        self.audio_source.start(callback=self.process_audio)
 
     def process_audio(self, samples: NDArray[np.float32]) -> None:
         self.samples.append_all(samples)

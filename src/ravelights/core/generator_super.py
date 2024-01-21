@@ -9,6 +9,7 @@ from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
+    from ravelights.audio.audio_data import AudioData
     from ravelights.configs.components import Keywords
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -54,6 +55,10 @@ class Generator(ABC):
         self.init()
         self.alternate()
         self.reset()
+
+    @property
+    def audio_data(self) -> "AudioData":
+        return self.root.audio_data.audio_data
 
     @abstractmethod
     def init(self):
