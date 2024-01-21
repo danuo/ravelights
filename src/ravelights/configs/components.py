@@ -180,17 +180,6 @@ blueprint_effects: list[BlueprintEffect] = [
 blueprint_timelines: list[Timeline] = [
     {
         "meta": {
-            "name": "just one",
-        },
-        "selectors": [
-            GenSelector(gen_type="p_audio", level=1),
-        ],
-        "placements": [
-            GenPlacing(level=1, timings=[0]),
-        ],
-    },
-    {
-        "meta": {
             "name": "all 1 level",
         },
         "selectors": [
@@ -278,6 +267,17 @@ blueprint_timelines: list[Timeline] = [
             GenPlacing(level=1, timings=[8*x for x in range(128//8)]),
             GenPlacing(level=2, timings=[8*x + 2 for x in range(128//8)], trigger_on_change=True),
             GenPlacing(level=3, timings=[8*x + 4 for x in range(128//8)], trigger_on_change=True),
+        ],
+    },
+    {
+        "meta": {
+            "name": "DEBUG_TIMELINE",
+        },
+        "selectors": [
+            GenSelector(gen_type=Pattern, name="p_audio", level=1),
+        ],
+        "placements": [
+            GenPlacing(level=1, timings=[0]),
         ],
     },
 ]

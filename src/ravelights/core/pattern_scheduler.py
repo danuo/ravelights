@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 from loguru import logger
 from ravelights.configs.components import (
@@ -33,7 +33,7 @@ class PatternScheduler:
         self.blueprint_timelines = blueprint_timelines
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
-            generators: list[Generator] = [blueprint.create_instance(kwargs) for blueprint in blueprint_generators]
+            generators: Sequence[Generator] = [blueprint.create_instance(kwargs) for blueprint in blueprint_generators]
             device.rendermodule.register_generators(generators=generators)
 
         self.load_timeline_from_index(self.settings.active_timeline_index)

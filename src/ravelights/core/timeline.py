@@ -54,7 +54,7 @@ class GenSelector:
     thinner_name
     """
 
-    gen_type: type[Pattern | Vfilter | Dimmer | Thinner] | str
+    gen_type: type[Pattern | Vfilter | Dimmer | Thinner]
     name: Optional[str] = None
     keywords: list["Keywords"] = field(default_factory=list)
     level: int = 1
