@@ -23,6 +23,8 @@ class RingBuffer(Generic[NumpyDataType]):
 
     def append_all(self, values: NDArray[NumpyDataType]) -> None:
         num_values = len(values)
+        assert num_values <= self._capacity
+
         first_part_len = min(num_values, self._capacity - self._next_index)
 
         # Fill as much as possible without wrapping around
@@ -34,3 +36,15 @@ class RingBuffer(Generic[NumpyDataType]):
             self._array[:second_part_len] = values[first_part_len:]
 
         self._next_index = (self._next_index + num_values) % self._capacity
+
+    def recent(self, n: int) -> NDArray[NumpyDataType]:
+        """Get the last n inserted elements of the buffer"""
+        assert 0 <= n <= self._capacity
+
+        end_index = self._next_index
+        start_index = (self._next_index - n) % self._capacity
+
+        if start_index < end_index:
+            return self._array[start_index:end_index]
+        else:
+            return np.concatenate([self._array[start_index:], self._array[:end_index]])

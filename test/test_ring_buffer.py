@@ -18,3 +18,8 @@ def test_ring_buffer():
 
     buffer.append_all(np.array([100, 200, 300], dtype=np.float32))
     assert buffer.array.tolist() == [30, 100, 200, 300, 20]
+    assert buffer.recent(3).tolist() == [100, 200, 300]
+
+    buffer.append_all(np.array([1000, 2000, 3000], dtype=np.float32))
+    assert buffer.array.tolist() == [2000, 3000, 200, 300, 1000]
+    assert buffer.recent(3).tolist() == [1000, 2000, 3000]

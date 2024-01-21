@@ -37,10 +37,16 @@ class AudioAnalyzer:
         self.FFT_WINDOW_SIZE = audio_source.CHUNK_SIZE * 2
         self.SPECTRUM_FREQUENCIES = np.fft.fftfreq(self.FFT_WINDOW_SIZE, 1 / self.audio_source.SAMPLING_RATE)
         self.samples = RingBuffer(capacity=self.FFT_WINDOW_SIZE, dtype=np.float32)
-        self.lows_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
-        self.mids_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
-        self.highs_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
-        self.all_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
+        self.CACHE_SECONDS = 60
+        self.N_CACHED_CHUNKS = self.CACHE_SECONDS * self.audio_source.CHUNKS_PER_SECOND
+        self.lows_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
+        self.mids_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
+        self.highs_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
+        self.total_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
+        self.LEVEL_SECONDS = 0.2
+        self.N_LEVEL_CHUNKS = int(self.LEVEL_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
+        self.PRESENCE_SECONDS = 5
+        self.N_PRESENCE_CHUNKS = int(self.PRESENCE_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
 
     def process_audio_callback(self, samples: NDArray[np.float32]) -> None:
         # samples
@@ -56,16 +62,53 @@ class AudioAnalyzer:
         self.audio_data["rms"] = rms
 
         # energies
-        self.lows_energies.append(self.compute_band_energy(spectrum, (0, 200)))
-        self.mids_energies.append(self.compute_band_energy(spectrum, (200, 2000)))
-        self.highs_energies.append(self.compute_band_energy(spectrum, (2000, self.audio_source.SAMPLING_RATE // 2)))
+        low_energy = self.compute_band_energy(spectrum, (0, 200))
+        mid_energy = self.compute_band_energy(spectrum, (200, 2000))
+        high_energy = self.compute_band_energy(spectrum, (2000, self.audio_source.SAMPLING_RATE // 2))
+        total_energy = self.compute_band_energy(spectrum, (0, self.audio_source.SAMPLING_RATE // 2))
 
-        self.audio_data["presence_low"] = float(self.lows_energies.array.mean())
-        self.audio_data["presence_mid"] = float(self.mids_energies.array.mean())
-        self.audio_data["presence_high"] = float(self.highs_energies.array.mean())
-        self.audio_data["presence"] = (
-            self.audio_data["presence_low"] + self.audio_data["presence_mid"] + self.audio_data["presence_high"]
-        ) / 3
+        self.lows_energies.append(low_energy)
+        self.mids_energies.append(mid_energy)
+        self.highs_energies.append(high_energy)
+        self.total_energies.append(total_energy)
+
+        # level and presence
+        lows_max = self.lows_energies.array.max()
+        mids_max = self.mids_energies.array.max()
+        highs_max = self.highs_energies.array.max()
+        total_max = self.total_energies.array.max()
+
+        if lows_max > 0:
+            self.audio_data["level_low"] = float(
+                self.lows_energies.recent(self.N_LEVEL_CHUNKS).mean() / self.lows_energies.array.max()
+            )
+            self.audio_data["presence_low"] = float(
+                self.lows_energies.recent(self.N_PRESENCE_CHUNKS).mean() / self.lows_energies.array.max()
+            )
+
+        if mids_max > 0:
+            self.audio_data["level_mid"] = float(
+                self.mids_energies.recent(self.N_LEVEL_CHUNKS).mean() / self.mids_energies.array.max()
+            )
+            self.audio_data["presence_mid"] = float(
+                self.mids_energies.recent(self.N_PRESENCE_CHUNKS).mean() / self.mids_energies.array.max()
+            )
+
+        if highs_max > 0:
+            self.audio_data["level_high"] = float(
+                self.highs_energies.recent(self.N_LEVEL_CHUNKS).mean() / self.highs_energies.array.max()
+            )
+            self.audio_data["presence_high"] = float(
+                self.highs_energies.recent(self.N_PRESENCE_CHUNKS).mean() / self.highs_energies.array.max()
+            )
+
+        if total_max > 0:
+            self.audio_data["level"] = float(
+                self.total_energies.recent(self.N_LEVEL_CHUNKS).mean() / self.total_energies.array.max()
+            )
+            self.audio_data["presence"] = float(
+                self.total_energies.recent(self.N_PRESENCE_CHUNKS).mean() / self.total_energies.array.max()
+            )
 
         self.audio_data["is_beat"] = False
         if self.beat_detector:

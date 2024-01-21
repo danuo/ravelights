@@ -41,7 +41,7 @@ args = parse_args()
 
 # for devices in ravelights app
 # device_config = [DeviceDict(n_lights=10, n_leds=144), DeviceDict(n_lights=10, n_leds=144)]
-device_config = [DeviceLightConfig(n_lights=9, n_leds=144, color_profile=ColorProfiles.LINEAR)]
+device_config = [DeviceLightConfig(n_lights=10, n_leds=144, color_profile=ColorProfiles.LINEAR)]
 
 
 # ─── Transmitters ─────────────────────────────────────────────────────────────
