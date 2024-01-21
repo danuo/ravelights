@@ -3,7 +3,7 @@ from dataclasses import asdict
 
 from loguru import logger
 from ravelights import DeviceLightConfig, TransmitterConfig
-from ravelights.audio.audio_analyzer_process import audio_analyzer_process
+from ravelights.audio.audio_analyzer import audio_analyzer_process
 from ravelights.audio.audio_data import AudioDataProvider
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
