@@ -1,9 +1,10 @@
 from typing import TYPE_CHECKING, Any, NamedTuple, cast
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
+from ravelights.core.blueprints import BlueprintEffect, BlueprintGen
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators
-from ravelights.core.template_objects import GenPlacing
+from ravelights.core.custom_typing import AvailableGenerators, Timeline
+from ravelights.core.timeline import GenPlacing
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -54,10 +55,17 @@ class MetaHandler:
     def get_meta_available_keywords(self) -> list[str]:
         available_keywords: set[str] = set()
         for item in blueprint_generators + blueprint_effects:
-            if "keywords" in item.args:
-                keywords: list[Keywords] = cast(list[Keywords], item.args["keywords"])
-                for keyword in keywords:
-                    available_keywords.add(keyword.value)
+            # todo: only have new stuff
+            if isinstance(item, BlueprintGen) or isinstance(item, BlueprintEffect):
+                if hasattr(item, "keywords"):
+                    keywords: list[Keywords] = item.keywords
+                    for keyword in keywords:
+                        available_keywords.add(keyword.value)
+            else:
+                if "keywords" in item.args:
+                    keywords: list[Keywords] = cast(list[Keywords], item.args["keywords"])
+                    for keyword in keywords:
+                        available_keywords.add(keyword.value)
         return list(available_keywords)
 
     def get_meta_available_generators(self) -> AvailableGenerators:
@@ -125,19 +133,19 @@ class MetaHandler:
             svgs.append(self.get_svg_for_timeline(timeline))
         return dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
-    def get_svg_for_timeline(self, timeline) -> None:
+    def get_svg_for_timeline(self, timeline: Timeline) -> str:
         SVG_HEIGHT = 70
 
         placements = timeline["placements"]
         items = []
         for placement in placements:
-            if placement.cls != GenPlacing:
+            if not isinstance(placement, GenPlacing):
                 continue
 
-            level: list[int] = placement.args["level"]
-            timings: list[int] = placement.args["timings"]
-            for t in timings:
-                item = Item(t, level)
+            level: int = placement.level
+            timings: list[int] = placement.timings
+            for timing in timings:
+                item = Item(timing, level)
                 items.append(item)
         items.append(Item(128, 1))
         items.sort()

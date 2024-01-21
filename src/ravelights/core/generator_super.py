@@ -9,6 +9,7 @@ from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
+    from ravelights.audio.audio_data import AudioData
     from ravelights.configs.components import Keywords
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -55,6 +56,10 @@ class Generator(ABC):
         self.alternate()
         self.reset()
 
+    @property
+    def audio_data(self) -> "AudioData":
+        return self.root.audio_data.audio_data
+
     @abstractmethod
     def init(self):
         """put custom init code in this function instead of overwriting __init__()"""
@@ -73,10 +78,6 @@ class Generator(ABC):
     def on_trigger(self):
         """called, when trigger is satisfied"""
         ...
-
-    @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
-        return in_matrix
 
     def sync_send(self) -> Optional[dict[str, Any]]:
         ...
@@ -200,8 +201,9 @@ class Generator(ABC):
 
 
 class Pattern(Generator):
+    @abstractmethod
     def render(self, colors: list[Color]) -> ArrayFloat:
-        return self.get_float_matrix_rgb()
+        ...
 
 
 class PatternNone(Pattern):
@@ -224,7 +226,9 @@ class PatternNone(Pattern):
 
 
 class Vfilter(Generator):
-    ...
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+        ...
 
 
 class VfilterNone(Vfilter):
@@ -247,13 +251,13 @@ class VfilterNone(Vfilter):
 
 
 class Thinner(Generator):
-    """Default thinner with blank output"""
-
-    ...
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+        ...
 
 
 class ThinnerNone(Thinner):
-    """"""
+    """Default thinner with blank output"""
 
     def init(self):
         ...
@@ -272,12 +276,14 @@ class ThinnerNone(Thinner):
 
 
 class Dimmer(Generator):
-    """Default dimmer with blank output"""
-
-    ...
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+        ...
 
 
 class DimmerNone(Dimmer):
+    """Default dimmer with blank output"""
+
     def init(self):
         ...
 

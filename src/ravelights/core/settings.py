@@ -110,7 +110,7 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    music_style: str = MusicStyles.TECHNO.value
+    music_style: Optional[str] = None
 
     # ─── Time Settings ────────────────────────────────────────────────────
     bpm_base: float = 140.0
@@ -128,7 +128,7 @@ class Settings:
     # ─── Pattern Settings ─────────────────────────────────────────────────
     selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
 
-    active_timeline_index: int = 0  # default timeline index
+    active_timeline_index: int = 0
     use_manual_timeline: bool = True
     global_manual_timeline_level: int = 1
 
@@ -148,38 +148,6 @@ class Settings:
         """resets selected generators to default state"""
         self.selected = get_default_selected_dict()
         self.root.refresh_ui(sse_event="settings")
-
-    # @property
-    # def bpm(self) -> float:
-    #     return self.bpm_multiplier * self.bpm_base
-
-    # @property
-    # def beat_time(self) -> float:
-    #     """time of a beat in seconds"""
-    #     return 60 / self.bpm
-
-    # @property
-    # def quarter_time(self) -> float:
-    #     """time of a quarter in seconds"""
-    #     return 60 / (self.bpm * 4)
-
-    # @property
-    # def n_quarters(self) -> int:
-    #     """self.n_quarters: will always represent current quarter number [0,15]"""
-    #     return self.n_quarters_long % 16
-
-    # @property
-    # def n_quarters_long(self) -> int:
-    #     """self.n_quarters: will always represent current quarter number [0,127]"""
-    #     return self.root.timehandler.beat_state.n_quarters_long
-
-    # @property
-    # def beat_progress(self) -> float:
-    #     return self.root.timehandler.beat_state.beat_progress
-
-    # @property
-    # def frame_time(self) -> float:
-    #     return 1 / self.fps
 
     def update_from_dict(self, update_dict: dict[str, Any]) -> None:
         assert isinstance(update_dict, dict)

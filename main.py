@@ -29,6 +29,7 @@ def parse_args():
     parser.add_argument("--artnet-serial-baudrate", type=int, default=3_000_000)
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
+    parser.add_argument("--audio", default=True, action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
     return args
 
@@ -135,12 +136,13 @@ if not args.webui:
     webui_port = 5000
     logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
 
-
-app = RaveLightsApp(
-    device_config=device_config,
-    fps=args.fps,
-    webui_port=webui_port,
-    serve_webui=args.webui,
-    transmitter_recipes=transmitter_recipes,
-    use_visualizer=args.visualizer,
-)
+if __name__ == "__main__":
+    app = RaveLightsApp(
+        device_config=device_config,
+        fps=args.fps,
+        webui_port=webui_port,
+        serve_webui=args.webui,
+        transmitter_recipes=transmitter_recipes,
+        use_visualizer=args.visualizer,
+        use_audio=args.audio,
+    )
