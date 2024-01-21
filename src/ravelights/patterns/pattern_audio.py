@@ -8,8 +8,11 @@ BANDS = Literal["lows", "mids", "highs"]
 
 
 class PatternAudio(Pattern):
+    """pattern name: p_audio"""
+
     def init(self):
-        ...
+        self.p_add_dimmer = 0.0
+        self.p_add_thinner = 0.0
 
     def alternate(self):
         ...
@@ -21,18 +24,19 @@ class PatternAudio(Pattern):
         ...
 
     def render(self, colors: list[Color]) -> ArrayFloat:
-        matrix = self.get_float_matrix_2d_mono()
+        matrix_rgb = self.get_float_matrix_rgb()
 
+        if self.audio_data["is_beat"]:
+            matrix_rgb[:, 0, :] = 1.0  # white
+
+        index_rms = int(self.n_leds * min(1.0, abs(self.audio_data["rms"])))
         index_lows = int(self.n_leds * min(1.0, abs(self.audio_data["level_low"])))
         index_mid = int(self.n_leds * min(1.0, abs(self.audio_data["level_mid"])))
         index_high = int(self.n_leds * min(1.0, abs(self.audio_data["level_high"])))
 
-        matrix[:index_lows, 0] = 1.0
-        matrix[:index_mid, 1] = 1.0
-        matrix[:index_high, 2] = 1.0
+        matrix_rgb[:index_rms, 1, :] = 1.0  # white
+        matrix_rgb[:index_lows, 2, 0] = 1.0  # red
+        matrix_rgb[:index_mid, 3, 1] = 1.0  # green
+        matrix_rgb[:index_high, 4, 2] = 1.0  # blue
 
-        if self.audio_data["is_beat"]:
-            matrix[:, 3] = 1.0
-
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
         return matrix_rgb
