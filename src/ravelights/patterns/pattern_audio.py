@@ -26,17 +26,23 @@ class PatternAudio(Pattern):
     def render(self, colors: list[Color]) -> ArrayFloat:
         matrix_rgb = self.get_float_matrix_rgb()
 
-        if self.audio_data["is_beat"]:
-            matrix_rgb[:, 0, :] = 1.0  # white
-
         index_rms = int(self.n_leds * min(1.0, abs(self.audio_data["rms"])))
         index_lows = int(self.n_leds * min(1.0, abs(self.audio_data["level_low"])))
         index_mid = int(self.n_leds * min(1.0, abs(self.audio_data["level_mid"])))
         index_high = int(self.n_leds * min(1.0, abs(self.audio_data["level_high"])))
 
-        matrix_rgb[:index_rms, 1, :] = 1.0  # white
-        matrix_rgb[:index_lows, 2, 0] = 1.0  # red
-        matrix_rgb[:index_mid, 3, 1] = 1.0  # green
-        matrix_rgb[:index_high, 4, 2] = 1.0  # blue
+        for light_id in range(self.n_lights):
+            match light_id:  # match statement to support devices with few n_lights in tests
+                case 0:
+                    if self.audio_data["is_beat"]:
+                        matrix_rgb[:, 0, :] = 1.0  # white
+                case 1:
+                    matrix_rgb[:index_rms, 1, :] = 1.0  # white
+                case 2:
+                    matrix_rgb[:index_lows, 2, 0] = 1.0  # red
+                case 3:
+                    matrix_rgb[:index_mid, 3, 1] = 1.0  # green
+                case 4:
+                    matrix_rgb[:index_high, 4, 2] = 1.0  # blue
 
         return matrix_rgb
