@@ -272,6 +272,7 @@ blueprint_timelines: list[Timeline] = [
     {
         "meta": {
             "name": "DEBUG_TIMELINE",
+            "description": "does nothing but loading a single pattern by name",
         },
         "selectors": [
             GenSelector(gen_type=Pattern, name="p_audio", level=1),
