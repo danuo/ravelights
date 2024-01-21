@@ -42,23 +42,32 @@ class AudioAnalyzer:
         self.highs_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
         self.all_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
 
-    def process_audio_callback(self, samples: NDArray[np.float32]) -> None:
+    def process_audio_callback(self, audio_buffer: bytes) -> None:
+        # samples
+        # range: [-1, 1]
+        # shape: (512,)
+        # frombuffer should be here fore satefy, does not require computation
+        samples: NDArray[np.float32] = np.frombuffer(audio_buffer, dtype=np.float32)
         self.samples.append_all(samples)
-
         spectrum = np.fft.fft(self.samples.array)
 
+        # rms
+        # range: [0, 1]
+        # shape: float
+        rms = float(np.sqrt(np.mean(samples**2)))
+        self.audio_data["rms"] = rms
+
+        # energies
         self.lows_energies.append(self.compute_band_energy(spectrum, (0, 200)))
         self.mids_energies.append(self.compute_band_energy(spectrum, (200, 2000)))
         self.highs_energies.append(self.compute_band_energy(spectrum, (2000, self.audio_source.SAMPLING_RATE // 2)))
 
-        self.audio_data["presence_low"] = self.lows_energies.array.mean()
-        self.audio_data["presence_mid"] = self.mids_energies.array.mean()
-        self.audio_data["presence_high"] = self.highs_energies.array.mean()
+        self.audio_data["presence_low"] = float(self.lows_energies.array.mean())
+        self.audio_data["presence_mid"] = float(self.mids_energies.array.mean())
+        self.audio_data["presence_high"] = float(self.highs_energies.array.mean())
         self.audio_data["presence"] = (
             self.audio_data["presence_low"] + self.audio_data["presence_mid"] + self.audio_data["presence_high"]
         ) / 3
-
-        print(self.audio_data["presence_low"], self.audio_data["presence_mid"], self.audio_data["presence_high"])
 
         self.audio_data["is_beat"] = False
         if self.beat_detector:

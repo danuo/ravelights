@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 
 
 class AudioData(TypedDict):
+    rms: float
+
     level: float
     level_low: float
     level_mid: float
@@ -26,6 +28,7 @@ class AudioData(TypedDict):
 
 
 DEFAULT_AUDIO_DATA = AudioData(
+    rms=0,
     level=0,
     level_low=0,
     level_mid=0,
