@@ -3,7 +3,6 @@ from dataclasses import asdict
 
 from loguru import logger
 from ravelights import DeviceLightConfig, TransmitterConfig
-from ravelights.audio.audio_analyzer import audio_analyzer_process
 from ravelights.audio.audio_data import AudioDataProvider
 from ravelights.core.autopilot import AutoPilot
 from ravelights.core.device import Device
@@ -65,6 +64,8 @@ class RaveLightsApp:
             discovery_service.start()
 
             if self.use_audio:
+                from ravelights.audio.audio_analyzer import audio_analyzer_process
+
                 sender_connection, receiver_connection = multiprocessing.Pipe()
                 self.audio_analyzer_process = multiprocessing.Process(
                     target=audio_analyzer_process,
