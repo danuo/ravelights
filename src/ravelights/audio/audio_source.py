@@ -25,15 +25,15 @@ class AudioSource:
         self._callback: AudioSourceCallback | None = None
 
     @property
-    def sampling_rate(self) -> int:
+    def SAMPLING_RATE(self) -> int:
         return self._SAMPLING_RATE
 
     @property
-    def chunk_size(self) -> int:
+    def CHUNK_SIZE(self) -> int:
         return self._CHUNK_SIZE
 
     @property
-    def measurements_per_second(self) -> int:
+    def CHUNKS_PER_SECOND(self) -> int:
         return self._SAMPLING_RATE // self._CHUNK_SIZE
 
     def _pyaudio_callback(

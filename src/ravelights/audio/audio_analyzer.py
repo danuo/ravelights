@@ -3,11 +3,25 @@ from multiprocessing.connection import _ConnectionBase
 
 import numpy as np
 from numpy.typing import NDArray
-from ravelights.audio.aubio_beat_detector import AubioBeatDetector
 from ravelights.audio.audio_data import DEFAULT_AUDIO_DATA
 from ravelights.audio.audio_source import AudioSource
-from ravelights.audio.beat_detector import BeatDetector
+from ravelights.audio.beat_detector import AubioBeatDetector, BeatDetector
 from ravelights.audio.ring_buffer import RingBuffer
+
+
+class BpmCaluclator:
+    def __init__(self, bpm_window_size: int = 16):
+        self._beat_times = RingBuffer(capacity=bpm_window_size, dtype=np.float32)
+
+    def register_beat(self, time: float) -> None:
+        self._beat_times.append(time)
+
+    def _compute_bpm(self) -> float | None:
+        inter_beat_times = np.diff(self._beat_times.array)
+        median_inter_beat_time = np.median(inter_beat_times)
+        if median_inter_beat_time == 0:
+            return None
+        return 60 / float(median_inter_beat_time)
 
 
 class AudioAnalyzer:
@@ -18,58 +32,60 @@ class AudioAnalyzer:
     ):
         self.connection = connection
         self.audio_source = audio_source
+        self.bpm_calculator = BpmCaluclator()
         self.beat_detector = beat_detector
-        self.fft_window_size = audio_source.chunk_size * 2
-        self.spectrum_frequencies = np.fft.fftfreq(self.fft_window_size, 1 / self.audio_source.sampling_rate)
-        self.samples = RingBuffer(capacity=self.fft_window_size, dtype=np.float32)
-        self.lows_energies = RingBuffer(capacity=self.audio_source.measurements_per_second, dtype=np.float64)
-        self.mids_energies = RingBuffer(capacity=self.audio_source.measurements_per_second, dtype=np.float64)
-        self.highs_energies = RingBuffer(capacity=self.audio_source.measurements_per_second, dtype=np.float64)
-        self.all_energies = RingBuffer(capacity=self.audio_source.measurements_per_second, dtype=np.float64)
+        self.FFT_WINDOW_SIZE = audio_source.CHUNK_SIZE * 2
+        self.SPECTRUM_FREQUENCIES = np.fft.fftfreq(self.FFT_WINDOW_SIZE, 1 / self.audio_source.SAMPLING_RATE)
+        self.samples = RingBuffer(capacity=self.FFT_WINDOW_SIZE, dtype=np.float32)
+        self.lows_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
+        self.mids_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
+        self.highs_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
+        self.all_energies = RingBuffer(capacity=self.audio_source.CHUNKS_PER_SECOND, dtype=np.float64)
 
-    def start(self):
-        self.audio_source.start(callback=self.process_audio)
-
-    def process_audio(self, samples: NDArray[np.float32]) -> None:
+    def process_audio_callback(self, samples: NDArray[np.float32]) -> None:
         self.samples.append_all(samples)
 
         spectrum = np.fft.fft(self.samples.array)
 
         self.lows_energies.append(self.compute_band_energy(spectrum, (0, 200)))
         self.mids_energies.append(self.compute_band_energy(spectrum, (200, 2000)))
-        self.highs_energies.append(self.compute_band_energy(spectrum, (2000, self.audio_source.sampling_rate // 2)))
+        self.highs_energies.append(self.compute_band_energy(spectrum, (2000, self.audio_source.SAMPLING_RATE // 2)))
 
-        lows_mean = self.lows_energies.array.mean()
-        mids_mean = self.mids_energies.array.mean()
-        highs_mean = self.highs_energies.array.mean()
-        all_mean = lows_mean + mids_mean + highs_mean
+        self.audio_data["presence_low"] = self.lows_energies.array.mean()
+        self.audio_data["presence_mid"] = self.mids_energies.array.mean()
+        self.audio_data["presence_high"] = self.highs_energies.array.mean()
+        self.audio_data["presence"] = (
+            self.audio_data["presence_low"] + self.audio_data["presence_mid"] + self.audio_data["presence_high"]
+        ) / 3
 
-        # print([lows_mean, mids_mean, highs_mean, all_mean])
+        print(self.audio_data["presence_low"], self.audio_data["presence_mid"], self.audio_data["presence_high"])
 
-        if self.beat_detector is not None:
-            bpm = self.beat_detector.process_samples(samples)
-            if bpm is not None:
-                print(f"Beat detected! BPM: {bpm}")
+        self.audio_data["is_beat"] = False
+        if self.beat_detector:
+            beat_time = self.beat_detector.detect_beat(samples)
+            if beat_time:
+                self.audio_data["is_beat"] = True
+                self.bpm_calculator.register_beat(beat_time)
+                # todo: use bpm
 
         self.send_audio_data()
 
-    def send_audio_data(self):
+    def send_audio_data(self) -> None:
         self.connection.send(self.audio_data)
 
     def compute_band_energy(self, spectrum: NDArray[np.complex128], band: tuple[int, int]) -> float:
         band_start, band_end = band
-        band_spectrum = spectrum[(self.spectrum_frequencies >= band_start) & (self.spectrum_frequencies < band_end)]
+        band_spectrum = spectrum[(self.SPECTRUM_FREQUENCIES >= band_start) & (self.SPECTRUM_FREQUENCIES < band_end)]
         band_magnitudes = np.abs(band_spectrum)
         band_energy = np.sum(band_magnitudes**2)
         return float(band_energy)
 
 
-def audio_analyzer_process(connection: _ConnectionBase):
-    source = AudioSource(sampling_rate=44100, chunk_size=512)
-    beat_detector = AubioBeatDetector(sampling_rate=source.sampling_rate, hop_size=source.chunk_size)
-    audio_analyzer = AudioAnalyzer(connection, source, beat_detector)
-    audio_analyzer.start()
+def audio_analyzer_process(connection: _ConnectionBase) -> None:
+    audio_source = AudioSource(sampling_rate=44100, chunk_size=512)
+    beat_detector = AubioBeatDetector(sampling_rate=audio_source.SAMPLING_RATE, hop_size=audio_source.CHUNK_SIZE)
+    audio_analyzer = AudioAnalyzer(connection, audio_source, beat_detector)
+    audio_source.start(callback=audio_analyzer.process_audio_callback)
 
-    # Keep the process alive
     while True:
-        time.sleep(60)
+        time.sleep(1)
