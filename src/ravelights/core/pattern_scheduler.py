@@ -42,6 +42,15 @@ class PatternScheduler:
         self.settings.active_timeline_index = index
         self._load_timeline(self.blueprint_timelines[index])
 
+    def load_timeline_by_name(self, name: str) -> None:
+        for index, timeline in enumerate(self.blueprint_timelines):
+            if timeline["meta"]["name"] == name:
+                self.settings.active_timeline_index = index
+                self._load_timeline(self.blueprint_timelines[index])
+                logger.info(f"loading timeline {name} at index {index}")
+                return
+        logger.warning(f"could not find timeline with name {name}")
+
     def _load_timeline(self, timeline: Timeline):
         self.settings.clear_selected()
         self.clear_instruction_queues()
