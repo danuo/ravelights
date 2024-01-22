@@ -39,10 +39,10 @@ class AudioAnalyzer:
         self.samples = RingBuffer(capacity=self.FFT_WINDOW_SIZE, dtype=np.float32)
         self.CACHE_SECONDS = 60
         self.N_CACHED_CHUNKS = self.CACHE_SECONDS * self.audio_source.CHUNKS_PER_SECOND
-        self.lows_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
-        self.mids_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
-        self.highs_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
-        self.total_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float64)
+        self.lows_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32)
+        self.mids_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32)
+        self.highs_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32)
+        self.total_energies = RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32)
         self.LEVEL_SECONDS = 0.05
         self.N_LEVEL_CHUNKS = int(self.LEVEL_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
         self.PRESENCE_SECONDS = 5
