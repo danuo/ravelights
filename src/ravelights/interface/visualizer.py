@@ -21,7 +21,7 @@ GUISCALE = 1.5
 
 
 class Visualizer:
-    def __init__(self, root: "RaveLightsApp"):
+    def __init__(self, root: "RaveLightsApp") -> None:
         self.root = root
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
@@ -35,7 +35,7 @@ class Visualizer:
         self.timehandler.bpm_sync()
         self.create_surfaces()
 
-    def get_visualizer_config(self):
+    def get_visualizer_config(self) -> list[list[dict[str, float]]]:
         device_config_string = str(self.settings.device_config)
         # load config from configuration file if available
         for configuration in configurations:
@@ -47,13 +47,13 @@ class Visualizer:
             return self.generate_visualizer_config(self.settings.device_config)
         raise Exception("could neither find nor generate matching visualizer_configuration")
 
-    def generate_visualizer_config(self, device_light_config: list[DeviceLightConfig]):
+    def generate_visualizer_config(self, device_light_config: list[DeviceLightConfig]) -> list[list[dict[str, float]]]:
         """
         generates visualizer config for one device
         """
-        full_vis_config = []
+        full_vis_config: list[list[dict[str, float]]] = []
         for device in device_light_config:
-            device_vis_config = []
+            device_vis_config: list[dict[str, float]] = []
             n_lights = device.n_lights
             spacings = np.linspace(0.2, 0.8, n_lights)
             for light_id in range(n_lights):
@@ -61,7 +61,7 @@ class Visualizer:
             full_vis_config.append(device_vis_config)
         return full_vis_config
 
-    def send_inputs_to_eventhandler(self):
+    def send_inputs_to_eventhandler(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -85,7 +85,7 @@ class Visualizer:
             self.surfaces_small.append(s_list_small)
             self.surfaces_big.append(s_list_big)
 
-    def render(self, matrices_int):
+    def render(self, matrices_int) -> None:
         self.surface.fill(C_BLACK)
         for device_id, matrix_int in enumerate(matrices_int):
             device = self.root.devices[device_id]
@@ -116,12 +116,12 @@ class Visualizer:
         pygame.display.update()
         self.send_inputs_to_eventhandler()
 
-    def draw_GUI(self):
+    def draw_GUI(self) -> None:
         self._draw_beat_progress()
         self._draw_beat_state()
         self._draw_stats()
 
-    def _draw_beat_progress(self):
+    def _draw_beat_progress(self) -> None:
         beat_progress = self.timehandler.beat_progress
         beat_progress_adjusted = (0.5 + beat_progress) % 1
         color = (0, 255, 0)
@@ -131,7 +131,7 @@ class Visualizer:
         y_pos = int(SCREENHEIGHT - square_h)
         pygame.draw.rect(self.surface, color, (x_pos, y_pos, square_w, square_h))
 
-    def _draw_beat_state(self):
+    def _draw_beat_state(self) -> None:
         """Draws blue rectangle on frames with beat."""
         if BeatStatePattern(loop_length=1).is_match(self.timehandler.beat_state):
             color = (0, 255, 255)
@@ -141,7 +141,7 @@ class Visualizer:
             y_pos = int(SCREENHEIGHT - square_h)
             pygame.draw.rect(self.surface, color, (x_pos, y_pos, square_w, square_h))
 
-    def _draw_stats(self):
+    def _draw_stats(self) -> None:
         stats = {k: str(v) for k, v in self.timehandler.get_stats().items()}
         fps = "".join(
             [
@@ -211,7 +211,7 @@ class Visualizer:
         y: int = 0,
         font_name: str = pygame.font.match_font("consolas"),
         position: str = "topleft",
-    ):
+    ) -> None:
         font = pygame.font.Font(font_name, size)
         text_surface = font.render(text, True, (255, 255, 255))
         text_rect = text_surface.get_rect()
