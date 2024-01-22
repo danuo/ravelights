@@ -36,39 +36,63 @@ class PatternAudio(Pattern):
         assert 0 <= self.audio_data["presence_high"] <= 1.0
         assert 0 <= self.audio_data["presence"] <= 1.0
 
-        index_rms = int(self.n_leds * min(1.0, abs(self.audio_data["rms"])))
-        index_level_lows = int(self.n_leds * self.audio_data["level_low"])
-        index_level_mids = int(self.n_leds * self.audio_data["level_mid"])
-        index_level_highs = int(self.n_leds * self.audio_data["level_high"])
-        index_level_total = int(self.n_leds * self.audio_data["level"])
+        indices_max: list[int] = []
+        channels: list[slice | int] = []
+        intensities: list[float] = []
 
-        index_presence_lows = int(self.n_leds * self.audio_data["presence_low"])
-        index_presence_mids = int(self.n_leds * self.audio_data["presence_mid"])
-        index_presence_highs = int(self.n_leds * self.audio_data["presence_high"])
-        index_presence_total = int(self.n_leds * self.audio_data["presence"])
+        index_cap = self.n_leds - 1
+
+        index_is_beat = index_cap if self.audio_data["is_beat"] else 0
+        indices_max.append(index_is_beat)
+        channels.append(slice(None, None, None))  # white
+        intensities.append(1.0)  # full
+
+        index_rms = int(index_cap * min(1.0, abs(self.audio_data["rms"])))
+        indices_max.append(index_rms)
+        channels.append(slice(None, None, None))  # white
+        intensities.append(0.5)  # half
+
+        index_level_total = int(index_cap * self.audio_data["level"])
+        indices_max.append(index_level_total)
+        channels.append(0)  # red
+        intensities.append(1.0)  # full
+
+        index_presence_total = int(index_cap * self.audio_data["presence"])
+        indices_max.append(index_presence_total)
+        channels.append(0)  # red
+        intensities.append(0.5)  # half
+
+        index_level_lows = int(index_cap * self.audio_data["level_low"])
+        indices_max.append(index_level_lows)
+        channels.append(1)  # green
+        intensities.append(1.0)  # full
+
+        index_presence_lows = int(index_cap * self.audio_data["presence_low"])
+        indices_max.append(index_presence_lows)
+        channels.append(1)  # green
+        intensities.append(0.5)  # half
+
+        index_level_mids = int(index_cap * self.audio_data["level_mid"])
+        indices_max.append(index_level_mids)
+        channels.append(2)  # blue
+        intensities.append(1.0)  # gray
+
+        index_presence_mids = int(index_cap * self.audio_data["presence_mid"])
+        indices_max.append(index_presence_mids)
+        channels.append(2)  # blue
+        intensities.append(0.5)  # gray
+
+        index_level_highs = int(index_cap * self.audio_data["level_high"])
+        indices_max.append(index_level_highs)
+        channels.append(slice(-1, 1))  # purple
+        intensities.append(1.0)  # gray
+
+        index_presence_highs = int(index_cap * self.audio_data["presence_high"])
+        indices_max.append(index_presence_highs)
+        channels.append(slice(-1, 1))  # purple
+        intensities.append(0.5)  # half
 
         for light_id in range(self.n_lights):
-            match light_id:  # match statement to support devices with few n_lights in tests
-                case 0:
-                    if self.audio_data["is_beat"]:
-                        matrix_rgb[:, 0, :] = 1.0  # white
-                case 1:
-                    matrix_rgb[:index_rms, 1, :] = 0.5  # gray
-                case 2:
-                    matrix_rgb[:index_level_total, 2, 0] = 1.0  # red
-                case 3:
-                    matrix_rgb[:index_presence_total, 3, 0] = 0.5  # dark red
-                case 4:
-                    matrix_rgb[:index_level_lows, 4, 1] = 1.0  # green
-                case 5:
-                    matrix_rgb[:index_presence_lows, 5, 1] = 0.5  # dark green
-                case 6:
-                    matrix_rgb[:index_level_mids, 6, 2] = 1.0  # blue
-                case 7:
-                    matrix_rgb[:index_presence_mids, 7, 2] = 0.5  # dark blue
-                case 8:
-                    matrix_rgb[:index_level_highs, 8] = [1.0, 0, 1.0]  # purple
-                case 9:
-                    matrix_rgb[:index_presence_highs, 9] = [0.5, 0, 0.5]  # dark purple
+            matrix_rgb[: indices_max[light_id], light_id, channels[light_id]] = intensities[light_id]
 
         return matrix_rgb
