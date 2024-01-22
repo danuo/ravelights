@@ -1,7 +1,6 @@
-from typing import TYPE_CHECKING, Any, NamedTuple, cast
+from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
-from ravelights.core.blueprints import BlueprintEffect, BlueprintGen
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
 from ravelights.core.custom_typing import AvailableGenerators, Timeline
 from ravelights.core.timeline import GenPlacing
@@ -85,15 +84,20 @@ class MetaHandler:
             ]
         }"""
 
-        keys = ["pattern", "vfilter", "thinner", "dimmer", "effect"]
-        meta_available_generators: AvailableGenerators = {key: [] for key in keys}
+        meta_available_generators = AvailableGenerators(
+            pattern=[],
+            vfilter=[],
+            thinner=[],
+            dimmer=[],
+            effect=[],
+        )
         generators_and_effects = (
             self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
         )
-        for generator_name, gen in generators_and_effects.items():
-            class_identifier = gen.get_identifier()
-            generator_keywords: list[str] = gen.keywords
-            generator_weight: float = gen.weight
+        for generator_name, gen_cls in generators_and_effects.items():
+            class_identifier = gen_cls.get_identifier()
+            generator_keywords: list[str] = gen_cls.keywords
+            generator_weight: float = gen_cls.weight
             meta_available_generators[class_identifier].append(
                 {
                     "generator_name": generator_name,
