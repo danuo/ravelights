@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 import numpy as np
 from loguru import logger
@@ -288,7 +288,7 @@ class Effect(ABC):
         keywords: Optional[list["Keywords"]] = None,
         weight: float = 1.0,
         **kwargs: dict[str, str | int | float],
-    ):
+    ) -> None:
         self.root = root
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.root.timehandler
@@ -301,17 +301,17 @@ class Effect(ABC):
         self.reset()
 
     @abstractmethod
-    def reset(self):
+    def reset(self) -> None:
         """Called, when effect is added to the queue"""
         ...
 
     @abstractmethod
-    def run_before(self):
+    def run_before(self) -> None:
         """Called once before each render cycle"""
         ...
 
     @abstractmethod
-    def run_after(self):
+    def run_after(self) -> None:
         """Called once after each render cycle"""
         ...
 
@@ -321,7 +321,7 @@ class Effect(ABC):
         ...
 
     @abstractmethod
-    def on_delete(self):
+    def on_delete(self) -> None:
         """Called upon effect removal"""
         # todo: is this needed anymore?
         ...
@@ -342,13 +342,13 @@ class Effect(ABC):
             else:
                 logger.warning(f"key {key} does not exist in settings")
 
-    def alternate(self):
+    def alternate(self) -> None:
         ...
 
     def get_new_trigger(self) -> Optional[BeatStatePattern]:
         return None
 
-    def on_trigger(self):
+    def on_trigger(self) -> None:
         ...
 
     def colorize_matrix(self, matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
@@ -376,11 +376,11 @@ class Effect(ABC):
         matrix_rgb = matrix_mono[..., None] * color_array
         return matrix_rgb
 
-    def init_pixelmatrix(self, pixelmatrix: "PixelMatrix"):
+    def init_pixelmatrix(self, pixelmatrix: "PixelMatrix") -> None:
         self.pixelmatrix = pixelmatrix
         self.n_lights: int = pixelmatrix.n_lights
         self.n_leds: int = pixelmatrix.n_leds
         self.n: int = pixelmatrix.n_leds * pixelmatrix.n_lights
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Effect {self.name}>"
