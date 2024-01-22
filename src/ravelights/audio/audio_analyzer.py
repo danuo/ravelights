@@ -47,6 +47,7 @@ class AudioAnalyzer:
         self.N_LEVEL_CHUNKS = int(self.LEVEL_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
         self.PRESENCE_SECONDS = 5
         self.N_PRESENCE_CHUNKS = int(self.PRESENCE_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
+        self.PERCENTILE_PERCENT = 99
 
     def process_audio_callback(self, samples: NDArray[np.float32]) -> None:
         # samples
@@ -72,53 +73,22 @@ class AudioAnalyzer:
         self.highs_energies.append(high_energy)
         self.total_energies.append(total_energy)
 
-        # level and presence
-        lows_max = self.lows_energies.array.max()
-        mids_max = self.mids_energies.array.max()
-        highs_max = self.highs_energies.array.max()
-        total_max = self.total_energies.array.max()
+        lows_max_energy = self.lows_energies.array.max()
+        mids_max_energy = self.mids_energies.array.max()
+        highs_max_energy = self.highs_energies.array.max()
+        total_max_energy = self.total_energies.array.max()
 
-        nth_percentile = 99
+        # level
+        self.audio_data["level"] = self.compute_level(self.total_energies, total_max_energy)
+        self.audio_data["level_low"] = self.compute_level(self.lows_energies, lows_max_energy)
+        self.audio_data["level_mid"] = self.compute_level(self.mids_energies, mids_max_energy)
+        self.audio_data["level_high"] = self.compute_level(self.highs_energies, highs_max_energy)
 
-        if lows_max > 0:
-            self.audio_data["level_low"] = float(
-                np.percentile(self.lows_energies.recent(self.N_LEVEL_CHUNKS), nth_percentile)
-                / self.lows_energies.array.max()
-            )
-            self.audio_data["presence_low"] = float(
-                np.percentile(self.lows_energies.recent(self.N_PRESENCE_CHUNKS), nth_percentile)
-                / self.lows_energies.array.max()
-            )
-
-        if mids_max > 0:
-            self.audio_data["level_mid"] = float(
-                np.percentile(self.mids_energies.recent(self.N_LEVEL_CHUNKS), nth_percentile)
-                / self.mids_energies.array.max()
-            )
-            self.audio_data["presence_mid"] = float(
-                np.percentile(self.mids_energies.recent(self.N_PRESENCE_CHUNKS), nth_percentile)
-                / self.mids_energies.array.max()
-            )
-
-        if highs_max > 0:
-            self.audio_data["level_high"] = float(
-                np.percentile(self.highs_energies.recent(self.N_LEVEL_CHUNKS), nth_percentile)
-                / self.highs_energies.array.max()
-            )
-            self.audio_data["presence_high"] = float(
-                np.percentile(self.highs_energies.recent(self.N_PRESENCE_CHUNKS), nth_percentile)
-                / self.highs_energies.array.max()
-            )
-
-        if total_max > 0:
-            self.audio_data["level"] = float(
-                np.percentile(self.total_energies.recent(self.N_LEVEL_CHUNKS), nth_percentile)
-                / self.total_energies.array.max()
-            )
-            self.audio_data["presence"] = float(
-                np.percentile(self.total_energies.recent(self.N_PRESENCE_CHUNKS), nth_percentile)
-                / self.total_energies.array.max()
-            )
+        # presence
+        self.audio_data["presence"] = self.compute_presence(self.total_energies, total_max_energy)
+        self.audio_data["presence_low"] = self.compute_presence(self.lows_energies, lows_max_energy)
+        self.audio_data["presence_mid"] = self.compute_presence(self.mids_energies, mids_max_energy)
+        self.audio_data["presence_high"] = self.compute_presence(self.highs_energies, highs_max_energy)
 
         self.audio_data["is_beat"] = False
         if self.beat_detector:
@@ -139,6 +109,24 @@ class AudioAnalyzer:
         band_magnitudes = np.abs(band_spectrum)
         band_energy = np.sum(band_magnitudes**2)
         return float(band_energy)
+
+    def compute_level(self, energy_buffer: RingBuffer, maximum_energy: float) -> float:
+        assert maximum_energy >= 0
+
+        if maximum_energy == 0:
+            return 0
+
+        percentile = float(np.percentile(energy_buffer.recent(self.N_LEVEL_CHUNKS), self.PERCENTILE_PERCENT))
+        return percentile / maximum_energy
+
+    def compute_presence(self, energy_buffer: RingBuffer, maximum_energy: float) -> float:
+        assert maximum_energy >= 0
+
+        if maximum_energy == 0:
+            return 0
+
+        percentile = float(np.percentile(energy_buffer.recent(self.N_PRESENCE_CHUNKS), self.PERCENTILE_PERCENT))
+        return percentile / maximum_energy
 
 
 def audio_analyzer_process(connection: _ConnectionBase) -> None:
