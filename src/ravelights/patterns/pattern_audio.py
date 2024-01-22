@@ -92,6 +92,21 @@ class PatternAudio(Pattern):
         channels.append(slice(None))  # white
         intensities.append([0.5, 0.0, 0.5])  # half purple
 
+        index_presence_highs = int(index_cap * self.audio_data["s_max"])
+        indices_max.append(index_presence_highs)
+        channels.append(slice(None))  # white
+        intensities.append([0.0, 1.0, 1.0])  # cyan
+
+        index_presence_highs = int(index_cap * self.audio_data["s_max_decay_fast"])
+        indices_max.append(index_presence_highs)
+        channels.append(slice(None))  # white
+        intensities.append([0.0, 1.0, 1.0])  # cyan
+
+        index_presence_highs = int(index_cap * self.audio_data["s_max_decay_slow"])
+        indices_max.append(index_presence_highs)
+        channels.append(slice(None))  # white
+        intensities.append([0.0, 1.0, 1.0])  # cyan
+
         for light_id in range(self.n_lights):
             matrix_rgb[: indices_max[light_id], light_id, channels[light_id]] = intensities[light_id]
 

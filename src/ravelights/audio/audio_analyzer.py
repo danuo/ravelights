@@ -62,6 +62,18 @@ class AudioAnalyzer:
         rms = float(np.sqrt(np.mean(samples**2)))
         self.audio_data["rms"] = rms
 
+        # s_max
+        # range: [0, 1]
+        # shape: float
+        DECAY_FAST = 0.8
+        DECAY_SLOW = 0.97
+        s_max = float(np.max(np.abs(samples)))
+        s_max_decay_fast = max(self.audio_data["s_max_decay_fast"] * DECAY_FAST, s_max)
+        s_max_decay_slow = max(self.audio_data["s_max_decay_slow"] * DECAY_SLOW, s_max)
+        self.audio_data["s_max"] = rms
+        self.audio_data["s_max_decay_fast"] = s_max_decay_fast
+        self.audio_data["s_max_decay_slow"] = s_max_decay_slow
+
         # energies
         low_energy = self.compute_band_energy(spectrum, (0, 200))
         mid_energy = self.compute_band_energy(spectrum, (200, 2000))

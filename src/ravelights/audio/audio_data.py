@@ -7,6 +7,9 @@ if TYPE_CHECKING:
 
 class AudioData(TypedDict):
     rms: float
+    s_max: float
+    s_max_decay_fast: float
+    s_max_decay_slow: float
 
     level: float
     level_low: float
@@ -29,6 +32,9 @@ class AudioData(TypedDict):
 
 DEFAULT_AUDIO_DATA = AudioData(
     rms=0,
+    s_max=0,
+    s_max_decay_fast=0,
+    s_max_decay_slow=0,
     level=0,
     level_low=0,
     level_mid=0,
