@@ -1,5 +1,6 @@
 import multiprocessing
 from dataclasses import asdict
+from typing import Literal
 
 from loguru import logger
 from ravelights import DeviceLightConfig, TransmitterConfig
@@ -104,7 +105,9 @@ class RaveLightsApp:
         for _ in range(n_frames):
             self.render_frame()
 
-    def sync_generators(self, gen_type_list: list[str]) -> None:
+    def sync_generators(
+        self, gen_type_list: list[Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"]]
+    ) -> None:
         for gen_type in gen_type_list:
             sync_dict = self.devices[0].rendermodule.get_selected_generator(gen_type).sync_send()
             for device in self.devices[1:]:
