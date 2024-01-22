@@ -55,17 +55,9 @@ class MetaHandler:
     def get_meta_available_keywords(self) -> list[str]:
         available_keywords: set[str] = set()
         for item in blueprint_generators + blueprint_effects:
-            # todo: only have new stuff
-            if isinstance(item, BlueprintGen) or isinstance(item, BlueprintEffect):
-                if hasattr(item, "keywords"):
-                    keywords: list[Keywords] = item.keywords
-                    for keyword in keywords:
-                        available_keywords.add(keyword.value)
-            else:
-                if "keywords" in item.args:
-                    keywords: list[Keywords] = cast(list[Keywords], item.args["keywords"])
-                    for keyword in keywords:
-                        available_keywords.add(keyword.value)
+            keywords: list[Keywords] = item.keywords
+            for keyword in keywords:
+                available_keywords.add(keyword.value)
         return list(available_keywords)
 
     def get_meta_available_generators(self) -> AvailableGenerators:

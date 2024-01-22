@@ -26,6 +26,7 @@ class BlueprintGen:
 class BlueprintEffect:
     cls: InitVar[type["Effect"]]
     name: str
+    keywords: list["Keywords"] = field(default_factory=list)
 
     def __post_init__(self, cls):
         self.cls = cls
