@@ -38,7 +38,7 @@ class PatternAudio(Pattern):
 
         indices_max: list[int] = []
         channels: list[slice | int] = []
-        intensities: list[float] = []
+        intensities: list[float | list[float]] = []
 
         index_cap = self.n_leds - 1
 
@@ -85,12 +85,12 @@ class PatternAudio(Pattern):
         index_level_highs = int(index_cap * self.audio_data["level_high"])
         indices_max.append(index_level_highs)
         channels.append(slice(None))  # white
-        intensities.append([1, 0, 1])  # purple
+        intensities.append([1.0, 0.0, 1.0])  # purple
 
         index_presence_highs = int(index_cap * self.audio_data["presence_high"])
         indices_max.append(index_presence_highs)
         channels.append(slice(None))  # white
-        intensities.append([0.5, 0, 0.5])  # half purple
+        intensities.append([0.5, 0.0, 0.5])  # half purple
 
         for light_id in range(self.n_lights):
             matrix_rgb[: indices_max[light_id], light_id, channels[light_id]] = intensities[light_id]
