@@ -1,6 +1,6 @@
 import random
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 import numpy as np
 from loguru import logger
@@ -192,7 +192,7 @@ class Generator(ABC):
         return f"<Generator {self.name}>"
 
     @classmethod
-    def get_identifier(cls) -> str:
+    def get_identifier(cls) -> Literal["pattern", "vfilter", "thinner", "dimmer", "effect"]:
         """returns str identifier of generator type, for example 'pattern' for pattern objects"""
         if cls.__bases__[0] is Generator:
             return cls.__name__.lower()
