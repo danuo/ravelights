@@ -47,7 +47,7 @@ class PatternScheduler:
             if timeline["meta"]["name"] == name:
                 self.settings.active_timeline_index = index
                 self._load_timeline(self.blueprint_timelines[index])
-                logger.info(f"loading timeline {name} at index {index}")
+                logger.debug(f"loading timeline {name} at index {index}")
                 return
         logger.warning(f"could not find timeline with name {name}")
 

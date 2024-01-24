@@ -34,7 +34,7 @@ class EventHandler:
                     "timeline_level": timeline_level,
                     "command": "renew_trigger",
                 }:
-                    logger.info(f"gen_command with {gen_type} at level {timeline_level} and command renew_trigger")
+                    logger.debug(f"gen_command with {gen_type} at level {timeline_level} and command renew_trigger")
                     device = self.patternscheduler.devices[0]
                     if timeline_level == 0:  # level = 0 means auto
                         timeline_level = device.rendermodule.get_timeline_level()
@@ -45,7 +45,7 @@ class EventHandler:
                     "timeline_level": timeline_level,
                     "command": command,
                 }:
-                    logger.info(f"gen_command with {gen_type} at level {timeline_level} and command {command}")
+                    logger.debug(f"gen_command with {gen_type} at level {timeline_level} and command {command}")
                     for device in self.patternscheduler.devices:
                         if timeline_level == 0:
                             timeline_level = device.rendermodule.get_timeline_level()
@@ -55,45 +55,49 @@ class EventHandler:
                         function = getattr(generator, command)
                         function()
                 case {"action": "set_sync"}:
+                    logger.debug("api: set_sync")
                     self.timehandler.bpm_sync()
                 case {"action": "adjust_sync", "value": value}:
                     assert isinstance(value, float)
+                    logger.debug(f"api: adjust_sync with {value=}")
                     self.timehandler.time_sync += value
                 case {"action": "reset_color_mappings"}:
+                    logger.debug("api: reset_color_mappings")
                     self.settings.reset_color_mapping()
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
-                    logger.info(f"set_settings color_transition_speed {speed_str}")
+                    logger.debug(f"api: set_settings color_transition_speed {speed_str}")
                     if isinstance(speed_str, str):
                         self.settings.set_color_transition_speed(speed_str)
                     else:
                         logger.error("could not apply color_transition_speed, value is not a string")
                 case {"action": "set_settings", **other_kwargs}:
-                    logger.info(f"set_settings {other_kwargs}")
+                    logger.debug(f"api: set_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
                 case {"action": "set_settings_autopilot", **other_kwargs}:
-                    logger.info("set_settings_autopilot (...)")
+                    logger.debug("api: set_settings_autopilot (...)")
                     self.settings.set_settings_autopilot(other_kwargs)
                 case {"action": "set_device_settings", "device_id": device_id, **other_kwargs}:
                     assert isinstance(device_id, int)
+                    logger.debug(f"api: set_device_settings with {device_id}")
                     self.devices[device_id].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
-                    logger.info(f"set_trigger with {other_kwargs}")
+                    logger.debug(f"api: set_trigger with {other_kwargs}")
                     self.settings.set_trigger(**other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
-                    logger.info(f"set_generator with {other_kwargs}")
+                    logger.debug(f"api: set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
                     # if set_full:     load generators, load timeline
                     # if not set_full: load timeline
-                    print(index, set_full)
                     # todo: implement set_full
+                    logger.debug(f"api: set_timeline with {index=} and {set_full=}")
                     self.patternscheduler.load_timeline_from_index(int(index))
                 case {"action": "clear_effect_queue"}:
                     self.effecthandler.clear_qeueues()
-                    logger.info("cleared all effect queues")
+                    logger.debug("api: cleared all effect queues")
                 case {"action": "set_effect", **other_kwargs}:
-                    logger.info(f"set_effect: {other_kwargs}")
+                    logger.debug(f"api: set_effect: {other_kwargs}")
                     self.effecthandler.load_effect(**other_kwargs)
                 case {
                     "action": "modify_effect",
@@ -105,19 +109,21 @@ class EventHandler:
                     assert isinstance(timeline_level, int)
                     match operation:
                         case "change_draw":
-                            logger.info(f"modify_effect {operation}: {effect_name}")
+                            logger.debug(f"api: modify_effect {operation}: {effect_name}")
                             self.effecthandler.effect_change_draw(effect=effect_name, timeline_level=timeline_level)
                         case "renew_trigger":
-                            logger.info(f"modify_effect {operation}: {effect_name}")
+                            logger.debug(f"api: modify_effect {operation}: {effect_name}")
                             self.effecthandler.effect_renew_trigger(effect=effect_name, timeline_level=timeline_level)
                         case "alternate":
-                            logger.info(f"modify_effect {operation}: {effect_name}")
+                            logger.debug(f"api: modify_effect {operation}: {effect_name}")
                             self.effecthandler.effect_alternate(effect=effect_name, timeline_level=timeline_level)
                         case "remove":
-                            logger.info(f"modify_effect {operation}: {effect_name}")
+                            logger.debug(f"api: modify_effect {operation}: {effect_name}")
                             self.effecthandler.effect_remove(effect=effect_name, timeline_level=timeline_level)
                         case _:
-                            logger.warning("API instruction with 'action': 'modify_effect' not understood")
+                            logger.warning(
+                                f"api: instruction with 'action': 'modify_effect' and {operation=} not understood"
+                            )
                 case {
                     "action": "set_color",
                     "color_rgb": color_rgb,
@@ -126,6 +132,4 @@ class EventHandler:
                     self.settings.color_engine.set_color_with_rule(color=color_rgb, color_key=color_key)
 
                 case other:
-                    logger.warning(other)
-                    logger.warning("API instruction not understood")
-            # self.root.refresh_ui(sse_event="test")
+                    logger.error(f"api: instruction not understood: {other=}")

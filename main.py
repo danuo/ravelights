@@ -11,11 +11,6 @@ from ravelights import (
     TransmitterConfig,
 )
 
-# ─── Logging ──────────────────────────────────────────────────────────────────
-
-logger.remove()
-logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> <level>{message}</level>")
-
 # ─── Argparse ─────────────────────────────────────────────────────────────────
 
 
@@ -30,11 +25,31 @@ def parse_args():
     parser.add_argument("--webui", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--audio", default=True, action=argparse.BooleanOptionalAction)
+    parser.add_argument("--debug", default=False, action=argparse.BooleanOptionalAction)
     args = parser.parse_args()
     return args
 
 
 args = parse_args()
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+
+
+logger.remove()
+if args.debug:
+    logger.add(
+        sys.stdout,
+        colorize=True,
+        format="<magenta>{time:HH:mm:ss}</magenta> <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> <level>{message}</level>",
+        level="DEBUG",
+    )
+else:
+    logger.add(
+        sys.stdout,
+        colorize=True,
+        format="<magenta>{time:HH:mm:ss}</magenta> <level>{message}</level>",
+        level="INFO",
+    )
 
 
 # ─── Device Config ────────────────────────────────────────────────────────────

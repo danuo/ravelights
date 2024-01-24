@@ -21,6 +21,7 @@ from ravelights.interface.data_router import (
 )
 from ravelights.interface.discovery import connectivity_check, discovery_service
 from ravelights.interface.rest_api import RestAPI
+from ravelights.logo import logo
 
 
 class RaveLightsApp:
@@ -93,10 +94,11 @@ class RaveLightsApp:
         return data_routers
 
     def run(self) -> None:
-        logger.info("Loading default timeline")
+        # load default timeline
         # self.patternscheduler.load_timeline_from_index(0)
         self.patternscheduler.load_timeline_by_name("DEBUG_TIMELINE")
         logger.info("Starting main loop...")
+        logger.opt(raw=True, colors=True).info(f"<magenta>{logo}</magenta>\n")
         while True:
             self.render_frame()
 
