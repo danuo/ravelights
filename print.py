@@ -19,8 +19,7 @@ string_old = r"""
 """
 
 
-string = r"""
-__________                     __   __        __     __          
+string = r"""__________                     __   __        __     __          
 \______   \_____ ___  __ ____ |  | |__| ____ |  |___/  |_  ______
  |       _/\__  \\  \/ // __ \|  | |  |/ ___\|  |  \   __\/  ___/
  |    |   \ / __ \\   /\  ___/|  |_|  / /_/  >   Y  \  |  \___ \ 
@@ -92,4 +91,4 @@ T = 10
 with Live(new_func(string), refresh_per_second=T) as live:
     for _ in range(100):
         time.sleep(1 / T)
-        live.update(new_func(string))
+        live.update(new_func(string), refresh=True)
