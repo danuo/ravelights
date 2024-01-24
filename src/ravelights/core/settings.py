@@ -137,19 +137,22 @@ class Settings:
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)
 
-    def __post_init__(self, root_init: "RaveLightsApp"):
+    def __post_init__(self, root_init: "RaveLightsApp") -> None:
         self.root = root_init
         self.generator_classes_identifiers = ["pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect"]
 
         self.color_engine = ColorEngine(settings=self)
         self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()
 
-    def clear_selected(self):
+    def clear_selected(self) -> None:
         """resets selected generators to default state"""
+        logger.debug("clear_selected")
         self.selected = get_default_selected_dict()
         self.root.refresh_ui(sse_event="settings")
 
     def update_from_dict(self, update_dict: dict[str, Any]) -> None:
+        """overwritte settings with new values from a dict"""
+        logger.debug(f"update_from_dict with {update_dict=}")
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
             if hasattr(self, key):
@@ -159,7 +162,10 @@ class Settings:
                 logger.warning(f"key {key} does not exist in settings")
         self.root.refresh_ui(sse_event="settings")
 
-    def set_generator(self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool):
+    def set_generator(
+        self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool
+    ) -> None:
+        logger.debug(f"set_generator with {gen_type=} {timeline_level=} {gen_name=} {renew_trigger=}")
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if timeline_level == 0:
             timeline_level = self.global_manual_timeline_level
@@ -176,10 +182,11 @@ class Settings:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
         self.root.refresh_ui(sse_event="settings")
 
-    def renew_trigger(self, gen_type: str | Type["Pattern"], timeline_level: int):
+    def renew_trigger(self, gen_type: str | Type["Pattern"], timeline_level: int) -> None:
         generator = self.root.devices[0].rendermodule.get_selected_generator(
             gen_type=gen_type, timeline_level=timeline_level
         )
+        logger.debug(f"renew_trigger with {gen_type=} {timeline_level=}")
         new_trigger = generator.get_new_trigger()
         self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
         self.root.refresh_ui(sse_event="triggers")
@@ -190,24 +197,27 @@ class Settings:
         timeline_level: int,
         beatstate_pattern: Optional[BeatStatePattern] = None,
         **kwargs: dict[str, Any],
-    ):
+    ) -> None:
         """triggers can be updated by new BeatStatePattern object or via keywords (kwargs)"""
+        logger.debug(f"set_trigger with {gen_type=} {timeline_level=}")
         if beatstate_pattern is not None:
             kwargs.update(asdict(beatstate_pattern))
         gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        logger.debug(f"set_trigger with {gen_type} {timeline_level}")
         self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
         self.root.refresh_ui(sse_event="triggers")
 
-    def set_settings_autopilot(self, in_dict):
+    def set_settings_autopilot(self, in_dict) -> None:
+        logger.debug(f"set_settings_autopilot with {in_dict=}")
         self.settings_autopilot.update(in_dict)
         self.root.refresh_ui(sse_event="settings")
 
-    def reset_color_mapping(self):
+    def reset_color_mapping(self) -> None:
+        logger.debug("reset_color_mapping")
         self.color_mapping = get_default_color_mappings()
         self.root.refresh_ui(sse_event="settings")
 
-    def set_color_transition_speed(self, speed: str):
+    def set_color_transition_speed(self, speed: str) -> None:
+        logger.debug(f"reset_color_mapping with {speed=}")
         self.color_transition_speed = speed
         self.color_engine.set_color_speed(speed)
         self.root.refresh_ui(sse_event="settings")
