@@ -4,8 +4,8 @@ version = "0.1.0"
 requires-python = "~=3.10"
 dependencies = [
     "numpy == 1.26.3",
-    "plum-py == 0.8.5",
-    "Flask == 2.3.3",
+    "plum-py == 0.8.7",
+    "Flask == 3.0.1",
     "Flask-RESTful == 0.3.10",
     "flask-socketio == 5.3.6",
     "requests == 2.31.0",
