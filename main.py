@@ -70,6 +70,23 @@ else:
     )
 
 
+# ─── Test Imports ─────────────────────────────────────────────────────────────
+
+if args.audio:
+    try:
+        from pyaudio import PyAudio
+    except ModuleNotFoundError:
+        logger.error("Could not load pyaudio. Continue with audio=False")
+        args.audio = False
+
+if args.visualizer:
+    try:
+        import pygame
+    except ModuleNotFoundError:
+        logger.error("Could not load pygame. Continue with visualizer=False")
+        args.visualizer = False
+
+
 # ─── Device Config ────────────────────────────────────────────────────────────
 
 # for devices in ravelights app

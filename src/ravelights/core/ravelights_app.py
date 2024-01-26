@@ -75,7 +75,7 @@ class RaveLightsApp:
                     daemon=True,
                 )
                 self.audio_analyzer_process.start()
-            self.audio_data.set_connection(connection=receiver_connection)
+                self.audio_data.set_connection(connection=receiver_connection)
 
             if self.use_visualizer:
                 from ravelights.interface.visualizer import Visualizer
