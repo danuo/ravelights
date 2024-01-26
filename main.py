@@ -1,4 +1,5 @@
 import argparse
+import logging
 import sys
 
 from loguru import logger
@@ -33,6 +34,16 @@ def parse_args():
 args = parse_args()
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
+
+
+class InterceptHandler(logging.Handler):
+    def emit(self, record):
+        logger_opt = logger.opt(depth=6, exception=record.exc_info)
+        logger_opt.log(record.levelno, record.getMessage())
+
+
+log = logging.getLogger("werkzeug")
+log.addHandler(InterceptHandler())
 
 
 logger.remove()
