@@ -11,6 +11,7 @@ dependencies = [
     "requests == 2.31.0",
     "zeroconf == 0.128.0",
     "loguru == 0.7.2",
+    "pyserial == 3.5.0",
 ]
 
 [project.optional-dependencies]
@@ -22,9 +23,6 @@ dev = [
 ]
 gui = [
     "pygame == 2.5.2",
-]
-serial = [
-    "pyserial == 3.5.0",
 ]
 
 [tool.hatch.build.targets.wheel]
