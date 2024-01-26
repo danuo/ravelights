@@ -27,21 +27,12 @@ serial = [
     "pyserial == 3.5.0",
 ]
 
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-# include package data
-# https://setuptools.pypa.io/en/latest/userguide/datafiles.html
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-# include all files, this is also the default
-"*" = ["*"]
+[tool.hatch.build.targets.wheel]
+packages = ["src/ravelights", "src/ravelights_ui"]
 
 [build-system]
-requires = ["setuptools>=42.0", "wheel", "pip >= 21.1"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.ruff]
 line-length = 120
