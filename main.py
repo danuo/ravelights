@@ -38,17 +38,24 @@ args = parse_args()
 logger.remove()
 if args.debug:
     logger.add(
-        sys.stdout,
+        sink=sys.stdout,
         colorize=True,
         format="<magenta>{time:HH:mm:ss}</magenta> <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> <level>{message}</level>",
         level="DEBUG",
     )
 else:
     logger.add(
-        sys.stdout,
+        sink=sys.stdout,
         colorize=True,
         format="<magenta>{time:HH:mm:ss}</magenta> <level>{message}</level>",
         level="INFO",
+        filter=lambda record: record["level"].name == "INFO",
+    )
+    logger.add(
+        sink=sys.stdout,
+        colorize=True,
+        format="<magenta>{time:HH:mm:ss}</magenta> <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> <level>{message}</level>",
+        level="WARNING",
     )
 
 
@@ -150,6 +157,9 @@ webui_port = 80
 if not args.webui:
     webui_port = 5000
     logger.info("Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80")
+    logger.warning(
+        "Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80"
+    )
 
 if __name__ == "__main__":
     app = RaveLightsApp(
