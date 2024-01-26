@@ -10,9 +10,14 @@ from ravelights import (
     LightIdentifier,
     RaveLightsApp,
     TransmitterConfig,
+    __version__,
 )
 
 # ─── Argparse ─────────────────────────────────────────────────────────────────
+
+
+def get_version():
+    return __version__
 
 
 def parse_args():
@@ -189,8 +194,9 @@ if not args.webui:
         "Running flask on port 5000, such that the web interface can be served by quasar or nginx on port 80"
     )
 
-if __name__ == "__main__":
-    app = RaveLightsApp(
+
+def run():
+    RaveLightsApp(
         device_config=device_config,
         fps=args.fps,
         webui_port=webui_port,
@@ -199,3 +205,7 @@ if __name__ == "__main__":
         use_visualizer=args.visualizer,
         use_audio=args.audio,
     )
+
+
+if __name__ == "__main__":
+    run()
