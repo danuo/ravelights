@@ -20,3 +20,5 @@ __all__ = [
     "ArtnetSerialTransmitter",
     "ColorProfiles",
 ]
+
+__version__ = "0.5.0"
