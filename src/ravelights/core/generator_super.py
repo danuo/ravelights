@@ -191,19 +191,19 @@ class Generator(ABC):
     def __repr__(self):
         return f"<Generator {self.name}>"
 
-    @classmethod
+    @abstractmethod
     def get_identifier(cls) -> Literal["pattern", "vfilter", "thinner", "dimmer", "effect"]:
         """returns str identifier of generator type, for example 'pattern' for pattern objects"""
-        if cls.__bases__[0] is Generator:
-            return cls.__name__.lower()
-        else:
-            return cls.__bases__[0].__name__.lower()
+        ...
 
 
 class Pattern(Generator):
     @abstractmethod
     def render(self, colors: list[Color]) -> ArrayFloat:
         ...
+
+    def get_identifier(self):
+        return "pattern"
 
 
 class PatternNone(Pattern):
@@ -230,6 +230,9 @@ class Vfilter(Generator):
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
 
+    def get_identifier(self):
+        return "vfilter"
+
 
 class VfilterNone(Vfilter):
     """Default vfilter with blank output"""
@@ -255,6 +258,9 @@ class Thinner(Generator):
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
 
+    def get_identifier(self):
+        return "thinner"
+
 
 class ThinnerNone(Thinner):
     """Default thinner with blank output"""
@@ -279,6 +285,9 @@ class Dimmer(Generator):
     @abstractmethod
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
+
+    def get_identifier(self):
+        return "dimmer"
 
 
 class DimmerNone(Dimmer):
