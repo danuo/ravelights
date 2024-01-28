@@ -47,13 +47,12 @@ include = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/ravelights", "src/ravelights_ui"]
 
-
 [tool.hatch.version]
 path = "src/ravelights/__init__.py"
-
-[project.scripts]
-lights = "main.py:run"
 
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+
+[tool.mypy]
+files = "src/ravelights"
