@@ -23,7 +23,7 @@ class FrequencyBandAnalyzer:
         self._N_PRESENCE_CHUNKS = int(presence_seconds * chunks_per_second)
         self._PERCENTILE_PERCENT = 99
 
-        self._MIN_HIT_TO_MEAN_RATIO = 1.3
+        self._MIN_HIT_TO_MEAN_RATIO = 1.5
         self._MIN_HIT_LEVEL = 0.5
         self._MIN_INTER_HIT_SECONDS = 0.3  # allows to detect hits with up to  200 bpm
 
@@ -86,7 +86,7 @@ class FrequencyBandAnalyzer:
         if mean_energy == 0:
             return False
 
-        hit_to_mean_ratio = float((current_energy - mean_energy) / mean_energy)
+        hit_to_mean_ratio = float(current_energy / mean_energy)
         current_seconds = time.time()
         seconds_since_last_hit = current_seconds - self._last_hit_seconds
 
