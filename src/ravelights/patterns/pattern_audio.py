@@ -60,7 +60,7 @@ class PatternAudio(Pattern):
         index_presence_total = int(index_cap * self.audio_data["presence"])
         indices_max.append(index_presence_total)
         channels.append(0)  # red
-        intensities.append(0.5)  # half
+        intensities.append(0 if self.audio_data["is_hit"] else 0.5)  # half
 
         index_level_lows = int(index_cap * self.audio_data["level_low"])
         indices_max.append(index_level_lows)
@@ -70,7 +70,7 @@ class PatternAudio(Pattern):
         index_presence_lows = int(index_cap * self.audio_data["presence_low"])
         indices_max.append(index_presence_lows)
         channels.append(1)  # green
-        intensities.append(0.5)  # half
+        intensities.append(0 if self.audio_data["is_hit_low"] else 0.5)  # half
 
         index_level_mids = int(index_cap * self.audio_data["level_mid"])
         indices_max.append(index_level_mids)
@@ -80,7 +80,7 @@ class PatternAudio(Pattern):
         index_presence_mids = int(index_cap * self.audio_data["presence_mid"])
         indices_max.append(index_presence_mids)
         channels.append(2)  # blue
-        intensities.append(0.5)  # gray
+        intensities.append(0 if self.audio_data["is_hit_mid"] else 0.5)  # gray
 
         index_level_highs = int(index_cap * self.audio_data["level_high"])
         indices_max.append(index_level_highs)
@@ -90,7 +90,7 @@ class PatternAudio(Pattern):
         index_presence_highs = int(index_cap * self.audio_data["presence_high"])
         indices_max.append(index_presence_highs)
         channels.append(slice(None))  # white
-        intensities.append([0.5, 0.0, 0.5])  # half purple
+        intensities.append([0, 0, 0] if self.audio_data["is_hit_high"] else [0.5, 0.0, 0.5])  # half purple
 
         index_presence_highs = int(index_cap * self.audio_data["s_max"])
         indices_max.append(index_presence_highs)

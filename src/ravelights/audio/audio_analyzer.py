@@ -1,5 +1,4 @@
 import time
-from dataclasses import dataclass
 from multiprocessing.connection import _ConnectionBase
 
 import numpy as np
@@ -7,14 +6,8 @@ from numpy.typing import NDArray
 from ravelights.audio.audio_data import DEFAULT_AUDIO_DATA
 from ravelights.audio.audio_source import AudioSource
 from ravelights.audio.beat_detector import AubioBeatDetector, BeatDetector
+from ravelights.audio.frequency_band_analyzer import FrequencyBandAnalyzer
 from ravelights.audio.ring_buffer import RingBuffer
-
-
-@dataclass
-class BandData:
-    energies: RingBuffer
-    last_hit_seconds = 0.0
-    level = 0.0
 
 
 class BpmCalculator:
@@ -45,24 +38,29 @@ class AudioAnalyzer:
 
         self.FFT_WINDOW_SIZE = audio_source.CHUNK_SIZE * 2
         self.SPECTRUM_FREQUENCIES = np.fft.fftfreq(self.FFT_WINDOW_SIZE, 1 / self.audio_source.SAMPLING_RATE)
+
         self.samples = RingBuffer(capacity=self.FFT_WINDOW_SIZE, dtype=np.float32)
 
-        self.CACHE_SECONDS = 60
-        self.N_CACHED_CHUNKS = self.CACHE_SECONDS * self.audio_source.CHUNKS_PER_SECOND
-        self.lows_data = BandData(energies=RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32))
-        self.mids_data = BandData(energies=RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32))
-        self.highs_data = BandData(energies=RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32))
-        self.total_data = BandData(energies=RingBuffer(capacity=self.N_CACHED_CHUNKS, dtype=np.float32))
-
-        self.LEVEL_SECONDS = 0.05
-        self.N_LEVEL_CHUNKS = int(self.LEVEL_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
-        self.PRESENCE_SECONDS = 5
-        self.N_PRESENCE_CHUNKS = int(self.PRESENCE_SECONDS * self.audio_source.CHUNKS_PER_SECOND)
-        self.PERCENTILE_PERCENT = 99
-
-        self.MIN_HIT_TO_MEAN_RATIO = 1.3
-        self.MIN_HIT_LEVEL = 0.5
-        self.MIN_INTER_HIT_SECONDS = 0.3  # allows to detect hits with up to  200 bpm
+        self._lows_analyzer = FrequencyBandAnalyzer(
+            start_freq=0,
+            end_freq=200,
+            chunks_per_second=self.audio_source.CHUNKS_PER_SECOND,
+        )
+        self._mids_analyzer = FrequencyBandAnalyzer(
+            start_freq=200,
+            end_freq=2000,
+            chunks_per_second=self.audio_source.CHUNKS_PER_SECOND,
+        )
+        self._highs_analyzer = FrequencyBandAnalyzer(
+            start_freq=2000,
+            end_freq=self.audio_source.SAMPLING_RATE // 2,
+            chunks_per_second=self.audio_source.CHUNKS_PER_SECOND,
+        )
+        self._total_analyzer = FrequencyBandAnalyzer(
+            start_freq=0,
+            end_freq=self.audio_source.SAMPLING_RATE // 2,
+            chunks_per_second=self.audio_source.CHUNKS_PER_SECOND,
+        )
 
     def process_audio_callback(self, samples: NDArray[np.float32]) -> None:
         # samples
@@ -89,99 +87,42 @@ class AudioAnalyzer:
         self.audio_data["s_max_decay_fast"] = s_max_decay_fast
         self.audio_data["s_max_decay_slow"] = s_max_decay_slow
 
-        # energies
-        low_energy = self.compute_band_energy(spectrum, (0, 200))
-        mid_energy = self.compute_band_energy(spectrum, (200, 2000))
-        high_energy = self.compute_band_energy(spectrum, (2000, self.audio_source.SAMPLING_RATE // 2))
-        total_energy = self.compute_band_energy(spectrum, (0, self.audio_source.SAMPLING_RATE // 2))
-
-        self.lows_data.energies.append(low_energy)
-        self.mids_data.energies.append(mid_energy)
-        self.highs_data.energies.append(high_energy)
-        self.total_data.energies.append(total_energy)
+        # frequency bands
+        self._lows_analyzer.analyze(spectrum, self.SPECTRUM_FREQUENCIES)
+        self._mids_analyzer.analyze(spectrum, self.SPECTRUM_FREQUENCIES)
+        self._highs_analyzer.analyze(spectrum, self.SPECTRUM_FREQUENCIES)
+        self._total_analyzer.analyze(spectrum, self.SPECTRUM_FREQUENCIES)
 
         # level
-        self.audio_data["level"] = self.total_data.level = self.compute_level(self.total_data)
-        self.audio_data["level_low"] = self.lows_data.level = self.compute_level(self.lows_data)
-        self.audio_data["level_mid"] = self.mids_data.level = self.compute_level(self.mids_data)
-        self.audio_data["level_high"] = self.highs_data.level = self.compute_level(self.highs_data)
+        self.audio_data["level"] = self._total_analyzer.level
+        self.audio_data["level_low"] = self._lows_analyzer.level
+        self.audio_data["level_mid"] = self._mids_analyzer.level
+        self.audio_data["level_high"] = self._highs_analyzer.level
 
         # presence
-        self.audio_data["presence"] = self.compute_presence(self.total_data)
-        self.audio_data["presence_low"] = self.compute_presence(self.lows_data)
-        self.audio_data["presence_mid"] = self.compute_presence(self.mids_data)
-        self.audio_data["presence_high"] = self.compute_presence(self.highs_data)
+        self.audio_data["presence"] = self._total_analyzer.presence
+        self.audio_data["presence_low"] = self._lows_analyzer.presence
+        self.audio_data["presence_mid"] = self._mids_analyzer.presence
+        self.audio_data["presence_high"] = self._highs_analyzer.presence
 
         # hits
-        self.audio_data["hits"] = self.detect_hit(self.total_data)
-        self.audio_data["hits_low"] = self.detect_hit(self.lows_data)
-        self.audio_data["hits_mid"] = self.detect_hit(self.mids_data)
-        self.audio_data["hits_high"] = self.detect_hit(self.highs_data)
+        self.audio_data["is_hit"] = self._total_analyzer.is_hit
+        self.audio_data["is_hit_low"] = self._lows_analyzer.is_hit
+        self.audio_data["is_hit_mid"] = self._mids_analyzer.is_hit
+        self.audio_data["is_hit_high"] = self._highs_analyzer.is_hit
 
         # beat
-        #        self.audio_data["is_beat"] = False
-        #        if self.beat_detector is not None:
-        #            beat_time = self.beat_detector.detect_beat(samples)
-        #            if beat_time is not None:
-        #                self.bpm_calculator.register_beat(beat_time)
-        #                self.audio_data["is_beat"] = True
-        #
-        self.audio_data["is_beat"] = self.audio_data["hits_low"]
+        self.audio_data["is_beat"] = False
+        if self.beat_detector is not None:
+            beat_time = self.beat_detector.detect_beat(samples)
+            if beat_time is not None:
+                self.bpm_calculator.register_beat(beat_time)
+                self.audio_data["is_beat"] = True
 
         self.send_audio_data()
 
     def send_audio_data(self) -> None:
         self.connection.send(self.audio_data)
-
-    def compute_band_energy(self, spectrum: NDArray[np.complex128], band: tuple[int, int]) -> float:
-        band_start, band_end = band
-        band_spectrum = spectrum[(self.SPECTRUM_FREQUENCIES >= band_start) & (self.SPECTRUM_FREQUENCIES < band_end)]
-        band_magnitudes = np.abs(band_spectrum)
-        band_energy = np.sum(band_magnitudes**2)
-        return float(band_energy)
-
-    def compute_level(self, band_data: BandData) -> float:
-        maximum_energy = band_data.energies.array.max()
-
-        if maximum_energy == 0:
-            return 0
-
-        percentile = float(np.percentile(band_data.energies.recent(self.N_LEVEL_CHUNKS), self.PERCENTILE_PERCENT))
-        return percentile / maximum_energy
-
-    def compute_presence(self, band_data: BandData) -> float:
-        maximum_energy = band_data.energies.array.max()
-
-        if maximum_energy == 0:
-            return 0
-
-        percentile = float(np.percentile(band_data.energies.recent(self.N_PRESENCE_CHUNKS), self.PERCENTILE_PERCENT))
-        return percentile / maximum_energy
-
-    def detect_hit(self, band_data: BandData) -> bool:
-        current_energy = band_data.energies.recent(1)
-        mean_energy = band_data.energies.array.mean()
-
-        if mean_energy == 0:
-            return False
-
-        energy_increase = float((current_energy - mean_energy) / mean_energy)
-        current_seconds = time.time()
-
-        if all(
-            [
-                energy_increase >= self.MIN_HIT_TO_MEAN_RATIO,
-                band_data.level >= self.MIN_HIT_LEVEL,
-                (current_seconds - band_data.last_hit_seconds) >= self.MIN_INTER_HIT_SECONDS,
-            ]
-        ):
-            print(
-                f"{energy_increase=}, level={band_data.level}, time_delta: {current_seconds - band_data.last_hit_seconds}"
-            )
-            band_data.last_hit_seconds = current_seconds
-            return True
-
-        return False
 
 
 def audio_analyzer_process(connection: _ConnectionBase) -> None:

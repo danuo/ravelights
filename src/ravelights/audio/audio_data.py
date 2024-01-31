@@ -27,7 +27,13 @@ class AudioData(TypedDict):
     presence_high: float
 
     FadeInOut: float
+
     is_beat: bool
+
+    is_hit: bool
+    is_hit_low: bool
+    is_hit_mid: bool
+    is_hit_high: bool
 
 
 DEFAULT_AUDIO_DATA = AudioData(
@@ -49,6 +55,10 @@ DEFAULT_AUDIO_DATA = AudioData(
     presence_high=0,
     FadeInOut=0,
     is_beat=False,
+    is_hit=False,
+    is_hit_low=False,
+    is_hit_mid=False,
+    is_hit_high=False,
 )
 
 
@@ -67,13 +77,25 @@ class AudioDataProvider:
         if self.connection is None:
             return
 
-        # all data in the pipe until pipe is empty
+        # Poll all data in the pipe until pipe is empty
         while self.connection.poll():
             self.received_data.append(self.connection.recv())
 
-        if self.received_data:
-            self.audio_data = self.received_data[-1]
-            for data in self.received_data:
-                if data["is_beat"]:
-                    self.audio_data["is_beat"] = True
+        if not self.received_data:
+            return
+
+        self.audio_data = self.received_data[-1]
+
+        for data in self.received_data:
+            if data["is_beat"]:
+                self.audio_data["is_beat"] = True
+            if data["is_hit"]:
+                self.audio_data["is_hit"] = True
+            if data["is_hit_low"]:
+                self.audio_data["is_hit_low"] = True
+            if data["is_hit_mid"]:
+                self.audio_data["is_hit_mid"] = True
+            if data["is_hit_high"]:
+                self.audio_data["is_hit_high"] = True
+
         self.received_data.clear()
