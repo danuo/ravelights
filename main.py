@@ -32,6 +32,7 @@ def parse_args():
     parser.add_argument("--visualizer", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--audio", default=True, action=argparse.BooleanOptionalAction)
     parser.add_argument("--debug", default=False, action=argparse.BooleanOptionalAction)
+    parser.add_argument("--debug-filter", default=None, type=str, help="filter logs with string")
     args = parser.parse_args()
     return args
 
@@ -52,12 +53,21 @@ log.addHandler(InterceptHandler())
 
 
 logger.remove()
+
+
+log_filter = None
+if args.debug_filter:
+    args.debug = True
+    log_filter = lambda record: args.debug_filter in record["message"]  # noqa: E731
+
+
 if args.debug:
     logger.add(
         sink=sys.stdout,
         colorize=True,
         format="<magenta>{time:HH:mm:ss}</magenta> <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> <level>{message}</level>",
         level="DEBUG",
+        filter=log_filter,
     )
 else:
     logger.add(
