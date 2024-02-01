@@ -195,8 +195,8 @@ if not args.webui:
     )
 
 
-def run():
-    RaveLightsApp(
+if __name__ == "__main__":
+    app = RaveLightsApp(
         device_config=device_config,
         fps=args.fps,
         webui_port=webui_port,
@@ -205,7 +205,4 @@ def run():
         use_visualizer=args.visualizer,
         use_audio=args.audio,
     )
-
-
-if __name__ == "__main__":
-    run()
+    app.start()

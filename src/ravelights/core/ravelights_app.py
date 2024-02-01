@@ -61,28 +61,6 @@ class RaveLightsApp:
 
         self.audio_data = AudioDataProvider(root=self)
 
-        if run:
-            connectivity_check.wait_until_connected_to_network()
-            discovery_service.start()
-
-            if self.use_audio:
-                from ravelights.audio.audio_analyzer import audio_analyzer_process
-
-                sender_connection, receiver_connection = multiprocessing.Pipe()
-                self.audio_analyzer_process = multiprocessing.Process(
-                    target=audio_analyzer_process,
-                    args=(sender_connection,),
-                    daemon=True,
-                )
-                self.audio_analyzer_process.start()
-                self.audio_data.set_connection(connection=receiver_connection)
-
-            if self.use_visualizer:
-                from ravelights.interface.visualizer import Visualizer
-
-                self.visualizer = Visualizer(root=self)
-            self.run()
-
     def initiate_data_routers(self, transmitter_recipes: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
         for receipt in transmitter_recipes:
@@ -93,12 +71,33 @@ class RaveLightsApp:
 
         return data_routers
 
-    def run(self) -> None:
+    def start(self) -> None:
+        connectivity_check.wait_until_connected_to_network()
+        discovery_service.start()
+
+        if self.use_audio:
+            from ravelights.audio.audio_analyzer import audio_analyzer_process
+
+            sender_connection, receiver_connection = multiprocessing.Pipe()
+            self.audio_analyzer_process = multiprocessing.Process(
+                target=audio_analyzer_process,
+                args=(sender_connection,),
+                daemon=True,
+            )
+            self.audio_analyzer_process.start()
+            self.audio_data.set_connection(connection=receiver_connection)
+
+        if self.use_visualizer:
+            from ravelights.interface.visualizer import Visualizer
+
+            self.visualizer = Visualizer(root=self)
+
         # load default timeline
         # self.patternscheduler.load_timeline_from_index(0)
         self.patternscheduler.load_timeline_by_name("DEBUG_TIMELINE")
         logger.info("Starting main loop...")
         logger.opt(raw=True, colors=True).info(f"<magenta>{logo}</magenta>\n")
+
         while True:
             self.render_frame()
 
