@@ -202,7 +202,8 @@ class Pattern(Generator):
     def render(self, colors: list[Color]) -> ArrayFloat:
         ...
 
-    def get_identifier(self):
+    @staticmethod
+    def get_identifier():
         return "pattern"
 
 
@@ -230,7 +231,8 @@ class Vfilter(Generator):
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
 
-    def get_identifier(self):
+    @staticmethod
+    def get_identifier():
         return "vfilter"
 
 
@@ -258,7 +260,8 @@ class Thinner(Generator):
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
 
-    def get_identifier(self):
+    @staticmethod
+    def get_identifier():
         return "thinner"
 
 
@@ -286,7 +289,8 @@ class Dimmer(Generator):
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
 
-    def get_identifier(self):
+    @staticmethod
+    def get_identifier():
         return "dimmer"
 
 
