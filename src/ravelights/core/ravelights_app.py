@@ -36,7 +36,6 @@ class RaveLightsApp:
         use_audio: bool = True,
         use_visualizer: bool = False,
         print_stats: bool = False,
-        run: bool = True,
     ) -> None:
         self.settings = Settings(root_init=self, device_config=device_config, fps=fps, bpm_base=140.0)
         self.timehandler = TimeHandler(root=self)

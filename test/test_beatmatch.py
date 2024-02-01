@@ -3,7 +3,7 @@ import random
 from ravelights import RaveLightsApp
 from ravelights.core.time_handler import BeatStatePattern
 
-app = RaveLightsApp(run=False)
+app = RaveLightsApp()
 timehandler = app.timehandler
 
 

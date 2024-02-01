@@ -6,7 +6,7 @@ from ravelights import RaveLightsApp
 
 @pytest.fixture(scope="session")
 def app():
-    app = RaveLightsApp(run=False)
+    app = RaveLightsApp()
     return app.rest_api.flask_app
 
 

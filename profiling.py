@@ -12,10 +12,7 @@ logger.add(sys.stdout, colorize=True, format="<green>{time:YYYY-MM-DD HH:mm:ss}<
 
 device_config = [DeviceLightConfig(n_lights=10, n_leds=144), DeviceLightConfig(n_lights=10, n_leds=144)]
 
-app = RaveLightsApp(
-    device_config=device_config,
-    run=False,
-)
+app = RaveLightsApp(device_config=device_config)
 
 profiler = Profiler(app=app)
 profiler.run()

@@ -20,8 +20,7 @@ def test_all_patterns():
         random_frame_time = 1 / FPS + norm
         global_time += random_frame_time
 
-    # app = RaveLightsApp(fps=FPS, visualizer=False, restapi=False)
-    app = RaveLightsApp(run=False)
+    app = RaveLightsApp()
     app.timehandler.get_current_time = get_global_time
     app.timehandler.after = increase_globaltime
     app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
