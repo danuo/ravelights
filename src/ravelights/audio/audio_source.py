@@ -1,6 +1,7 @@
 from typing import Callable, Mapping, Optional
 
 import numpy as np
+from loguru import logger
 from numpy.typing import NDArray
 from pyaudio import PyAudio, paContinue, paFloat32
 
@@ -8,7 +9,12 @@ AudioSourceCallback = Callable[[NDArray[np.float32]], None]
 
 
 class AudioSource:
-    def __init__(self, sampling_rate: int = 44100, chunk_size: int = 512) -> None:
+    def __init__(
+        self,
+        sampling_rate: int = 44100,
+        chunk_size: int = 512,
+        input_device_index: Optional[int] = None,
+    ) -> None:
         self._SAMPLING_RATE = sampling_rate
         self._CHUNK_SIZE = chunk_size
 
@@ -20,6 +26,7 @@ class AudioSource:
             input=True,
             frames_per_buffer=chunk_size,
             stream_callback=self._pyaudio_callback,
+            input_device_index=input_device_index,
             start=False,
         )
         self._callback: Optional[AudioSourceCallback] = None
@@ -56,3 +63,9 @@ class AudioSource:
         self._stream.stop_stream()
         self._stream.close()
         self._pa.terminate()
+
+    @staticmethod
+    def list_audio_devices():
+        _pa = PyAudio()
+        for i in range(_pa.get_device_count()):
+            logger.info(_pa.get_device_info_by_index(i))

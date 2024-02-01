@@ -80,6 +80,12 @@ else:
 if args.audio:
     try:
         from pyaudio import PyAudio
+
+        if args.debug:
+            from ravelights.audio.audio_source import AudioSource
+
+            AudioSource.list_audio_devices()
+
     except ModuleNotFoundError:
         logger.error("Could not load pyaudio. Continue with audio=False")
         args.audio = False
