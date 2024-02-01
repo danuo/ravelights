@@ -68,4 +68,5 @@ class AudioSource:
     def list_audio_devices():
         _pa = PyAudio()
         for i in range(_pa.get_device_count()):
-            logger.info(_pa.get_device_info_by_index(i))
+            device_info = _pa.get_device_info_by_index(i)
+            logger.info(f"index: {device_info['index']}, name: {device_info['name']}")
