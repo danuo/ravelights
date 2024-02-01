@@ -56,3 +56,4 @@ target-version = "py311"
 
 [tool.mypy]
 files = "src/ravelights"
+ignore_missing_imports = true
