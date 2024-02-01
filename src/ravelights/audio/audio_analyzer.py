@@ -1,5 +1,6 @@
 import time
 from multiprocessing.connection import _ConnectionBase
+from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -17,7 +18,7 @@ class BpmCalculator:
     def register_beat(self, time: float) -> None:
         self._beat_times.append(time)
 
-    def _compute_bpm(self) -> float | None:
+    def _compute_bpm(self) -> Optional[float]:
         inter_beat_times = np.diff(self._beat_times.array)
         median_inter_beat_time = np.median(inter_beat_times)
         if median_inter_beat_time == 0:
@@ -29,7 +30,10 @@ class AudioAnalyzer:
     audio_data = DEFAULT_AUDIO_DATA.copy()
 
     def __init__(
-        self, connection: _ConnectionBase, audio_source: AudioSource, beat_detector: BeatDetector | None = None
+        self,
+        connection: _ConnectionBase,
+        audio_source: AudioSource,
+        beat_detector: Optional[BeatDetector] = None,
     ):
         self.connection = connection
         self.audio_source = audio_source

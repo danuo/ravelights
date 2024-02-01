@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import DefaultDict
+from typing import DefaultDict, Optional
 
 from loguru import logger
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
@@ -12,7 +12,7 @@ class PixeldriverServiceListener(ServiceListener):
         self._hosts: dict[str, str] = {}
         self._callbacks: DefaultDict[str, list[DiscoveryUpdateCallback]] = defaultdict(list)
 
-    def _extract_hostname_and_ip(self, service_info: ServiceInfo | None) -> tuple[str, str] | tuple[None, None]:
+    def _extract_hostname_and_ip(self, service_info: Optional[ServiceInfo]) -> tuple[str, str] | tuple[None, None]:
         if service_info is None or service_info.server is None:
             return None, None
 
@@ -24,7 +24,7 @@ class PixeldriverServiceListener(ServiceListener):
 
         return None, None
 
-    def _notify_listeners(self, hostname: str, ip_address: str | None) -> None:
+    def _notify_listeners(self, hostname: str, ip_address: Optional[str]) -> None:
         logger.info(f"Sending discovery update for device {hostname} ({ip_address})...")
         for callback in self._callbacks[hostname]:
             callback(hostname, ip_address)

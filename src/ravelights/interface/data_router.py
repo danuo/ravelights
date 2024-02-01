@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 from loguru import logger
@@ -29,9 +29,9 @@ class DataRouterTransmitter(DataRouter):
         self.root = root
         self.settings = self.root.settings
         self.devices = self.root.devices
-        self._ip_address: str | None = None
+        self._ip_address: Optional[str] = None
 
-    def _on_discovery_update(self, hostname: str, new_ip_address: str | None):
+    def _on_discovery_update(self, hostname: str, new_ip_address: Optional[str]):
         if new_ip_address != self._ip_address:
             if new_ip_address is not None:
                 rest_client = RestClient(ip_address=new_ip_address)

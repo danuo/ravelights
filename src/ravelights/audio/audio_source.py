@@ -1,4 +1,4 @@
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -22,7 +22,7 @@ class AudioSource:
             stream_callback=self._pyaudio_callback,
             start=False,
         )
-        self._callback: AudioSourceCallback | None = None
+        self._callback: Optional[AudioSourceCallback] = None
 
     @property
     def SAMPLING_RATE(self) -> int:
@@ -37,8 +37,8 @@ class AudioSource:
         return self._SAMPLING_RATE // self._CHUNK_SIZE
 
     def _pyaudio_callback(
-        self, audio_buffer: bytes | None, frame_count: int, time_info: Mapping[str, float], status: int
-    ) -> tuple[bytes | None, int]:
+        self, audio_buffer: Optional[bytes], frame_count: int, time_info: Mapping[str, float], status: int
+    ) -> tuple[Optional[bytes], int]:
         assert self._callback is not None
 
         if audio_buffer is None:

@@ -1,11 +1,13 @@
+from typing import Optional
+
 from loguru import logger
 from ravelights.core.custom_typing import DiscoveryUpdateCallback
 from ravelights.interface.discovery import connectivity_check
 from ravelights.interface.discovery.pixeldriver_service_listener import PixeldriverServiceListener
 from zeroconf import ServiceBrowser, Zeroconf
 
-_zeroconf: Zeroconf | None = None
-_service_browser: ServiceBrowser | None = None
+_zeroconf: Optional[Zeroconf] = None
+_service_browser: Optional[ServiceBrowser] = None
 _service_listener = PixeldriverServiceListener()
 
 

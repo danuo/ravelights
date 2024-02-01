@@ -1,12 +1,18 @@
 import errno
 import socket
+from typing import Optional
 
 from loguru import logger
 from ravelights.interface.artnet.artnet_transmitter import ArtnetTransmitter
 
 
 class ArtnetUdpTransmitter(ArtnetTransmitter):
-    def __init__(self, ip_address: str | None = None, start_universe: int = 0, debug: bool = False) -> None:
+    def __init__(
+        self,
+        ip_address: Optional[str] = None,
+        start_universe: int = 0,
+        debug: bool = False,
+    ) -> None:
         super().__init__(start_universe=start_universe, debug=False)
         self._PORT = 6454
         self._ip_address = ip_address
@@ -28,7 +34,7 @@ class ArtnetUdpTransmitter(ArtnetTransmitter):
                 else:
                     raise
 
-    def update_ip_address(self, ip_address: str | None) -> None:
+    def update_ip_address(self, ip_address: Optional[str]) -> None:
         self._ip_address = ip_address
 
         if ip_address is None:

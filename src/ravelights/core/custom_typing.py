@@ -1,5 +1,5 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, Callable, Protocol, TypedDict
+from typing import TYPE_CHECKING, Any, Callable, Optional, Protocol, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -14,7 +14,7 @@ ArrayFloat = NDArray[np.float_]
 ArrayInt = NDArray[np.int_]
 ArrayUInt8 = NDArray[np.uint8]
 
-DiscoveryUpdateCallback = Callable[[str, str | None], None]
+DiscoveryUpdateCallback = Callable[[str, Optional[str]], None]
 
 
 def assert_dims(in_matrix: NDArray[Any], *dims: int):
