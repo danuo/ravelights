@@ -16,7 +16,7 @@ class FrequencyBandAnalyzer:
         chunks_per_second: int,
         energy_seconds: float = 60,
         level_seconds: float = 0.05,
-        presence_seconds: float = 15,
+        presence_seconds: float = 10,
     ) -> None:
         self._N_ENERGY_CHUNKS = int(energy_seconds * chunks_per_second)
         self._N_LEVEL_CHUNKS = int(level_seconds * chunks_per_second)
@@ -99,7 +99,7 @@ class FrequencyBandAnalyzer:
         ):
             # Temporarily for  debugging
             if (self._start_freq, self._end_freq) == (0, 200):
-                logger.info(f"{hit_to_mean_ratio=}, {self._level=}, {seconds_since_last_hit=}")
+                logger.trace(f"{hit_to_mean_ratio=}, {self._level=}, {seconds_since_last_hit=}")
 
             self._last_hit_seconds = current_seconds
             return True

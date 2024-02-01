@@ -67,6 +67,9 @@ class AudioAnalyzer:
         # range: [-1, 1]
         # shape: (512,)
         self.samples.append_all(samples)
+        if self.samples.size < self.FFT_WINDOW_SIZE:
+            return
+
         spectrum = np.fft.fft(self.samples.array)
 
         # rms
