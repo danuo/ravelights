@@ -79,7 +79,7 @@ else:
 
 if args.audio:
     try:
-        from pyaudio import PyAudio
+        from pyaudio import PyAudio  # noqa: F401
 
         if args.debug:
             from ravelights.audio.audio_source import AudioSource
@@ -92,7 +92,7 @@ if args.audio:
 
 if args.visualizer:
     try:
-        import pygame
+        import pygame  # noqa: F401
     except ModuleNotFoundError:
         logger.error("Could not load pygame. Continue with visualizer=False")
         args.visualizer = False
