@@ -70,3 +70,15 @@ class AudioSource:
         for i in range(_pa.get_device_count()):
             device_info = _pa.get_device_info_by_index(i)
             logger.info(f"index: {device_info['index']}, name: {device_info['name']}")
+
+    @staticmethod
+    def list_default_audio_device(verbose=False):
+        _pa = PyAudio()
+        default_input_device_index = _pa.get_default_input_device_info()["index"]
+
+        logger.info(f"Default Input Device Index: {default_input_device_index}")
+        if verbose:
+            logger.info(f"Default Input Device Info: {_pa.get_device_info_by_index(default_input_device_index)}")
+        else:
+            device_info = _pa.get_device_info_by_index(default_input_device_index)
+            logger.info(f"Default Input Device Name: {device_info['name']}")
