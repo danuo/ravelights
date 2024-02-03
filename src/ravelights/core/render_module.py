@@ -93,11 +93,11 @@ class RenderModule:
 
         # ------------------------------ get generators ------------------------------ #
         # fmt: off
-        pattern: Pattern = self.get_selected_generator(gen_type="pattern", timeline_level=timeline_level) # type: ignore[type-abstract]
+        pattern: Pattern = self.get_selected_generator(gen_type="pattern", timeline_level=timeline_level)
         pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
-        vfilter: Vfilter = self.get_selected_generator(gen_type="vfilter", timeline_level=timeline_level_vfilter) # type: ignore[type-abstract]
-        thinner: Thinner = self.get_selected_generator(gen_type="thinner", timeline_level=timeline_level_thinner) # type: ignore[type-abstract]
-        dimmer: Dimmer = self.get_selected_generator(gen_type="dimmer", timeline_level=timeline_level_dimmer) # type: ignore[type-abstract]
+        vfilter: Vfilter = self.get_selected_generator(gen_type="vfilter", timeline_level=timeline_level_vfilter)
+        thinner: Thinner = self.get_selected_generator(gen_type="thinner", timeline_level=timeline_level_thinner)
+        dimmer: Dimmer = self.get_selected_generator(gen_type="dimmer", timeline_level=timeline_level_dimmer)
         # fmt: on
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
