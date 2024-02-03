@@ -1,11 +1,11 @@
 from dataclasses import InitVar, asdict, dataclass, field
 from enum import auto
-from typing import TYPE_CHECKING, Any, Optional, Type
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from loguru import logger
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
-from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
+from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import StrEnum
 
@@ -171,10 +171,13 @@ class Settings:
         self.root.refresh_ui(sse_event="settings")
 
     def set_generator(
-        self, gen_type: str | Type["Generator"], timeline_level: int, gen_name: str, renew_trigger: bool
+        self,
+        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        timeline_level: int,
+        gen_name: str,
+        renew_trigger: bool,
     ) -> None:
         logger.debug(f"set_generator with {gen_type=} {timeline_level=} {gen_name=} {renew_trigger=}")
-        gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         if timeline_level == 0:
             timeline_level = self.global_manual_timeline_level
             if timeline_level == 0:
@@ -190,7 +193,11 @@ class Settings:
             self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
         self.root.refresh_ui(sse_event="settings")
 
-    def renew_trigger(self, gen_type: str | Type["Pattern"], timeline_level: int) -> None:
+    def renew_trigger(
+        self,
+        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        timeline_level: int,
+    ) -> None:
         generator = self.root.devices[0].rendermodule.get_selected_generator(
             gen_type=gen_type, timeline_level=timeline_level
         )
@@ -201,7 +208,7 @@ class Settings:
 
     def set_trigger(
         self,
-        gen_type: str | Type["Generator"],
+        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
         beatstate_pattern: Optional[BeatStatePattern] = None,
         **kwargs: dict[str, Any],
@@ -210,7 +217,6 @@ class Settings:
         logger.debug(f"set_trigger with {gen_type=} {timeline_level=}")
         if beatstate_pattern is not None:
             kwargs.update(asdict(beatstate_pattern))
-        gen_type = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
         self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
         self.root.refresh_ui(sse_event="triggers")
 
