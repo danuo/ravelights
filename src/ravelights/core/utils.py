@@ -69,7 +69,7 @@ def p(chance: float) -> bool:
     return random.random() < chance
 
 
-def get_random_from_weights(names: list[T], weights: list[float]) -> T:
+def get_random_from_weights(names: list[T], weights: list[float]) -> Optional[T]:
     """Return a random item from the list with respect to the weights"""
     if not names:
         logger.warning("called get_random_from_weights() with empty list")
