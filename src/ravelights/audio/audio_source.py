@@ -64,21 +64,15 @@ class AudioSource:
         self._stream.close()
         self._pa.terminate()
 
-    @staticmethod
-    def list_audio_devices():
-        _pa = PyAudio()
-        for i in range(_pa.get_device_count()):
-            device_info = _pa.get_device_info_by_index(i)
-            logger.info(f"index: {device_info['index']}, name: {device_info['name']}")
+    def list_all_audio_devices(self):
+        for i in range(self._pa.get_device_count()):
+            device_info = self._pa.get_device_info_by_index(i)
+            logger.debug(f"index: {device_info['index']}, name: {device_info['name']}")
 
-    @staticmethod
-    def list_default_audio_device(verbose=False):
-        _pa = PyAudio()
-        default_input_device_index = _pa.get_default_input_device_info()["index"]
+    def list_default_audio_device(self):
+        default_input_device_index = self._pa.get_default_input_device_info()["index"]
+        device_info = self._pa.get_device_info_by_index(default_input_device_index)
 
+        logger.debug(f"Default Input Device Info: {device_info}")
         logger.info(f"Default Input Device Index: {default_input_device_index}")
-        if verbose:
-            logger.info(f"Default Input Device Info: {_pa.get_device_info_by_index(default_input_device_index)}")
-        else:
-            device_info = _pa.get_device_info_by_index(default_input_device_index)
-            logger.info(f"Default Input Device Name: {device_info['name']}")
+        logger.info(f"Default Input Device Name: {device_info['name']}")
