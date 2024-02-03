@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Optional, Sequence, cast
 
 from loguru import logger
 from ravelights.core.custom_typing import GeneratorMeta
-from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
+from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
 from ravelights.core.utils import get_random_from_weights, p
 from ravelights.effects.effect_super import Effect
@@ -14,7 +14,10 @@ if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
-def get_names_and_weights(generators: list[str], keywords: Optional[list[str]] = None) -> tuple[list[str], list[float]]:
+def get_names_and_weights(
+    generators: list[GeneratorMeta],
+    keywords: Optional[Sequence[str]] = None,
+) -> tuple[list[str], list[float]]:
     """Creates a list of generator names and their weights from the specified generator class.
     Only generators with all the given keywords are chosen."""
 
@@ -77,9 +80,9 @@ class GenSelector:
                 out.pattern_name = self.name
             else:
                 out.pattern_name = self.get_random_generator(gen_type=Pattern)
-            pattern: Pattern = self.root.devices[0].rendermodule.find_generator(name=out.pattern_name)
-            assert isinstance(pattern, Pattern)
-            self.set_dimmer_thinner(pattern, out)
+            pattern_instance = self.root.devices[0].rendermodule.find_generator(name=out.pattern_name)
+            assert isinstance(pattern_instance, Pattern)
+            self.set_dimmer_thinner(pattern_instance, out)
 
         # ─── Vfilter ──────────────────────────────────────────────────
         elif self.gen_type is Vfilter:
@@ -125,26 +128,32 @@ class GenSelector:
         # first try
         names, weights = get_names_and_weights(generators=generators, keywords=keywords)
         if len(names) > 0:
-            return get_random_from_weights(names=names, weights=weights)
+            generator_name = get_random_from_weights(names=names, weights=weights)
+            if isinstance(generator_name, str):
+                return generator_name
 
         # second try without music_style
         logger.warning(f"no generators found with keywords {keywords}")
         names, weights = get_names_and_weights(generators=generators, keywords=self.keywords)
         if len(names) > 0:
-            return get_random_from_weights(names=names, weights=weights)
+            generator_name = get_random_from_weights(names=names, weights=weights)
+            if isinstance(generator_name, str):
+                return generator_name
 
         # third try without keywords
         logger.warning(f"no generators found with keywords {keywords}")
         names, weights = get_names_and_weights(generators=generators)
         if len(names) > 0:
-            return get_random_from_weights(names=names, weights=weights)
+            generator_name = get_random_from_weights(names=names, weights=weights)
+            if isinstance(generator_name, str):
+                return generator_name
         logger.warning(f"no generators of type {gen_type} found")
 
         # backup
         return gen_type.get_identifier()[0] + "_none"
 
-    def get_gen_list(self, gen_type: str | type[Generator] | type[Effect]) -> list[GeneratorMeta]:
-        identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
+    def get_gen_list(self, gen_type: type[Pattern | Vfilter | Thinner | Dimmer | Effect]) -> list[GeneratorMeta]:
+        identifier = gen_type.get_identifier()
         if hasattr(self.root, "metahandler"):
             return self.root.metahandler["available_generators"][identifier]
         else:
@@ -168,7 +177,6 @@ class EffectSelectorPlacing:
 
     effect_name: str = field(init=False)
 
-    # gen_type: type[Effect] = Effect
     name: Optional[str] = None
     keywords: list["Keywords"] = field(default_factory=list)
     length_q: int = 4
@@ -179,25 +187,25 @@ class EffectSelectorPlacing:
         if self.name is not None:
             self.effect_name = self.name
         else:
-            self.effect_name = self.get_random_generator(gen_type=Effect)
+            self.effect_name = self.get_random_effect()
         self.settings = self.patternscheduler.settings
         self.effect_length_frames = int(self.timehandler.fps * self.timehandler.quarter_time * self.length_q)
 
-    def get_random_generator(self, gen_type: type[Generator]) -> str:
-        generators = self.get_gen_list(gen_type=gen_type)
+    def get_random_effect(self) -> str:
+        effects = self.get_effect_list()
         if self.settings.music_style:
             keywords = self.keywords + [self.settings.music_style]
         else:
             keywords = self.keywords
-        names, weights = get_names_and_weights(generators=generators, keywords=keywords)
+        names, weights = get_names_and_weights(generators=effects, keywords=keywords)
         assert len(names) > 0
         gen_name = get_random_from_weights(names=names, weights=weights)
+        assert isinstance(gen_name, str)
         return gen_name
 
-    def get_gen_list(self, gen_type: str | type[Generator] | type[Effect]) -> list[dict[str, str | list[str] | float]]:
-        identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        generators = self.settings.meta["available_generators"][identifier]
-        return generators
+    def get_effect_list(self) -> list[GeneratorMeta]:
+        effects = self.settings.meta["available_generators"]["effect"]
+        return effects
 
 
 @dataclass
