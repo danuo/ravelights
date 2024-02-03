@@ -19,6 +19,10 @@ class AudioSource:
         self._CHUNK_SIZE = chunk_size
 
         self._pa = PyAudio()
+
+        self.list_all_audio_devices()
+        self.list_default_audio_device()
+
         self._stream = self._pa.open(
             format=paFloat32,
             channels=1,
@@ -65,9 +69,11 @@ class AudioSource:
         self._pa.terminate()
 
     def list_all_audio_devices(self):
+        message = "listing all audio devices:\n"
         for i in range(self._pa.get_device_count()):
             device_info = self._pa.get_device_info_by_index(i)
-            logger.debug(f"index: {device_info['index']}, name: {device_info['name']}")
+            message += f"index: {device_info['index']}, name: {device_info['name']}\n"
+        logger.debug(message)
 
     def list_default_audio_device(self):
         default_input_device_index = self._pa.get_default_input_device_info()["index"]
