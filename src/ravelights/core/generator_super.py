@@ -191,8 +191,9 @@ class Generator(ABC):
     def __repr__(self):
         return f"<Generator {self.name}>"
 
+    @staticmethod
     @abstractmethod
-    def get_identifier(cls) -> Literal["pattern", "vfilter", "thinner", "dimmer", "effect"]:
+    def get_identifier() -> Literal["pattern", "vfilter", "thinner", "dimmer", "effect"]:
         """returns str identifier of generator type, for example 'pattern' for pattern objects"""
         ...
 
