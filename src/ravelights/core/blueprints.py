@@ -1,35 +1,37 @@
-from dataclasses import InitVar, asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, Optional
+from dataclasses import asdict, dataclass, field
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keywords
-    from ravelights.core.generator_super import Generator
+    from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
     from ravelights.effects.effect_super import Effect
 
 
+T = TypeVar("T", "Pattern", "Vfilter", "Dimmer", "Thinner")
+
+
 @dataclass
-class BlueprintGen:
-    cls: InitVar[type["Generator"]]
+class BlueprintGen(Generic[T]):
+    cls: type[T]
     name: str
     weight: float | int = 1.0
     keywords: list["Keywords"] = field(default_factory=list)
     version: Optional[int] = 0
 
-    def __post_init__(self, cls):
-        self.cls = cls
-
-    def create_instance(self, kwargs: Optional[dict[str, Any]] = None) -> "Generator":
-        return self.cls(**asdict(self), **kwargs)
+    def create_instance(self, kwargs: Optional[dict[str, Any]] = None) -> T:
+        attributes = asdict(self)
+        del attributes["cls"]
+        instance: T = self.cls(**attributes, **kwargs)  # type: ignore[arg-type]
+        return instance
 
 
 @dataclass
 class BlueprintEffect:
-    cls: InitVar[type["Effect"]]
+    cls: type["Effect"]
     name: str
     keywords: list["Keywords"] = field(default_factory=list)
 
-    def __post_init__(self, cls):
-        self.cls = cls
-
     def create_instance(self, kwargs: Optional[dict[str, Any]] = None) -> "Effect":
-        return self.cls(**asdict(self), **kwargs)
+        attributes = asdict(self)
+        del attributes["cls"]
+        return self.cls(**attributes, **kwargs)  # type: ignore[arg-type]

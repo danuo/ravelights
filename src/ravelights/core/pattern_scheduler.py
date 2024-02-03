@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 from loguru import logger
 from ravelights.configs.components import (
@@ -8,7 +8,7 @@ from ravelights.configs.components import (
 )
 from ravelights.core.device import Device
 from ravelights.core.effect_handler import EffectHandler
-from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
+from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.instruction import InstructionDevice, InstructionEffect
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import TimeHandler
@@ -33,7 +33,9 @@ class PatternScheduler:
         self.blueprint_timelines = blueprint_timelines
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
-            generators: Sequence[Generator] = [blueprint.create_instance(kwargs) for blueprint in blueprint_generators]
+            generators: list[Pattern | Vfilter | Dimmer | Thinner] = [
+                blueprint.create_instance(kwargs) for blueprint in blueprint_generators
+            ]
             device.rendermodule.register_generators(generators=generators)
 
         self.load_timeline_from_index(self.settings.active_timeline_index)
