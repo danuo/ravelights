@@ -1,7 +1,8 @@
 import time
+from functools import partial
 
 from loguru import logger
-from ravelights.core.generator_super import Generator, Pattern
+from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.core.time_handler import BeatState
 from ravelights.effects.effect_super import EffectWrapper
@@ -31,23 +32,23 @@ class Profiler:
 
         logger.info("profiling finished")
 
-    def profile_generator(self, generator: Generator | EffectWrapper):
+    def profile_generator(self, generator: Pattern | Vfilter | Thinner | Dimmer | EffectWrapper):
         logger.info("generator.name")
         colors = self.app.settings.color_engine.get_colors_rgb(1)
         matrix = self.app.devices[0].pixelmatrix.get_float_matrix_rgb()
         if isinstance(generator, Pattern):
-            args = dict(colors=colors)
+            closure = partial(generator.render, colors=colors)
         elif isinstance(generator, EffectWrapper):
-            args = dict(in_matrix=matrix, colors=colors, device_id=0)
+            closure = partial(generator.render, in_matrix=matrix, colors=colors, device_id=0)
         else:
-            args = dict(in_matrix=matrix, colors=colors)
+            closure = partial(generator.render, in_matrix=matrix, colors=colors)
         t0 = time.time_ns()
         for i in range(self.samples):
             if i % 200 == 0:  # alternate every 200 frames
                 generator.alternate()
             if i % (4 * self.app.timehandler.fps):  # on_trigger every 4
                 generator.on_trigger()
-            generator.render(**args)
+            closure()
         t1 = time.time_ns()
         dtime_ms = (t1 - t0) / (10**6) / self.samples
         return dtime_ms
