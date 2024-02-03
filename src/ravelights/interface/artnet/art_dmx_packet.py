@@ -7,7 +7,7 @@ from plum.structure import Structure, member, sized_member
 from plum.utilities import pack, pack_and_dump
 
 
-class ArtDmxPacketPlum(Structure):
+class ArtDmxPacketPlum(Structure):  # type: ignore[misc]
     """
     Structure representing an ArtDMX packet
     (https://art-net.org.uk/how-it-works/streaming-packets/artdmx-packet-definition/)
@@ -39,7 +39,7 @@ class ArtDmxPacketPlum(Structure):
     data: bytes = sized_member(fmt=BytesX(), size=length)
 
 
-class ArtDmxPacket(ArtDmxPacketPlum):
+class ArtDmxPacket(ArtDmxPacketPlum):  # type: ignore[misc]
     """
     Structure representing an ArtDMX packet
     (https://art-net.org.uk/how-it-works/streaming-packets/artdmx-packet-definition/)
