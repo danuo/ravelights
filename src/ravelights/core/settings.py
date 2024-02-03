@@ -75,6 +75,14 @@ def get_default_color_sec_modes() -> dict[str, str]:
     return {"B": SecondaryColorModes.COMPLEMENTARY.value, "C": SecondaryColorModes.COMPLEMENTARY66.value}
 
 
+@dataclass(frozen=True)
+class FrozenSettings:
+    use_audio: bool
+    use_visualizer: bool
+    print_stats: bool
+    serve_webui: bool
+
+
 @dataclass
 class Settings:
     """
