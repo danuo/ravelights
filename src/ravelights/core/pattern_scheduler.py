@@ -76,7 +76,7 @@ class PatternScheduler:
         genset: GeneratorSet = generator_selector.create_generator_set()
         if genset.pattern_name:
             self.settings.set_generator(
-                gen_type=Pattern,
+                gen_type="pattern",
                 timeline_level=generator_selector.level,
                 gen_name=genset.pattern_name,
                 renew_trigger=renew_trigger,
@@ -84,7 +84,7 @@ class PatternScheduler:
 
         if genset.vfilter_name:
             self.settings.set_generator(
-                gen_type=Vfilter,
+                gen_type="vfilter",
                 timeline_level=generator_selector.level,
                 gen_name=genset.vfilter_name,
                 renew_trigger=renew_trigger,
@@ -92,7 +92,7 @@ class PatternScheduler:
 
         if genset.dimmer_name:
             self.settings.set_generator(
-                gen_type=Dimmer,
+                gen_type="dimmer",
                 timeline_level=generator_selector.level,
                 gen_name=genset.dimmer_name,
                 renew_trigger=renew_trigger,
@@ -100,7 +100,7 @@ class PatternScheduler:
 
         if genset.thinner_name:
             self.settings.set_generator(
-                gen_type=Thinner,
+                gen_type="thinner",
                 timeline_level=generator_selector.level,
                 gen_name=genset.thinner_name,
                 renew_trigger=renew_trigger,
