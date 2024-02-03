@@ -19,19 +19,24 @@ if TYPE_CHECKING:
 
 
 class LightObject(ABC):
-    def __init__(self, root: "RaveLightsApp", device: "Device", **kwargs: dict[str, Any]):
+    def __init__(
+        self,
+        root: "RaveLightsApp",
+        device: "Device",
+        lifetime_beats: Optional[int] = None,
+        lifetime_frames: Optional[int] = None,
+        **kwargs: dict[str, Any],
+    ):
         self.root = root
         self.device = device
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.root.timehandler
         self.pixelmatrix: "PixelMatrix" = self.device.pixelmatrix
         self.n_leds = self.pixelmatrix.n_leds
-        self.gen_args = [self.root, self.device]
         self.counter_frame: int = 0
         self.counter_beats: int = -1
-
-        self.lifetime_beats: Optional[int] = kwargs.get("lifetime_beats", None)
-        self.lifetime_frames: Optional[int] = kwargs.get("lifetime_frames", None)
+        self.lifetime_beats: Optional[int] = lifetime_beats
+        self.lifetime_frames: Optional[int] = lifetime_frames
         self.init_kwargs(**kwargs)
 
     @abstractmethod
@@ -81,16 +86,18 @@ class LightObject(ABC):
 
 
 class FallingSmallBlock(LightObject):
-    # formerly TwoThing
+    flip: bool
+
     def init_kwargs(self, **kwargs: dict[str, Any]):
-        if "flip" in kwargs:
-            self.flip = kwargs["flip"]
+        flip = kwargs.get("flip", None)
+        if isinstance(flip, bool):
+            self.flip = flip
         else:
             self.flip = False
-        self.speed = random.uniform(1, 4)
-        self.length = random.randint(2, 8) if self.settings.global_energy < 0.8 else random.randint(5, 20)
-        self.pos = 1 - self.length  # only one pixel visible at first frame
-        self.filter = VfilterFlimmering(*self.gen_args)
+        self.speed: float = random.uniform(1, 4)
+        self.length: int = random.randint(2, 8) if self.settings.global_energy < 0.8 else random.randint(5, 20)
+        self.pos: float = 1.0 - self.length  # only one pixel visible at first frame
+        self.filter = VfilterFlimmering(self.root, self.device)
 
     def is_done(self) -> bool:
         return True if self.pos > self.n_leds + 30 else False
@@ -136,11 +143,13 @@ class Slideblock(LightObject):
 
 
 class SlideStrobe(Slideblock):
+    flashes: list[bool]
+
     def init_kwargs(self, **kwargs: dict[str, Any]):
         super().init_kwargs(**kwargs)
         self.done = False
         if "flashes" in kwargs:
-            self.flashes = kwargs["flashes"]
+            self.flashes = kwargs["flashes"]  # type: ignore
         else:
             ran = random.randint(3, 9)
             ran = random.choice([3, 4, 20])
@@ -161,12 +170,11 @@ class SlideStrobe(Slideblock):
             return self.get_float_matrix()
 
 
-# class SymmetricalStrobe(SlideStrobe):
 class SymmetricalStrobe(Slideblock):
     # todo: do not have this class, have vfilters for pattern sec instead
     def init_kwargs(self, **kwargs: dict[str, Any]):
         super().init_kwargs(**kwargs)
-        self.mirror = VfilterMirrorVer(**self.gen_args)
+        self.mirror = VfilterMirrorVer(self.root, self.device)
 
     def render(self, colors: list[Color]):
         matrix = super().render(colors)
