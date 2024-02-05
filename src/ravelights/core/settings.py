@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Literal, Optional
 from loguru import logger
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
-from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import StrEnum
 
@@ -21,7 +20,7 @@ class MusicStyle(StrEnum):
     AMBIENT = auto()
 
 
-def get_default_selected_dict() -> dict[str, list[str]]:
+def get_default_selected() -> dict[str, list[str]]:
     """
     level 0: none
     level 1: 1
@@ -30,21 +29,21 @@ def get_default_selected_dict() -> dict[str, list[str]]:
     level 4: not used
     """
     return {
-        Pattern.get_identifier(): ["p_none" for _ in range(5)],
-        Pattern.get_identifier() + "_sec": ["p_none" for _ in range(5)],
-        Vfilter.get_identifier(): ["v_none" for _ in range(5)],
-        Thinner.get_identifier(): ["t_none" for _ in range(5)],
-        Dimmer.get_identifier(): ["d_none" for _ in range(5)],
+        "pattern": ["p_none" for _ in range(5)],
+        "pattern_sec": ["p_none" for _ in range(5)],
+        "vfilter": ["v_none" for _ in range(5)],
+        "thinner": ["t_none" for _ in range(5)],
+        "dimmer": ["d_none" for _ in range(5)],
     }
 
 
 def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     return {
-        Pattern.get_identifier(): [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(5)],
-        Pattern.get_identifier() + "_sec": [BeatStatePattern() for _ in range(5)],
-        Vfilter.get_identifier(): [BeatStatePattern() for _ in range(5)],
-        Thinner.get_identifier(): [BeatStatePattern() for _ in range(5)],
-        Dimmer.get_identifier(): [BeatStatePattern() for _ in range(5)],
+        "pattern": [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(5)],
+        "pattern_sec": [BeatStatePattern() for _ in range(5)],
+        "vfilter": [BeatStatePattern() for _ in range(5)],
+        "thinner": [BeatStatePattern() for _ in range(5)],
+        "dimmer": [BeatStatePattern() for _ in range(5)],
     }
 
 
@@ -132,7 +131,7 @@ class Settings:
     renew_trigger_from_timeline: bool = True
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
-    selected: dict[str, list[str]] = field(default_factory=get_default_selected_dict)
+    selected: dict[str, list[str]] = field(default_factory=get_default_selected)
 
     active_timeline_index: int = 0
     use_manual_timeline: bool = True
@@ -153,7 +152,7 @@ class Settings:
     def clear_selected(self) -> None:
         """resets selected generators to default state"""
         logger.debug("clear_selected")
-        self.selected = get_default_selected_dict()
+        self.selected = get_default_selected()
         self.root.refresh_ui(sse_event="settings")
 
     def update_from_dict(self, update_dict: dict[str, Any]) -> None:
