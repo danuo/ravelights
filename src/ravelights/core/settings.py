@@ -10,11 +10,10 @@ from ravelights.core.time_handler import BeatStatePattern
 from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:
-    from ravelights.configs.components import Keywords
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
-class MusicStyles(StrEnum):
+class MusicStyle(StrEnum):
     """available music styles for settings"""
 
     TECHNO = auto()
@@ -117,7 +116,7 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    music_style: Optional["Keywords"] = None
+    music_style: Optional["MusicStyle"] = None
 
     # ─── Time Settings ────────────────────────────────────────────────────
     bpm_base: float = 140.0
