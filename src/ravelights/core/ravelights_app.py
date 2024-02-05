@@ -11,7 +11,7 @@ from ravelights.core.effect_handler import EffectHandler
 from ravelights.core.event_handler import EventHandler
 from ravelights.core.meta_handler import MetaHandler
 from ravelights.core.pattern_scheduler import PatternScheduler
-from ravelights.core.settings import FrozenSettings, Settings
+from ravelights.core.settings import Settings
 from ravelights.core.time_handler import TimeHandler
 from ravelights.interface.data_router import (
     DataRouter,
@@ -37,18 +37,15 @@ class RaveLightsApp:
         use_visualizer: bool = False,
         print_stats: bool = False,
     ) -> None:
-        self.frozen_settings = FrozenSettings(
-            serve_webui=serve_webui,
-            use_audio=use_audio,
-            use_visualizer=use_visualizer,
-            print_stats=print_stats,
-        )
-
         self.settings = Settings(
             root_init=self,
             device_config=device_config,
             fps=fps,
             bpm_base=140.0,
+            serve_webui=serve_webui,
+            use_audio=use_audio,
+            use_visualizer=use_visualizer,
+            print_stats=print_stats,
         )
         self.timehandler = TimeHandler(root=self)
         self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
@@ -75,8 +72,7 @@ class RaveLightsApp:
         connectivity_check.wait_until_connected_to_network()
         discovery_service.start()
 
-        # maybe frozen dataclass for this
-        if self.frozen_settings.use_audio:
+        if self.settings.use_audio:
             from ravelights.audio.audio_analyzer import audio_analyzer_process
 
             sender_connection, receiver_connection = multiprocessing.Pipe()
@@ -88,7 +84,7 @@ class RaveLightsApp:
             self.audio_analyzer_process.start()
             self.audio_data.set_connection(connection=receiver_connection)
 
-        if self.frozen_settings.use_visualizer:
+        if self.settings.use_visualizer:
             from ravelights.interface.visualizer import Visualizer
 
             self.visualizer = Visualizer(root=self)
@@ -134,7 +130,7 @@ class RaveLightsApp:
         # ─── Effect After ─────────────────────────────────────────────
         self.effecthandler.run_after()
         # ─── Output ───────────────────────────────────────────────────
-        if self.frozen_settings.print_stats:  # this doesnt have to be frozen
+        if self.settings.print_stats:  # this doesnt have to be frozen
             self.timehandler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
         matrices_processed_int = [device.get_matrix_processed_int() for device in self.devices]
