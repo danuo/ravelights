@@ -82,7 +82,7 @@ class EventHandler:
                     self.devices[device_id].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     logger.debug(f"api: set_trigger with {other_kwargs}")
-                    self.settings.set_trigger(**other_kwargs)
+                    self.settings.set_trigger(new_trigger=other_kwargs)
                 case {"action": "set_generator", **other_kwargs}:
                     logger.debug(f"api: set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual

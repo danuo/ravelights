@@ -215,7 +215,7 @@ class Settings:
         logger.debug(f"renew_trigger with {gen_type=} {timeline_level=}")
         new_trigger = generator.get_new_trigger()
         self.set_trigger(
-            device_index=device_index, gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger
+            device_index=device_index, gen_type=gen_type, timeline_level=timeline_level, new_trigger=new_trigger
         )
         self.root.refresh_ui(sse_event="triggers")
 
@@ -224,14 +224,13 @@ class Settings:
         device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
-        beatstate_pattern: Optional[BeatStatePattern] = None,
-        **kwargs: dict[str, Any],
+        new_trigger: BeatStatePattern | dict[str, Any],
     ) -> None:
-        """triggers can be updated by new BeatStatePattern object or via keywords (kwargs)"""
+        """triggers can be updated by new BeatStatePattern object or via keyword dict"""
         logger.debug(f"set_trigger with {gen_type=} {timeline_level=}")
-        if beatstate_pattern is not None:
-            kwargs.update(asdict(beatstate_pattern))
-        self.triggers[device_index][gen_type][timeline_level].update_from_dict(kwargs)
+        if isinstance(new_trigger, BeatStatePattern):
+            new_trigger = asdict(new_trigger)
+        self.triggers[device_index][gen_type][timeline_level].update_from_dict(new_trigger)
         self.root.refresh_ui(sse_event="triggers")
 
     def set_settings_autopilot(self, in_dict) -> None:
