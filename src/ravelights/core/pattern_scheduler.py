@@ -75,38 +75,49 @@ class PatternScheduler:
         # load each generator that is defined inside of the GenSelector Object
         renew_trigger = self.settings.renew_trigger_from_timeline
 
-        genset: GeneratorSet = generator_selector.create_generator_set()
-        if genset.pattern_name:
-            self.settings.set_generator(
-                gen_type="pattern",
-                timeline_level=generator_selector.level,
-                gen_name=genset.pattern_name,
-                renew_trigger=renew_trigger,
-            )
+        for device_index, device in enumerate(self.devices):
+            if not device.refresh_generators_from_timeline:
+                continue
 
-        if genset.vfilter_name:
-            self.settings.set_generator(
-                gen_type="vfilter",
-                timeline_level=generator_selector.level,
-                gen_name=genset.vfilter_name,
-                renew_trigger=renew_trigger,
-            )
+            if device.linked_to:
+                continue
 
-        if genset.dimmer_name:
-            self.settings.set_generator(
-                gen_type="dimmer",
-                timeline_level=generator_selector.level,
-                gen_name=genset.dimmer_name,
-                renew_trigger=renew_trigger,
-            )
+            genset: GeneratorSet = generator_selector.create_generator_set()
+            if genset.pattern_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="pattern",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.pattern_name,
+                    renew_trigger=renew_trigger,
+                )
 
-        if genset.thinner_name:
-            self.settings.set_generator(
-                gen_type="thinner",
-                timeline_level=generator_selector.level,
-                gen_name=genset.thinner_name,
-                renew_trigger=renew_trigger,
-            )
+            if genset.vfilter_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="vfilter",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.vfilter_name,
+                    renew_trigger=renew_trigger,
+                )
+
+            if genset.dimmer_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="dimmer",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.dimmer_name,
+                    renew_trigger=renew_trigger,
+                )
+
+            if genset.thinner_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="thinner",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.thinner_name,
+                    renew_trigger=renew_trigger,
+                )
 
     def process_timeline_placements(self, timeline_placements: list[GenPlacing]) -> None:
         for placement in timeline_placements:
