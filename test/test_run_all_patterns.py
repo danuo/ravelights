@@ -49,7 +49,13 @@ def test_all_patterns():
             if gen_type is None:
                 done = True
             else:
-                app.settings.set_generator(gen_type=gen_type, timeline_level=1, gen_name=gen_name, renew_trigger=False)
+                app.settings.set_generator(
+                    gen_type=gen_type,
+                    device_index=0,
+                    timeline_level=1,
+                    gen_name=gen_name,
+                    renew_trigger=False,
+                )
 
         counter_frame += 1
         app.render_frame()
