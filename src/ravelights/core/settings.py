@@ -141,7 +141,6 @@ class Settings:
     renew_trigger_from_timeline: bool = True
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
-    # selected: dict[str, list[str]] = field(default_factory=get_default_selected)
     selected: list[dict[str, list[str]]] = field(init=False)
 
     active_timeline_index: int = 0
@@ -158,7 +157,9 @@ class Settings:
         self.color_engine = ColorEngine(settings=self)
         self.n_devices = len(self.device_config)
         self.reset_selected()
-        self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()  # should not be part of asdict(self)
+        self.triggers: list[dict[str, list[BeatStatePattern]]] = [
+            get_default_triggers() for _ in range(self.n_devices)
+        ]  # should not be part of asdict(self)
 
     def reset_selected(self) -> None:
         """resets selected generators to default state"""
@@ -180,6 +181,7 @@ class Settings:
 
     def set_generator(
         self,
+        device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
         gen_name: str,
@@ -196,26 +198,30 @@ class Settings:
                 timeline_level = 1
             elif gen_type == "dimmer" and self.global_dimmer:
                 timeline_level = 1
-        self.selected[gen_type][timeline_level] = gen_name
+        self.selected[device_index][gen_type][timeline_level] = gen_name
         if renew_trigger:
-            self.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+            self.renew_trigger(device_index=device_index, gen_type=gen_type, timeline_level=timeline_level)
         self.root.refresh_ui(sse_event="settings")
 
     def renew_trigger(
         self,
+        device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
     ) -> None:
         generator = self.root.devices[0].rendermodule.get_selected_generator(
-            gen_type=gen_type, timeline_level=timeline_level
+            device_index=device_index, gen_type=gen_type, timeline_level=timeline_level
         )
         logger.debug(f"renew_trigger with {gen_type=} {timeline_level=}")
         new_trigger = generator.get_new_trigger()
-        self.set_trigger(gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger)
+        self.set_trigger(
+            device_index=device_index, gen_type=gen_type, timeline_level=timeline_level, beatstate_pattern=new_trigger
+        )
         self.root.refresh_ui(sse_event="triggers")
 
     def set_trigger(
         self,
+        device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
         beatstate_pattern: Optional[BeatStatePattern] = None,
@@ -225,7 +231,7 @@ class Settings:
         logger.debug(f"set_trigger with {gen_type=} {timeline_level=}")
         if beatstate_pattern is not None:
             kwargs.update(asdict(beatstate_pattern))
-        self.triggers[gen_type][timeline_level].update_from_dict(kwargs)
+        self.triggers[device_index][gen_type][timeline_level].update_from_dict(kwargs)
         self.root.refresh_ui(sse_event="triggers")
 
     def set_settings_autopilot(self, in_dict) -> None:

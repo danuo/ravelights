@@ -26,42 +26,46 @@ class RenderModule:
 
     def get_selected_trigger(
         self,
+        device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         level: Optional[int] = None,
     ) -> BeatStatePattern:
         if level is None:
             level = self.device_automatic_timeline_level
-        return self.settings.triggers[gen_type][level]
+        return self.settings.triggers[device_index][gen_type][level]
 
+    # fmt: off
     @overload
-    def get_selected_generator(self, gen_type: Literal["pattern"], timeline_level: Optional[int] = None) -> Pattern:
+    def get_selected_generator(self, device_index: int, gen_type: Literal["pattern"], timeline_level: Optional[int] = None) -> Pattern:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["pattern_sec"], timeline_level: Optional[int] = None) -> Pattern:
+    def get_selected_generator(self, device_index: int, gen_type: Literal["pattern_sec"], timeline_level: Optional[int] = None) -> Pattern:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["vfilter"], timeline_level: Optional[int] = None) -> Vfilter:
+    def get_selected_generator(self, device_index: int, gen_type: Literal["vfilter"], timeline_level: Optional[int] = None) -> Vfilter:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["dimmer"], timeline_level: Optional[int] = None) -> Dimmer:
+    def get_selected_generator(self, device_index: int, gen_type: Literal["dimmer"], timeline_level: Optional[int] = None) -> Dimmer:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["thinner"], timeline_level: Optional[int] = None) -> Thinner:
+    def get_selected_generator(self, device_index: int, gen_type: Literal["thinner"], timeline_level: Optional[int] = None) -> Thinner:
         ...
+    # fmt: on
 
     def get_selected_generator(
         self,
+        device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
         timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
-        # identifier = gen_type if isinstance(gen_type, str) else gen_type.get_identifier()
-        gen_name = self.settings.selected[gen_type][timeline_level]
+        device_selected = self.settings.selected[device_index]
+        gen_name = device_selected[gen_type][timeline_level]
         return self.get_generator_by_name(gen_name)
 
     def get_generator_by_name(self, gen_name: str) -> Pattern | Vfilter | Thinner | Dimmer:
@@ -84,6 +88,9 @@ class RenderModule:
             return self.device_automatic_timeline_level
 
     def render(self) -> None:
+        # ----------------------------- get device index ----------------------------- #
+        device_index = self.device.linked_to if self.device.linked_to else self.device.device_id
+
         # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.get_timeline_level()
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
@@ -93,11 +100,11 @@ class RenderModule:
 
         # ------------------------------ get generators ------------------------------ #
         # fmt: off
-        pattern: Pattern = self.get_selected_generator(gen_type="pattern", timeline_level=timeline_level)
-        pattern_sec: Pattern = self.get_selected_generator(gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
-        vfilter: Vfilter = self.get_selected_generator(gen_type="vfilter", timeline_level=timeline_level_vfilter)
-        thinner: Thinner = self.get_selected_generator(gen_type="thinner", timeline_level=timeline_level_thinner)
-        dimmer: Dimmer = self.get_selected_generator(gen_type="dimmer", timeline_level=timeline_level_dimmer)
+        pattern: Pattern = self.get_selected_generator(device_index=device_index, gen_type="pattern", timeline_level=timeline_level)
+        pattern_sec: Pattern = self.get_selected_generator(device_index=device_index, gen_type="pattern_sec", timeline_level=timeline_level_pattern_sec)
+        vfilter: Vfilter = self.get_selected_generator(device_index=device_index, gen_type="vfilter", timeline_level=timeline_level_vfilter)
+        thinner: Thinner = self.get_selected_generator(device_index=device_index, gen_type="thinner", timeline_level=timeline_level_thinner)
+        dimmer: Dimmer = self.get_selected_generator(device_index=device_index, gen_type="dimmer", timeline_level=timeline_level_dimmer)
         # fmt: on
         # ------------------------ validate thinner and dimmer ----------------------- #
         if pattern.p_add_thinner == 1.0 and thinner.name == "t_none":
