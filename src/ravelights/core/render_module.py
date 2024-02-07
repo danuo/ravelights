@@ -122,16 +122,18 @@ class RenderModule:
             dimmer = cast(Dimmer, self.get_generator_by_name("d_none"))
 
         # ------------------------------- check trigger ------------------------------ #
-        if self.get_selected_trigger(gen_type="pattern").is_match(self.timehandler.beat_state, self.device):
+        # fmt: off
+        if self.get_selected_trigger(device_index=device_index, gen_type="pattern").is_match(self.timehandler.beat_state, self.device):
             pattern.on_trigger()
-        if self.get_selected_trigger(gen_type="pattern_sec").is_match(self.timehandler.beat_state, self.device):
+        if self.get_selected_trigger(device_index=device_index, gen_type="pattern_sec").is_match(self.timehandler.beat_state, self.device):
             pattern_sec.on_trigger()
-        if self.get_selected_trigger(gen_type="vfilter").is_match(self.timehandler.beat_state, self.device):
+        if self.get_selected_trigger(device_index=device_index, gen_type="vfilter").is_match(self.timehandler.beat_state, self.device):
             vfilter.on_trigger()
-        if self.get_selected_trigger(gen_type="thinner").is_match(self.timehandler.beat_state, self.device):
+        if self.get_selected_trigger(device_index=device_index, gen_type="thinner").is_match(self.timehandler.beat_state, self.device):
             thinner.on_trigger()
-        if self.get_selected_trigger(gen_type="dimmer").is_match(self.timehandler.beat_state, self.device):
+        if self.get_selected_trigger(device_index=device_index, gen_type="dimmer").is_match(self.timehandler.beat_state, self.device):
             dimmer.on_trigger()
+        # fmt: on
 
         # ---------------------------------- colors ---------------------------------- #
         # color is a tuple of 2 colors
