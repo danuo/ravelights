@@ -48,7 +48,7 @@ class RaveLightsApp:
             print_stats=print_stats,
         )
         self.timehandler = TimeHandler(root=self)
-        self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
+        self.devices = [Device(root=self, device_index=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)

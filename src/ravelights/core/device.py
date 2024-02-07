@@ -18,18 +18,18 @@ class Device:
     def __init__(
         self,
         root: "RaveLightsApp",
-        device_id: int,
+        device_index: int,
         n_leds: int,
         n_lights: int,
         color_profile: ColorProfiles,
         linked_to: Optional[int] = None,
     ):
         self.root = root
-        self.device_id: int = device_id
+        self.device_id: int = device_index
         self.n_leds: int = n_leds
         self.n_lights: int = n_lights
         self.color_profile: ColorProfiles = color_profile
-        self.is_prim: bool = True if device_id == 0 else False
+        self.is_prim: bool = True if device_index == 0 else False
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.root.timehandler
         self.pixelmatrix: PixelMatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
