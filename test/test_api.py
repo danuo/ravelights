@@ -1,12 +1,15 @@
 import json
 
 import pytest
-from ravelights import RaveLightsApp
+from ravelights import DeviceLightConfig, RaveLightsApp
+
+N_DEVICES = 2
+device_config = [DeviceLightConfig(n_lights=2, n_leds=144)] * N_DEVICES
 
 
 @pytest.fixture(scope="session")
 def app():
-    app = RaveLightsApp()
+    app = RaveLightsApp(device_config=device_config)
     return app.rest_api.flask_app
 
 
@@ -27,7 +30,8 @@ def test_flask_endpoints_rest_triggers(client):
     response = client.get("/rest/triggers")
     assert response.status_code == 200
     response_dict = json.loads(response.data)
-    assert "dimmer" in response_dict
+    assert len(response_dict) == N_DEVICES
+    assert "dimmer" in response_dict[0]
 
 
 def test_flask_endpoints_rest_devices(client):
