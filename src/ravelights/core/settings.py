@@ -1,23 +1,14 @@
 from dataclasses import InitVar, asdict, dataclass, field
-from enum import auto
 from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from loguru import logger
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.time_handler import BeatStatePattern
-from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:
+    from ravelights.configs.components import Keyword
     from ravelights.core.ravelights_app import RaveLightsApp
-
-
-class MusicStyle(StrEnum):
-    """available music styles for settings"""
-
-    TECHNO = auto()
-    DISCO = auto()
-    AMBIENT = auto()
 
 
 N_LEVELS = 4
@@ -125,7 +116,7 @@ class Settings:
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
-    music_style: Optional["MusicStyle"] = None
+    music_style: Optional["Keyword"] = None
 
     # ─── Time Settings ────────────────────────────────────────────────────
     bpm_base: float = 140.0
