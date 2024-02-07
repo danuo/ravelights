@@ -20,30 +20,32 @@ class MusicStyle(StrEnum):
     AMBIENT = auto()
 
 
+N_LEVELS = 4
+
+
 def get_default_selected() -> dict[str, list[str]]:
     """
-    level 0: none
+    level 0: none (black output)
     level 1: 1
     level 2: 2
     level 3: 3
-    level 4: not used
     """
     return {
-        "pattern": ["p_none" for _ in range(5)],
-        "pattern_sec": ["p_none" for _ in range(5)],
-        "vfilter": ["v_none" for _ in range(5)],
-        "thinner": ["t_none" for _ in range(5)],
-        "dimmer": ["d_none" for _ in range(5)],
+        "pattern": ["p_none" for _ in range(N_LEVELS)],
+        "pattern_sec": ["p_none" for _ in range(N_LEVELS)],
+        "vfilter": ["v_none" for _ in range(N_LEVELS)],
+        "thinner": ["t_none" for _ in range(N_LEVELS)],
+        "dimmer": ["d_none" for _ in range(N_LEVELS)],
     }
 
 
 def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     return {
-        "pattern": [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(5)],
-        "pattern_sec": [BeatStatePattern() for _ in range(5)],
-        "vfilter": [BeatStatePattern() for _ in range(5)],
-        "thinner": [BeatStatePattern() for _ in range(5)],
-        "dimmer": [BeatStatePattern() for _ in range(5)],
+        "pattern": [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(N_LEVELS)],
+        "pattern_sec": [BeatStatePattern() for _ in range(N_LEVELS)],
+        "vfilter": [BeatStatePattern() for _ in range(N_LEVELS)],
+        "thinner": [BeatStatePattern() for _ in range(N_LEVELS)],
+        "dimmer": [BeatStatePattern() for _ in range(N_LEVELS)],
     }
 
 
@@ -92,7 +94,7 @@ class Settings:
     serve_webui: bool
 
     # ─── Meta Information ─────────────────────────────────────────────────
-    generator_classes_identifiers: list[str] = field(init=False)
+    generator_classes_identifiers: list[str] = ["pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect"]
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
@@ -144,10 +146,8 @@ class Settings:
 
     def __post_init__(self, root_init: "RaveLightsApp") -> None:
         self.root = root_init
-        self.generator_classes_identifiers = ["pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect"]
-
         self.color_engine = ColorEngine(settings=self)
-        self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()
+        self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()  # should not be part of asdict(self)
 
     def clear_selected(self) -> None:
         """resets selected generators to default state"""
