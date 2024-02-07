@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 from loguru import logger
@@ -22,6 +22,7 @@ class Device:
         n_leds: int,
         n_lights: int,
         color_profile: ColorProfiles,
+        linked_to: Optional[int] = None,
     ):
         self.root = root
         self.device_id: int = device_id
@@ -38,6 +39,10 @@ class Device:
             pixelmatrix=self.pixelmatrix,
             rendermodule=self.rendermodule,
         )
+
+        if isinstance(linked_to, int):
+            assert 0 <= linked_to < self.device_id
+        self.linked_to: Optional[int] = linked_to
 
         self.device_manual_timeline_level: int = 4  # 0: blackout, 1: level1, ... 4: undefined
         self.device_triggerskip: int = 0  # Will select max(device_triggerskip, global_triggerskip)
