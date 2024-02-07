@@ -48,6 +48,7 @@ class Device:
         self.device_triggerskip: int = 0  # Will select max(device_triggerskip, global_triggerskip)
         self.device_frameskip: int = 1  # must be 1 or higher. Will select max(device_frameskip, global_frameskip)
         self.device_brightness: float = 1.0  # will select min(device_brightness, global_brightness)
+        self.refresh_generators_from_timeline: bool = True
 
     def render(self):
         self.rendermodule.render()
