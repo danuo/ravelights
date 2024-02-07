@@ -94,7 +94,7 @@ class Settings:
     serve_webui: bool
 
     # ─── Meta Information ─────────────────────────────────────────────────
-    generator_classes_identifiers: list[str] = ["pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect"]
+    generator_classes_identifiers: tuple[str] = ("pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect")
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast

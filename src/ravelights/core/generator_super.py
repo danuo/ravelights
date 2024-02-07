@@ -10,7 +10,7 @@ from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.audio.audio_data import AudioData
-    from ravelights.configs.components import Keywords
+    from ravelights.configs.components import Keyword
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
@@ -22,7 +22,7 @@ class Generator(ABC):
         root: "RaveLightsApp",
         device: "Device",
         name: str = "undefined",
-        keywords: Optional[list["Keywords"]] = None,
+        keywords: Optional[list["Keyword"]] = None,
         weight: float = 1.0,
         is_prim: bool = True,
         version: int = 0,

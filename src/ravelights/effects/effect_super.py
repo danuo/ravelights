@@ -9,7 +9,7 @@ from ravelights.core.pixel_matrix import PixelMatrix
 from ravelights.core.time_handler import BeatStatePattern
 
 if TYPE_CHECKING:
-    from ravelights.configs.components import Keywords
+    from ravelights.configs.components import Keyword
     from ravelights.core.device import Device
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
@@ -285,7 +285,7 @@ class Effect(ABC):
         root: "RaveLightsApp",
         device: "Device",
         name: str,
-        keywords: Optional[list["Keywords"]] = None,
+        keywords: Optional[list["Keyword"]] = None,
         weight: float = 1.0,
         **kwargs: dict[str, str | int | float],
     ) -> None:

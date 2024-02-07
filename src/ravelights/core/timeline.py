@@ -9,7 +9,7 @@ from ravelights.core.utils import get_random_from_weights, p
 from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
-    from ravelights.configs.components import Keywords
+    from ravelights.configs.components import Keyword
     from ravelights.core.pattern_scheduler import PatternScheduler
     from ravelights.core.ravelights_app import RaveLightsApp
 
@@ -59,7 +59,7 @@ class GenSelector:
 
     gen_type: type[Pattern | Vfilter | Dimmer | Thinner]
     name: Optional[str] = None
-    keywords: list["Keywords"] = field(default_factory=list)
+    keywords: list["Keyword"] = field(default_factory=list)
     level: int = 1
     p: float = 1.0  # if chance is not met, set pattern to p_none (black)
     trigger_on_change: bool = True
@@ -178,7 +178,7 @@ class EffectSelectorPlacing:
     effect_name: str = field(init=False)
 
     name: Optional[str] = None
-    keywords: list["Keywords"] = field(default_factory=list)
+    keywords: list["Keyword"] = field(default_factory=list)
     length_q: int = 4
     timings: list[int] = field(default_factory=list)
     p: float = 1.0

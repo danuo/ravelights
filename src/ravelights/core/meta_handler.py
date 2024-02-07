@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, NamedTuple
 
-from ravelights.configs.components import Keywords, blueprint_effects, blueprint_generators, blueprint_timelines
+from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
 from ravelights.core.custom_typing import AvailableGenerators, Timeline
 from ravelights.core.timeline import GenPlacing
@@ -54,7 +54,7 @@ class MetaHandler:
     def get_meta_available_keywords(self) -> list[str]:
         available_keywords: set[str] = set()
         for item in blueprint_generators + blueprint_effects:
-            keywords: list[Keywords] = item.keywords
+            keywords: list[Keyword] = item.keywords
             for keyword in keywords:
                 available_keywords.add(keyword.value)
         return list(available_keywords)

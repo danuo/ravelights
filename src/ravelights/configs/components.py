@@ -74,7 +74,7 @@ from ravelights.vfilters.vfilter_some_first import VfilterMapSomeFirst
 from ravelights.vfilters.vfilter_time_delay import VfilterTimeDelay
 
 
-class Keywords(StrEnum):
+class Keyword(StrEnum):
     TECHNO = auto()
     DISCO = auto()
     AMBIENT = auto()
@@ -90,7 +90,7 @@ class Keywords(StrEnum):
 # ─── Blueprint Section ────────────────────────────────────────────────────────
 # fmt: off
 
-K = Keywords
+K = Keyword
 
 blueprint_generators: list[BlueprintGen] = [
     BlueprintGen(PatternNone, name="p_none", weight=0),
