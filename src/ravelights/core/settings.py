@@ -86,6 +86,7 @@ class Settings:
     # ─── Device Configuration ─────────────────────────────────────────────
     root_init: InitVar["RaveLightsApp"]  # todo: remove this
     device_config: list[DeviceLightConfig]
+    n_devices: int = field(init=False)
 
     # ─── App ──────────────────────────────────────────────────────────────
     use_audio: bool
@@ -94,7 +95,14 @@ class Settings:
     serve_webui: bool
 
     # ─── Meta Information ─────────────────────────────────────────────────
-    generator_classes_identifiers: tuple[str] = ("pattern", "pattern_sec", "vfilter", "thinner", "dimmer", "effect")
+    generator_classes_identifiers: tuple[str, ...] = (
+        "pattern",
+        "pattern_sec",
+        "vfilter",
+        "thinner",
+        "dimmer",
+        "effect",
+    )
 
     # ─── Color Settings ───────────────────────────────────────────────────
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
@@ -133,7 +141,8 @@ class Settings:
     renew_trigger_from_timeline: bool = True
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
-    selected: dict[str, list[str]] = field(default_factory=get_default_selected)
+    # selected: dict[str, list[str]] = field(default_factory=get_default_selected)
+    selected: list[dict[str, list[str]]] = field(init=False)
 
     active_timeline_index: int = 0
     use_manual_timeline: bool = True
@@ -147,12 +156,14 @@ class Settings:
     def __post_init__(self, root_init: "RaveLightsApp") -> None:
         self.root = root_init
         self.color_engine = ColorEngine(settings=self)
+        self.n_devices = len(self.device_config)
+        self.reset_selected()
         self.triggers: dict[str, list[BeatStatePattern]] = get_default_triggers()  # should not be part of asdict(self)
 
-    def clear_selected(self) -> None:
+    def reset_selected(self) -> None:
         """resets selected generators to default state"""
-        logger.debug("clear_selected")
-        self.selected = get_default_selected()
+        logger.debug("reset_selected")
+        self.selected = [get_default_selected() for _ in range(self.n_devices)]
         self.root.refresh_ui(sse_event="settings")
 
     def update_from_dict(self, update_dict: dict[str, Any]) -> None:

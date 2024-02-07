@@ -54,7 +54,7 @@ class PatternScheduler:
         logger.warning(f"could not find timeline with name {name}")
 
     def _load_timeline(self, timeline: Timeline) -> None:
-        self.settings.clear_selected()
+        self.settings.reset_selected()
         self.clear_instruction_queues()
 
         self.timeline_selectors = timeline["selectors"]
