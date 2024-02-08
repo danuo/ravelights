@@ -30,6 +30,7 @@ class EventHandler:
             match receive_data:
                 case {
                     "action": "gen_command",
+                    "device_index": device_index,
                     "gen_type": gen_type,
                     "timeline_level": timeline_level,
                     "command": "renew_trigger",
@@ -38,15 +39,21 @@ class EventHandler:
                     device = self.patternscheduler.devices[0]
                     if timeline_level == 0:  # level = 0 means auto
                         timeline_level = device.rendermodule.get_timeline_level()
-                    self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+                    self.settings.renew_trigger(
+                        device_index=device_index,
+                        gen_type=gen_type,
+                        timeline_level=timeline_level,
+                    )
                 case {
                     "action": "gen_command",
+                    "device_index": device_index,
                     "gen_type": gen_type,
                     "timeline_level": timeline_level,
                     "command": command,
                 }:
                     logger.debug(f"gen_command with {gen_type} at level {timeline_level} and command {command}")
                     for device in self.patternscheduler.devices:
+                        # todo: make sure this applied to correct devices
                         if timeline_level == 0:
                             timeline_level = device.rendermodule.get_timeline_level()
                         generator = device.rendermodule.get_selected_generator(
@@ -86,6 +93,7 @@ class EventHandler:
                 case {"action": "set_generator", **other_kwargs}:
                     logger.debug(f"api: set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual
+                    assert isinstance(other_kwargs["device_index"], int), other_kwargs["device_index"]
                     assert other_kwargs["timeline_level"] is None or 1 <= other_kwargs["timeline_level"] <= 3
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
