@@ -76,10 +76,10 @@ class EventHandler:
                 case {"action": "set_settings_autopilot", **other_kwargs}:
                     logger.debug("api: set_settings_autopilot (...)")
                     self.settings.set_settings_autopilot(other_kwargs)
-                case {"action": "set_device_settings", "device_id": device_id, **other_kwargs}:
-                    assert isinstance(device_id, int)
-                    logger.debug(f"api: set_device_settings with {device_id}")
-                    self.devices[device_id].update_from_dict(other_kwargs)
+                case {"action": "set_device_settings", "device_index": device_index, **other_kwargs}:
+                    assert isinstance(device_index, int)
+                    logger.debug(f"api: set_device_settings with {device_index}")
+                    self.devices[device_index].update_from_dict(other_kwargs)
                 case {"action": "set_trigger", **other_kwargs}:
                     logger.debug(f"api: set_trigger with {other_kwargs}")
                     self.settings.set_trigger(new_trigger=other_kwargs)
