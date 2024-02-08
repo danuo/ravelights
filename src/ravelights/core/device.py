@@ -48,7 +48,7 @@ class Device:
         self.device_frameskip: int = 1  # must be 1 or higher. Will select max(device_frameskip, global_frameskip)
         self.device_brightness: float = 1.0  # will select min(device_brightness, global_brightness)
 
-        self.device_manual_timeline_level: int = -1  # 0: blackout, 1: level1, ... -1: undefined
+        self.device_manual_timeline_level: Optional[int] = None  # 0: blackout, 1: level1, ... None: undefined
         self.refresh_generators_from_timeline: bool = True
 
     def render(self):
