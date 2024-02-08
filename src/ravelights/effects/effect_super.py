@@ -293,7 +293,7 @@ class Effect(ABC):
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.root.timehandler
         self.device = device
-        self.device_id = device.device_id
+        self.device_id = device.device_index
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []

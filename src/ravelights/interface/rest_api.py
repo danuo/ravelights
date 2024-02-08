@@ -156,10 +156,11 @@ class TriggersAPIResource(Resource):
 
 
 resource_fields_devices = {
-    "device_id": fields.Integer,
+    "device_index": fields.Integer,
     "n_leds": fields.Integer,
     "n_lights": fields.Integer,
     "is_prim": fields.Boolean,
+    "linked_to": fields.Integer,
     "device_manual_timeline_level": fields.Integer,
     "device_triggerskip": fields.Integer,
     "device_frameskip": fields.Integer,

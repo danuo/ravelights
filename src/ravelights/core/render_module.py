@@ -62,8 +62,8 @@ class RenderModule:
         device_index: Optional[int] = None,
         timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
-        if device_index is None:
-            device_index = self.device.linked_to if self.device.linked_to else self.device.device_id
+        if device_index == -1:
+            device_index = self.device.linked_to if self.device.linked_to else self.device.device_index
         if timeline_level is None:
             timeline_level = self.get_timeline_level()
         device_selected = self.settings.selected[device_index]
@@ -91,7 +91,7 @@ class RenderModule:
 
     def render(self) -> None:
         # ----------------------------- get device index ----------------------------- #
-        device_index = self.device.linked_to if self.device.linked_to else self.device.device_id
+        device_index = self.device.linked_to if self.device.linked_to else self.device.device_index
 
         # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.get_timeline_level()
@@ -171,7 +171,7 @@ class RenderModule:
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
         for effect_wrapper in self.root.effecthandler.effective_effect_queue:
-            out_matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_id=self.device.device_id)
+            out_matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_id=self.device.device_index)
             if effect_wrapper.draw_mode == "overlay":
                 matrix = Generator.merge_matrices(matrix, out_matrix)
             elif effect_wrapper.draw_mode == "normal":
