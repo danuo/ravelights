@@ -36,35 +36,35 @@ class RenderModule:
 
     # fmt: off
     @overload
-    def get_selected_generator(self, gen_type: Literal["pattern"], device_index: Optional[int] = None, timeline_level: Optional[int] = None) -> Pattern:
+    def get_selected_generator(self, gen_type: Literal["pattern"], device_index: int = -1, timeline_level: int = -1) -> Pattern:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["pattern_sec"], device_index: Optional[int] = None, timeline_level: Optional[int] = None) -> Pattern:
+    def get_selected_generator(self, gen_type: Literal["pattern_sec"], device_index: int = -1, timeline_level: int = -1) -> Pattern:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["vfilter"], device_index: Optional[int] = None, timeline_level: Optional[int] = None) -> Vfilter:
+    def get_selected_generator(self, gen_type: Literal["vfilter"], device_index: int = -1, timeline_level: int = -1) -> Vfilter:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["dimmer"], device_index: Optional[int] = None, timeline_level: Optional[int] = None) -> Dimmer:
+    def get_selected_generator(self, gen_type: Literal["dimmer"], device_index: int = -1, timeline_level: int = -1) -> Dimmer:
         ...
 
     @overload
-    def get_selected_generator(self, gen_type: Literal["thinner"], device_index: Optional[int] = None, timeline_level: Optional[int] = None) -> Thinner:
+    def get_selected_generator(self, gen_type: Literal["thinner"], device_index: int = -1, timeline_level: int = -1) -> Thinner:
         ...
     # fmt: on
 
     def get_selected_generator(
         self,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
-        device_index: Optional[int] = None,
-        timeline_level: Optional[int] = None,
+        device_index: int = -1,
+        timeline_level: int = -1,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if device_index == -1:
             device_index = self.device.linked_to if self.device.linked_to else self.device.device_index
-        if timeline_level is None:
+        if timeline_level == -1:
             timeline_level = self.get_timeline_level()
         device_selected = self.settings.selected[device_index]
         gen_name = device_selected[gen_type][timeline_level]
@@ -77,17 +77,16 @@ class RenderModule:
         """
         return manual level or level from timeline, accoridng to setting
         """
-        # todo: make this pretty
-        if self.device.device_manual_timeline_level != 4:
+        if self.device.device_manual_timeline_level != -1:  # -1: undefined
+            # manual timeline level is defined on device level
             return self.device.device_manual_timeline_level
 
-        if self.settings.use_manual_timeline:
-            if self.device.device_manual_timeline_level != 4:
-                return self.device.device_manual_timeline_level
-            else:
-                return self.settings.global_manual_timeline_level
-        else:
-            return self.device_automatic_timeline_level
+        if self.settings.global_manual_timeline_level != -1:
+            # manual timeline level is defined on global level
+            return self.settings.global_manual_timeline_level
+
+        # level is chosen by global timeline
+        return self.device_automatic_timeline_level
 
     def render(self) -> None:
         # ----------------------------- get device index ----------------------------- #

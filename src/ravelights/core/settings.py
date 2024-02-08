@@ -135,7 +135,6 @@ class Settings:
     selected: list[dict[str, list[str]]] = field(init=False)
 
     active_timeline_index: int = 0
-    use_manual_timeline: bool = True
     global_manual_timeline_level: int = 1
 
     websocket_data: tuple[int, ...] = (30, 10, 10)
