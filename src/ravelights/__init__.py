@@ -22,3 +22,4 @@ __all__ = [
 ]
 
 __version__ = "0.5.0"
+__api_version__ = "1"
