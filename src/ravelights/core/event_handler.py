@@ -86,6 +86,7 @@ class EventHandler:
                 case {"action": "set_generator", **other_kwargs}:
                     logger.debug(f"api: set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual
+                    assert other_kwargs["timeline_level"] is None or 1 <= other_kwargs["timeline_level"] <= 3
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
                     # if set_full:     load generators, load timeline

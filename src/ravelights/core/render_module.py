@@ -19,8 +19,8 @@ class RenderModule:
         self.timehandler: TimeHandler = self.root.timehandler
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
-        self.device_automatic_timeline_level = 0
-        self.counter_frame = 0  # for frameskip
+        self.device_automatic_timeline_level: int = 0
+        self.counter_frame: int = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
         self.generators_dict: dict[str, Pattern | Vfilter | Thinner | Dimmer] = dict()
 
@@ -77,11 +77,11 @@ class RenderModule:
         """
         return manual level or level from timeline, accoridng to setting
         """
-        if self.device.device_manual_timeline_level != -1:  # -1: undefined
+        if isinstance(self.device.device_manual_timeline_level, int):
             # manual timeline level is defined on device level
             return self.device.device_manual_timeline_level
 
-        if self.settings.global_manual_timeline_level != -1:
+        if isinstance(self.settings.global_manual_timeline_level, int):
             # manual timeline level is defined on global level
             return self.settings.global_manual_timeline_level
 

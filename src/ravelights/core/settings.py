@@ -135,9 +135,7 @@ class Settings:
     selected: list[dict[str, list[str]]] = field(init=False)
 
     active_timeline_index: int = 0
-    global_manual_timeline_level: int = 1
-
-    websocket_data: tuple[int, ...] = (30, 10, 10)
+    global_manual_timeline_level: Optional[int] = 1
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)
@@ -173,7 +171,7 @@ class Settings:
         self,
         device_index: int,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
-        timeline_level: int,
+        timeline_level: Optional[int],
         gen_name: str,
         renew_trigger: bool,
     ) -> None:

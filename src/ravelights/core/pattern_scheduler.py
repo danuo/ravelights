@@ -83,6 +83,7 @@ class PatternScheduler:
                 continue
 
             genset: GeneratorSet = generator_selector.create_generator_set()
+            assert 1 <= generator_selector.level <= 3
             if genset.pattern_name:
                 self.settings.set_generator(
                     device_index=device_index,
