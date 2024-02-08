@@ -3,10 +3,12 @@ from dataclasses import asdict
 from typing import Literal
 
 from loguru import logger
-from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.audio.audio_data import AudioDataProvider
+from ravelights.constants import __api_version__, logo
 from ravelights.core.autopilot import AutoPilot
+from ravelights.core.custom_typing import TransmitterConfig
 from ravelights.core.device import Device
+from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.effect_handler import EffectHandler
 from ravelights.core.event_handler import EventHandler
 from ravelights.core.meta_handler import MetaHandler
@@ -21,7 +23,6 @@ from ravelights.interface.data_router import (
 )
 from ravelights.interface.discovery import connectivity_check, discovery_service
 from ravelights.interface.rest_api import RestAPI
-from ravelights.logo import logo
 
 
 class RaveLightsApp:
@@ -37,6 +38,7 @@ class RaveLightsApp:
         use_visualizer: bool = False,
         print_stats: bool = False,
     ) -> None:
+        self.API_VERSION = __api_version__
         self.settings = Settings(
             root_init=self,
             device_config=device_config,

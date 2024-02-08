@@ -50,7 +50,7 @@ include = [
 packages = ["src/ravelights", "src/ravelights_ui"]
 
 [tool.hatch.version]
-path = "src/ravelights/__init__.py"
+path = "src/ravelights/constants.py"
 
 [tool.ruff]
 line-length = 120

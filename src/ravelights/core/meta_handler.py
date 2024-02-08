@@ -30,6 +30,7 @@ class MetaHandler:
         self.root = root
         self.settings = root.settings
         self.api_content: dict[str, Any] = dict()
+        self.api_content["API_VERSION"] = self.root.API_VERSION
         self.api_content["available_timelines"] = self.get_meta_available_timelines()
         self.api_content["available_keywords"] = self.get_meta_available_keywords()
         self.api_content["available_generators"] = self.get_meta_available_generators()

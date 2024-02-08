@@ -10,8 +10,8 @@ from ravelights import (
     LightIdentifier,
     RaveLightsApp,
     TransmitterConfig,
-    __version__,
 )
+from ravelights.constants import __version__
 
 # ─── Argparse ─────────────────────────────────────────────────────────────────
 
