@@ -160,9 +160,9 @@ class EffectWrapper:
         for effect in self.effects:
             effect.reset()
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color], device_id: int) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: list[Color], device_index: int) -> ArrayFloat:
         if self.active:
-            effect = self.effects[device_id]
+            effect = self.effects[device_index]
             return effect.render_matrix(in_matrix=in_matrix, colors=colors)
         else:
             return in_matrix
@@ -293,7 +293,7 @@ class Effect(ABC):
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.root.timehandler
         self.device = device
-        self.device_id = device.device_index
+        self.device_index = device.device_index
         self.init_pixelmatrix(self.device.pixelmatrix)
         self.name: str = name
         self.keywords: list[str] = [k.value for k in keywords] if keywords else []

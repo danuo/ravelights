@@ -39,7 +39,7 @@ class Profiler:
         if isinstance(generator, Pattern):
             closure = partial(generator.render, colors=colors)
         elif isinstance(generator, EffectWrapper):
-            closure = partial(generator.render, in_matrix=matrix, colors=colors, device_id=0)
+            closure = partial(generator.render, in_matrix=matrix, colors=colors, device_index=0)
         else:
             closure = partial(generator.render, in_matrix=matrix, colors=colors)
         t0 = time.time_ns()

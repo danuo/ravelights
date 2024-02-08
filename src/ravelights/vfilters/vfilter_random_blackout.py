@@ -37,8 +37,8 @@ class VfilterRandomBlackout(Vfilter):
             pass
         elif self.use_devices == "one":
             rng = random.Random(self.timehandler.time_0)
-            active_device_id = rng.randrange(0, self.n_devices)
-            if active_device_id != self.device.device_index:
+            active_device_index = rng.randrange(0, self.n_devices)
+            if active_device_index != self.device.device_index:
                 return out_matrix
 
         if self.source_index is None:
