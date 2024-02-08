@@ -62,8 +62,8 @@ class RenderModule:
         device_index: int = -1,
         timeline_level: int = -1,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
-        if device_index == -1:
-            device_index = self.device.linked_to if self.device.linked_to else self.device.device_index
+        if device_index is None:
+            device_index = self.device.linked_to if isinstance(self.device.linked_to, int) else self.device.device_index
         if timeline_level == -1:
             timeline_level = self.get_timeline_level()
         device_selected = self.settings.selected[device_index]
@@ -90,7 +90,16 @@ class RenderModule:
 
     def render(self) -> None:
         # ----------------------------- get device index ----------------------------- #
-        device_index = self.device.linked_to if self.device.linked_to else self.device.device_index
+        if isinstance(self.device.linked_to, int):
+            device_index = self.device.linked_to
+            if isinstance(self.root.devices[device_index].linked_to, int):
+                # this device is linked to a device, that is linked itself -> change this link to final target with UI refresh
+                self.device.update_from_dict({"linked_to": self.root.devices[device_index].linked_to})
+
+        else:
+            device_index = self.device.device_index
+
+        # device_index = self.device.linked_to if isinstance(self.device.linked_to, int) else self.device.device_index
 
         # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.get_timeline_level()

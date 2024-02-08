@@ -22,7 +22,7 @@ class Device:
         n_leds: int,
         n_lights: int,
         color_profile: ColorProfiles,
-        linked_to: int = -1,  # -1 = no link
+        linked_to: Optional[int] = None,
     ):
         self.root = root
         self.device_index: int = device_index
@@ -40,8 +40,9 @@ class Device:
             rendermodule=self.rendermodule,
         )
 
-        assert -1 <= linked_to < self.device_index
-        self.linked_to: int = linked_to
+        if isinstance(linked_to, int):
+            assert 0 <= linked_to < self.device_index
+        self.linked_to: Optional[int] = linked_to
 
         self.device_triggerskip: int = 0  # Will select max(device_triggerskip, global_triggerskip)
         self.device_frameskip: int = 1  # must be 1 or higher. Will select max(device_frameskip, global_frameskip)

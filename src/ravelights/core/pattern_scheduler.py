@@ -79,7 +79,7 @@ class PatternScheduler:
             if not device.refresh_generators_from_timeline:
                 continue
 
-            if device.linked_to:
+            if isinstance(device.linked_to, int):
                 continue
 
             genset: GeneratorSet = generator_selector.create_generator_set()

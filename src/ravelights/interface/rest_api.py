@@ -160,7 +160,7 @@ resource_fields_devices = {
     "n_leds": fields.Integer,
     "n_lights": fields.Integer,
     "is_prim": fields.Boolean,
-    "linked_to": fields.Integer,
+    "linked_to": fields.Integer(default=None),
     "device_manual_timeline_level": fields.Integer,
     "device_triggerskip": fields.Integer,
     "device_frameskip": fields.Integer,
