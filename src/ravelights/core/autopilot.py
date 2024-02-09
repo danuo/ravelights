@@ -6,7 +6,7 @@ from loguru import logger
 from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
-from ravelights.core.time_handler import BeatStatePattern
+from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 from ravelights.core.utils import p
 
 if TYPE_CHECKING:
@@ -24,6 +24,7 @@ class AutoPilot:
     def __post_init__(self) -> None:
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
+        self.timehandler: TimeHandler = self.root.timehandler
 
         self.settings.settings_autopilot = dict(
             autopilot=False,
@@ -182,4 +183,6 @@ class AutoPilot:
                 for timeline_level in range(1, 4):  # levels 1 to 4
                     if p(self.settings.settings_autopilot["p_triggers"]):
                         logger.info(f"renew_trigger {gen_type} {timeline_level}")
-                        self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+                        logger.warning("this is not done")
+                        # todo: make sure correct device is
+                        # self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
