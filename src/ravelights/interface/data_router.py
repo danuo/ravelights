@@ -89,7 +89,8 @@ class DataRouterWebsocket(DataRouter):
     def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "rest_api"):
             if self.root.rest_api.websocket_num_clients > 0:
-                matrix_int = matrices_int[0]
+                device_index = self.settings.target_device_index
+                matrix_int = matrices_int[device_index]
                 matrix_int = matrix_int.reshape((-1, 3), order="F")
 
                 # turn into rgba
