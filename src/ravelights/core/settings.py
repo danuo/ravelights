@@ -136,6 +136,7 @@ class Settings:
 
     active_timeline_index: int = 0
     global_manual_timeline_level: Optional[int] = 1
+    target_device_index: int = 0
 
     # ─── Other Settings ───────────────────────────────────────────────────
     settings_autopilot: dict[str, Any] = field(init=False)
