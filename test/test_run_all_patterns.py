@@ -83,7 +83,7 @@ def test_autopilot():
     app.timehandler.after = increase_globaltime
     app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
 
-    assert app.settings.settings_autopilot["autopilot"] == False
+    assert app.settings.settings_autopilot["autopilot"] is False
     app.settings.settings_autopilot["autopilot"] = True
 
     for _ in range(2_000):
