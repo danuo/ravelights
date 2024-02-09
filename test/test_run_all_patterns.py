@@ -61,3 +61,30 @@ def test_all_patterns():
         app.render_frame()
     logger.info(f"tested {counter_frame} frames")
     logger.info(f"tested {counter_generators} generators")
+
+
+def test_autopilot():
+    FPS = 20
+    global_time = 0
+
+    def get_global_time():
+        nonlocal global_time
+        return global_time
+
+    def increase_globaltime():
+        nonlocal global_time
+        norm = random.normalvariate(0, 0.004)
+        assert abs(norm) < 1 / FPS
+        random_frame_time = 1 / FPS + norm
+        global_time += random_frame_time
+
+    app = RaveLightsApp()
+    app.timehandler.get_current_time = get_global_time
+    app.timehandler.after = increase_globaltime
+    app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
+
+    assert app.settings.settings_autopilot["autopilot"] == False
+    app.settings.settings_autopilot["autopilot"] = True
+
+    for _ in range(2_000):
+        app.render_frame()
