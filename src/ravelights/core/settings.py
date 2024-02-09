@@ -139,7 +139,7 @@ class Settings:
     target_device_index: int = 0
 
     # ─── Other Settings ───────────────────────────────────────────────────
-    settings_autopilot: dict[str, Any] = field(init=False)
+    settings_autopilot: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self, root_init: "RaveLightsApp") -> None:
         self.root = root_init
