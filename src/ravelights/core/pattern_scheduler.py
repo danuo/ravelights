@@ -38,8 +38,6 @@ class PatternScheduler:
             ]
             device.rendermodule.register_generators(generators=generators)
 
-        self.load_timeline_from_index(self.settings.active_timeline_index)
-
     def load_timeline_from_index(self, index: int) -> None:
         self.settings.active_timeline_index = index
         self._load_timeline(self.blueprint_timelines[index])

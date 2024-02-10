@@ -53,12 +53,14 @@ class RaveLightsApp:
         self.devices = [Device(root=self, device_index=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
-        self.metahandler = MetaHandler(root=self)
         self.patternscheduler = PatternScheduler(root=self)
+        self.metahandler = MetaHandler(root=self)
         self.eventhandler = EventHandler(root=self)
         self.data_routers = self.initiate_data_routers(transmitter_recipes)
         self.rest_api = RestAPI(root=self, serve_webui=serve_webui, port=webui_port)
         self.audio_data = AudioDataProvider(root=self)
+
+        self.patternscheduler.load_timeline_from_index(self.settings.active_timeline_index)
 
     def initiate_data_routers(self, transmitter_recipes: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
