@@ -158,7 +158,7 @@ class AutoPilot:
     def randomize(self) -> None:
         """Called every frame to randomize parameters within ravelights app."""
 
-        if not self.settings.settings_autopilot["autopilot"]:
+        if not self.settings.enable_autopilot:
             return None
 
         beat_pattern = BeatStatePattern(loop_length=self.settings.settings_autopilot["autopilot_loop_length"])
