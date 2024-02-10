@@ -25,6 +25,8 @@ def test_all_patterns():
     app.timehandler.after = increase_globaltime
     app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
 
+    app.settings.enable_autopilot = False
+
     counter_frame = 0
     counter_generators = 0
     beat_matcher = BeatStatePattern(loop_length=4)
@@ -83,8 +85,7 @@ def test_autopilot():
     app.timehandler.after = increase_globaltime
     app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
 
-    assert app.settings.settings_autopilot["autopilot"] is False
-    app.settings.settings_autopilot["autopilot"] = True
+    app.settings.enable_autopilot = True
 
     for _ in range(2_000):
         app.render_frame()
