@@ -111,7 +111,7 @@ class Settings:
     global_effect_draw_mode: Literal["normal", "overlay"] = "normal"
     effect_draw_mode: Literal["normal", "overlay"] = "normal"
 
-    # ─── Generator Settings ────────────────────────────────────────────────
+    # ─── Generator Settings ───────────────────────────────────────────────
 
     global_pattern_sec: bool = False
     global_vfilter: bool = False
@@ -119,13 +119,15 @@ class Settings:
     global_dimmer: bool = False
     music_style: Optional["Keyword"] = None
 
-    # ─── Time Settings ────────────────────────────────────────────────────
+    # ─── Audio and Time Settings ──────────────────────────────────────────
 
     bpm_base: float = 140.0
     bpm_multiplier: float = 1.0
     fps: int = 20
     queue_length: int = 32 * 4
     global_frameskip: int = 1  # must be >= 1
+
+    enable_audio_analysis: bool = True
 
     # ─── Autoloading ──────────────────────────────────────────────────────
 
