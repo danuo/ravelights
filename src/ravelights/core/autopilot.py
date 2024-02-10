@@ -27,7 +27,6 @@ class AutoPilot:
         self.timehandler: TimeHandler = self.root.timehandler
 
         self.settings.settings_autopilot = dict(
-            autopilot=False,
             autopilot_loop_length=4,
             renew_pattern=True,
             p_renew_pattern=0.1,  # use in timeline genselector
@@ -53,7 +52,7 @@ class AutoPilot:
 
     def get_autopilot_controls(self):
         controls_autopilot = [
-            dict(type="toggle", name_toggle="autopilot"),
+            # dict(type="toggle", name_toggle="autopilot"),
             dict(
                 type="toggle_slider",
                 name_toggle="renew_pattern",

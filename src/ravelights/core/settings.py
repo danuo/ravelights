@@ -96,6 +96,7 @@ class Settings:
     )
 
     # ─── Color Settings ───────────────────────────────────────────────────
+
     color_transition_speed: str = COLOR_TRANSITION_SPEEDS[1].value  # =fast
     color_sec_mode: dict[str, str] = field(default_factory=get_default_color_sec_modes)
     color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
@@ -119,6 +120,7 @@ class Settings:
     music_style: Optional["Keyword"] = None
 
     # ─── Time Settings ────────────────────────────────────────────────────
+
     bpm_base: float = 140.0
     bpm_multiplier: float = 1.0
     fps: int = 20
@@ -126,19 +128,23 @@ class Settings:
     global_frameskip: int = 1  # must be >= 1
 
     # ─── Autoloading ──────────────────────────────────────────────────────
+
     renew_trigger_from_manual: bool = True
     renew_thinner_from_manual: bool = True
     renew_dimmer_from_manual: bool = True
     renew_trigger_from_timeline: bool = True
 
     # ─── Pattern Settings ─────────────────────────────────────────────────
+
     selected: list[dict[str, list[str]]] = field(init=False)
 
     active_timeline_index: int = 0
     global_manual_timeline_level: Optional[int] = 1
     target_device_index: int = 0
 
-    # ─── Other Settings ───────────────────────────────────────────────────
+    # ─── Autopilot ────────────────────────────────────────────────────────
+
+    enable_autopilot: bool = False
     settings_autopilot: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self, root_init: "RaveLightsApp") -> None:
