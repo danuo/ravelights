@@ -96,7 +96,7 @@ class MetaHandler:
             self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
         )
         for generator_name, gen_cls in generators_and_effects.items():
-            class_identifier = gen_cls.get_identifier()
+            class_identifier = gen_cls.identifier
             generator_keywords: list[str] = gen_cls.keywords
             generator_weight: float = gen_cls.weight
             meta_available_generators[class_identifier].append(

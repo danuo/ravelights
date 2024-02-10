@@ -150,14 +150,10 @@ class GenSelector:
         logger.warning(f"no generators of type {gen_type} found")
 
         # backup
-        return gen_type.get_identifier()[0] + "_none"
+        return gen_type.identifier[0] + "_none"
 
-    def get_gen_list(self, gen_type: type[Pattern | Vfilter | Thinner | Dimmer | Effect]) -> list[GeneratorMeta]:
-        identifier = gen_type.get_identifier()
-        if hasattr(self.root, "metahandler"):
-            return self.root.metahandler["available_generators"][identifier]
-        else:
-            return []
+    def get_gen_list(self, gen_type: type[Pattern | Vfilter | Thinner | Dimmer]) -> list[GeneratorMeta]:
+        return self.root.metahandler["available_generators"][gen_type.identifier]
 
 
 @dataclass

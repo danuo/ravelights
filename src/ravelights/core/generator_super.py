@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class Generator(ABC):
+    identifier: Literal["pattern", "vfilter", "thinner", "dimmer"] = "pattern"
+
     def __init__(
         self,
         root: "RaveLightsApp",
@@ -191,21 +193,13 @@ class Generator(ABC):
     def __repr__(self):
         return f"<Generator {self.name}>"
 
-    @staticmethod
-    @abstractmethod
-    def get_identifier() -> Literal["pattern", "vfilter", "thinner", "dimmer", "effect"]:
-        """returns str identifier of generator type, for example 'pattern' for pattern objects"""
-        ...
-
 
 class Pattern(Generator):
+    identifier = "pattern"
+
     @abstractmethod
     def render(self, colors: list[Color]) -> ArrayFloat:
         ...
-
-    @staticmethod
-    def get_identifier():
-        return "pattern"
 
 
 class PatternNone(Pattern):
@@ -228,13 +222,11 @@ class PatternNone(Pattern):
 
 
 class Vfilter(Generator):
+    identifier = "vfilter"
+
     @abstractmethod
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
-
-    @staticmethod
-    def get_identifier():
-        return "vfilter"
 
 
 class VfilterNone(Vfilter):
@@ -257,13 +249,11 @@ class VfilterNone(Vfilter):
 
 
 class Thinner(Generator):
+    identifier = "thinner"
+
     @abstractmethod
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
-
-    @staticmethod
-    def get_identifier():
-        return "thinner"
 
 
 class ThinnerNone(Thinner):
@@ -286,13 +276,11 @@ class ThinnerNone(Thinner):
 
 
 class Dimmer(Generator):
+    identifier = "dimmer"
+
     @abstractmethod
     def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
         ...
-
-    @staticmethod
-    def get_identifier():
-        return "dimmer"
 
 
 class DimmerNone(Dimmer):

@@ -176,6 +176,7 @@ class Settings:
         gen_name: str,
         renew_trigger: bool,
     ) -> None:
+        # todo: timeline_level = None
         logger.debug(f"set_generator with {gen_type=} {timeline_level=} {gen_name=} {renew_trigger=}")
         if timeline_level == 0:
             timeline_level = self.global_manual_timeline_level

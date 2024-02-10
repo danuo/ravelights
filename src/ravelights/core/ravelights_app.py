@@ -53,8 +53,8 @@ class RaveLightsApp:
         self.devices = [Device(root=self, device_index=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
         self.effecthandler = EffectHandler(root=self)
-        self.patternscheduler = PatternScheduler(root=self)
         self.metahandler = MetaHandler(root=self)
+        self.patternscheduler = PatternScheduler(root=self)
         self.eventhandler = EventHandler(root=self)
         self.data_routers = self.initiate_data_routers(transmitter_recipes)
         self.rest_api = RestAPI(root=self, serve_webui=serve_webui, port=webui_port)

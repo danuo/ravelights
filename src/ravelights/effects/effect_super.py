@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 import numpy as np
 from loguru import logger
@@ -22,6 +22,8 @@ class EffectWrapper:
     Wrapper class for Effect objects. One EffectWrapper object will be created for each Effect class in Effecthandler object.
     Each EffectWrapper contains one Effect instance per Device
     """
+
+    identifier: Literal["effect"] = "effect"
 
     def __init__(self, root: "RaveLightsApp", effect_objects: list["Effect"]):
         self.root = root
@@ -267,9 +269,6 @@ class EffectWrapper:
                     return True
         return False
 
-    def get_identifier(self):
-        return self.effects[0].get_identifier()
-
     def __repr__(self):
         return f"<EffectWrapper {self.name}>"
 
@@ -279,6 +278,8 @@ class Effect(ABC):
     effects will be present temporarily (for n frames) before delted
     effects can modify settings parameters, for example color attribute
     """
+
+    identifier: Literal["effect"] = "effect"
 
     def __init__(
         self,
@@ -325,10 +326,6 @@ class Effect(ABC):
         """Called upon effect removal"""
         # todo: is this needed anymore?
         ...
-
-    @staticmethod
-    def get_identifier():
-        return "effect"
 
     def sync_send(self) -> Optional[dict[str, Any]]:
         ...
