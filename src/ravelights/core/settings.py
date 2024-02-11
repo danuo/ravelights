@@ -142,7 +142,7 @@ class Settings:
 
     active_timeline_index: int = 0
     global_manual_timeline_level: Optional[int] = 1
-    target_device_index: int = 0
+    target_device_index: Optional[int] = 0
 
     # ─── Autopilot ────────────────────────────────────────────────────────
 

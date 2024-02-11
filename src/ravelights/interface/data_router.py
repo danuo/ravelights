@@ -90,6 +90,8 @@ class DataRouterWebsocket(DataRouter):
         if hasattr(self.root, "rest_api"):
             if self.root.rest_api.websocket_num_clients > 0:
                 device_index = self.settings.target_device_index
+                if device_index is None:
+                    device_index = 0
                 matrix_int = matrices_int[device_index]
                 matrix_int = matrix_int.reshape((-1, 3), order="F")
 
