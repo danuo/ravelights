@@ -153,3 +153,9 @@ class PatternScheduler:
     def generate_instructions(self) -> None:
         logger.warning("function undefined")
         pass
+
+    # def get_effective_device_index(self) -> int:
+    # this doesnt make sense. if device_index = None -> apply to all
+
+    def get_effective_timeline_level(self, device_index: int) -> int:
+        return self.devices[device_index].get_effective_timeline_level()

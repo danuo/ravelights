@@ -9,6 +9,7 @@ from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
+    from ravelights.core.pattern_scheduler import PatternScheduler
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
@@ -17,9 +18,10 @@ class RenderModule:
         self.root = root
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.root.timehandler
+        self.pattern_scheduler: PatternScheduler = self.root.patternscheduler
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
-        self.device_automatic_timeline_level: int = 0
+
         self.counter_frame: int = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()
         self.generators_dict: dict[str, Pattern | Vfilter | Thinner | Dimmer] = dict()
@@ -31,7 +33,7 @@ class RenderModule:
         level: Optional[int] = None,
     ) -> BeatStatePattern:
         if level is None:
-            level = self.device_automatic_timeline_level
+            level = self.device.device_automatic_timeline_level
         return self.settings.triggers[device_index][gen_type][level]
 
     # fmt: off
@@ -59,34 +61,19 @@ class RenderModule:
     def get_selected_generator(
         self,
         gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
-        device_index: int = -1,
-        timeline_level: int = -1,
+        device_index: Optional[int] = None,
+        timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if device_index is None:
             device_index = self.device.linked_to if isinstance(self.device.linked_to, int) else self.device.device_index
-        if timeline_level == -1:
-            timeline_level = self.get_timeline_level()
+        if timeline_level is None:
+            timeline_level = self.pattern_scheduler.get_effective_timeline_level(device_index)
         device_selected = self.settings.selected[device_index]
         gen_name = device_selected[gen_type][timeline_level]
         return self.get_generator_by_name(gen_name)
 
     def get_generator_by_name(self, gen_name: str) -> Pattern | Vfilter | Thinner | Dimmer:
         return self.generators_dict[gen_name]
-
-    def get_timeline_level(self) -> int:
-        """
-        return manual level or level from timeline, accoridng to setting
-        """
-        if isinstance(self.device.device_manual_timeline_level, int):
-            # manual timeline level is defined on device level
-            return self.device.device_manual_timeline_level
-
-        if isinstance(self.settings.global_manual_timeline_level, int):
-            # manual timeline level is defined on global level
-            return self.settings.global_manual_timeline_level
-
-        # level is chosen by global timeline
-        return self.device_automatic_timeline_level
 
     def render(self) -> None:
         # ----------------------------- get device index ----------------------------- #
@@ -99,10 +86,8 @@ class RenderModule:
         else:
             device_index = self.device.device_index
 
-        # device_index = self.device.linked_to if isinstance(self.device.linked_to, int) else self.device.device_index
-
         # ---------------------------- get timeline_level ---------------------------- #
-        timeline_level = self.get_timeline_level()
+        timeline_level = self.pattern_scheduler.get_effective_timeline_level(device_index)
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
         timeline_level_vfilter = 1 if self.settings.global_vfilter else timeline_level
         timeline_level_thinner = 1 if self.settings.global_thinner else timeline_level

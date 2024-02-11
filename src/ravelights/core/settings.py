@@ -184,18 +184,18 @@ class Settings:
         gen_name: str,
         renew_trigger: bool,
     ) -> None:
-        # todo: timeline_level = None
         logger.debug(f"set_generator with {gen_type=} {timeline_level=} {gen_name=} {renew_trigger=}")
-        if timeline_level == 0:
-            timeline_level = self.global_manual_timeline_level
-            if timeline_level == 0:
-                timeline_level = 1
-            if gen_type == "vfilter" and self.global_vfilter:
-                timeline_level = 1
-            elif gen_type == "thinner" and self.global_thinner:
-                timeline_level = 1
-            elif gen_type == "dimmer" and self.global_dimmer:
-                timeline_level = 1
+        assert timeline_level is None or timeline_level >= 1
+        if timeline_level is None:
+            return
+
+        if gen_type == "vfilter" and self.global_vfilter:
+            timeline_level = 1
+        elif gen_type == "thinner" and self.global_thinner:
+            timeline_level = 1
+        elif gen_type == "dimmer" and self.global_dimmer:
+            timeline_level = 1
+
         self.selected[device_index][gen_type][timeline_level] = gen_name
         if renew_trigger:
             self.renew_trigger(device_index=device_index, gen_type=gen_type, timeline_level=timeline_level)
@@ -213,7 +213,10 @@ class Settings:
         logger.debug(f"renew_trigger with {gen_type=} {timeline_level=}")
         new_trigger = generator.get_new_trigger()
         self.set_trigger(
-            device_index=device_index, gen_type=gen_type, timeline_level=timeline_level, new_trigger=new_trigger
+            device_index=device_index,
+            gen_type=gen_type,
+            timeline_level=timeline_level,
+            new_trigger=new_trigger,
         )
         self.root.refresh_ui(sse_event="triggers")
 

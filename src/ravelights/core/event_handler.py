@@ -36,14 +36,16 @@ class EventHandler:
                     "command": "renew_trigger",
                 }:
                     logger.debug(f"gen_command with {gen_type} at level {timeline_level} and command renew_trigger")
-                    device = self.patternscheduler.devices[0]
-                    if timeline_level == 0:  # level = 0 means auto
-                        timeline_level = device.rendermodule.get_timeline_level()
+                    device = self.devices[0]
+                    assert timeline_level in [1, 2, 3]
+                    if timeline_level is None:  # None means auto
+                        timeline_level = device.get_effective_timeline_level()
                     self.settings.renew_trigger(
                         device_index=device_index,
                         gen_type=gen_type,
                         timeline_level=timeline_level,
                     )
+
                 case {
                     "action": "gen_command",
                     "device_index": device_index,
@@ -52,62 +54,81 @@ class EventHandler:
                     "command": command,
                 }:
                     logger.debug(f"gen_command with {gen_type} at level {timeline_level} and command {command}")
-                    for device in self.patternscheduler.devices:
-                        # todo: make sure this applied to correct devices
-                        if timeline_level == 0:
-                            timeline_level = device.rendermodule.get_timeline_level()
-                        generator = device.rendermodule.get_selected_generator(
-                            gen_type=gen_type, timeline_level=timeline_level
-                        )
-                        function = getattr(generator, command)
-                        function()
+                    assert timeline_level in [1, 2, 3]
+
+                    device = self.devices[device_index]
+
+                    if timeline_level is None:
+                        timeline_level = device.get_effective_timeline_level()
+                    generator = device.rendermodule.get_selected_generator(
+                        gen_type=gen_type, timeline_level=timeline_level
+                    )
+                    function = getattr(generator, command)
+                    function()
+
                 case {"action": "set_sync"}:
                     logger.debug("api: set_sync")
                     self.timehandler.bpm_sync()
+
                 case {"action": "adjust_sync", "value": value}:
                     assert isinstance(value, float)
                     logger.debug(f"api: adjust_sync with {value=}")
                     self.timehandler.time_sync += value
+
                 case {"action": "reset_color_mappings"}:
                     logger.debug("api: reset_color_mappings")
                     self.settings.reset_color_mapping()
+
                 case {"action": "set_settings", "color_transition_speed": speed_str}:
                     logger.debug(f"api: set_settings color_transition_speed {speed_str}")
                     if isinstance(speed_str, str):
                         self.settings.set_color_transition_speed(speed_str)
                     else:
                         logger.error("could not apply color_transition_speed, value is not a string")
+
                 case {"action": "set_settings", **other_kwargs}:
                     logger.debug(f"api: set_settings {other_kwargs}")
                     self.settings.update_from_dict(other_kwargs)
+
                 case {"action": "set_settings_autopilot", **other_kwargs}:
                     logger.debug("api: set_settings_autopilot (...)")
                     self.settings.set_settings_autopilot(other_kwargs)
+
                 case {"action": "set_device_settings", "device_index": device_index, **other_kwargs}:
-                    assert isinstance(device_index, int)
-                    logger.debug(f"api: set_device_settings with {device_index}")
-                    self.devices[device_index].update_from_dict(other_kwargs)
-                case {"action": "set_trigger", **other_kwargs}:
+                    logger.debug(f"api: set_device_settings with {device_index=}")
+                    assert isinstance(device_index, int) or device_index is None
+                    if isinstance(device_index, int):
+                        self.devices[device_index].update_from_dict(other_kwargs)
+                    else:
+                        for device in self.devices:
+                            device.update_from_dict(other_kwargs)
+
+                case {"action": "set_trigger", "device_index": device_index, **other_kwargs}:
                     logger.debug(f"api: set_trigger with {other_kwargs}")
-                    self.settings.set_trigger(new_trigger=other_kwargs)
+                    self.settings.set_trigger(new_trigger=other_kwargs, device_index=device_index, **other_kwargs)
+
                 case {"action": "set_generator", **other_kwargs}:
                     logger.debug(f"api: set_generator with {other_kwargs}")
                     renew_trigger = self.settings.renew_trigger_from_manual
                     assert isinstance(other_kwargs["device_index"], int), other_kwargs["device_index"]
                     assert other_kwargs["timeline_level"] is None or 1 <= other_kwargs["timeline_level"] <= 3
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
+
                 case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
                     # if set_full:     load generators, load timeline
                     # if not set_full: load timeline
                     # todo: implement set_full
                     logger.debug(f"api: set_timeline with {index=} and {set_full=}")
                     self.patternscheduler.load_timeline_from_index(int(index))
+
                 case {"action": "clear_effect_queue"}:
                     self.effecthandler.clear_qeueues()
                     logger.debug("api: cleared all effect queues")
+
                 case {"action": "set_effect", **other_kwargs}:
                     logger.debug(f"api: set_effect: {other_kwargs}")
                     self.effecthandler.load_effect(**other_kwargs)
+
                 case {
                     "action": "modify_effect",
                     "operation": operation,
@@ -133,11 +154,8 @@ class EventHandler:
                             logger.warning(
                                 f"api: instruction with 'action': 'modify_effect' and {operation=} not understood"
                             )
-                case {
-                    "action": "set_color",
-                    "color_rgb": color_rgb,
-                    "color_key": color_key,
-                }:
+
+                case {"action": "set_color", "color_rgb": color_rgb, "color_key": color_key}:
                     self.settings.color_engine.set_color_with_rule(color=color_rgb, color_key=color_key)
 
                 case other:

@@ -73,7 +73,7 @@ class EffectHandler:
                     effect_queue.remove(effect_wrapper)
 
         # ─── Assemble Queues ──────────────────────────────────────────
-        timeline_levels = {device.rendermodule.get_timeline_level() for device in self.devices}
+        timeline_levels = {device.rendermodule.get_effective_timeline_level() for device in self.devices}
         self.effective_effect_queue = [*self.effect_queues[0]]
         for timeline_level in timeline_levels:
             self.effective_effect_queue += self.effect_queues[timeline_level]

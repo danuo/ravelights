@@ -30,6 +30,7 @@ class Device:
         self.n_lights: int = n_lights
         self.color_profile: ColorProfiles = color_profile
         self.is_prim: bool = True if device_index == 0 else False
+
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.root.timehandler
         self.pixelmatrix: PixelMatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
@@ -49,6 +50,7 @@ class Device:
         self.device_brightness: float = 1.0  # will select min(device_brightness, global_brightness)
 
         self.device_manual_timeline_level: Optional[int] = None  # 0: blackout, 1: level1, ... None: undefined
+        self.device_automatic_timeline_level: int = 0
         self.refresh_generators_from_timeline: bool = True
 
     def render(self):
@@ -68,9 +70,6 @@ class Device:
     def get_matrix_int(self) -> ArrayUInt8:
         return self.pixelmatrix.get_matrix_int()
 
-    def get_device_objects(self) -> dict[str, Settings | TimeHandler | PixelMatrix]:
-        return dict(settings=self.settings, pixelmatrix=self.pixelmatrix)
-
     def update_from_dict(self, update_dict: dict[str, Any]):
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
@@ -79,3 +78,18 @@ class Device:
             else:
                 logger.warning(f"key {key} does not exist in settings")
         self.root.refresh_ui(sse_event="devices")
+
+    def get_effective_timeline_level(self) -> int:
+        """
+        return manual level or level from timeline, accoridng to setting
+        """
+        if isinstance(self.device_manual_timeline_level, int):
+            # manual timeline level is defined on device level
+            return self.device_manual_timeline_level
+
+        if isinstance(self.settings.global_manual_timeline_level, int):
+            # manual timeline level is defined on global level
+            return self.settings.global_manual_timeline_level
+
+        # level is chosen by global timeline
+        return self.device_automatic_timeline_level
