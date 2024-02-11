@@ -108,8 +108,8 @@ if args.visualizer:
 # device_config = [DeviceDict(n_lights=10, n_leds=144), DeviceDict(n_lights=10, n_leds=144)]
 device_config = [
     DeviceLightConfig(n_lights=5, n_leds=144, color_profile=ColorProfiles.LINEAR),
-    DeviceLightConfig(n_lights=5, n_leds=144, color_profile=ColorProfiles.LINEAR),
-    DeviceLightConfig(n_lights=5, n_leds=144, color_profile=ColorProfiles.LINEAR),
+    DeviceLightConfig(n_lights=4, n_leds=144, color_profile=ColorProfiles.LINEAR),
+    DeviceLightConfig(n_lights=6, n_leds=144, color_profile=ColorProfiles.LINEAR),
 ]
 
 
