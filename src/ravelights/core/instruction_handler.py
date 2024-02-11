@@ -21,7 +21,7 @@ class InstructionHandler:
         self.root = root
         self.pixelmatrix: PixelMatrix = pixelmatrix
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.timehandler: TimeHandler = self.root.time_handler
         self.rendermodule: RenderModule = rendermodule
         self.instruction_queue = InstructionQueue(root=self.root)
 

@@ -28,7 +28,7 @@ class EffectWrapper:
     def __init__(self, root: "RaveLightsApp", effect_objects: list["Effect"]):
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.timehandler: TimeHandler = self.root.time_handler
         self.effects: list[Effect] = effect_objects
         self.name = effect_objects[0].name
         self.keywords = effect_objects[0].keywords
@@ -292,7 +292,7 @@ class Effect(ABC):
     ) -> None:
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.timehandler: TimeHandler = self.root.time_handler
         self.device = device
         self.device_index = device.device_index
         self.init_pixelmatrix(self.device.pixelmatrix)

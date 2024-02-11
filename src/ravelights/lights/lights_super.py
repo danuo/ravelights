@@ -30,7 +30,7 @@ class LightObject(ABC):
         self.root = root
         self.device = device
         self.settings: "Settings" = self.root.settings
-        self.timehandler: "TimeHandler" = self.root.timehandler
+        self.timehandler: "TimeHandler" = self.root.time_handler
         self.pixelmatrix: "PixelMatrix" = self.device.pixelmatrix
         self.n_leds = self.pixelmatrix.n_leds
         self.counter_frame: int = 0

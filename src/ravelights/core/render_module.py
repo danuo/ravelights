@@ -17,8 +17,8 @@ class RenderModule:
     def __init__(self, root: "RaveLightsApp", device: "Device") -> None:
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
-        self.pattern_scheduler: PatternScheduler = self.root.patternscheduler
+        self.timehandler: TimeHandler = self.root.time_handler
+        # self.pattern_scheduler: PatternScheduler = self.root.patternscheduler
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
 
@@ -67,7 +67,7 @@ class RenderModule:
         if device_index is None:
             device_index = self.device.linked_to if isinstance(self.device.linked_to, int) else self.device.device_index
         if timeline_level is None:
-            timeline_level = self.pattern_scheduler.get_effective_timeline_level(device_index)
+            timeline_level = self.root.pattern_scheduler.get_effective_timeline_level(device_index)
         device_selected = self.settings.selected[device_index]
         gen_name = device_selected[gen_type][timeline_level]
         return self.get_generator_by_name(gen_name)
@@ -87,7 +87,7 @@ class RenderModule:
             device_index = self.device.device_index
 
         # ---------------------------- get timeline_level ---------------------------- #
-        timeline_level = self.pattern_scheduler.get_effective_timeline_level(device_index)
+        timeline_level = self.root.pattern_scheduler.get_effective_timeline_level(device_index)
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
         timeline_level_vfilter = 1 if self.settings.global_vfilter else timeline_level
         timeline_level_thinner = 1 if self.settings.global_thinner else timeline_level
@@ -163,7 +163,7 @@ class RenderModule:
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
-        for effect_wrapper in self.root.effecthandler.effective_effect_queue:
+        for effect_wrapper in self.root.effect_handler.effective_effect_queue:
             out_matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_index=self.device.device_index)
             if effect_wrapper.draw_mode == "overlay":
                 matrix = Generator.merge_matrices(matrix, out_matrix)

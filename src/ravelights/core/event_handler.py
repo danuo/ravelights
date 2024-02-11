@@ -14,10 +14,10 @@ class EventHandler:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.timehandler: TimeHandler = self.root.time_handler
         self.devices = self.root.devices
-        self.patternscheduler: PatternScheduler = self.root.patternscheduler
-        self.effecthandler: EffectHandler = self.root.effecthandler
+        self.patternscheduler: PatternScheduler = self.root.pattern_scheduler
+        self.effecthandler: EffectHandler = self.root.effect_handler
         self.modification_queue: list[dict[str, Any]] = []
 
     def add_to_modification_queue(self, receive_data: dict[str, Any]) -> None:

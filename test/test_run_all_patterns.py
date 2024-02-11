@@ -21,9 +21,9 @@ def test_all_patterns():
         global_time += random_frame_time
 
     app = RaveLightsApp()
-    app.timehandler.get_current_time = get_global_time
-    app.timehandler.after = increase_globaltime
-    app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
+    app.time_handler.get_current_time = get_global_time
+    app.time_handler.after = increase_globaltime
+    app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
 
     app.settings.enable_autopilot = False
 
@@ -34,7 +34,7 @@ def test_all_patterns():
     # get all generator names
     gen_names = []
     gen_types = []
-    for i, (key, lis) in enumerate(app.metahandler.api_content["available_generators"].items()):
+    for i, (key, lis) in enumerate(app.meta_handler.api_content["available_generators"].items()):
         if i == 4:
             break
         for dictionary in lis:
@@ -45,7 +45,7 @@ def test_all_patterns():
 
     done = False
     while not done:
-        if beat_matcher.is_match(app.timehandler.beat_state):
+        if beat_matcher.is_match(app.time_handler.beat_state):
             counter_generators += 1
             gen_type, gen_name = next(it, (None, None))
             if gen_type is None:
@@ -81,9 +81,9 @@ def test_autopilot():
         global_time += random_frame_time
 
     app = RaveLightsApp()
-    app.timehandler.get_current_time = get_global_time
-    app.timehandler.after = increase_globaltime
-    app.patternscheduler.load_timeline_from_index(1)  # todo: load by name
+    app.time_handler.get_current_time = get_global_time
+    app.time_handler.after = increase_globaltime
+    app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
 
     app.settings.enable_autopilot = True
 

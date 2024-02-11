@@ -127,9 +127,9 @@ class RestAPI:
 class SettingsAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.eventhandler = root.eventhandler
+        self.eventhandler = root.event_handler
         self.settings: Settings = root.settings
-        self.patternscheduler: PatternScheduler = root.patternscheduler
+        self.patternscheduler: PatternScheduler = root.pattern_scheduler
 
     def get(self):
         data = asdict(self.settings)
@@ -181,7 +181,7 @@ class DevicesAPIResource(Resource):
 class MetaAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.metahandler: MetaHandler = root.metahandler
+        self.metahandler: MetaHandler = root.meta_handler
         self.data = None
 
     def get(self):
@@ -204,8 +204,8 @@ class EffectAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
         self.settings: Settings = root.settings
-        self.effecthandler = root.effecthandler
-        self.eventhandler: EventHandler = root.eventhandler
+        self.effecthandler = root.effect_handler
+        self.eventhandler: EventHandler = root.event_handler
 
     @marshal_with(resource_fields_effect)
     def get(self):

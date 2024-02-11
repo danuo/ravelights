@@ -24,7 +24,7 @@ class AutoPilot:
     def __post_init__(self) -> None:
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.timehandler: TimeHandler = self.root.time_handler
 
         self.settings.settings_autopilot = dict(
             autopilot_loop_length=4,

@@ -10,7 +10,7 @@ class InstructionQueue:
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
         self.settings = self.root.settings
-        self.timehandler = self.root.timehandler
+        self.timehandler = self.root.time_handler
         self._instruction_queue: list[list[Instruction]]
         self.just_initialized: bool
         self.clear()

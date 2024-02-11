@@ -32,7 +32,7 @@ class EffectHandler:
 
     def __post_init__(self) -> None:
         self.settings = self.root.settings
-        self.timehandler = self.root.timehandler
+        self.timehandler = self.root.time_handler
         self.devices: list[Device] = self.root.devices
         self.instruction_queue = InstructionQueue(root=self.root)
         self.effect_wrappers_dict: dict[str, EffectWrapper] = dict()
@@ -73,7 +73,7 @@ class EffectHandler:
                     effect_queue.remove(effect_wrapper)
 
         # ─── Assemble Queues ──────────────────────────────────────────
-        timeline_levels = {device.rendermodule.get_effective_timeline_level() for device in self.devices}
+        timeline_levels = {device.get_effective_timeline_level() for device in self.devices}
         self.effective_effect_queue = [*self.effect_queues[0]]
         for timeline_level in timeline_levels:
             self.effective_effect_queue += self.effect_queues[timeline_level]

@@ -49,18 +49,18 @@ class RaveLightsApp:
             use_visualizer=use_visualizer,
             print_stats=print_stats,
         )
-        self.timehandler = TimeHandler(root=self)
+        self.time_handler = TimeHandler(root=self)
         self.devices = [Device(root=self, device_index=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
-        self.effecthandler = EffectHandler(root=self)
-        self.patternscheduler = PatternScheduler(root=self)
-        self.metahandler = MetaHandler(root=self)
-        self.eventhandler = EventHandler(root=self)
+        self.effect_handler = EffectHandler(root=self)
+        self.pattern_scheduler = PatternScheduler(root=self)
+        self.meta_handler = MetaHandler(root=self)
+        self.event_handler = EventHandler(root=self)
         self.data_routers = self.initiate_data_routers(transmitter_recipes)
         self.rest_api = RestAPI(root=self, serve_webui=serve_webui, port=webui_port)
         self.audio_data = AudioDataProvider(root=self)
 
-        self.patternscheduler.load_timeline_from_index(self.settings.active_timeline_index)
+        self.pattern_scheduler.load_timeline_from_index(self.settings.active_timeline_index)
 
     def initiate_data_routers(self, transmitter_recipes: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
@@ -95,7 +95,7 @@ class RaveLightsApp:
 
         # load default timeline
         # self.patternscheduler.load_timeline_from_index(0)
-        self.patternscheduler.load_timeline_by_name("DEBUG_TIMELINE")
+        self.pattern_scheduler.load_timeline_by_name("DEBUG_TIMELINE")
         logger.info("Starting main loop...")
         logger.opt(raw=True, colors=True).info(f"<magenta>{logo}</magenta>\n")
 
@@ -120,33 +120,33 @@ class RaveLightsApp:
                 device.rendermodule.get_selected_generator(gen_type).sync_load(in_dict=sync_dict)
 
     def render_frame(self) -> None:
-        self.timehandler.before()
+        self.time_handler.before()
         self.settings.color_engine.before()
         self.audio_data.collect_audio_data()
         # ─── Apply Inputs ─────────────────────────────────────────────
-        self.eventhandler.apply_settings_modifications_queue()
+        self.event_handler.apply_settings_modifications_queue()
         # ─── Prepare ──────────────────────────────────────────────────
         self.autopilot.randomize()
         for device in self.devices:
             device.instructionhandler.load_and_apply_instructions()
-        self.effecthandler.run_before()
+        self.effect_handler.run_before()
         # ─── Sync ─────────────────────────────────────────────────────
         self.sync_generators(["pattern", "vfilter"])
         # ─── Render ───────────────────────────────────────────────────
         for device in self.devices:
             device.render()
         # ─── Effect After ─────────────────────────────────────────────
-        self.effecthandler.run_after()
+        self.effect_handler.run_after()
         # ─── Output ───────────────────────────────────────────────────
         if self.settings.print_stats:  # this doesnt have to be frozen
-            self.timehandler.print_performance_stats()
+            self.time_handler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
         matrices_processed_int = [device.get_matrix_processed_int() for device in self.devices]
         matrices_int = [device.get_matrix_int() for device in self.devices]
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_processed_int, matrices_int)
         # ─── After ────────────────────────────────────────────────────
-        self.timehandler.after()
+        self.time_handler.after()
 
     def refresh_ui(self, sse_event: str) -> None:
         if hasattr(self, "rest_api"):

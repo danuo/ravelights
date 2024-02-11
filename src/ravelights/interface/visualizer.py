@@ -28,8 +28,8 @@ class Visualizer:
         self.root = root
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
-        self.eventhandler: EventHandler = self.root.eventhandler
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.eventhandler: EventHandler = self.root.event_handler
+        self.timehandler: TimeHandler = self.root.time_handler
         self.visualizer_config = self.get_visualizer_config()
         pygame.init()
         pygame.display.set_caption("ravelights")

@@ -34,7 +34,7 @@ class Generator(ABC):
     ):
         self.root = root
         self.settings: "Settings" = self.root.settings
-        self.timehandler: "TimeHandler" = self.root.timehandler
+        self.timehandler: "TimeHandler" = self.root.time_handler
         self.device: "Device" = device
         self.n_devices = len(self.root.devices)
         self.pixelmatrix = self.device.pixelmatrix

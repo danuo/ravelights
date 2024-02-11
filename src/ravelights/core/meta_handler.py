@@ -93,7 +93,7 @@ class MetaHandler:
             effect=[],
         )
         generators_and_effects = (
-            self.root.devices[0].rendermodule.generators_dict | self.root.effecthandler.effect_wrappers_dict
+            self.root.devices[0].rendermodule.generators_dict | self.root.effect_handler.effect_wrappers_dict
         )
         for generator_name, gen_cls in generators_and_effects.items():
             class_identifier = gen_cls.identifier

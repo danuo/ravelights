@@ -26,7 +26,7 @@ class Profiler:
             self.data[gen_name] = dtime_ms
 
         logger.info("profiling effects:")
-        for effect_name, effect in self.app.effecthandler.effect_wrappers_dict.items():
+        for effect_name, effect in self.app.effect_handler.effect_wrappers_dict.items():
             dtime_ms = self.profile_generator(effect)
             self.data[effect_name] = dtime_ms
 
@@ -46,7 +46,7 @@ class Profiler:
         for i in range(self.samples):
             if i % 200 == 0:  # alternate every 200 frames
                 generator.alternate()
-            if i % (4 * self.app.timehandler.fps):  # on_trigger every 4
+            if i % (4 * self.app.time_handler.fps):  # on_trigger every 4
                 generator.on_trigger()
             closure()
         t1 = time.time_ns()
@@ -90,17 +90,17 @@ class Profiler:
                 f.write(f"{key.ljust(30)} {round(value,5)} ms\n")
 
     def fake_timestep(self):
-        self.time_0 += 1 / self.app.timehandler.fps
+        self.time_0 += 1 / self.app.time_handler.fps
         self.app.beat_state_cache = self.get_beat_state()
 
     def get_beat_state(self):
         time_since_sync = self.time_0 - self.time_sync
-        time_since_quarter = time_since_sync % self.app.timehandler.quarter_time
+        time_since_quarter = time_since_sync % self.app.time_handler.quarter_time
         n_quarters_long = int(
-            (time_since_sync // self.app.timehandler.quarter_time) % self.app.timehandler.queue_length
+            (time_since_sync // self.app.time_handler.quarter_time) % self.app.time_handler.queue_length
         )
         is_quarterbeat = n_quarters_long != self.n_quarters_long_memory  # this frame is beginninf of new quarter beat
-        beat_progress = (n_quarters_long % 4 + time_since_quarter / self.app.timehandler.quarter_time) * 0.25
+        beat_progress = (n_quarters_long % 4 + time_since_quarter / self.app.time_handler.quarter_time) * 0.25
         beat_state = BeatState(self.app, is_quarterbeat, beat_progress, n_quarters_long)
         self.n_quarters_long_memory = n_quarters_long
         return beat_state

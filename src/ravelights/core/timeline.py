@@ -153,7 +153,7 @@ class GenSelector:
         return gen_type.identifier[0] + "_none"
 
     def get_gen_list(self, gen_type: type[Pattern | Vfilter | Thinner | Dimmer]) -> list[GeneratorMeta]:
-        return self.root.metahandler["available_generators"][gen_type.identifier]
+        return self.root.meta_handler["available_generators"][gen_type.identifier]
 
 
 @dataclass

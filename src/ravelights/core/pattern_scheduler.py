@@ -23,8 +23,8 @@ class PatternScheduler:
     def __init__(self, root: "RaveLightsApp") -> None:
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
-        self.effecthandler: EffectHandler = self.root.effecthandler
+        self.timehandler: TimeHandler = self.root.time_handler
+        self.effecthandler: EffectHandler = self.root.effect_handler
         self.devices: list[Device] = self.root.devices
         self.timeline_selectors: list[GenSelector] = []
         self.timeline_placements: list[GenPlacing] = []
