@@ -26,8 +26,8 @@ def app_time_patched() -> RaveLightsApp:
         global_time += random_frame_time
 
     app = RaveLightsApp()
-    app.time_handler.get_current_time = get_global_time  # typing: ignore[method-assign]
-    app.time_handler.after = increase_globaltime  # typing: ignore[method-assign]
+    app.time_handler.get_current_time = get_global_time  # type: ignore[method-assign]
+    app.time_handler.after = increase_globaltime  # type: ignore[method-assign]
     app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
 
     return app
