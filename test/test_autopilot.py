@@ -1,13 +1,23 @@
-def test_autopilot(app_time_patched):
-    app = app_time_patched
+import pytest
+from ravelights import RaveLightsApp
 
-    # turn all things off
-    settings_autopilot = app.settings.settings_autopilot
+
+@pytest.fixture
+def app_autopilot_disabled(app_time_patched) -> RaveLightsApp:
+    settings_autopilot = app_time_patched.settings.settings_autopilot
     for key, value in settings_autopilot.items():
         if isinstance(value, bool):
             settings_autopilot[key] = False
 
     # turn on autopilot
+    app_time_patched.settings.enable_autopilot = False
+    return app_time_patched
+
+
+def test_autopilot_color_primary(app_autopilot_disabled):
+    app = app_autopilot_disabled
+    settings_autopilot = app_autopilot_disabled.settings.settings_autopilot
+
     app.settings.enable_autopilot = True
 
     # test color_primary

@@ -1,31 +1,11 @@
-import random
-
 from loguru import logger
-from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.core.time_handler import BeatStatePattern
 
 
-def test_all_patterns():
-    FPS = 20
-    global_time = 0
+def test_all_patterns(app_time_patched):
+    app = app_time_patched
 
-    def get_global_time():
-        nonlocal global_time
-        return global_time
-
-    def increase_globaltime():
-        nonlocal global_time
-        norm = random.normalvariate(0, 0.004)
-        assert abs(norm) < 1 / FPS
-        random_frame_time = 1 / FPS + norm
-        global_time += random_frame_time
-
-    app = RaveLightsApp()
-    app.time_handler.get_current_time = get_global_time
-    app.time_handler.after = increase_globaltime
-    app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
-
-    app.settings.enable_autopilot = False
+    assert app.settings.enable_autopilot is False
 
     counter_frame = 0
     counter_generators = 0

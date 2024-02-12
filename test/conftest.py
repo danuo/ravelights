@@ -4,12 +4,12 @@ import pytest
 from ravelights import RaveLightsApp
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_normal() -> RaveLightsApp:
     return RaveLightsApp()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def app_time_patched() -> RaveLightsApp:
     FPS = 20
     global_time = 0
@@ -29,5 +29,8 @@ def app_time_patched() -> RaveLightsApp:
     app.time_handler.get_current_time = get_global_time  # type: ignore[method-assign]
     app.time_handler.after = increase_globaltime  # type: ignore[method-assign]
     app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
+
+    # disable autopilot
+    app.settings.enable_autopilot = False
 
     return app
