@@ -1,12 +1,3 @@
-import pytest
-from ravelights import RaveLightsApp
-
-
-@pytest.fixture(scope="session")
-def ravelights_app():
-    return RaveLightsApp()
-
-
 def test_available_generators(ravelights_app):
     keys = ["pattern", "vfilter", "thinner", "dimmer", "effect"]
     avail_gens = ravelights_app.meta_handler.api_content["available_generators"]
