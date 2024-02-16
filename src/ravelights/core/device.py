@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import numpy as np
 from loguru import logger
+from ravelights.configs.components import Keyword
 from ravelights.core.custom_typing import ArrayFloat, ArrayUInt8
 from ravelights.core.instruction_handler import InstructionHandler
 from ravelights.core.pixel_matrix import PixelMatrix
@@ -23,6 +24,7 @@ class Device:
         n_lights: int,
         color_profile: ColorProfiles,
         linked_to: Optional[int] = None,
+        keywords: Optional[list[Keyword]] = None,
     ):
         self.root = root
         self.device_index: int = device_index
@@ -30,6 +32,8 @@ class Device:
         self.n_lights: int = n_lights
         self.color_profile: ColorProfiles = color_profile
         self.is_prim: bool = True if device_index == 0 else False
+
+        self.keywords: list[Keyword] = keywords if keywords else []  # todo
 
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.root.time_handler
@@ -51,7 +55,10 @@ class Device:
 
         self.device_manual_timeline_level: Optional[int] = None  # 0: blackout, 1: level1, ... None: undefined
         self.device_automatic_timeline_level: int = 0
-        self.refresh_generators_from_timeline: bool = True
+
+        self.refresh_from_timeline: bool = True
+        self.use_autopilot: bool = True
+        self.use_effect: dict[str, bool] = {"1": True, "2": True, "3": True}
 
     def render(self):
         self.rendermodule.render()

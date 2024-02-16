@@ -74,7 +74,7 @@ class PatternScheduler:
         renew_trigger = self.settings.renew_trigger_from_timeline
 
         for device_index, device in enumerate(self.devices):
-            if not device.refresh_generators_from_timeline:
+            if not device.refresh_from_timeline:
                 continue
 
             if isinstance(device.linked_to, int):
