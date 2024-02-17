@@ -24,6 +24,7 @@ def get_default_selected() -> dict[str, list[str]]:
     return {
         "pattern": ["p_none" for _ in range(N_LEVELS)],
         "pattern_sec": ["p_none" for _ in range(N_LEVELS)],
+        "pattern_break": ["p_none" for _ in range(N_LEVELS)],  # todo: implement in renderpipeline
         "vfilter": ["v_none" for _ in range(N_LEVELS)],
         "thinner": ["t_none" for _ in range(N_LEVELS)],
         "dimmer": ["d_none" for _ in range(N_LEVELS)],
@@ -34,6 +35,7 @@ def get_default_triggers() -> dict[str, list[BeatStatePattern]]:
     return {
         "pattern": [BeatStatePattern(beats=[0, 3], quarters="AC", loop_length=8) for _ in range(N_LEVELS)],
         "pattern_sec": [BeatStatePattern() for _ in range(N_LEVELS)],
+        "pattern_break": [BeatStatePattern() for _ in range(N_LEVELS)],
         "vfilter": [BeatStatePattern() for _ in range(N_LEVELS)],
         "thinner": [BeatStatePattern() for _ in range(N_LEVELS)],
         "dimmer": [BeatStatePattern() for _ in range(N_LEVELS)],
