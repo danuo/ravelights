@@ -86,6 +86,15 @@ class RenderModule:
 
         # ---------------------------- get timeline_level ---------------------------- #
         timeline_level = self.root.pattern_scheduler.get_effective_timeline_level(device_index)
+
+        # ---------------------------------- render ---------------------------------- #
+        array_chorus = self.render_chorus(device_index=device_index, timeline_level=timeline_level)
+        assert_dims(array_chorus, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+
+        # ---------------------------- send to pixelmatrix --------------------------- #
+        self.pixelmatrix.set_matrix_float(array_chorus)
+
+    def render_chorus(self, device_index: int, timeline_level: int) -> ArrayFloat:
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
         timeline_level_vfilter = 1 if self.settings.global_vfilter else timeline_level
         timeline_level_thinner = 1 if self.settings.global_thinner else timeline_level
@@ -175,8 +184,7 @@ class RenderModule:
             matrix = Generator.merge_matrices(in_matrix, matrix)
         assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
-        # ─── Send To Pixelmatrix ──────────────────────────────────────
-        self.pixelmatrix.set_matrix_float(matrix)
+        return matrix
 
     def register_generators(self, generators: list[Pattern | Vfilter | Dimmer | Thinner]) -> None:
         for generator in generators:
