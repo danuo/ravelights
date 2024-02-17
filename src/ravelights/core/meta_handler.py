@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
+from ravelights.core.autopilot import AUTOPILOT_CONTROLS
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
 from ravelights.core.custom_typing import AvailableGenerators, Timeline
 from ravelights.core.timeline import GenPlacing
@@ -38,7 +39,7 @@ class MetaHandler:
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
-        self.api_content["controls_autopilot"] = self.root.autopilot.get_autopilot_controls()
+        self.api_content["controls_autopilot"] = AUTOPILOT_CONTROLS
         self.api_content["controls_color_palette"] = self.root.autopilot.get_color_palette()
         self.api_content["color_sec_mode_names"] = [mode.value for mode in SecondaryColorModes]
 

@@ -12,6 +12,101 @@ from ravelights.core.utils import p
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
+AUTOPILOT_CONTROLS = [
+    # dict(type="toggle", name_toggle="autopilot"),
+    dict(
+        type="toggle_slider",
+        name_toggle="renew_pattern",
+        name_slider="p_renew_pattern",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="renew_pattern_sec",
+        name_slider="p_renew_pattern_sec",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="renew_vfilter",
+        name_slider="p_renew_vfilter",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="renew_dimmer",
+        name_slider="p_renew_dimmer",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="renew_thinner",
+        name_slider="p_renew_thinner",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="color_primary",
+        name_slider="p_color_primary",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="timeline",
+        name_slider="p_timeline",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="alternate_pattern",
+        name_slider="p_alternate_pattern",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="alternate_pattern_sec",
+        name_slider="p_alternate_pattern_sec",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(
+        type="toggle_slider",
+        name_toggle="triggers",
+        name_slider="p_triggers",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    dict(type="slider", name_slider="autopilot_loop_length", range_min=4, range_max=32, step=4, markers=True),
+]
+
 
 @dataclass
 class AutoPilot:
@@ -49,103 +144,6 @@ class AutoPilot:
             triggers=True,
             p_triggers=0.1,  # run on every item in selected seperately
         )
-
-    def get_autopilot_controls(self):
-        controls_autopilot = [
-            # dict(type="toggle", name_toggle="autopilot"),
-            dict(
-                type="toggle_slider",
-                name_toggle="renew_pattern",
-                name_slider="p_renew_pattern",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="renew_pattern_sec",
-                name_slider="p_renew_pattern_sec",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="renew_vfilter",
-                name_slider="p_renew_vfilter",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="renew_dimmer",
-                name_slider="p_renew_dimmer",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="renew_thinner",
-                name_slider="p_renew_thinner",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="color_primary",
-                name_slider="p_color_primary",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="timeline",
-                name_slider="p_timeline",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="alternate_pattern",
-                name_slider="p_alternate_pattern",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="alternate_pattern_sec",
-                name_slider="p_alternate_pattern_sec",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(
-                type="toggle_slider",
-                name_toggle="triggers",
-                name_slider="p_triggers",
-                range_min=0.0,
-                range_max=1.0,
-                step=0.1,
-                markers=True,
-            ),
-            dict(type="slider", name_slider="autopilot_loop_length", range_min=4, range_max=32, step=4, markers=True),
-        ]
-        return controls_autopilot
 
     def get_color_palette(self):
         # ─── Add Controls Color Palette ───────────────────────────────
