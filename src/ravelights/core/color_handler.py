@@ -107,7 +107,7 @@ class ColorEngine:
         color_1 and color_2 may be interchanged depending on the level
         """
         if timeline_level == 0:
-            return [DefaultColors.BLACK.value, DefaultColors.BLACK.value]
+            return (DefaultColors.BLACK.value, DefaultColors.BLACK.value)
         color_key_prim, color_key_sec = self.get_color_keys(timeline_level=timeline_level)
         color_prim = self.color_overwrite[color_key_prim]
         if color_prim is None:
