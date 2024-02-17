@@ -117,6 +117,7 @@ class Settings:
     # ─── Generator Settings ───────────────────────────────────────────────
 
     global_pattern_sec: bool = False
+    global_pattern_break: bool = False
     global_vfilter: bool = False
     global_thinner: bool = False
     global_dimmer: bool = False
