@@ -101,6 +101,7 @@ class Settings:
     color_sec_mode: dict[str, str] = field(default_factory=get_default_color_sec_modes)
     color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
+    global_fade: float = 1.0  # 1.0 -> main 0.0 -> break
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
     global_triggerskip: int = 1
