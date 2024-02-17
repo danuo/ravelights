@@ -94,6 +94,22 @@ class RenderModule:
         # ---------------------------- send to pixelmatrix --------------------------- #
         self.pixelmatrix.set_matrix_float(array_chorus)
 
+    def render_break(self, device_index: int, timeline_level: int) -> ArrayFloat:
+        timeline_level_pattern_break = 1 if self.settings.global_pattern_break else timeline_level
+
+        # fmt: off
+        pattern_break: Pattern = self.get_selected_generator(device_index=device_index, gen_type="pattern_break", timeline_level=timeline_level_pattern_break)
+        # fmt: on
+
+        # ---------------------------------- colors ---------------------------------- #
+        colors = self.settings.color_engine.get_colors_rgb(timeline_level=timeline_level)
+
+        # ─── RENDER PATTERN ──────────────────────────────────────────────
+        matrix = pattern_break.render(colors=colors)
+        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+
+        return matrix
+
     def render_chorus(self, device_index: int, timeline_level: int) -> ArrayFloat:
         timeline_level_pattern_sec = 1 if self.settings.global_pattern_sec else timeline_level
         timeline_level_vfilter = 1 if self.settings.global_vfilter else timeline_level
