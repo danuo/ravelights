@@ -9,7 +9,6 @@ from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
-    from ravelights.core.pattern_scheduler import PatternScheduler
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
@@ -18,7 +17,6 @@ class RenderModule:
         self.root = root
         self.settings: Settings = self.root.settings
         self.timehandler: TimeHandler = self.root.time_handler
-        # self.pattern_scheduler: PatternScheduler = self.root.patternscheduler
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
 
