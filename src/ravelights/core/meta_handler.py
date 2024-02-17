@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any, NamedTuple
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.autopilot import AUTOPILOT_CONTROLS
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators, Timeline
+from ravelights.core.custom_typing import AvailableGenerators, Slider, Timeline
 from ravelights.core.timeline import GenPlacing
 
 if TYPE_CHECKING:
@@ -111,13 +111,15 @@ class MetaHandler:
         return meta_available_generators
 
     def get_controls_global_sliders(self):
+        # fmt: off
         controls_global_sliders = [
-            dict(type="slider", var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-            dict(type="slider", var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-            dict(type="slider", var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-            dict(type="slider", var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
-            dict(type="slider", var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
+            Slider(type="slider", var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+            Slider(type="slider", var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+            Slider(type="slider", var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+            Slider(type="slider", var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
+            Slider(type="slider", var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
         ]
+        # fmt: on
         return controls_global_sliders
 
     def get_all_timeline_svgs(self):

@@ -63,3 +63,22 @@ class Timeline(TypedDict):  # todo: move to custom typing
     meta: dict[str, str]
     selectors: list["GenSelector"]
     placements: list["GenPlacing"]
+
+
+class ToggleSlider(TypedDict):
+    type: str
+    name_toggle: str
+    name_slider: str
+    range_min: float
+    range_max: float
+    step: float
+    markers: bool
+
+
+class Slider(TypedDict):
+    type: str
+    name_slider: str
+    range_min: float
+    range_max: float
+    step: float
+    markers: bool

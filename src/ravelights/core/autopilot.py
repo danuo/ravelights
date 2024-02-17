@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypedDict
+from typing import TYPE_CHECKING
 
 import numpy as np
 from loguru import logger
 from ravelights.core.color_handler import Color, ColorHandler
+from ravelights.core.custom_typing import Slider, ToggleSlider
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
@@ -11,25 +12,6 @@ from ravelights.core.utils import p
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
-
-
-class ToggleSlider(TypedDict):
-    type: str
-    name_toggle: str
-    name_slider: str
-    range_min: float
-    range_max: float
-    step: float
-    markers: bool
-
-
-class Slider(TypedDict):
-    type: str
-    name_slider: str
-    range_min: float
-    range_max: float
-    step: float
-    markers: bool
 
 
 AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
