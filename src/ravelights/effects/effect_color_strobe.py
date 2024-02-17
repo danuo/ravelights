@@ -30,7 +30,7 @@ class EffectColorStrobe(Effect):
         for index in "ABC":
             self.settings.color_engine.color_overwrite[index] = None
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         """Called each render cycle"""
         return in_matrix
 

@@ -23,7 +23,7 @@ class VfilterMapSomeFirst(Vfilter):
         else:
             self.light_ids = [0]
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         assert_dims(in_matrix, self.n_leds, self.n_lights, 3)
         out_matrix = self.get_float_matrix_rgb()
         for i in self.light_ids:

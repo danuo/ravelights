@@ -98,7 +98,7 @@ class PatternMovingBlocks(Pattern):
     def on_trigger(self):
         self.reset()
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         matrix = self.get_float_matrix_2d_mono()
         matrix = np.zeros((self.n_leds))
         for state in self.states:

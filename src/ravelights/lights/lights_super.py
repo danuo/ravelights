@@ -49,7 +49,7 @@ class LightObject(ABC):
         ...
 
     @abstractmethod
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         ...
 
     def increase_counters(self):
@@ -71,7 +71,7 @@ class LightObject(ABC):
                     return True
         return self.is_done()
 
-    def render_super(self, colors: list[Color]) -> tuple[ArrayFloat, bool]:
+    def render_super(self, colors: tuple[Color, Color]) -> tuple[ArrayFloat, bool]:
         """
         out: NDArray[float] Nx1 | out_matrix
         out: bool               | done
@@ -102,7 +102,7 @@ class FallingSmallBlock(LightObject):
     def is_done(self) -> bool:
         return True if self.pos > self.n_leds + 30 else False
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         matrix: ArrayFloat = self.get_float_matrix()
         a = int(max(0, self.pos))
         b = int(self.pos + self.length)
@@ -131,7 +131,7 @@ class Slideblock(LightObject):
         while abs(self.speed_b) < 0.1:
             self.speed_b = random.uniform(-1, 1)
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: tuple[Color, Color]):
         matrix = self.get_float_matrix()
         a, b = min(self.pos_a, self.pos_b), max(self.pos_a, self.pos_b)
         a, b = max(0, a), min(self.n_leds - 1, b)
@@ -159,7 +159,7 @@ class SlideStrobe(Slideblock):
     def is_done(self):
         return self.done
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: tuple[Color, Color]):
         matrix = super().render(colors=colors)
         flash = next(self.iter, None)
         if flash is None:
@@ -176,7 +176,7 @@ class SymmetricalStrobe(Slideblock):
         super().init_kwargs(**kwargs)
         self.mirror = VfilterMirrorVer(self.root, self.device)
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: tuple[Color, Color]):
         matrix = super().render(colors)
         matrix = self.mirror.render(matrix, colors=colors)
         return matrix
@@ -197,7 +197,7 @@ class Sine(LightObject):
     def is_done(self) -> bool:
         return False
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: tuple[Color, Color]):
         matrix = self.get_float_matrix()
         matrix[:] = 1
         return self.mat
@@ -219,7 +219,7 @@ class Square(LightObject):
     def is_done(self) -> bool:
         return False
 
-    def render(self, colors: list[Color]):
+    def render(self, colors: tuple[Color, Color]):
         matrix = self.get_float_matrix()
         matrix[:] = 1
         return self.mat
@@ -243,7 +243,7 @@ class OneThing(LightObject):
     def is_done(self) -> bool:
         return True if self.counter_frame > self.lifetime_frames else False
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         # lifetime
         self.counter_frame += 1
         matrix: ArrayFloat = np.zeros(shape=(self.n_leds), dtype=float)
@@ -288,7 +288,7 @@ class Meteor(LightObject):
     def is_done(self) -> bool:
         return self.pos > 2 * self.n_leds
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         decay = np.random.uniform(0.85, 1.0, size=self.n_leds) * self.decay_factor
         decay = np.where(np.random.uniform(0, 1, size=self.n_leds) < 0.05, decay * 0.5, decay)
         self.matrix[:] = np.multiply(self.matrix, decay)

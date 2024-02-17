@@ -19,5 +19,5 @@ class EffectColorSwap(Effect):
     def run_after(self):
         self.settings.color_engine.reset_color_overwrite()
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix

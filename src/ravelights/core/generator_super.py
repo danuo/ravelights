@@ -198,7 +198,7 @@ class Pattern(Generator):
     identifier = "pattern"
 
     @abstractmethod
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         ...
 
 
@@ -217,7 +217,7 @@ class PatternNone(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         return self.get_float_matrix_rgb()
 
 
@@ -225,7 +225,7 @@ class Vfilter(Generator):
     identifier = "vfilter"
 
     @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         ...
 
 
@@ -244,7 +244,7 @@ class VfilterNone(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix
 
 
@@ -252,7 +252,7 @@ class Thinner(Generator):
     identifier = "thinner"
 
     @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         ...
 
 
@@ -271,7 +271,7 @@ class ThinnerNone(Thinner):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix
 
 
@@ -279,7 +279,7 @@ class Dimmer(Generator):
     identifier = "dimmer"
 
     @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         ...
 
 
@@ -298,5 +298,5 @@ class DimmerNone(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix

@@ -38,7 +38,7 @@ class EffectColorShift(Effect):
             color_key = "ABC"[index]
             self.settings.color_engine.color_overwrite[color_key] = None
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: tuple[Color, Color]) -> Array:
         """Called each render cycle"""
         return in_matrix
 

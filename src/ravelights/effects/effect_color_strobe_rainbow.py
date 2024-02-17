@@ -21,7 +21,7 @@ class EffectColorStrobeRainbow(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         """Called each render cycle"""
         bw_matrix_mono = Generator.bw_matrix(in_matrix)
 

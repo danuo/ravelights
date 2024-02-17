@@ -75,7 +75,7 @@ class PixelMatrix:
         else:  # full
             return np.arange(self.n_lights)
 
-    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: list[Color]) -> ArrayFloat:
+    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: tuple[Color, Color]) -> ArrayFloat:
         """Renders lists of LightObjects (one queue per light) to a blank matrix."""
 
         matrix = np.zeros(shape=(self.n_leds, self.n_lights))

@@ -23,7 +23,7 @@ class PatternAudio(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         matrix_rgb = self.get_float_matrix_rgb()
 
         assert 0 <= self.audio_data["level_low"] <= 1.0

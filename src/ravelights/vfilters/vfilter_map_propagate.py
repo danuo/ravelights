@@ -68,7 +68,7 @@ class VfilterMapPropagate(Vfilter):
         for light_indices in light_indices_list:
             self.props.append(Propagation(self.n_lights, light_indices))
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         total_out_intensity = np.zeros(self.n_lights)
 
         for prop in self.props:

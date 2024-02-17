@@ -19,7 +19,7 @@ class VfilterBW(Vfilter):
         ...
 
     @staticmethod
-    def render(in_matrix: Array, colors: list[Color]) -> Array:
+    def render(in_matrix: Array, colors: tuple[Color, Color]) -> Array:
         if in_matrix.ndim == 3:
             in_matrix_rgb = in_matrix.reshape(-1, 3, order="F")
             luminance = ColorHandler.rgb_to_brightness(in_matrix_rgb)

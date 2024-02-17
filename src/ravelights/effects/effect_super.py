@@ -162,7 +162,7 @@ class EffectWrapper:
         for effect in self.effects:
             effect.reset()
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color], device_index: int) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color], device_index: int) -> ArrayFloat:
         if self.active:
             effect = self.effects[device_index]
             return effect.render_matrix(in_matrix=in_matrix, colors=colors)
@@ -317,7 +317,7 @@ class Effect(ABC):
         ...
 
     @abstractmethod
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         """Called inside each render cycle, between vfilter and dimmer"""
         ...
 

@@ -31,7 +31,7 @@ class VfilterRandomBlackout(Vfilter):
         self.limit_frames = int(round(limit_quarters * self.timehandler.beat_time * self.timehandler.fps))
         self.source_index = None
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         out_matrix = self.get_float_matrix_rgb()
         if self.use_devices == "all":
             pass

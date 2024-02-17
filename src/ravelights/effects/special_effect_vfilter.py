@@ -41,7 +41,7 @@ class SpecialEffectVfilter(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: tuple[Color, Color]) -> Array:
         return self.vfilter.render(in_matrix, colors)
 
     def on_delete(self):

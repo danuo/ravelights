@@ -18,7 +18,7 @@ class EffectFrameskip(Effect):
     def run_after(self):
         self.device.device_frameskip = self.frameskip_before
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix
 
     def on_delete(self):

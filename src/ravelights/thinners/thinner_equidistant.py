@@ -35,6 +35,6 @@ class ThinnerEquidistant(Thinner):
         skip_selection = np.argmin([abs(bright - bright_target) for bright in brightness_fraction])
         self.mask[:: skip_led[skip_selection]] = 1
 
-    def render(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render(self, in_matrix: Array, colors: tuple[Color, Color]) -> Array:
         matrix = self.apply_mask(in_matrix=in_matrix, mask=self.mask.reshape(self.n_leds, -1))
         return matrix

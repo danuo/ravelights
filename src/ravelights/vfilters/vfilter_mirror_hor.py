@@ -16,7 +16,7 @@ class VfilterMirrorHor(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         assert_dims(in_matrix, self.n_leds, self.n_lights, 3)
         n = self.n_lights // 2
         for i in range(n):
