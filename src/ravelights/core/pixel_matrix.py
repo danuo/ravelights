@@ -55,10 +55,6 @@ class PixelMatrix:
         # return led_id, light_id
         return divmod(index, self.n_leds)
 
-    @staticmethod
-    def clip_matrix_to_1(matrix: ArrayFloat) -> ArrayFloat:
-        return np.fmin(1.0, matrix)
-
     def get_lights(self, light_selection: str = "") -> NDArray[np.int_]:
         if light_selection == "":
             light_selection = random.choice(["half", "random", "random_v2", "full"])

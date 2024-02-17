@@ -154,6 +154,10 @@ class Generator(ABC):
         return matrix_rgb
 
     @staticmethod
+    def clip_matrix_to_1(matrix: ArrayFloat) -> ArrayFloat:
+        return np.fmin(1.0, matrix)
+
+    @staticmethod
     def bw_matrix(matrix_rgb: ArrayFloat) -> ArrayFloat:
         """
         in:  Nx3
