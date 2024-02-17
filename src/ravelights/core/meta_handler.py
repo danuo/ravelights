@@ -22,6 +22,15 @@ TIMELINE_COLORS = {
 }
 
 
+CONTROLS_GLOBAL_SLIDERS = [
+    Slider(type="slider", var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(type="slider", var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(type="slider", var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(type="slider", var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
+    Slider(type="slider", var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
+]
+
+
 class MetaHandler:
     """
     This creates objects/resources that are available via api to create elements of the UI
@@ -35,7 +44,7 @@ class MetaHandler:
         self.api_content["available_timelines"] = self.get_meta_available_timelines()
         self.api_content["available_keywords"] = self.get_meta_available_keywords()
         self.api_content["available_generators"] = self.get_meta_available_generators()
-        self.api_content["controls_global_sliders"] = self.get_controls_global_sliders()
+        self.api_content["controls_global_sliders"] = CONTROLS_GLOBAL_SLIDERS
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
@@ -109,18 +118,6 @@ class MetaHandler:
             )
 
         return meta_available_generators
-
-    def get_controls_global_sliders(self):
-        # fmt: off
-        controls_global_sliders = [
-            Slider(type="slider", var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-            Slider(type="slider", var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-            Slider(type="slider", var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-            Slider(type="slider", var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
-            Slider(type="slider", var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
-        ]
-        # fmt: on
-        return controls_global_sliders
 
     def get_all_timeline_svgs(self):
         names = []
