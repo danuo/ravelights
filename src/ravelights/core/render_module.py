@@ -94,9 +94,17 @@ class RenderModule:
         # ---------------------------------- render ---------------------------------- #
         array_chorus = self.render_chorus(device_index=device_index, timeline_level=timeline_level)
         assert_dims(array_chorus, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        array_break = self.render_break(device_index=device_index, timeline_level=timeline_level)
+        assert_dims(array_break, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+
+        # ---------------------------------- combine --------------------------------- #
+        matrix = Generator.merge_matrices_with_weight(
+            [array_chorus, array_break],
+            [self.settings.global_fade, 1 - self.settings.global_fade],
+        )
 
         # ---------------------------- send to pixelmatrix --------------------------- #
-        self.pixelmatrix.set_matrix_float(array_chorus)
+        self.pixelmatrix.set_matrix_float(matrix)
 
     def render_break(self, device_index: int, timeline_level: int) -> ArrayFloat:
         timeline_level_pattern_break = 1 if self.settings.global_pattern_break else timeline_level

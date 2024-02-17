@@ -194,6 +194,16 @@ class Generator(ABC):
         mask = np.repeat(mask[:, :, None], 3, axis=2)
         return np.multiply(in_matrix, mask)
 
+    @classmethod
+    def merge_matrices_with_weight(cls, matrices: list[ArrayFloat], weights: list[float]) -> ArrayFloat:
+        assert len(matrices) == len(weights)
+
+        out = np.zeros(shape=matrices[0].shape)
+        for index, matrix in enumerate(matrices):
+            out += weights[index] * matrix
+
+        return cls.clip_matrix_to_1(out / sum(weights))
+
     def __repr__(self):
         return f"<Generator {self.name}>"
 
