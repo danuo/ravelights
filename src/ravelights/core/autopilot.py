@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 import numpy as np
 from loguru import logger
@@ -12,9 +12,28 @@ from ravelights.core.utils import p
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
-AUTOPILOT_CONTROLS = [
-    # dict(type="toggle", name_toggle="autopilot"),
-    dict(
+
+class ToggleSlider(TypedDict):
+    type: str
+    name_toggle: str
+    name_slider: str
+    range_min: float
+    range_max: float
+    step: float
+    markers: bool
+
+
+class Slider(TypedDict):
+    type: str
+    name_slider: str
+    range_min: float
+    range_max: float
+    step: float
+    markers: bool
+
+
+AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="renew_pattern",
         name_slider="p_renew_pattern",
@@ -23,7 +42,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="renew_pattern_sec",
         name_slider="p_renew_pattern_sec",
@@ -32,7 +51,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="renew_vfilter",
         name_slider="p_renew_vfilter",
@@ -41,7 +60,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="renew_dimmer",
         name_slider="p_renew_dimmer",
@@ -50,7 +69,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="renew_thinner",
         name_slider="p_renew_thinner",
@@ -59,7 +78,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="color_primary",
         name_slider="p_color_primary",
@@ -68,7 +87,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="timeline",
         name_slider="p_timeline",
@@ -77,7 +96,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="alternate_pattern",
         name_slider="p_alternate_pattern",
@@ -86,7 +105,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="alternate_pattern_sec",
         name_slider="p_alternate_pattern_sec",
@@ -95,7 +114,7 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(
+    ToggleSlider(
         type="toggle_slider",
         name_toggle="triggers",
         name_slider="p_triggers",
@@ -104,7 +123,14 @@ AUTOPILOT_CONTROLS = [
         step=0.1,
         markers=True,
     ),
-    dict(type="slider", name_slider="autopilot_loop_length", range_min=4, range_max=32, step=4, markers=True),
+    Slider(
+        type="slider",
+        name_slider="autopilot_loop_length",
+        range_min=4,
+        range_max=32,
+        step=4,
+        markers=True,
+    ),
 ]
 
 
