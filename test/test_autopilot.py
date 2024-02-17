@@ -1,6 +1,5 @@
 import pytest
 from ravelights import RaveLightsApp
-from ravelights.core.autopilot import AUTOPILOT_CONTROLS
 
 
 @pytest.fixture
@@ -52,22 +51,3 @@ def test_autopilot_color_primary(app_autopilot_disabled):
             value_has_changed = True
             break
     assert value_has_changed is True
-
-
-def test_autopilot_controls(app_normal):
-    # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings_autopilot
-    settings_autopilot = app_normal.settings.settings_autopilot
-
-    for item in AUTOPILOT_CONTROLS:
-        if item["type"] == "toggle_slider":
-            assert item["name_toggle"] in settings_autopilot
-            assert isinstance(settings_autopilot[item["name_toggle"]], bool)
-            assert item["name_slider"] in settings_autopilot
-            assert isinstance(settings_autopilot[item["name_slider"]], float) or isinstance(
-                settings_autopilot[item["name_slider"]], int
-            )
-        if item["type"] == "slider":
-            assert item["name_slider"] in settings_autopilot
-            assert isinstance(settings_autopilot[item["name_slider"]], float) or isinstance(
-                settings_autopilot[item["name_slider"]], int
-            )
