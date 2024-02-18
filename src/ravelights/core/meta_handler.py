@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Any, NamedTuple
 
+import numpy as np
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.autopilot import AUTOPILOT_CONTROLS
-from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, SecondaryColorModes
+from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, Color, ColorHandler, SecondaryColorModes
 from ravelights.core.custom_typing import AvailableGenerators, Slider, Timeline
 from ravelights.core.timeline import GenPlacing
 
@@ -50,7 +51,7 @@ class MetaHandler:
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
         self.api_content["controls_autopilot"] = AUTOPILOT_CONTROLS
-        self.api_content["controls_color_palette"] = self.root.autopilot.get_color_palette()
+        self.api_content["controls_color_palette"] = self.get_color_palette()
         self.api_content["color_sec_mode_names"] = [mode.value for mode in SecondaryColorModes]
 
     def __getitem__(self, key: str):
@@ -168,3 +169,11 @@ class MetaHandler:
         steps = [2**x for x in range(6)]
         steps.append("inf")
         return {i: s for i, s in enumerate(steps)}
+
+    def get_color_palette(self) -> tuple[str]:
+        # ─── Add Controls Color Palette ───────────────────────────────
+        n_colors = 11
+        controls_color_palette = [
+            ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]
+        ] + [Color(1, 1, 1)]
+        return (f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette)

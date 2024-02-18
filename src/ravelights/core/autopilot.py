@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-import numpy as np
 from loguru import logger
-from ravelights.core.color_handler import Color, ColorHandler
+from ravelights.core.color_handler import ColorHandler
 from ravelights.core.custom_typing import Slider, ToggleSlider
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
@@ -152,14 +151,6 @@ class AutoPilot:
             triggers=True,
             p_triggers=0.1,  # run on every item in selected seperately
         )
-
-    def get_color_palette(self):
-        # ─── Add Controls Color Palette ───────────────────────────────
-        n_colors = 11
-        controls_color_palette = [
-            ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]
-        ] + [Color(1, 1, 1)]
-        return [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
 
     def randomize(self) -> None:
         """Called every frame to randomize parameters within ravelights app."""
