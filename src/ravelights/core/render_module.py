@@ -202,19 +202,8 @@ class RenderModule:
         assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, dimmer.name)
 
         # ─── Render Effects ───────────────────────────────────────────────
-        in_matrix = matrix.copy()
         for effect_wrapper in self.root.effect_handler.effective_effect_queue:
-            out_matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_index=self.device.device_index)
-            if effect_wrapper.draw_mode == "overlay":
-                matrix = Generator.merge_matrices(matrix, out_matrix)
-            elif effect_wrapper.draw_mode == "normal":
-                matrix = out_matrix
-            else:
-                logger.error("illegal effect_wrapper.draw_mode")
-
-        # global thing
-        if self.settings.global_effect_draw_mode == "overlay":
-            matrix = Generator.merge_matrices(in_matrix, matrix)
+            matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_index=self.device.device_index)
 
         assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 

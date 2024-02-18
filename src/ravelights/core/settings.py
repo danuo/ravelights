@@ -111,8 +111,6 @@ class Settings:
     # ─── Effect Settings ──────────────────────────────────────────────────
 
     global_effects_enabled: bool = True
-    global_effect_draw_mode: Literal["normal", "overlay"] = "normal"
-    effect_draw_mode: Literal["normal", "overlay"] = "normal"
 
     # ─── Generator Settings ───────────────────────────────────────────────
 
