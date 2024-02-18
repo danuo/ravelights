@@ -93,9 +93,9 @@ class RenderModule:
 
         # ---------------------------------- render ---------------------------------- #
         array_chorus = self.render_chorus(device_index=device_index, timeline_level=timeline_level)
-        assert array_chorus.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert array_chorus.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), array_chorus.shape
         array_break = self.render_break(device_index=device_index, timeline_level=timeline_level)
-        assert array_break.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert array_break.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), array_break.shape
 
         # ---------------------------------- combine --------------------------------- #
         matrix = Generator.merge_matrices_with_weight(
@@ -118,7 +118,9 @@ class RenderModule:
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern_break.render(colors=colors)
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        # fmt: off
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, pattern_break.name)
+        # fmt: on
 
         return matrix
 
@@ -174,28 +176,30 @@ class RenderModule:
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern.render(colors=colors)
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), pattern.name
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, pattern.name)
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
         matrix = self.apply_frameskip(matrix)
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), matrix.shape
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
         matrix_sec = pattern_sec.render(colors=colors[::-1])
-        assert matrix_sec.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), pattern_sec.name
+        # fmt: off
+        assert matrix_sec.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, pattern_sec.name)
+        # fmt: on
         matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
         matrix = vfilter.render(in_matrix=matrix, colors=colors)
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), vfilter.name
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, vfilter.name)
 
         # ─── RENDER THINNER ──────────────────────────────────────────────
         matrix = thinner.render(in_matrix=matrix, colors=colors)
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), thinner.name
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, thinner.name)
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
         matrix = dimmer.render(in_matrix=matrix, colors=colors)
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), dimmer.name
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, dimmer.name)
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
@@ -212,7 +216,7 @@ class RenderModule:
         if self.settings.global_effect_draw_mode == "overlay":
             matrix = Generator.merge_matrices(in_matrix, matrix)
 
-        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         return matrix
 
