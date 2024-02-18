@@ -29,7 +29,7 @@ class RaveLightsApp:
     def __init__(
         self,
         *,
-        fps: int = 20,
+        fps: int = 30,
         webui_port: int = 80,
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],

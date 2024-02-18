@@ -11,7 +11,8 @@ def app_normal() -> RaveLightsApp:
 
 @pytest.fixture(scope="module")
 def app_time_patched() -> RaveLightsApp:
-    FPS = 20
+    app = RaveLightsApp()
+    FPS = app.settings.fps
     global_time = 0
 
     def get_global_time():
@@ -25,7 +26,6 @@ def app_time_patched() -> RaveLightsApp:
         random_frame_time = 1 / FPS + norm
         global_time += random_frame_time
 
-    app = RaveLightsApp()
     app.time_handler.get_current_time = get_global_time  # type: ignore[method-assign]
     app.time_handler.after = increase_globaltime  # type: ignore[method-assign]
     app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
