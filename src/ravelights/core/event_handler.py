@@ -133,20 +133,18 @@ class EventHandler:
                     "action": "modify_effect",
                     "operation": operation,
                     "effect_name": effect_name,
-                    "timeline_level": timeline_level,
                 }:
                     assert isinstance(effect_name, str)
-                    assert isinstance(timeline_level, int)
                     match operation:
                         case "renew_trigger":
                             logger.debug(f"api: modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_renew_trigger(effect=effect_name, timeline_level=timeline_level)
+                            self.effecthandler.effect_renew_trigger(effect=effect_name)
                         case "alternate":
                             logger.debug(f"api: modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_alternate(effect=effect_name, timeline_level=timeline_level)
+                            self.effecthandler.effect_alternate(effect=effect_name)
                         case "remove":
                             logger.debug(f"api: modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_remove(effect=effect_name, timeline_level=timeline_level)
+                            self.effecthandler.effect_remove(effect=effect_name)
                         case _:
                             logger.warning(
                                 f"api: instruction with 'action': 'modify_effect' and {operation=} not understood"
