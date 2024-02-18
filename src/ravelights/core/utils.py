@@ -77,8 +77,7 @@ class LightSequenceGenerator:
             for lis in in_lists:
                 if index < len(lis):
                     indices_of_frame.append(lis[index])
-            indices_of_frame_tuple: tuple[int] = tuple(indices_of_frame)
-            out_list.append(indices_of_frame_tuple)
+            out_list.append(tuple(indices_of_frame))  # type: ignore
         return out_list
 
 
