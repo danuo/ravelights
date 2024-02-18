@@ -23,7 +23,7 @@ def test_effect_frames_limit(app_time_patched_2):
     app.settings.enable_autopilot = False
 
     # get 3 effect names
-    effect_names = app.meta_handler.api_content["available_generators"]["effect"][:3]
+    effect_names = [e["generator_name"] for e in app.meta_handler.api_content["available_generators"]["effect"][:3]]
 
     # add effects with 15 frames duration
     for effect_name in effect_names:
