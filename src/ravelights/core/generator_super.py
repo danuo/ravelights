@@ -126,27 +126,13 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n_leds, self.n_lights), fill_value=fill_value, dtype=float)
         return matrix
 
-    def colorize_matrix(self, matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
-        """
-        in:  Nx1
-        out: Nx3
-        function to colorize a matrix with a given color
-        for colorization, another dimension is added
-        special case: input matrix is 1d of size n:
-        (n) -> (n_leds, n_lights, 3)  /special case
-        (x) -> (x,3)
-        (x,y) -> (x,y,3)
-        """
+    def reshape_1d_to_2d(self, in_matrix: ArrayFloat) -> ArrayFloat:
+        assert in_matrix.ndim == 1
+        return in_matrix.reshape((self.n_leds, self.n_lights), order="F")
 
-        # prepare output matrix of correct size
-        if matrix_mono.ndim == 1:
-            if matrix_mono.shape == (self.n,):
-                matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
-                matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
-            else:
-                matrix_rgb = np.zeros((matrix_mono.size, 3))
-        elif matrix_mono.ndim == 2:
-            matrix_rgb = np.zeros((*matrix_mono.shape, 3))
+    @staticmethod
+    def colorize_matrix(matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
+        """colorizes matrix, adds one dimension for 3 color channels"""
 
         shape = [1] * matrix_mono.ndim + [3]
         color_array: ArrayFloat = np.array(color).reshape(shape)

@@ -1,5 +1,5 @@
 from ravelights.core.color_handler import Color
-from ravelights.core.custom_typing import ArrayFloat, assert_dims
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -17,7 +17,7 @@ class VfilterMirrorHor(Vfilter):
         ...
 
     def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
-        assert_dims(in_matrix, self.n_leds, self.n_lights, 3)
+        assert in_matrix.ndim == (self.n_leds, self.n_lights, 3)
         n = self.n_lights // 2
         for i in range(n):
             in_matrix[:, i, :] = in_matrix[:, -i - 1, :]

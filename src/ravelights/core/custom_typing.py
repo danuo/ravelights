@@ -17,11 +17,6 @@ ArrayUInt8 = NDArray[np.uint8]
 DiscoveryUpdateCallback = Callable[[str, Optional[str]], None]
 
 
-def assert_dims(in_matrix: NDArray[Any], *dims: int):
-    """checks if shape is (n_leds, n_lights, 3). this is a debug function"""
-    assert in_matrix.shape == dims
-
-
 class Transmitter(Protocol):
     def _send_bytes(self, data) -> None:
         ...

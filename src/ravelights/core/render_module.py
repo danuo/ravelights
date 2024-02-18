@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Literal, Optional, cast, overload
 
 from loguru import logger
-from ravelights.core.custom_typing import ArrayFloat, assert_dims
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixel_matrix import PixelMatrix
 from ravelights.core.settings import Settings
@@ -93,9 +93,9 @@ class RenderModule:
 
         # ---------------------------------- render ---------------------------------- #
         array_chorus = self.render_chorus(device_index=device_index, timeline_level=timeline_level)
-        assert_dims(array_chorus, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert array_chorus.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
         array_break = self.render_break(device_index=device_index, timeline_level=timeline_level)
-        assert_dims(array_break, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert array_break.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ---------------------------------- combine --------------------------------- #
         matrix = Generator.merge_matrices_with_weight(
@@ -118,7 +118,7 @@ class RenderModule:
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern_break.render(colors=colors)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         return matrix
 
@@ -174,27 +174,28 @@ class RenderModule:
 
         # ─── RENDER PATTERN ──────────────────────────────────────────────
         matrix = pattern.render(colors=colors)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), pattern.name
 
         # ─── FRAMESKIP ───────────────────────────────────────────────────
         matrix = self.apply_frameskip(matrix)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         # ─── RENDER SECONDARY PATTERN ────────────────────────────────────
         matrix_sec = pattern_sec.render(colors=colors[::-1])
+        assert matrix_sec.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), pattern_sec.name
         matrix = Generator.merge_matrices(matrix, matrix_sec)
 
         # ─── RENDER VFILTER ──────────────────────────────────────────────
         matrix = vfilter.render(in_matrix=matrix, colors=colors)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), vfilter.name
 
         # ─── RENDER THINNER ──────────────────────────────────────────────
         matrix = thinner.render(in_matrix=matrix, colors=colors)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), thinner.name
 
         # ─── RENDER DIMMER ───────────────────────────────────────────────
         matrix = dimmer.render(in_matrix=matrix, colors=colors)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), dimmer.name
 
         # ─── Render Effects ───────────────────────────────────────────────
         in_matrix = matrix.copy()
@@ -210,7 +211,8 @@ class RenderModule:
         # global thing
         if self.settings.global_effect_draw_mode == "overlay":
             matrix = Generator.merge_matrices(in_matrix, matrix)
-        assert_dims(matrix, self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
+
+        assert matrix.ndim == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
 
         return matrix
 

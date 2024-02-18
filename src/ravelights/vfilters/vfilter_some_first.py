@@ -1,7 +1,7 @@
 import random
 
 from ravelights.core.color_handler import Color
-from ravelights.core.custom_typing import ArrayFloat, assert_dims
+from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Vfilter
 
 
@@ -24,7 +24,7 @@ class VfilterMapSomeFirst(Vfilter):
             self.light_ids = [0]
 
     def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
-        assert_dims(in_matrix, self.n_leds, self.n_lights, 3)
+        assert in_matrix.ndim == (self.n_leds, self.n_lights, 3)
         out_matrix = self.get_float_matrix_rgb()
         for i in self.light_ids:
             out_matrix[:, i, :] = in_matrix[:, 0, :]
