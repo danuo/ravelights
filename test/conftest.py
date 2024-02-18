@@ -1,4 +1,6 @@
 import random
+from collections.abc import Generator
+from unittest.mock import patch
 
 import pytest
 from ravelights import DeviceLightConfig, RaveLightsApp
@@ -45,6 +47,33 @@ def app_time_patched_2(app_2: RaveLightsApp) -> RaveLightsApp:
 def app_time_patched_3(app_3: RaveLightsApp) -> RaveLightsApp:
     """time patched app with 3 devices"""
     return patch_time(app_3)
+
+
+@pytest.fixture(scope="function")
+def app_render_patched_1(app_time_patched_1: RaveLightsApp) -> Generator[RaveLightsApp, None, None]:
+    """app without actually rendering for fast testing"""
+
+    mocked_render = patch("ravelights.core.render_module.RenderModule.render").start()
+    yield app_time_patched_1
+    mocked_render.stop()
+
+
+@pytest.fixture(scope="function")
+def app_render_patched_2(app_time_patched_2: RaveLightsApp) -> Generator[RaveLightsApp, None, None]:
+    """app without actually rendering for fast testing"""
+
+    mocked_render = patch("ravelights.core.render_module.RenderModule.render").start()
+    yield app_time_patched_2
+    mocked_render.stop()
+
+
+@pytest.fixture(scope="function")
+def app_render_patched_3(app_time_patched_3: RaveLightsApp) -> Generator[RaveLightsApp, None, None]:
+    """app without actually rendering for fast testing"""
+
+    mocked_render = patch("ravelights.core.render_module.RenderModule.render").start()
+    yield app_time_patched_3
+    mocked_render.stop()
 
 
 def patch_time(app: RaveLightsApp) -> RaveLightsApp:
