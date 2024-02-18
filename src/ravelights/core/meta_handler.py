@@ -170,10 +170,10 @@ class MetaHandler:
         steps.append("inf")
         return {i: s for i, s in enumerate(steps)}
 
-    def get_color_palette(self) -> tuple[str]:
+    def get_color_palette(self) -> list[str]:
         # ─── Add Controls Color Palette ───────────────────────────────
         n_colors = 11
         controls_color_palette = [
             ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]
         ] + [Color(1, 1, 1)]
-        return (f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette)
+        return [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
