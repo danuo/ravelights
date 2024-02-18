@@ -28,10 +28,9 @@ def run_all_patterns(app: RaveLightsApp):
     # get all generator names
     gen_names = []
     gen_types = []
-    for i, (key, lis) in enumerate(app.meta_handler.api_content["available_generators"].items()):
-        if i == 4:
-            break
-        for dictionary in lis:
+
+    for key in ("pattern", "vfilter", "thinner", "dimmer"):
+        for dictionary in app.meta_handler.api_content["available_generators"][key]:
             gen_names.append(dictionary["generator_name"])
             gen_types.append(key)
 
