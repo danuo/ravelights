@@ -259,6 +259,7 @@ class EffectWrapper:
         assert isinstance(multi, int) and multi >= 1
 
         self.state = EffectWrapperStateFrames(
+            limit_frames=limit_frames,
             mode="frames",
             multi=multi,
             counter_frames=0,
