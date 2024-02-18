@@ -131,7 +131,27 @@ class EventHandler:
                     self.effecthandler.clear_qeueues()
                     logger.debug("api: cleared all effect queues")
 
-                case {"action": "set_effect", **other_kwargs}:
+                case {
+                    "action": "set_effect",
+                    "mode": "frames",
+                    "effect_name": effect_name,
+                    "limit_frames": limit_frames,
+                    "multi": multi,
+                    "frames_pattern": frames_pattern,
+                }:
+                    self.effecthandler.load_effect_frames(
+                        effect_name=effect_name,
+                        limit_frames=limit_frames,
+                        multi=multi,
+                        frames_pattern=frames_pattern,
+                    )
+
+                case {
+                    "action": "set_effect",
+                    "mode": "frames",
+                    "effect_name": effect_name,
+                }:
+                    logger.error("should not be used")
                     logger.debug(f"api: set_effect: {other_kwargs}")
                     self.effecthandler.load_effect(**other_kwargs)
 

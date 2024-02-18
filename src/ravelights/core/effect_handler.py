@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators
+from ravelights.core.custom_typing import ArrayFloat, FramesPattern, FramesPatternBinary
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect
 from ravelights.core.instruction_queue import InstructionQueue
@@ -114,6 +115,22 @@ class EffectHandler:
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
+    def load_effect_frames(
+        self,
+        effect_name: str,
+        limit_frames: Optional[int],  # None == inf
+        multi: int = 1,
+        frames_pattern: FramesPattern = FramesPattern(1, (0,)),
+    ):
+        effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
+        effect_wrapper.reset_frames(
+            limit_frames=limit_frames,
+            multi=multi,
+            frames_pattern=frames_pattern,
+        )
+        self.effect_queue.append(effect_wrapper)
+        self.root.refresh_ui(sse_event="effect")
+
     def load_effect(
         self,
         effect_name: str,
@@ -125,6 +142,7 @@ class EffectHandler:
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
         if mode == "frames":
+            assert False, "use load_effect_frames()"
             assert "limit_frames" in kwargs
             effect_wrapper.reset_frames(**kwargs)  # type: ignore
 

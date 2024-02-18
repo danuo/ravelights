@@ -1,5 +1,5 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, Callable, Optional, Protocol, TypedDict
+from typing import TYPE_CHECKING, Any, Callable, NamedTuple, Optional, Protocol, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -19,6 +19,14 @@ DiscoveryUpdateCallback = Callable[[str, Optional[str]], None]
 
 LightIndices = tuple[int]
 LightSequence = list[LightIndices]
+
+
+class FramesPattern(NamedTuple):
+    length: int
+    pattern_indices: tuple[int]
+
+
+FramesPatternBinary = list[bool]
 
 
 class Transmitter(Protocol):

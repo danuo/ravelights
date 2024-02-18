@@ -19,7 +19,7 @@ def run_all_effects(app: RaveLightsApp):
     for effect_name in effect_names:
         app.effect_handler.clear_qeueues()
         assert len(app.effect_handler.effect_queue) == 0
-        app.effect_handler.load_effect(effect_name=effect_name, mode="frames", limit_frames=None)
+        app.effect_handler.load_effect_frames(effect_name=effect_name, limit_frames=None)
         assert len(app.effect_handler.effect_queue) == 1
 
         for _ in range(LIMIT):

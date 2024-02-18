@@ -29,7 +29,7 @@ def test_effect_frames_limit(app_time_patched_2):
     for effect_name in effect_names:
         app.effect_handler.clear_qeueues()
         assert len(app.effect_handler.effect_queue) == 0
-        app.effect_handler.load_effect(effect_name=effect_name, mode="frames", limit_frames=15)
+        app.effect_handler.load_effect_frames(effect_name=effect_name, limit_frames=15)
         assert len(app.effect_handler.effect_queue) == 1
 
         for _ in range(10):

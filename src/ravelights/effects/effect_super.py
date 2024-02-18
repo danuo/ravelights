@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Literal, NamedTuple, Optional
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from loguru import logger
 from ravelights.core.color_handler import Color
-from ravelights.core.custom_typing import ArrayFloat
+from ravelights.core.custom_typing import ArrayFloat, FramesPattern, FramesPatternBinary
 from ravelights.core.pixel_matrix import PixelMatrix
 from ravelights.core.time_handler import BeatState, BeatStatePattern
 
@@ -14,14 +14,6 @@ if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
     from ravelights.core.time_handler import TimeHandler
-
-
-class FramesPattern(NamedTuple):
-    length: int
-    pattern_indices: tuple[int]
-
-
-FramesPatternBinary = list[bool]
 
 
 def get_frames_pattern_binary(frames_pattern: FramesPattern, multi: int = 1) -> FramesPatternBinary:
