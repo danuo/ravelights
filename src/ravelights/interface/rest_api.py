@@ -196,7 +196,6 @@ class MetaAPIResource(Resource):
 resource_fields_effect = {
     "name": fields.String,
     "mode": fields.String,
-    "draw_mode": fields.String,
     "limit_frames": fields.String,
     "loop_length": fields.String,
     "trigger": fields.String,
