@@ -2,27 +2,30 @@ import random
 
 import numpy as np
 from ravelights.core.color_handler import Color
-from ravelights.core.custom_typing import ArrayFloat
+from ravelights.core.custom_typing import ArrayFloat, LightSequence
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.time_handler import BeatStatePattern
-from ravelights.core.utils import LightSequence
+from ravelights.core.utils import LightSequenceGenerator
 
 
 class Propagation:
-    def __init__(self, n_lights: int, light_indices: list[int]) -> None:
+    def __init__(self, n_lights: int, light_sequence: LightSequence) -> None:
         self.n_lights = n_lights
-        self.light_indices: list[int] = light_indices
+        self.light_sequence: LightSequence = light_sequence
         self.frame_counter: int = 0
 
     def get_output_intensity(self) -> ArrayFloat:
+        """Returns an array of light intensities. Contains one value for each light"""
+
         out_intensity = np.zeros(self.n_lights)
-        light_index = self.light_indices[self.frame_counter]
-        out_intensity[light_index] = 1.0
+        light_indices = self.light_sequence[self.frame_counter]
+        for light_index in light_indices:
+            out_intensity[light_index] = 1.0
         self.frame_counter += 1
         return out_intensity
 
     def done(self) -> bool:
-        if self.frame_counter >= len(self.light_indices):
+        if self.frame_counter >= len(self.light_sequence):
             return True
         else:
             return False
@@ -57,16 +60,15 @@ class VfilterMapPropagate(Vfilter):
 
     def on_trigger(self):  #
         if self.mode == 0:
-            light_indices_list = LightSequence.left_to_right(self.n_lights)
+            light_sequence = LightSequenceGenerator.left_to_right(self.n_lights)
         elif self.mode == 1:
-            light_indices_list = LightSequence.left_to_right(self.n_lights, reverse=True)
+            light_sequence = LightSequenceGenerator.left_to_right(self.n_lights, reverse=True)
         if self.mode == 2:
-            light_indices_list = LightSequence.out_to_mid(self.n_lights)
+            light_sequence = LightSequenceGenerator.out_to_mid(self.n_lights)
         elif self.mode == 3:
-            light_indices_list = LightSequence.out_to_mid(self.n_lights, reverse=True)
+            light_sequence = LightSequenceGenerator.out_to_mid(self.n_lights, reverse=True)
 
-        for light_indices in light_indices_list:
-            self.props.append(Propagation(self.n_lights, light_indices))
+        self.props.append(Propagation(self.n_lights, light_sequence))
 
     def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         total_out_intensity = np.zeros(self.n_lights)
