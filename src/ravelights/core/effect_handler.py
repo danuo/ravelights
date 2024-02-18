@@ -124,19 +124,11 @@ class EffectHandler:
     def load_effect(self, effect_name: str, timeline_level: int, **kwargs: dict[str, Any]) -> None:
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
-        effect_wrapper.draw_mode = self.settings.effect_draw_mode
         effect_wrapper.reset(**kwargs)  # type: ignore
         logger.debug(self.effect_queues)
         self.effect_queues[timeline_level].append(effect_wrapper)
         logger.debug(self.effect_queues)
         self.root.refresh_ui(sse_event="effect")
-
-    def effect_change_draw(self, effect: str | EffectWrapper, timeline_level: int) -> None:
-        if isinstance(effect, str):
-            effect = self.find_effect(name=effect)
-        assert isinstance(effect, EffectWrapper)
-        if effect in self.effect_queues[timeline_level]:
-            effect.change_draw()
 
     def effect_renew_trigger(self, effect: str | EffectWrapper, timeline_level: int) -> None:
         if isinstance(effect, str):

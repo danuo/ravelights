@@ -138,9 +138,6 @@ class EventHandler:
                     assert isinstance(effect_name, str)
                     assert isinstance(timeline_level, int)
                     match operation:
-                        case "change_draw":
-                            logger.debug(f"api: modify_effect {operation}: {effect_name}")
-                            self.effecthandler.effect_change_draw(effect=effect_name, timeline_level=timeline_level)
                         case "renew_trigger":
                             logger.debug(f"api: modify_effect {operation}: {effect_name}")
                             self.effecthandler.effect_renew_trigger(effect=effect_name, timeline_level=timeline_level)
