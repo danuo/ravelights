@@ -1,11 +1,25 @@
+import pytest
 from loguru import logger
+from ravelights import RaveLightsApp
 from ravelights.core.time_handler import BeatStatePattern
 
 
-def test_all_patterns(app_time_patched):
-    app = app_time_patched
+@pytest.mark.slow  # only run in ci for speed
+def test_all_patterns_1(app_time_patched_1):
+    run_all_patterns(app_time_patched_1)
 
-    assert app.settings.enable_autopilot is False
+
+def test_all_patterns_2(app_time_patched_2):
+    run_all_patterns(app_time_patched_2)
+
+
+@pytest.mark.slow  # only run in ci for speed
+def test_all_patterns_3(app_time_patched_3):
+    run_all_patterns(app_time_patched_3)
+
+
+def run_all_patterns(app: RaveLightsApp):
+    app.settings.enable_autopilot = False
 
     counter_frame = 0
     counter_generators = 0
@@ -30,6 +44,7 @@ def test_all_patterns(app_time_patched):
             gen_type, gen_name = next(it, (None, None))
             if gen_type is None:
                 done = True
+            assert isinstance(gen_name, str)
             else:
                 app.settings.set_generator(
                     gen_type=gen_type,

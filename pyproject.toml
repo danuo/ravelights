@@ -59,3 +59,10 @@ target-version = "py311"
 [tool.mypy]
 files = "src/ravelights"
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = "test"
+markers = [
+    "slow: marks tests as slow",
+]
+addopts = "-m 'not slow'"
