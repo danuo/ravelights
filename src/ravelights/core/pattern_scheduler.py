@@ -29,8 +29,13 @@ class PatternScheduler:
         self.timeline_selectors: list[GenSelector] = []
         self.timeline_placements: list[GenPlacing] = []
 
-        # ─── GENERATORS ──────────────────────────────────────────────────
+        # ------------------------------ init timelines ------------------------------ #
         self.blueprint_timelines = blueprint_timelines
+        for timeline in self.blueprint_timelines:
+            for selector in timeline["selectors"]:
+                selector.set_root(self.root)
+
+        # ------------------------------ init generators ----------------------------- #
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
             generators: list[Pattern | Vfilter | Dimmer | Thinner] = [
@@ -38,28 +43,29 @@ class PatternScheduler:
             ]
             device.rendermodule.register_generators(generators=generators)
 
-    def load_timeline_from_index(self, index: int) -> None:
+    def load_timeline_from_index(self, index: int, placements: bool = True, selectors: bool = True) -> None:
         self.settings.active_timeline_index = index
-        self._load_timeline(self.blueprint_timelines[index])
+        timeline: Timeline = self.blueprint_timelines[index]
+        if selectors:
+            self._load_timeline_selectors(timeline)
+        if placements:
+            self._load_timeline_placements(timeline)
 
     def load_timeline_by_name(self, name: str) -> None:
         for index, timeline in enumerate(self.blueprint_timelines):
             if timeline["meta"]["name"] == name:
-                self.settings.active_timeline_index = index
-                self._load_timeline(self.blueprint_timelines[index])
+                self.load_timeline_from_index(index)
                 logger.debug(f"loading timeline {name} at index {index}")
                 return
         logger.warning(f"could not find timeline with name {name}")
 
-    def _load_timeline(self, timeline: Timeline) -> None:
+    def _load_timeline_selectors(self, timeline: Timeline) -> None:
         self.settings.reset_selected()
-        self.clear_instruction_queues()
-
         self.timeline_selectors = timeline["selectors"]
-        for selector in self.timeline_selectors:
-            selector.set_root(self.root)
         self.process_timeline_selectors(self.timeline_selectors)
 
+    def _load_timeline_placements(self, timeline: Timeline) -> None:
+        self.clear_instruction_queues()
         self.timeline_placements = timeline["placements"]
         self.process_timeline_placements(self.timeline_placements)
 

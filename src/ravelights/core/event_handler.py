@@ -114,12 +114,18 @@ class EventHandler:
                     assert other_kwargs["timeline_level"] is None or 1 <= other_kwargs["timeline_level"] <= 3
                     self.settings.set_generator(renew_trigger=renew_trigger, **other_kwargs)
 
-                case {"action": "set_timeline", "timeline_index": index, "set_full": set_full}:
-                    # if set_full:     load generators, load timeline
-                    # if not set_full: load timeline
-                    # todo: implement set_full
-                    logger.debug(f"api: set_timeline with {index=} and {set_full=}")
-                    self.patternscheduler.load_timeline_from_index(int(index))
+                case {
+                    "action": "set_timeline",
+                    "timeline_index": timeline_index,
+                    "placements": placements,
+                    "selectors": selectors,
+                }:
+                    logger.debug(f"api: set_timeline with {timeline_index=}, {placements=} and {selectors=}")
+                    self.patternscheduler.load_timeline_from_index(
+                        index=int(timeline_index),
+                        placements=placements,
+                        selectors=selectors,
+                    )
 
                 case {"action": "clear_effect_queue"}:
                     self.effecthandler.clear_qeueues()
