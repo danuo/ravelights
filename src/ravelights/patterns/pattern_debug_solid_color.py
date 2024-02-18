@@ -20,7 +20,7 @@ class PatternDebugSolidColor(Pattern):
         ...
 
     def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
-        matrix = self.get_float_matrix_1d_mono()
-        matrix[:] = 1.0
-        matrix_rgb = self.colorize_matrix(matrix, color=colors[0])
+        matrix_1d = self.get_float_matrix_1d_mono()
+        matrix_1d[:] = 1.0
+        matrix_rgb = self.colorize_matrix(self.reshape_1d_to_2d(matrix_1d), color=colors[0])
         return matrix_rgb
