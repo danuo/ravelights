@@ -175,10 +175,16 @@ class AutoPilot:
         # ─── Triggers ─────────────────────────────────────────────────
 
         if self.settings.settings_autopilot["triggers"]:
-            for gen_type in ["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"]:
-                for timeline_level in range(1, 4):  # levels 1 to 4
-                    if p(self.settings.settings_autopilot["p_triggers"]):
-                        logger.info(f"renew_trigger {gen_type} {timeline_level}")
-                        logger.warning("this is not done")
-                        # todo: make sure correct device is
-                        # self.settings.renew_trigger(gen_type=gen_type, timeline_level=timeline_level)
+            for device_index, device in enumerate(self.devices):
+                if device.linked_to is not None:
+                    continue
+
+                for gen_type in ("pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"):
+                    for timeline_level in range(1, 4):  # levels 1 to 4
+                        if p(self.settings.settings_autopilot["p_triggers"]):
+                            logger.info(f"renew_trigger() with {device_index=} {gen_type=} {timeline_level=}")
+                            self.settings.renew_trigger(
+                                device_index=device_index,
+                                gen_type=gen_type,
+                                timeline_level=timeline_level,
+                            )
