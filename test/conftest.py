@@ -1,17 +1,54 @@
 import random
 
 import pytest
-from ravelights import RaveLightsApp
+from ravelights import DeviceLightConfig, RaveLightsApp
+
+device_config_1 = [DeviceLightConfig(n_lights=1, n_leds=100)]
+
+device_config_2 = [DeviceLightConfig(n_lights=5, n_leds=144), DeviceLightConfig(n_lights=5, n_leds=144)]
+
+device_config_3 = [
+    DeviceLightConfig(n_lights=5, n_leds=144),
+    DeviceLightConfig(n_lights=5, n_leds=144),
+    DeviceLightConfig(n_lights=5, n_leds=144),
+]
 
 
 @pytest.fixture(scope="module")
-def app_normal() -> RaveLightsApp:
-    return RaveLightsApp()
+def app_1() -> RaveLightsApp:
+    return RaveLightsApp(device_config=device_config_1)
 
 
 @pytest.fixture(scope="module")
-def app_time_patched() -> RaveLightsApp:
-    app = RaveLightsApp()
+def app_2() -> RaveLightsApp:
+    return RaveLightsApp(device_config=device_config_2)
+
+
+@pytest.fixture(scope="module")
+def app_3() -> RaveLightsApp:
+    return RaveLightsApp(device_config=device_config_3)
+
+
+@pytest.fixture(scope="module")
+def app_time_patched_1(app_1: RaveLightsApp) -> RaveLightsApp:
+    """time patched app with 1 device"""
+    return patch_time(app_1)
+
+
+@pytest.fixture(scope="module")
+def app_time_patched_2(app_2: RaveLightsApp) -> RaveLightsApp:
+    """time patched app with 2 devices"""
+    return patch_time(app_2)
+
+
+@pytest.fixture(scope="module")
+def app_time_patched_3(app_3: RaveLightsApp) -> RaveLightsApp:
+    """time patched app with 3 devices"""
+    return patch_time(app_3)
+
+
+def patch_time(app: RaveLightsApp) -> RaveLightsApp:
+    """time patched will render as fast as possible (hardware limited), without FPS cap"""
     FPS = app.settings.fps
     global_time = 0
 
