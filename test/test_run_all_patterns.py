@@ -1,3 +1,5 @@
+from typing import Literal
+
 import pytest
 from loguru import logger
 from ravelights import RaveLightsApp
@@ -26,8 +28,8 @@ def run_all_patterns(app: RaveLightsApp):
     beat_matcher = BeatStatePattern(loop_length=4)
 
     # get all generator names
-    gen_names = []
-    gen_types = []
+    gen_names: list[str] = []
+    gen_types: list[Literal["pattern", "vfilter", "dimmer", "thinner"]] = []
 
     for key in ("pattern", "vfilter", "thinner", "dimmer"):
         for dictionary in app.meta_handler.api_content["available_generators"][key]:
