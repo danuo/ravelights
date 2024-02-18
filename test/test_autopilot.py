@@ -1,27 +1,18 @@
-import pytest
-from ravelights import RaveLightsApp
+from unittest.mock import ANY, patch
+
+from ravelights.core.settings import Settings  # noqa: F401
 
 
-@pytest.fixture
-def app_autopilot_disabled(app_time_patched) -> RaveLightsApp:
-    settings_autopilot = app_time_patched.settings.settings_autopilot
-    for key, value in settings_autopilot.items():
-        if isinstance(value, bool):
-            settings_autopilot[key] = False
-
-    # turn on autopilot
-    app_time_patched.settings.enable_autopilot = False
-    return app_time_patched
-
-
-def test_autopilot_color_primary(app_autopilot_disabled):
-    app = app_autopilot_disabled
-    settings_autopilot = app_autopilot_disabled.settings.settings_autopilot
+def test_autopilot_color_primary(app_render_patched_3):
+    app = app_render_patched_3
+    settings_autopilot = app.settings.settings_autopilot
 
     app.settings.enable_autopilot = True
 
     # test color_primary
     assert "color_primary" in settings_autopilot
+    settings_autopilot["color_primary"] = False
+    settings_autopilot["p_color_primary"] = 0.9
     color_primary_before, color_secondary_before = app.settings.color_engine.get_colors_rgb(1)
     for _ in range(2_000):
         app.render_frame()
@@ -51,3 +42,37 @@ def test_autopilot_color_primary(app_autopilot_disabled):
             value_has_changed = True
             break
     assert value_has_changed is True
+
+
+def test_autopilot_triggers(app_render_patched_3):
+    app = app_render_patched_3
+    settings_autopilot = app.settings.settings_autopilot
+
+    app.settings.enable_autopilot = True
+
+    # test triggers
+    assert "triggers" in settings_autopilot
+
+    with patch("ravelights.core.settings.Settings.renew_trigger") as mock_renew_trigger:
+        settings_autopilot["triggers"] = False
+        settings_autopilot["p_triggers"] = 0.9
+        for _ in range(200):
+            app.render_frame()
+        mock_renew_trigger.assert_not_called()
+
+        settings_autopilot["triggers"] = True
+        settings_autopilot["p_triggers"] = 0.0
+        for _ in range(200):
+            app.render_frame()
+        mock_renew_trigger.assert_not_called()
+
+        settings_autopilot["triggers"] = True
+        settings_autopilot["p_triggers"] = 0.9
+        for _ in range(1000):
+            app.render_frame()
+
+        mock_renew_trigger.assert_called()
+
+        mock_renew_trigger.assert_any_call(device_index=0, gen_type=ANY, timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=1, gen_type=ANY, timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=2, gen_type=ANY, timeline_level=ANY)
