@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Literal, Optional
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Literal, NamedTuple, Optional
 
-import numpy as np
 from loguru import logger
 from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.pixel_matrix import PixelMatrix
-from ravelights.core.time_handler import BeatStatePattern
+from ravelights.core.time_handler import BeatState, BeatStatePattern
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keyword
@@ -14,6 +14,185 @@ if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
     from ravelights.core.settings import Settings
     from ravelights.core.time_handler import TimeHandler
+
+
+class FramesPattern(NamedTuple):
+    length: int
+    pattern_indices: tuple[int]
+
+
+FramesPatternBinary = list[bool]
+
+
+def get_frames_pattern_binary(frames_pattern: FramesPattern, multi: int = 1) -> FramesPatternBinary:
+    """
+    example input:
+    frames_pattern = (4, (0,))
+    multi = 2
+    -> [True, True, False, False, False, False, False, False]
+    """
+    assert isinstance(multi, int)
+    assert multi >= 1
+
+    pattern_length = frames_pattern.length
+    assert isinstance(pattern_length, int)
+    assert pattern_length > 0
+
+    out: list[bool] = []
+
+    pattern_indices = frames_pattern.pattern_indices
+
+    for index in range(pattern_length):
+        if index in pattern_indices:
+            out.extend([True] * multi)
+        else:
+            out.extend([False] * multi)
+
+    return out
+
+
+def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int, limit_loopquarters: int):
+    """
+    Turns quarters_pattern into a binary array. Each value represents a quarter
+    loop_length_beats: loop length in beats
+    quarters_pattern = ["0A", "0C", "1A", "2A"]
+    loop_length_beats = 2
+    -> [True, False, True, False, True, False, False, False]
+    """
+
+    loop_length_quarters = loop_length_beats * 4
+    quarters_pattern_binary = [False] * loop_length_quarters
+
+    for item in quarters_pattern:
+        num = int(item[:-1])
+        letter = item[-1]
+        assert letter in "ABCD"
+        letter_num = ord(letter) - 65  # A->0, B->1 etc.
+        index = num * 4 + letter_num
+        if index < limit_loopquarters:
+            quarters_pattern_binary[index] = True
+    return quarters_pattern_binary
+
+
+@dataclass
+class EffectWrapperState(ABC):
+    multi: int
+    mode: Literal["frames"]
+
+    counter_frames: int
+
+    @abstractmethod
+    def is_active(self, beat_state: BeatState) -> bool:
+        ...
+
+    @abstractmethod
+    def counting_before_check(self, beat_state: BeatState) -> None:
+        """execute this once per frame after check_active"""
+        ...
+
+    @abstractmethod
+    def counting_after_check(self, beat_state: BeatState) -> None:
+        """execute this once per frame after check_active"""
+        ...
+
+    @abstractmethod
+    def is_finished(self) -> bool:
+        """execute this once per frame after check_active"""
+        ...
+
+
+@dataclass
+class EffectWrapperStateFrames(EffectWrapperState):
+    frames_pattern_binary: FramesPatternBinary
+    limit_frames: Optional[int] = None
+
+    def is_active(self, beat_state: BeatState) -> bool:
+        index = self.counter_frames % len(self.frames_pattern_binary)
+        if self.frames_pattern_binary[index]:
+            return True
+        return False
+
+    def counting_before_check(self, beat_state: BeatState) -> None:
+        pass
+
+    def counting_after_check(self, beat_state: BeatState):
+        self.counter_frames += 1
+
+    def is_finished(self):
+        """returns if effect is finished (ready for removal)"""
+
+        if self.limit_frames is None:
+            return False
+
+        assert isinstance(self.limit_frames, int)
+        if self.counter_frames >= self.limit_frames:
+            return True
+
+        return False
+
+
+"""
+@dataclass
+class EffectWrapperStateQuarters(EffectWrapperState):
+    timehandler: Any
+    has_started: bool
+    # wip
+
+    def is_active(self, beat_state: BeatState) -> bool:
+        # search first beat before start
+        if not self.has_started:
+            if self.timehandler.beat_state.is_beat:
+                self.has_started = True
+            else:
+                return False
+
+        # after start, effect is potentially active
+        assert isinstance(self.limit_frames, int)
+        if self.counter_frames < self.limit_frames:
+            index = self.counter_frames % len(self.frames_pattern_binary)
+            if self.frames_pattern_binary[index]:
+                return True
+        return False
+
+    def counting_after_check(self, beat_state: BeatState):
+        if self.has_started:
+            self.counter_frames += 1
+            if self.timehandler.beat_state.is_quarter:
+                self.counter_quarters += 1
+                counter_beats = self.counter_quarters // 4
+                if counter_beats > 0 and counter_beats % self.loop_length_beats == 0:
+                    self.counter_quarters_loop += 1
+                    self.counter_quarters = 0
+                    self.counter_frames = 0
+
+    def is_finished(self):
+        if self.limit_frames != "inf":
+            assert isinstance(self.limit_frames, int)
+            if self.counter_frames >= self.limit_frames:
+                return True
+
+        return False
+
+
+@dataclass
+class EffectWrapperStateLoopQuarters(EffectWrapperState):
+    # WIP
+
+    def is_active(self, beat_state: BeatState) -> bool:
+        if not self.has_started:
+            if self.timehandler.beat_state.is_beat:
+                self.has_started = True
+            else:
+                return False
+
+    def is_finished(self):
+        if self.limit_loopquarters_loop != "inf":
+            assert isinstance(self.limit_loopquarters_loop, int)
+            if self.counter_quarters_loop >= self.limit_loopquarters_loop:
+                return True
+
+        return False
+"""
 
 
 # todo: move to core
@@ -33,15 +212,19 @@ class EffectWrapper:
         self.name = effect_objects[0].name
         self.keywords = effect_objects[0].keywords
         self.weight = effect_objects[0].weight
-        self.mode = "frames"  # todo: make EnumStr
+
         self.active = False
         self.trigger: Optional[BeatStatePattern] = None
         self.renew_trigger()
 
-        # mode == "frames"
-        self.counter_frames: int = 0
-        self.limit_frames: int | str = 0
-        self.frames_pattern_binary: list[bool] = [True]
+        self.state: Optional[EffectWrapperState] = None
+
+        # self.mode = "frames"  # todo: make EnumStr
+
+        #### mode == "frames"
+        # self.counter_frames: int = 0
+        # self.limit_frames: Optional[int] = None
+        # self.frames_pattern_binary: list[bool] = [True]
 
         # mode == "quarters"
         # -> use frames infrastructure
@@ -65,6 +248,23 @@ class EffectWrapper:
             effect = self.effects[0]
             effect.run_before()
 
+    def reset_frames(
+        self,
+        limit_frames: Optional[int],  # None == inf
+        multi: int = 1,
+        frames_pattern: FramesPattern = FramesPattern(1, (0,)),
+    ):
+        """for mode == 'frames'"""
+
+        assert isinstance(multi, int) and multi >= 1
+
+        self.state = EffectWrapperStateFrames(
+            mode="frames",
+            multi=multi,
+            counter_frames=0,
+            frames_pattern_binary=get_frames_pattern_binary(frames_pattern, multi=multi),
+        )
+
     def reset(
         self,
         mode: str,
@@ -81,51 +281,18 @@ class EffectWrapper:
         reset effects in effectwrapper
         """
 
-        def get_frames_pattern_binary(frames_pattern: list[str | int], multi: int = 1):
-            """
-            example input:
-            frames_pattern = ["L4", 0]
-            multi = 2
-            -> [True, True, False, False, False, False, False, False]
-            """
+        assert False
 
-            string_part = frames_pattern[0]
-            assert isinstance(string_part, str)
-            assert string_part[0] == "L"
-            pattern_length = int(string_part[1:])
-
-            pattern = frames_pattern[1:]
-            frames_pattern_binary = [y in pattern for x in range(pattern_length) for y in multi * [x]]
-            return frames_pattern_binary
-
-        def get_quarters_pattern_binary(quarters_pattern: list[str], loop_length_beats: int, limit_loopquarters: int):
-            """
-            Turns quarters_pattern into a binary array. Each value represents a quarter
-            loop_length_beats: loop length in beats
-            quarters_pattern = ["0A", "0C", "1A", "2A"]
-            loop_length_beats = 2
-            -> [True, False, True, False, True, False, False, False]
-            """
-
-            loop_length_quarters = loop_length_beats * 4
-            quarters_pattern_binary = [False] * loop_length_quarters
-
-            for item in quarters_pattern:
-                num = int(item[:-1])
-                letter = item[-1]
-                assert letter in "ABCD"
-                letter_num = ord(letter) - 65  # A->0, B->1 etc.
-                index = num * 4 + letter_num
-                if index < limit_loopquarters:
-                    quarters_pattern_binary[index] = True
-            return quarters_pattern_binary
-
+        # checks
         assert isinstance(multi, int) and multi >= 1
-        self.multi = multi
+
+        # assignments
         self.mode = mode
+        self.multi = multi
         self.has_started = False
 
         if self.mode == "frames":
+            assert False, "use reset_frames() instead"
             self.has_started = True
             self.counter_frames = 0
             self.limit_frames = limit_frames
@@ -141,7 +308,7 @@ class EffectWrapper:
             self.frames_pattern_binary = get_frames_pattern_binary(frames_pattern, multi=multi)
 
         if self.mode == "loopquarters":
-            # reset counter erst sp�ter
+            # reset counter erst spaeter
             self.has_started = False
             self.counter_frames = 0
             self.limit_frames = limit_frames
@@ -169,62 +336,25 @@ class EffectWrapper:
             return in_matrix
 
     def counting_before_check(self):
-        """
-        execute this once per frame before check_active
-        """
+        """execute this once per frame before check_active"""
 
-        if self.has_started and self.mode == "loopquarters":
-            if self.timehandler.beat_state.is_quarter:
-                if self.quarters_pattern_binary[self.counter_quarters]:
-                    self.counter_frames = 0
+        if self.state:
+            self.state.counting_before_check(beat_state=self.timehandler.beat_state)
 
     def check_active(self) -> bool:
         """Invisible render class with effect logic"""
+
         if not self.settings.global_effects_enabled:
             return False
-
-        if self.mode == "frames" or self.mode == "quarters":
-            return self.check_active_matrix_frames()
-        elif self.mode == "loopquarters":
-            return self.checkactive_matrix_loopquarters()
-        assert False
-
-    def check_active_matrix_frames(self) -> bool:
-        index = self.counter_frames % len(self.frames_pattern_binary)
-        if self.frames_pattern_binary[index]:
-            return True
-        return False
-
-    def checkactive_matrix_loopquarters(self) -> bool:
-        # search first beat before start
-        if not self.has_started:
-            if self.timehandler.beat_state.is_beat:
-                self.has_started = True
-            else:
-                return False
-
-        # after start, effect is potentially active
-        assert isinstance(self.limit_frames, int)
-        if self.counter_frames < self.limit_frames:
-            index = self.counter_frames % len(self.frames_pattern_binary)
-            if self.frames_pattern_binary[index]:
-                return True
-        return False
+        if self.state:
+            return self.state.is_active(beat_state=self.timehandler.beat_state)
+        assert False, "this should not happen -> bug"
 
     def counting_after_check(self):
-        """
-        execute this once per frame after check_active
-        """
+        """execute this once per frame after check_active"""
 
-        if self.has_started:
-            self.counter_frames += 1
-            if self.timehandler.beat_state.is_quarter:
-                self.counter_quarters += 1
-                counter_beats = self.counter_quarters // 4
-                if counter_beats > 0 and counter_beats % self.loop_length_beats == 0:
-                    self.counter_quarters_loop += 1
-                    self.counter_quarters = 0
-                    self.counter_frames = 0
+        if self.state:
+            self.state.counting_after_check(beat_state=self.timehandler.beat_state)
 
     def renew_trigger(self):
         self.trigger = self.effects[0].get_new_trigger()
@@ -248,17 +378,11 @@ class EffectWrapper:
 
     def is_finished(self):
         """returns if effect is finished (ready for removal)"""
-        if self.mode == "frames" or self.mode == "quarters":
-            if self.limit_frames != "inf":
-                assert isinstance(self.limit_frames, int)
-                if self.counter_frames >= self.limit_frames:
-                    return True
-        elif self.mode == "loopquarters":
-            if self.limit_loopquarters_loop != "inf":
-                assert isinstance(self.limit_loopquarters_loop, int)
-                if self.counter_quarters_loop >= self.limit_loopquarters_loop:
-                    return True
-        return False
+
+        if self.state:
+            return self.state.is_finished()
+
+        return True
 
     def __repr__(self):
         return f"<EffectWrapper {self.name}>"
@@ -338,31 +462,6 @@ class Effect(ABC):
 
     def on_trigger(self) -> None:
         ...
-
-    def colorize_matrix(self, matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
-        """
-        function to colorize a matrix with a given color
-        for colorization, another dimension is added
-        special case: input matrix is 1d of size n:
-        (n) -> (n_leds, n_lights, 3)  /special case
-        (x) -> (x,3)
-        (x,y) -> (x,y,3)
-        """
-
-        # prepare output matrix of correct size
-        if matrix_mono.ndim == 1:
-            if matrix_mono.shape == (self.n,) and self.n_lights > 1:
-                matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
-                matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
-            else:
-                matrix_rgb = np.zeros((matrix_mono.size, 3))
-        elif matrix_mono.ndim == 2:
-            matrix_rgb = np.zeros((*matrix_mono.shape, 3))
-
-        shape = [1] * matrix_mono.ndim + [3]
-        color_array = np.array(color).reshape(shape)
-        matrix_rgb = matrix_mono[..., None] * color_array
-        return matrix_rgb
 
     def init_pixelmatrix(self, pixelmatrix: "PixelMatrix") -> None:
         self.pixelmatrix = pixelmatrix

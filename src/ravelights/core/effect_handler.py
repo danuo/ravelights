@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators
@@ -114,10 +114,23 @@ class EffectHandler:
         length_frames = instruction.effect_length_frames
         self.load_effect(effect_name=effect_name, length_frames=length_frames)
 
-    def load_effect(self, effect_name: str, **kwargs: dict[str, Any]) -> None:
+    def load_effect(
+        self,
+        effect_name: str,
+        mode: Literal["frames"],
+        **kwargs: dict[str, Optional[Any]],
+    ) -> None:
+        assert mode in ("frames",)
+
         logger.info(f"setting {effect_name} with {kwargs}")
         effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
-        effect_wrapper.reset(**kwargs)  # type: ignore
+        if mode == "frames":
+            assert "limit_frames" in kwargs
+            effect_wrapper.reset_frames(**kwargs)  # type: ignore
+
+        else:
+            effect_wrapper.reset(**kwargs)  # type: ignore
+
         logger.debug(self.effect_queue)
         self.effect_queue.append(effect_wrapper)
         logger.debug(self.effect_queue)

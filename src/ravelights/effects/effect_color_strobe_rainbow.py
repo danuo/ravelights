@@ -31,7 +31,7 @@ class EffectColorStrobeRainbow(Effect):
             matrix_view = bw_matrix_mono[:, light_id]
             random_hue = random.random()
             random_color = ColorHandler.get_color_from_hue(random_hue)
-            colored_matrix = self.colorize_matrix(matrix_mono=matrix_view, color=random_color)
+            colored_matrix = Generator.colorize_matrix(matrix_mono=matrix_view, color=random_color)
             matrix_out[:, light_id, :] = colored_matrix
 
         return matrix_out
