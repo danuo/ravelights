@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Optional, Sequence, Type, TypeVar
 import numpy as np
 import numpy.typing as npt
 from loguru import logger
+from ravelights.core.custom_typing import LightIndices, LightSequence
 
 if TYPE_CHECKING:
     from ravelights.core.color_handler import Color
@@ -35,17 +36,20 @@ class StrEnum(str, Enum):
         return name.lower()
 
 
-class LightSequence:
+class LightSequenceGenerator:
+    """A light Sequence is a list of tuples. The first tuple in the list contains all the light indices
+    that should be active in the first frame. The second tuple is related to the second frame."""
+
     @staticmethod
-    def left_to_right(n_lights: int, reverse=False) -> list[list[int]]:
+    def left_to_right(n_lights: int, reverse=False) -> LightSequence:
         """return left to right"""
         out_seq = list(range(n_lights))
         if reverse:
             out_seq.reverse()
-        return [out_seq]
+        return list(zip(out_seq))
 
-    @staticmethod
-    def out_to_mid(n_lights: int, reverse=False) -> list[list[int]]:
+    @classmethod
+    def out_to_mid(cls, n_lights: int, reverse=False) -> LightSequence:
         middle_index = n_lights // 2
         out_all = list(range(n_lights))
         if n_lights % 2 == 0:
@@ -62,7 +66,20 @@ class LightSequence:
             out_left.reverse()
             out_right.reverse()
 
-        return [out_left, out_right]
+        return cls.improved_zip(out_left, out_right)
+
+    @staticmethod
+    def improved_zip(*in_lists: list[int]) -> LightSequence:
+        out_list = []
+        max_length = max([len(x) for x in in_lists])
+        for index in range(max_length):
+            indices_of_frame: list[int] = []
+            for lis in in_lists:
+                if index < len(lis):
+                    indices_of_frame.append(lis[index])
+            indices_of_frame_tuple: tuple[int] = tuple(indices_of_frame)
+            out_list.append(indices_of_frame_tuple)
+        return out_list
 
 
 def p(chance: float) -> bool:

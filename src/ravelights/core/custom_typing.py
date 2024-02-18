@@ -17,6 +17,10 @@ ArrayUInt8 = NDArray[np.uint8]
 DiscoveryUpdateCallback = Callable[[str, Optional[str]], None]
 
 
+LightIndices = tuple[int]
+LightSequence = list[LightIndices]
+
+
 class Transmitter(Protocol):
     def _send_bytes(self, data) -> None:
         ...
