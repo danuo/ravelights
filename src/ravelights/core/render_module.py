@@ -27,7 +27,7 @@ class RenderModule:
     def get_selected_trigger(
         self,
         device_index: int,
-        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        gen_type: Literal["pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"],
         level: Optional[int] = None,
     ) -> BeatStatePattern:
         if level is None:

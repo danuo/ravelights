@@ -181,7 +181,7 @@ class Settings:
     def set_generator(
         self,
         device_index: int,
-        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        gen_type: Literal["pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"],
         timeline_level: Optional[int],
         gen_name: str,
         renew_trigger: bool,
@@ -206,7 +206,7 @@ class Settings:
     def renew_trigger(
         self,
         device_index: int,
-        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        gen_type: Literal["pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
     ) -> None:
         generator = self.root.devices[0].rendermodule.get_selected_generator(
@@ -225,7 +225,7 @@ class Settings:
     def set_trigger(
         self,
         device_index: int,
-        gen_type: Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"],
+        gen_type: Literal["pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"],
         timeline_level: int,
         new_trigger: BeatStatePattern | dict[str, Any],
     ) -> None:
