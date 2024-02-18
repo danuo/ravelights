@@ -44,8 +44,8 @@ def run_all_patterns(app: RaveLightsApp):
             gen_type, gen_name = next(it, (None, None))
             if gen_type is None:
                 done = True
-            assert isinstance(gen_name, str)
             else:
+                assert isinstance(gen_name, str)
                 app.settings.set_generator(
                     gen_type=gen_type,
                     device_index=0,
