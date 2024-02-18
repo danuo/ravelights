@@ -2,9 +2,9 @@ from ravelights.core.autopilot import AUTOPILOT_CONTROLS
 from ravelights.core.meta_handler import CONTROLS_GLOBAL_SLIDERS
 
 
-def test_autopilot_controls(app_normal):
+def test_autopilot_controls(app_1):
     # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings_autopilot
-    settings_autopilot = app_normal.settings.settings_autopilot
+    settings_autopilot = app_1.settings.settings_autopilot
 
     for item in AUTOPILOT_CONTROLS:
         if item["type"] == "toggle_slider":
@@ -21,9 +21,9 @@ def test_autopilot_controls(app_normal):
             )
 
 
-def test_controls_global_sliders(app_normal):
+def test_controls_global_sliders(app_1):
     # checks that all setting vars in CONTROLS_GLOBAL_SLIDERS are present in settings
-    settings = app_normal.settings
+    settings = app_1.settings
 
     for item in CONTROLS_GLOBAL_SLIDERS:
         if item["type"] == "slider":
