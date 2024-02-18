@@ -1,5 +1,6 @@
 from unittest.mock import ANY, patch
 
+import pytest
 from ravelights.core.settings import Settings  # noqa: F401
 
 
@@ -76,3 +77,20 @@ def test_autopilot_triggers(app_render_patched_3):
         mock_renew_trigger.assert_any_call(device_index=0, gen_type=ANY, timeline_level=ANY)
         mock_renew_trigger.assert_any_call(device_index=1, gen_type=ANY, timeline_level=ANY)
         mock_renew_trigger.assert_any_call(device_index=2, gen_type=ANY, timeline_level=ANY)
+
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type="pattern", timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type="pattern_sec", timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type="pattern_break", timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type="vfilter", timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type="dimmer", timeline_level=ANY)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type="thinner", timeline_level=ANY)
+
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=1)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=2)
+        mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=3)
+
+        with pytest.raises(Exception):
+            mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=0)
+
+        with pytest.raises(Exception):
+            mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=4)
