@@ -52,4 +52,4 @@ def test_flask_endpoints_rest_effect(client):
     response = client.get("/rest/effect")
     assert response.status_code == 200
     response_dict = json.loads(response.data)
-    assert isinstance(response_dict[0], list)
+    assert isinstance(response_dict, list)

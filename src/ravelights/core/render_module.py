@@ -202,7 +202,7 @@ class RenderModule:
         assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), (matrix.shape, dimmer.name)
 
         # ─── Render Effects ───────────────────────────────────────────────
-        for effect_wrapper in self.root.effect_handler.effective_effect_queue:
+        for effect_wrapper in self.root.effect_handler.effect_queue:
             matrix = effect_wrapper.render(in_matrix=matrix, colors=colors, device_index=self.device.device_index)
 
         assert matrix.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3)
