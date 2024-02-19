@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING, Any, Literal, Optional
 from loguru import logger
 from ravelights.configs.components import blueprint_effects, blueprint_generators
 from ravelights.core.custom_typing import ArrayFloat, FramesPattern, FramesPatternBinary
+from ravelights.core.effect_super import Effect, EffectWrapper
 from ravelights.core.generator_super import Vfilter
 from ravelights.core.instruction import InstructionEffect
 from ravelights.core.instruction_queue import InstructionQueue
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import TimeHandler
-from ravelights.effects.effect_super import Effect, EffectWrapper
 from ravelights.effects.special_effect_vfilter import SpecialEffectVfilter
 
 if TYPE_CHECKING:

@@ -3,7 +3,7 @@ from typing import Optional
 
 from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.effects.effect_super import Effect
+from ravelights.core.effect_super import Effect
 
 
 class EffectColorStrobe(Effect):

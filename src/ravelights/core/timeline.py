@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING, Optional, Sequence, cast
 
 from loguru import logger
 from ravelights.core.custom_typing import GeneratorMeta
+from ravelights.core.effect_super import Effect
 from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
 from ravelights.core.utils import get_random_from_weights, p
-from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keyword

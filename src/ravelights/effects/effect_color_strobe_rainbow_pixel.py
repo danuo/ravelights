@@ -3,8 +3,8 @@ import random
 import numpy as np
 from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import ArrayFloat
+from ravelights.core.effect_super import Effect
 from ravelights.core.generator_super import Generator
-from ravelights.effects.effect_super import Effect
 
 
 class EffectColorStrobeRainbowPixel(Effect):

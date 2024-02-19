@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keyword
+    from ravelights.core.effect_super import Effect
     from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
-    from ravelights.effects.effect_super import Effect
 
 
 T = TypeVar("T", "Pattern", "Vfilter", "Dimmer", "Thinner")

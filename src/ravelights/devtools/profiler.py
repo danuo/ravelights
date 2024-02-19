@@ -2,10 +2,10 @@ import time
 from functools import partial
 
 from loguru import logger
+from ravelights.core.effect_super import EffectWrapper
 from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.ravelights_app import RaveLightsApp
 from ravelights.core.time_handler import BeatState
-from ravelights.effects.effect_super import EffectWrapper
 
 
 class Profiler:
