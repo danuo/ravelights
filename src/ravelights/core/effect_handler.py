@@ -85,7 +85,7 @@ class EffectHandler:
             effect_wrapper.counting_before_check()
 
             # ------------------------------- check active ------------------------------- #
-            effect_wrapper.active = effect_wrapper.check_active()
+            effect_wrapper.active = effect_wrapper.is_active()
 
             # ------------------------------ counting after ------------------------------ #
             effect_wrapper.counting_after_check()

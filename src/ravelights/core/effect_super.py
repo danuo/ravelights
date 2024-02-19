@@ -334,7 +334,7 @@ class EffectWrapper:
         if self.state:
             self.state.counting_before_check(beat_state=self.timehandler.beat_state)
 
-    def check_active(self) -> bool:
+    def is_active(self) -> bool:
         """Invisible render class with effect logic"""
 
         if not self.settings.global_effects_enabled:
