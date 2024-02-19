@@ -17,13 +17,13 @@ ArrayUInt8 = NDArray[np.uint8]
 DiscoveryUpdateCallback = Callable[[str, Optional[str]], None]
 
 
-LightIndices = tuple[int]
+LightIndices = tuple[int, ...]
 LightSequence = list[LightIndices]
 
 
 class FramesPattern(NamedTuple):
     length: int
-    pattern_indices: tuple[int]
+    pattern_indices: tuple[int, ...]
 
 
 FramesPatternBinary = list[bool]
