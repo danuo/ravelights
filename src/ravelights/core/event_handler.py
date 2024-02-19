@@ -148,6 +148,21 @@ class EventHandler:
 
                 case {
                     "action": "set_effect",
+                    "mode": "quarters",
+                    "effect_name": effect_name,
+                    "limit_quarters": limit_quarters,
+                    "multi": multi,
+                    "frames_pattern": frames_pattern,
+                }:
+                    self.effecthandler.load_effect_quarters(
+                        effect_name=effect_name,
+                        limit_quarters=limit_quarters,
+                        multi=multi,
+                        frames_pattern=frames_pattern,
+                    )
+
+                case {
+                    "action": "set_effect",
                     "mode": "frames",
                     "effect_name": effect_name,
                 }:

@@ -124,46 +124,6 @@ class EffectWrapperStateFrames(EffectWrapperState):
 
 
 """
-@dataclass
-class EffectWrapperStateQuarters(EffectWrapperState):
-    timehandler: Any
-    has_started: bool
-    # wip
-
-    def is_active(self, beat_state: BeatState) -> bool:
-        # search first beat before start
-        if not self.has_started:
-            if self.timehandler.beat_state.is_beat:
-                self.has_started = True
-            else:
-                return False
-
-        # after start, effect is potentially active
-        assert isinstance(self.limit_frames, int)
-        if self.counter_frames < self.limit_frames:
-            index = self.counter_frames % len(self.frames_pattern_binary)
-            if self.frames_pattern_binary[index]:
-                return True
-        return False
-
-    def counting_after_check(self, beat_state: BeatState):
-        if self.has_started:
-            self.counter_frames += 1
-            if self.timehandler.beat_state.is_quarter:
-                self.counter_quarters += 1
-                counter_beats = self.counter_quarters // 4
-                if counter_beats > 0 and counter_beats % self.loop_length_beats == 0:
-                    self.counter_quarters_loop += 1
-                    self.counter_quarters = 0
-                    self.counter_frames = 0
-
-    def is_finished(self):
-        if self.limit_frames != "inf":
-            assert isinstance(self.limit_frames, int)
-            if self.counter_frames >= self.limit_frames:
-                return True
-
-        return False
 
 
 @dataclass

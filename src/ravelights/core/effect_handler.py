@@ -131,6 +131,27 @@ class EffectHandler:
         self.effect_queue.append(effect_wrapper)
         self.root.refresh_ui(sse_event="effect")
 
+    def load_effect_quarters(
+        self,
+        effect_name: str,
+        limit_quarters: Optional[int],  # None == inf
+        multi: int = 1,
+        frames_pattern: FramesPattern = FramesPattern(1, (0,)),
+    ):
+        effect_wrapper: EffectWrapper = self.find_effect(name=effect_name)
+        limit_frames: Optional[int] = (
+            None
+            if limit_quarters is None
+            else int(limit_quarters * self.timehandler.quarter_time * self.timehandler.fps)
+        )
+        effect_wrapper.reset_frames(
+            limit_frames=limit_frames,
+            multi=multi,
+            frames_pattern=frames_pattern,
+        )
+        self.effect_queue.append(effect_wrapper)
+        self.root.refresh_ui(sse_event="effect")
+
     def load_effect(
         self,
         effect_name: str,
