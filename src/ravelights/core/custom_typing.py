@@ -1,6 +1,6 @@
 # ruff: noqa: F811
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, NamedTuple, NotRequired, Optional, Protocol, TypedDict
+from typing import TYPE_CHECKING, Any, Callable, NamedTuple, Optional, Protocol, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
