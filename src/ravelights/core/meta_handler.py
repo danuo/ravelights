@@ -61,7 +61,7 @@ class MetaHandler:
         self.api_content[key] = value
 
     def get_meta_available_timelines(self) -> list[str]:
-        timeline_names: list[str] = [blue["meta"]["name"] for blue in blueprint_timelines]
+        timeline_names: list[str] = [blue["meta"].name for blue in blueprint_timelines]
         return timeline_names
 
     def get_meta_available_keywords(self) -> list[str]:
@@ -127,8 +127,8 @@ class MetaHandler:
         svgs = []
         colors = [c for c in TIMELINE_COLORS.values()]
         for timeline in blueprint_timelines:
-            names.append(timeline["meta"].get("name", "unnamed"))
-            descriptions.append(timeline["meta"].get("description", "no description"))
+            names.append(timeline["meta"].name)
+            descriptions.append(timeline["meta"].description)
             svgs.append(self.get_svg_for_timeline(timeline))
         return dict(names=names, descriptions=descriptions, svgs=svgs, colors=colors)
 
