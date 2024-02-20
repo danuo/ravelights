@@ -121,7 +121,7 @@ class EventHandler:
                     "selectors": selectors,
                 }:
                     logger.debug(f"api: set_timeline with {timeline_index=}, {placements=} and {selectors=}")
-                    self.patternscheduler.load_timeline_from_index(
+                    self.patternscheduler.load_timeline_by_index(
                         index=int(timeline_index),
                         placements=placements,
                         selectors=selectors,

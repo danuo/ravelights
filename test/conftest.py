@@ -94,7 +94,7 @@ def patch_time(app: RaveLightsApp) -> RaveLightsApp:
 
     app.time_handler.get_current_time = get_global_time  # type: ignore[method-assign]
     app.time_handler.after = increase_globaltime  # type: ignore[method-assign]
-    app.pattern_scheduler.load_timeline_from_index(1)  # todo: load by name
+    app.pattern_scheduler.load_timeline_by_index(1)  # todo: load by name
 
     # disable autopilot
     app.settings.enable_autopilot = False

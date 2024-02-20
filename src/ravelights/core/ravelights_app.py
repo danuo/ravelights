@@ -60,7 +60,7 @@ class RaveLightsApp:
         self.rest_api = RestAPI(root=self, serve_webui=serve_webui, port=webui_port)
         self.audio_data = AudioDataProvider(root=self)
 
-        self.pattern_scheduler.load_timeline_from_index(self.settings.active_timeline_index)
+        self.pattern_scheduler.load_timeline_by_index(self.settings.active_timeline_index)
 
     def initiate_data_routers(self, transmitter_recipes: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]

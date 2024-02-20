@@ -1,6 +1,7 @@
 from unittest.mock import ANY, patch
 
 import pytest
+from ravelights.configs.components import blueprint_timelines
 from ravelights.core.settings import Settings  # noqa: F401
 
 
@@ -94,3 +95,37 @@ def test_autopilot_triggers(app_render_patched_3):
 
         with pytest.raises(Exception):
             mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=4)
+
+
+def test_autopilot_timeline_placement(app_render_patched_3):
+    app = app_render_patched_3
+    settings_autopilot = app.settings.settings_autopilot
+
+    app.settings.enable_autopilot = True
+
+    # test triggers
+    assert "triggers" in settings_autopilot
+
+    with patch("ravelights.core.pattern_scheduler.PatternScheduler.load_timeline_by_index") as mock_load_timeline:
+        settings_autopilot["timeline_placement"] = False
+        settings_autopilot["p_timeline_placement"] = 0.9
+        for _ in range(200):
+            app.render_frame()
+        mock_load_timeline.assert_not_called()
+
+        settings_autopilot["timeline_placement"] = True
+        settings_autopilot["p_timeline_placement"] = 0.0
+        for _ in range(200):
+            app.render_frame()
+        mock_load_timeline.assert_not_called()
+
+        settings_autopilot["timeline_placement"] = True
+        settings_autopilot["p_timeline_placement"] = 0.9
+        for _ in range(1000):
+            app.render_frame()
+
+        mock_load_timeline.assert_called()
+
+        for item in mock_load_timeline.mock_calls:
+            timeline_index = item.args[0]
+            assert blueprint_timelines[timeline_index]["meta"].weight != 0

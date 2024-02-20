@@ -2,12 +2,13 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from loguru import logger
+from ravelights.configs.components import blueprint_timelines
 from ravelights.core.color_handler import ColorHandler
 from ravelights.core.custom_typing import Slider, ToggleSlider
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
-from ravelights.core.utils import p
+from ravelights.core.utils import get_random_from_weights, p
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
@@ -70,8 +71,8 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
     ),
     ToggleSlider(
         type="toggle_slider",
-        name_toggle="timeline",
-        name_slider="p_timeline",
+        name_toggle="timeline_placement",
+        name_slider="p_timeline_placement",
         range_min=0.0,
         range_max=1.0,
         step=0.1,
@@ -79,8 +80,16 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
     ),
     ToggleSlider(
         type="toggle_slider",
-        name_toggle="alternate_pattern",
-        name_slider="p_alternate_pattern",
+        name_toggle="timeline_selector",
+        name_slider="p_timeline_selector",
+        range_min=0.0,
+        range_max=1.0,
+        step=0.1,
+        markers=True,
+    ),
+    Slider(
+        type="slider",
+        name_slider="p_timeline_selector_individual",
         range_min=0.0,
         range_max=1.0,
         step=0.1,
@@ -88,8 +97,8 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
     ),
     ToggleSlider(
         type="toggle_slider",
-        name_toggle="alternate_pattern_sec",
-        name_slider="p_alternate_pattern_sec",
+        name_toggle="alternate",
+        name_slider="p_alternate",
         range_min=0.0,
         range_max=1.0,
         step=0.1,
@@ -142,12 +151,13 @@ class AutoPilot:
             p_renew_dimmer=0.1,  # use in timeline genselector
             color_primary=True,
             p_color_primary=0.1,
-            timeline=True,
-            p_timeline=0.1,
-            alternate_pattern=True,
-            p_alternate_pattern=0.1,  # run on every item in selected seperately
-            alternate_pattern_sec=True,
-            p_alternate_pattern_sec=0.1,  # run on every item in selected seperately
+            timeline_placement=True,  # full timeline
+            p_timeline_placement=0.1,
+            timeline_selector=True,
+            p_timeline_selector=0.1,
+            p_timeline_selector_individual=0.1,
+            alternate=True,
+            p_alternate=0.1,  # run on every item in selected seperately
             triggers=True,
             p_triggers=0.1,  # run on every item in selected seperately
         )
@@ -164,7 +174,7 @@ class AutoPilot:
 
         logger.info("run randomize routine")
 
-        # ─── Colors ───────────────────────────────────────────────────
+        # ---------------------------------- colors ---------------------------------- #
 
         if self.settings.settings_autopilot["color_primary"]:
             if p(self.settings.settings_autopilot["p_color_primary"]):
@@ -172,7 +182,7 @@ class AutoPilot:
                 logger.info("set new color_primary")
                 self.settings.color_engine.set_color_with_rule(color=random_color, color_key="A")
 
-        # ─── Triggers ─────────────────────────────────────────────────
+        # --------------------------------- triggers --------------------------------- #
 
         if self.settings.settings_autopilot["triggers"]:
             for device_index, device in enumerate(self.devices):
@@ -188,3 +198,12 @@ class AutoPilot:
                                 gen_type=gen_type,
                                 timeline_level=timeline_level,
                             )
+
+        # --------------------------------- timeline --------------------------------- #
+
+        if self.settings.settings_autopilot["timeline_placement"]:
+            if p(self.settings.settings_autopilot["p_timeline_placement"]):
+                timeline_weights: list[float | int] = [blue["meta"].weight for blue in blueprint_timelines]
+                timeline_indices = list(range(len(timeline_weights)))
+                new_timeline_index = get_random_from_weights(timeline_indices, timeline_weights)
+                self.root.pattern_scheduler.load_timeline_by_index(new_timeline_index)
