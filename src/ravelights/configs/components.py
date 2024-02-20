@@ -1,7 +1,7 @@
 from enum import auto
 
 from ravelights.core.blueprints import BlueprintEffect, BlueprintGen
-from ravelights.core.custom_typing import Timeline
+from ravelights.core.custom_typing import Timeline, TimelineMeta
 from ravelights.core.generator_super import (
     DimmerNone,
     Pattern,
@@ -176,65 +176,57 @@ blueprint_effects: list[BlueprintEffect] = [
     BlueprintEffect(EffectFrameskip, name="e_frameskip"),
 ]
 
+# fmt: on
+
 # todo: effects need length, patterns do not
 blueprint_timelines: list[Timeline] = [
     {
-        "meta": {
-            "name": "all 1 level",
-        },
+        "meta": TimelineMeta(name="all 1 level"),
         "selectors": [
             GenSelector(gen_type=Pattern, level=1),
         ],
         "placements": [
-            GenPlacing(level=1, timings=[16*x for x in range(128//16)]),
+            GenPlacing(level=1, timings=[16 * x for x in range(128 // 16)]),
         ],
     },
     {
-        "meta": {
-            "name": "4beat 2level",
-        },
+        "meta": TimelineMeta(name="4beat 2level"),
         "selectors": [
             GenSelector(gen_type=Pattern, level=1),
             GenSelector(gen_type=Pattern, level=2),
             GenSelector(gen_type=Vfilter, level=1, p=0.1),
         ],
         "placements": [
-            GenPlacing(level=1, timings=[16*x for x in range(128//16)]),
-            GenPlacing(level=2, timings=[16*x + 12 for x in range(128//16)]),
+            GenPlacing(level=1, timings=[16 * x for x in range(128 // 16)]),
+            GenPlacing(level=2, timings=[16 * x + 12 for x in range(128 // 16)]),
         ],
     },
     {
-        "meta": {
-            "name": "2beat 2level fast",
-        },
+        "meta": TimelineMeta(name="2beat 2level fast"),
         "selectors": [
             GenSelector(gen_type=Pattern, level=1),
             GenSelector(gen_type=Pattern, level=2),
             GenSelector(gen_type=Vfilter, level=1, p=0.1),
         ],
         "placements": [
-            GenPlacing(level=1, timings=[2*4*x for x in range(128//8)]),
-            GenPlacing(level=2, timings=[2*4*x + 4 for x in range(128//8)]),
+            GenPlacing(level=1, timings=[2 * 4 * x for x in range(128 // 8)]),
+            GenPlacing(level=2, timings=[2 * 4 * x + 4 for x in range(128 // 8)]),
         ],
     },
     {
-        "meta": {
-            "name": "8beat 2level",
-        },
+        "meta": TimelineMeta(name="8beat 2level"),
         "selectors": [
             GenSelector(gen_type=Pattern, level=1),
             GenSelector(gen_type=Pattern, level=2),
             GenSelector(gen_type=Vfilter, level=1, p=0.2),
         ],
         "placements": [
-            GenPlacing(level=1, timings=[32*x for x in range(128//32)]),
-            GenPlacing(level=2, timings=[32*x + 28 for x in range(128//32)]),
+            GenPlacing(level=1, timings=[32 * x for x in range(128 // 32)]),
+            GenPlacing(level=2, timings=[32 * x + 28 for x in range(128 // 32)]),
         ],
     },
     {
-        "meta": {
-            "name": "8beat 3level",
-        },
+        "meta": TimelineMeta(name="8beat 3level"),
         "selectors": [
             GenSelector(gen_type=Pattern, level=1),
             GenSelector(gen_type=Pattern, level=2),
@@ -242,18 +234,15 @@ blueprint_timelines: list[Timeline] = [
             GenSelector(gen_type=Vfilter, level=1, p=0.2),
             GenSelector(gen_type=Vfilter, level=2, p=0.2),
             GenSelector(gen_type=Vfilter, level=3, p=0.2),
-
         ],
         "placements": [
-            GenPlacing(level=1, timings=[32*x for x in range(128//32)]),
-            GenPlacing(level=2, timings=[32*x + 28 for x in range(128//32)], trigger_on_change=True),
-            GenPlacing(level=3, timings=[32*x + 30 for x in range(128//32)], trigger_on_change=True),
+            GenPlacing(level=1, timings=[32 * x for x in range(128 // 32)]),
+            GenPlacing(level=2, timings=[32 * x + 28 for x in range(128 // 32)], trigger_on_change=True),
+            GenPlacing(level=3, timings=[32 * x + 30 for x in range(128 // 32)], trigger_on_change=True),
         ],
     },
     {
-        "meta": {
-            "name": "8beat 3level fast switching",
-        },
+        "meta": TimelineMeta(name="8beat 3level fast switching"),
         "selectors": [
             GenSelector(gen_type=Pattern, level=1),
             GenSelector(gen_type=Pattern, level=2),
@@ -261,19 +250,19 @@ blueprint_timelines: list[Timeline] = [
             GenSelector(gen_type=Vfilter, level=1, p=0.2),
             GenSelector(gen_type=Vfilter, level=2, p=0.2),
             GenSelector(gen_type=Vfilter, level=3, p=0.2),
-
         ],
         "placements": [
-            GenPlacing(level=1, timings=[8*x for x in range(128//8)]),
-            GenPlacing(level=2, timings=[8*x + 2 for x in range(128//8)], trigger_on_change=True),
-            GenPlacing(level=3, timings=[8*x + 4 for x in range(128//8)], trigger_on_change=True),
+            GenPlacing(level=1, timings=[8 * x for x in range(128 // 8)]),
+            GenPlacing(level=2, timings=[8 * x + 2 for x in range(128 // 8)], trigger_on_change=True),
+            GenPlacing(level=3, timings=[8 * x + 4 for x in range(128 // 8)], trigger_on_change=True),
         ],
     },
     {
-        "meta": {
-            "name": "DEBUG_TIMELINE",
-            "description": "does nothing but loading a single pattern by name",
-        },
+        "meta": TimelineMeta(
+            name="8beat 3level fast switching",
+            description="does nothing but loading a single pattern by name",
+            weight=0.0,
+        ),
         "selectors": [
             GenSelector(gen_type=Pattern, name="p_audio", level=1),
         ],

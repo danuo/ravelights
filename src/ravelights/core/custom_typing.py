@@ -1,5 +1,6 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, Callable, NamedTuple, Optional, Protocol, TypedDict
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Callable, NamedTuple, NotRequired, Optional, Protocol, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -66,8 +67,15 @@ class AvailableGenerators(TypedDict):
     effect: list[GeneratorMeta]
 
 
+@dataclass
+class TimelineMeta:
+    name: str
+    description: str = ""
+    weight: float | int = 1.0
+
+
 class Timeline(TypedDict):  # todo: move to custom typing
-    meta: dict[str, str]
+    meta: TimelineMeta
     selectors: list["GenSelector"]
     placements: list["GenPlacing"]
 
