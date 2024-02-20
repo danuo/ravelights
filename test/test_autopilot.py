@@ -1,11 +1,19 @@
 from unittest.mock import ANY, patch
 
 import pytest
+from ravelights import RaveLightsApp
 from ravelights.configs.components import blueprint_timelines
 from ravelights.core.settings import Settings  # noqa: F401
 
 
-def test_autopilot_color_primary(app_render_patched_3):
+def disable_all_autopilot(app: RaveLightsApp) -> None:
+    settings_autopilot = app.settings.settings_autopilot
+    for key in settings_autopilot:
+        if isinstance(settings_autopilot[key], bool):
+            settings_autopilot[key] = False
+
+
+def test_autopilot_color_primary(app_render_patched_3: RaveLightsApp):
     app = app_render_patched_3
     settings_autopilot = app.settings.settings_autopilot
 
@@ -46,9 +54,11 @@ def test_autopilot_color_primary(app_render_patched_3):
     assert value_has_changed is True
 
 
-def test_autopilot_triggers(app_render_patched_3):
+def test_autopilot_triggers(app_render_patched_3: RaveLightsApp):
     app = app_render_patched_3
     settings_autopilot = app.settings.settings_autopilot
+
+    disable_all_autopilot(app)
 
     app.settings.enable_autopilot = True
 
@@ -97,7 +107,7 @@ def test_autopilot_triggers(app_render_patched_3):
             mock_renew_trigger.assert_any_call(device_index=ANY, gen_type=ANY, timeline_level=4)
 
 
-def test_autopilot_timeline_placement(app_render_patched_3):
+def test_autopilot_timeline_placement(app_render_patched_3: RaveLightsApp):
     app = app_render_patched_3
     settings_autopilot = app.settings.settings_autopilot
 
