@@ -53,7 +53,7 @@ class PatternScheduler:
 
     def load_timeline_by_name(self, name: str) -> None:
         for index, timeline in enumerate(self.blueprint_timelines):
-            if timeline["meta"]["name"] == name:
+            if timeline["meta"].name == name:
                 self.load_timeline_by_index(index)
                 logger.debug(f"loading timeline {name} at index {index}")
                 return
