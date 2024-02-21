@@ -2,9 +2,10 @@ from typing import TYPE_CHECKING, Any, NamedTuple
 
 import numpy as np
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
-from ravelights.core.autopilot import AUTOPILOT_CONTROLS
+from ravelights.core.autopilot import CONTROLS_AUTOPILOT
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, Color, ColorHandler, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators, Slider, Timeline
+from ravelights.core.custom_typing import AvailableGenerators, Selector, Slider, Timeline
+from ravelights.core.settings import AutomateChorus
 from ravelights.core.timeline import GenPlacing
 
 if TYPE_CHECKING:
@@ -23,13 +24,16 @@ TIMELINE_COLORS = {
 }
 
 
+CONROLS_AUDIO = [Selector(options=[e.value for e in AutomateChorus])]
+
+
 CONTROLS_GLOBAL_SLIDERS = [
-    Slider(type="slider", name_slider="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(type="slider", name_slider="global_fade", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(type="slider", name_slider="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(type="slider", name_slider="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(type="slider", name_slider="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
-    Slider(type="slider", name_slider="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
+    Slider(name_slider="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(name_slider="global_manual_chorus", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(name_slider="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(name_slider="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(name_slider="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
+    Slider(name_slider="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
 ]
 
 
@@ -50,7 +54,8 @@ class MetaHandler:
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
-        self.api_content["controls_autopilot"] = AUTOPILOT_CONTROLS
+        self.api_content["controls_autopilot"] = CONTROLS_AUTOPILOT
+        self.api_content["controls_audio"] = CONROLS_AUDIO
         self.api_content["controls_color_palette"] = self.get_color_palette()
         self.api_content["color_sec_mode_names"] = [mode.value for mode in SecondaryColorModes]
 

@@ -1,4 +1,4 @@
-from ravelights.core.autopilot import AUTOPILOT_CONTROLS
+from ravelights.core.autopilot import CONTROLS_AUTOPILOT
 from ravelights.core.meta_handler import CONTROLS_GLOBAL_SLIDERS
 
 
@@ -6,7 +6,7 @@ def test_autopilot_controls(app_1):
     # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings_autopilot
     settings_autopilot = app_1.settings.settings_autopilot
 
-    for item in AUTOPILOT_CONTROLS:
+    for item in CONTROLS_AUTOPILOT:
         if item["type"] == "toggle_slider":
             assert item["name_toggle"] in settings_autopilot
             assert isinstance(settings_autopilot[item["name_toggle"]], bool)

@@ -1,10 +1,12 @@
 from dataclasses import InitVar, asdict, dataclass, field
+from enum import auto
 from typing import TYPE_CHECKING, Any, Literal, Optional
 
 from loguru import logger
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, ColorEngine, SecondaryColorModes
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.time_handler import BeatStatePattern
+from ravelights.core.utils import StrEnum
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keyword
@@ -12,6 +14,11 @@ if TYPE_CHECKING:
 
 
 N_LEVELS = 4
+
+
+class AutomateChorus(StrEnum):
+    manual = auto()
+    audio = auto()
 
 
 def get_default_selected() -> dict[str, list[str]]:
@@ -24,7 +31,7 @@ def get_default_selected() -> dict[str, list[str]]:
     return {
         "pattern": ["p_none" for _ in range(N_LEVELS)],
         "pattern_sec": ["p_none" for _ in range(N_LEVELS)],
-        "pattern_break": ["p_none" for _ in range(N_LEVELS)],  # todo: implement in renderpipeline
+        "pattern_break": ["p_none" for _ in range(N_LEVELS)],
         "vfilter": ["v_none" for _ in range(N_LEVELS)],
         "thinner": ["t_none" for _ in range(N_LEVELS)],
         "dimmer": ["d_none" for _ in range(N_LEVELS)],
@@ -103,10 +110,14 @@ class Settings:
     color_sec_mode: dict[str, str] = field(default_factory=get_default_color_sec_modes)
     color_mapping: dict[str, dict[str, str]] = field(default_factory=get_default_color_mappings)
     global_brightness: float = 1.0
-    global_fade: float = 1.0  # 1.0 -> main 0.0 -> break
     global_thinning_ratio: float = 0.5
     global_energy: float = 0.5
     global_triggerskip: int = 1
+
+    # ─── Chorus ───────────────────────────────────────────────────────────
+
+    automate_chorus: AutomateChorus = AutomateChorus.manual
+    global_manual_chorus: float = 1.0  # 1.0 -> main 0.0 -> break
 
     # ─── Effect Settings ──────────────────────────────────────────────────
 

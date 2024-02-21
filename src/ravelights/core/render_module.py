@@ -4,7 +4,7 @@ from loguru import logger
 from ravelights.core.custom_typing import ArrayFloat
 from ravelights.core.generator_super import Dimmer, Generator, Pattern, Thinner, Vfilter
 from ravelights.core.pixel_matrix import PixelMatrix
-from ravelights.core.settings import Settings
+from ravelights.core.settings import AutomateChorus, Settings
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
 
 if TYPE_CHECKING:
@@ -98,9 +98,15 @@ class RenderModule:
         assert array_break.shape == (self.pixelmatrix.n_leds, self.pixelmatrix.n_lights, 3), array_break.shape
 
         # ---------------------------------- combine --------------------------------- #
+        # todo: move this somewhere
+        effective_chorus: float = 1.0
+        if self.settings.automate_chorus == AutomateChorus.manual:
+            effective_chorus = self.settings.global_manual_chorus
+        if self.settings.automate_chorus == AutomateChorus.audio:
+            effective_chorus = self.root.audio_data.audio_data["level_low"]
         matrix = Generator.merge_matrices_with_weight(
             [array_chorus, array_break],
-            [self.settings.global_fade, 1 - self.settings.global_fade],
+            [effective_chorus, 1 - effective_chorus],
         )
 
         # ---------------------------- send to pixelmatrix --------------------------- #

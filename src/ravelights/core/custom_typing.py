@@ -80,20 +80,28 @@ class Timeline(TypedDict):  # todo: move to custom typing
     placements: list["GenPlacing"]
 
 
-class ToggleSlider(TypedDict):
-    type: str
+@dataclass
+class ToggleSlider:
     name_toggle: str
     name_slider: str
     range_min: float
     range_max: float
     step: float
     markers: bool
+    type: str = "toggle_slider"
 
 
-class Slider(TypedDict):
-    type: str
+@dataclass
+class Slider:
     name_slider: str
     range_min: float
     range_max: float
     step: float
     markers: bool
+    type: str = "slider"
+
+
+@dataclass
+class Selector:
+    options: list[str]
+    type: str = "selector"

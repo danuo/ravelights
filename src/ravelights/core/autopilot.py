@@ -14,9 +14,8 @@ if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
-AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
+CONTROLS_AUTOPILOT: list[Slider | ToggleSlider] = [
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="renew_pattern",
         name_slider="p_renew_pattern",
         range_min=0.0,
@@ -25,7 +24,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="renew_pattern_sec",
         name_slider="p_renew_pattern_sec",
         range_min=0.0,
@@ -34,7 +32,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="renew_vfilter",
         name_slider="p_renew_vfilter",
         range_min=0.0,
@@ -43,7 +40,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="renew_dimmer",
         name_slider="p_renew_dimmer",
         range_min=0.0,
@@ -52,7 +48,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="renew_thinner",
         name_slider="p_renew_thinner",
         range_min=0.0,
@@ -61,7 +56,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="color_primary",
         name_slider="p_color_primary",
         range_min=0.0,
@@ -70,7 +64,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="timeline_placement",
         name_slider="p_timeline_placement",
         range_min=0.0,
@@ -79,7 +72,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="timeline_selector",
         name_slider="p_timeline_selector",
         range_min=0.0,
@@ -88,7 +80,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     Slider(
-        type="slider",
         name_slider="p_timeline_selector_individual",
         range_min=0.0,
         range_max=1.0,
@@ -96,7 +87,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="alternate",
         name_slider="p_alternate",
         range_min=0.0,
@@ -105,7 +95,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     ToggleSlider(
-        type="toggle_slider",
         name_toggle="triggers",
         name_slider="p_triggers",
         range_min=0.0,
@@ -114,7 +103,6 @@ AUTOPILOT_CONTROLS: list[Slider | ToggleSlider] = [
         markers=True,
     ),
     Slider(
-        type="slider",
         name_slider="autopilot_loop_length",
         range_min=4,
         range_max=32,
