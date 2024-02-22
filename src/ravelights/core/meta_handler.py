@@ -168,12 +168,12 @@ class MetaHandler:
 
         return svg_string
 
-    def get_effect_timelines_meta(self) -> dict[str, Any]:
+    def get_effect_timelines_meta(self) -> dict[str, str]:
         """outputs {0: '1', 1: '2', 2: '4', 3: '8', 4: '16', 5: '32', 6: 'inf'}"""
         # todo: get rid of this
         steps = [2**x for x in range(6)]
         steps.append("inf")
-        return {i: s for i, s in enumerate(steps)}
+        return {str(index): step for index, step in enumerate(steps)}
 
     def get_color_palette(self) -> list[str]:
         # ─── Add Controls Color Palette ───────────────────────────────
