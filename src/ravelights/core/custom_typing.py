@@ -91,6 +91,11 @@ class ToggleSlider:
     type: str = "toggle_slider"
     target: Literal["app", "device"] = "app"
     advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.name_toggle
 
 
 @dataclass
@@ -103,17 +108,22 @@ class Slider:
     type: str = "slider"
     target: Literal["app", "device"] = "app"
     advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.name_slider
 
 
 @dataclass
 class Dropdown:
     var_name: str
     options: list[str]
-    label: Optional[str] = None
     type: str = "dropdown"
     conditional_var_name: Optional[str] = None
     target: Literal["app", "device"] = "app"
     advanced: bool = False
+    label: Optional[str] = None
 
     def __post_init__(self):
         if self.label is None:
