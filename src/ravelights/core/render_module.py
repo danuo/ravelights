@@ -68,8 +68,8 @@ class RenderModule:
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if device_index is None:
             device_index = (
-                self.device.settings.linked_to
-                if isinstance(self.device.settings.linked_to, int)
+                self.device.device_settings.linked_to
+                if isinstance(self.device.device_settings.linked_to, int)
                 else self.device.device_index
             )
         if timeline_level is None:
