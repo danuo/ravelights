@@ -39,9 +39,7 @@ CONTROLS_GLOBAL_SLIDERS = [
 
 
 class MetaHandler:
-    """
-    This creates objects/resources that are available via api to create elements of the UI
-    """
+    """creates resources that are available via api that are meant to be static during runtime"""
 
     def __init__(self, root: "RaveLightsApp"):
         self.root = root
