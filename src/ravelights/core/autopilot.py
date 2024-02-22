@@ -194,4 +194,5 @@ class AutoPilot:
                 timeline_weights: list[float | int] = [blue["meta"].weight for blue in blueprint_timelines]
                 timeline_indices = list(range(len(timeline_weights)))
                 new_timeline_index = get_random_from_weights(timeline_indices, timeline_weights)
+                assert isinstance(new_timeline_index, int)
                 self.root.pattern_scheduler.load_timeline_by_index(new_timeline_index)

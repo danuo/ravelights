@@ -155,33 +155,13 @@ class TriggersAPIResource(Resource):
         return make_response(jsonify(data), 200)
 
 
-resource_fields_devices = {
-    "device_index": fields.Integer,
-    "n_leds": fields.Integer,
-    "n_lights": fields.Integer,
-    "is_prim": fields.Boolean,
-    "linked_to": fields.Integer(default=None),
-    "device_triggerskip": fields.Integer,
-    "device_frameskip": fields.Integer,
-    "device_brightness": fields.Float,
-    "device_manual_timeline_level": fields.Integer(default=None),
-    "refresh_from_timeline": fields.Boolean,
-    "use_autopilot": fields.Boolean,
-    "use_effect": fields.Raw,
-}
-
-
 class DevicesAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
         self.devices: list["Device"] = root.devices
 
-    # @marshal_with(resource_fields_devices)
-    # def get(self):
-    #     return self.devices, 200
-
     def get(self):
-        return [asdict(d.settings) for d in self.devices], 200
+        return [asdict(device.device_settings) for device in self.devices], 200
 
 
 class MetaAPIResource(Resource):

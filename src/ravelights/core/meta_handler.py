@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, NamedTuple
 
 import numpy as np
+from flask_restful import fields, marshal
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.autopilot import CONTROLS_AUTOPILOT
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, Color, ColorHandler, SecondaryColorModes
@@ -58,6 +59,7 @@ class MetaHandler:
         self.api_content["controls_audio"] = CONROLS_AUDIO
         self.api_content["controls_color_palette"] = self.get_color_palette()
         self.api_content["color_sec_mode_names"] = [mode.value for mode in SecondaryColorModes]
+        self.api_content["device_meta"] = self.get_device_meta()
 
     def __getitem__(self, key: str):
         return self.api_content[key]
@@ -168,7 +170,7 @@ class MetaHandler:
 
         return svg_string
 
-    def get_effect_timelines_meta(self):
+    def get_effect_timelines_meta(self) -> dict[str, Any]:
         """outputs {0: '1', 1: '2', 2: '4', 3: '8', 4: '16', 5: '32', 6: 'inf'}"""
         # todo: get rid of this
         steps = [2**x for x in range(6)]
@@ -182,3 +184,13 @@ class MetaHandler:
             ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]
         ] + [Color(1, 1, 1)]
         return [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
+
+    def get_device_meta(self) -> list[dict[str, Any]]:
+        resource_fields_devices = {
+            "device_index": fields.Integer,
+            "n_leds": fields.Integer,
+            "n_lights": fields.Integer,
+            "is_prim": fields.Boolean,
+        }
+
+        return marshal(self.root.devices, resource_fields_devices)

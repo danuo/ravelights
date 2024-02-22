@@ -38,7 +38,8 @@ def test_flask_endpoints_rest_devices(client):
     response = client.get("/rest/devices")
     assert response.status_code == 200
     response_dict = json.loads(response.data)
-    assert "n_leds" in response_dict[0]
+    assert "linked_to" in response_dict[0]
+    assert response_dict[0]["linked_to"] is None
 
 
 def test_flask_endpoints_rest_meta(client):
@@ -46,6 +47,7 @@ def test_flask_endpoints_rest_meta(client):
     assert response.status_code == 200
     response_dict = json.loads(response.data)
     assert "available_generators" in response_dict
+    assert "n_leds" in response_dict["device_meta"][0]
 
 
 def test_flask_endpoints_rest_effect(client):

@@ -27,15 +27,18 @@ class Device:
         linked_to: Optional[int] = None,
         keywords: Optional[list[Keyword]] = None,
     ):
-        self.root = root
+        # meta
         self.device_index: int = device_index
         self.n_leds: int = n_leds
         self.n_lights: int = n_lights
         self.color_profile: ColorProfiles = color_profile
         self.is_prim: bool = True if device_index == 0 else False
-
         self.keywords: list[Keyword] = keywords if keywords else []  # todo
 
+        # settings
+        self.device_settings: DeviceSettings = DeviceSettings(linked_to=linked_to)
+
+        self.root = root
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.root.time_handler
         self.pixelmatrix: PixelMatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
@@ -46,12 +49,6 @@ class Device:
             rendermodule=self.rendermodule,
         )
         self.device_automatic_timeline_level: int = 0
-
-        # todo: remove
-        if isinstance(linked_to, int):
-            assert 0 <= linked_to < self.device_index
-
-        self.device_settings: DeviceSettings = DeviceSettings(linked_to=linked_to)
 
     def render(self):
         self.rendermodule.render()
