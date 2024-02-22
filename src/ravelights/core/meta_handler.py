@@ -51,15 +51,15 @@ class MetaHandler:
         self.api_content["available_timelines"] = self.get_meta_available_timelines()
         self.api_content["available_keywords"] = self.get_meta_available_keywords()
         self.api_content["available_generators"] = self.get_meta_available_generators()
-        self.api_content["controls_global_sliders"] = CONTROLS_GLOBAL_SLIDERS
         self.api_content["available_timelines_svg"] = self.get_all_timeline_svgs()  # formerly meta / timelines
         self.api_content["steps_dict"] = self.get_effect_timelines_meta()
         self.api_content["color_transition_speeds"] = [x.value for x in COLOR_TRANSITION_SPEEDS]
-        self.api_content["controls_autopilot"] = CONTROLS_AUTOPILOT
-        self.api_content["controls_audio"] = CONROLS_AUDIO
-        self.api_content["controls_color_palette"] = self.get_color_palette()
         self.api_content["color_sec_mode_names"] = [mode.value for mode in SecondaryColorModes]
         self.api_content["device_meta"] = self.get_device_meta()
+        self.api_content["color_palette"] = self.get_color_palette()
+        self.api_content["controls_global_sliders"] = CONTROLS_GLOBAL_SLIDERS
+        self.api_content["controls_audio"] = CONROLS_AUDIO
+        self.api_content["controls_autopilot"] = CONTROLS_AUTOPILOT
 
     def __getitem__(self, key: str):
         return self.api_content[key]
