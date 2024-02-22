@@ -81,6 +81,19 @@ class Timeline(TypedDict):  # todo: move to custom typing
 
 
 @dataclass
+class Toggle:
+    name_toggle: str
+    type: str = "toggle"
+    target: Literal["app", "device"] = "app"
+    advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.name_toggle
+
+
+@dataclass
 class ToggleSlider:
     name_toggle: str
     name_slider: str
