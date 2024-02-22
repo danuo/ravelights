@@ -5,7 +5,7 @@ from flask_restful import fields, marshal
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
 from ravelights.core.autopilot import CONTROLS_AUTOPILOT
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, Color, ColorHandler, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators, Selector, Slider, Timeline
+from ravelights.core.custom_typing import AvailableGenerators, Dropdown, Slider, Timeline
 from ravelights.core.settings import AutomateChorus
 from ravelights.core.timeline import GenPlacing
 
@@ -25,7 +25,7 @@ TIMELINE_COLORS = {
 }
 
 
-CONROLS_AUDIO = [Selector(var_name="automate_chorus", options=[e.value for e in AutomateChorus])]
+CONROLS_AUDIO = [Dropdown(var_name="automate_chorus", options=[e.value for e in AutomateChorus])]
 
 
 CONTROLS_GLOBAL_SLIDERS = [

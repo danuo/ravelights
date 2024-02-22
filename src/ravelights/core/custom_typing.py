@@ -88,8 +88,8 @@ class ToggleSlider:
     range_max: float
     step: float
     markers: bool
-    settings_type: Literal["app_settings", "device_settings"] = "app_settings"
     type: str = "toggle_slider"
+    target: Literal["app", "device"] = "app"
     advanced: bool = False
 
 
@@ -101,16 +101,18 @@ class Slider:
     step: float
     markers: bool
     type: str = "slider"
+    target: Literal["app", "device"] = "app"
     advanced: bool = False
 
 
 @dataclass
-class Selector:
+class Dropdown:
     var_name: str
     options: list[str]
     label: Optional[str] = None
-    type: str = "selector"
+    type: str = "dropdown"
     conditional_var_name: Optional[str] = None
+    target: Literal["app", "device"] = "app"
     advanced: bool = False
 
     def __post_init__(self):
