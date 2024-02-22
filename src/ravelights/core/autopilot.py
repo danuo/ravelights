@@ -174,7 +174,7 @@ class AutoPilot:
 
         if self.settings.settings_autopilot["triggers"]:
             for device_index, device in enumerate(self.devices):
-                if device.linked_to is not None:
+                if device.device_settings.linked_to is not None:
                     continue
 
                 for gen_type in ("pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"):

@@ -24,7 +24,7 @@ TIMELINE_COLORS = {
 }
 
 
-CONROLS_AUDIO = [Selector(options=[e.value for e in AutomateChorus])]
+CONROLS_AUDIO = [Selector(var_name="automate_chorus", options=[e.value for e in AutomateChorus])]
 
 
 CONTROLS_GLOBAL_SLIDERS = [

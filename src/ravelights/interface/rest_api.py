@@ -176,9 +176,12 @@ class DevicesAPIResource(Resource):
         super().__init__()
         self.devices: list["Device"] = root.devices
 
-    @marshal_with(resource_fields_devices)
+    # @marshal_with(resource_fields_devices)
+    # def get(self):
+    #     return self.devices, 200
+
     def get(self):
-        return self.devices, 200
+        return [asdict(d.settings) for d in self.devices], 200
 
 
 class MetaAPIResource(Resource):

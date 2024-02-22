@@ -80,10 +80,10 @@ class PatternScheduler:
         renew_trigger = self.settings.renew_trigger_from_timeline
 
         for device_index, device in enumerate(self.devices):
-            if not device.refresh_from_timeline:
+            if not device.device_settings.refresh_from_timeline:
                 continue
 
-            if isinstance(device.linked_to, int):
+            if isinstance(device.device_settings.linked_to, int):
                 continue
 
             genset: GeneratorSet = generator_selector.create_generator_set()

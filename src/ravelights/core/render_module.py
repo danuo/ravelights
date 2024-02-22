@@ -67,7 +67,11 @@ class RenderModule:
         timeline_level: Optional[int] = None,
     ) -> Pattern | Vfilter | Thinner | Dimmer:
         if device_index is None:
-            device_index = self.device.linked_to if isinstance(self.device.linked_to, int) else self.device.device_index
+            device_index = (
+                self.device.settings.linked_to
+                if isinstance(self.device.settings.linked_to, int)
+                else self.device.device_index
+            )
         if timeline_level is None:
             timeline_level = self.root.pattern_scheduler.get_effective_timeline_level(device_index)
         device_selected = self.settings.selected[device_index]
@@ -79,11 +83,11 @@ class RenderModule:
 
     def render(self) -> None:
         # ----------------------------- get device index ----------------------------- #
-        if isinstance(self.device.linked_to, int):
-            device_index = self.device.linked_to
-            if isinstance(self.root.devices[device_index].linked_to, int):
+        if isinstance(self.device.device_settings.linked_to, int):
+            device_index = self.device.device_settings.linked_to
+            if isinstance(self.root.devices[device_index].device_settings.linked_to, int):
                 # this device is linked to a device, that is linked itself -> change this link to final target with UI refresh
-                self.device.update_from_dict({"linked_to": self.root.devices[device_index].linked_to})
+                self.device.update_from_dict({"linked_to": self.root.devices[device_index].device_settings.linked_to})
 
         else:
             device_index = self.device.device_index
@@ -224,7 +228,7 @@ class RenderModule:
 
     def apply_frameskip(self, in_matrix: ArrayFloat) -> ArrayFloat:
         self.counter_frame += 1
-        frameskip = max(self.settings.global_frameskip, self.device.device_frameskip)
+        frameskip = max(self.settings.global_frameskip, self.device.device_settings.device_frameskip)
         if self.counter_frame % frameskip != 0:
             return self.matrix_memory.copy()
         else:

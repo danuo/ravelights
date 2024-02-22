@@ -113,10 +113,14 @@ class RaveLightsApp:
         """synchronizes the generators of given type across devices, if they are linked"""
         for gen_type in gen_type_list:
             for device in self.devices:
-                if device.linked_to is None:
+                if device.device_settings.linked_to is None:
                     continue
 
-                sync_dict = self.devices[device.linked_to].rendermodule.get_selected_generator(gen_type).sync_send()
+                sync_dict = (
+                    self.devices[device.device_settings.linked_to]
+                    .rendermodule.get_selected_generator(gen_type)
+                    .sync_send()
+                )
                 device.rendermodule.get_selected_generator(gen_type).sync_load(in_dict=sync_dict)
 
     def render_frame(self) -> None:

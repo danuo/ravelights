@@ -1,6 +1,6 @@
 # ruff: noqa: F811
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, NamedTuple, Optional, Protocol, TypedDict
+from typing import TYPE_CHECKING, Any, Callable, Literal, NamedTuple, Optional, Protocol, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -88,7 +88,9 @@ class ToggleSlider:
     range_max: float
     step: float
     markers: bool
+    settings_type: Literal["app_settings", "device_settings"] = "app_settings"
     type: str = "toggle_slider"
+    advanced: bool = False
 
 
 @dataclass
@@ -99,9 +101,18 @@ class Slider:
     step: float
     markers: bool
     type: str = "slider"
+    advanced: bool = False
 
 
 @dataclass
 class Selector:
+    var_name: str
     options: list[str]
+    label: Optional[str] = None
     type: str = "selector"
+    conditional_var_name: Optional[str] = None
+    advanced: bool = False
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.var_name
