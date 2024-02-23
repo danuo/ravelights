@@ -7,30 +7,32 @@ from ravelights.core.settings import Settings  # noqa: F401
 
 
 def disable_all_autopilot(app: RaveLightsApp) -> None:
-    settings_autopilot = app.settings.settings_autopilot
-    for key in settings_autopilot:
-        if isinstance(settings_autopilot[key], bool):
-            settings_autopilot[key] = False
+    # todo
+    settings = app.settings
+    PREFIX = "auto_"
+    for key in settings.__dict__:
+        if isinstance(getattr(settings, key), bool):
+            setattr(settings, key, False)
 
 
 def test_autopilot_color_primary(app_render_patched_3: RaveLightsApp):
     app = app_render_patched_3
-    settings_autopilot = app.settings.settings_autopilot
+    settings = app.settings
 
     app.settings.enable_autopilot = True
 
     # test color_primary
-    assert "color_primary" in settings_autopilot
-    settings_autopilot["color_primary"] = False
-    settings_autopilot["p_color_primary"] = 0.9
+    assert hasattr(settings, "auto_color_primary")
+    settings.auto_color_primary = False
+    settings.auto_p_color_primary = 0.9
     color_primary_before, color_secondary_before = app.settings.color_engine.get_colors_rgb(1)
     for _ in range(2_000):
         app.render_frame()
     color_primary_after, color_secondary_after = app.settings.color_engine.get_colors_rgb(1)
     assert color_primary_before == color_primary_after
 
-    settings_autopilot["color_primary"] = True
-    settings_autopilot["p_color_primary"] = 0.0
+    settings.auto_color_primary = True
+    settings.auto_p_color_primary = 0.0
     value_has_changed = False
     color_primary_before, color_secondary_before = app.settings.color_engine.get_colors_rgb(1)
 
@@ -44,7 +46,7 @@ def test_autopilot_color_primary(app_render_patched_3: RaveLightsApp):
     assert value_has_changed is False
 
     # check with p = 0.5 -> color should change
-    settings_autopilot["p_color_primary"] = 0.5
+    settings.auto_p_color_primary = 0.5
     for _ in range(1_000):
         app.render_frame()
         color_primary_now, color_secondary_now = app.settings.color_engine.get_colors_rgb(1)
@@ -56,30 +58,28 @@ def test_autopilot_color_primary(app_render_patched_3: RaveLightsApp):
 
 def test_autopilot_triggers(app_render_patched_3: RaveLightsApp):
     app = app_render_patched_3
-    settings_autopilot = app.settings.settings_autopilot
-
     disable_all_autopilot(app)
-
+    settings = app.settings
     app.settings.enable_autopilot = True
 
     # test triggers
-    assert "triggers" in settings_autopilot
+    assert hasattr(settings, "auto_triggers")
 
     with patch("ravelights.core.settings.Settings.renew_trigger") as mock_renew_trigger:
-        settings_autopilot["triggers"] = False
-        settings_autopilot["p_triggers"] = 0.9
+        settings.auto_triggers = False
+        settings.auto_p_triggers = 0.9
         for _ in range(200):
             app.render_frame()
         mock_renew_trigger.assert_not_called()
 
-        settings_autopilot["triggers"] = True
-        settings_autopilot["p_triggers"] = 0.0
+        settings.auto_triggers = True
+        settings.auto_p_triggers = 0.0
         for _ in range(200):
             app.render_frame()
         mock_renew_trigger.assert_not_called()
 
-        settings_autopilot["triggers"] = True
-        settings_autopilot["p_triggers"] = 0.9
+        settings.auto_triggers = True
+        settings.auto_p_triggers = 0.9
         for _ in range(1000):
             app.render_frame()
 
@@ -109,28 +109,28 @@ def test_autopilot_triggers(app_render_patched_3: RaveLightsApp):
 
 def test_autopilot_timeline_placement(app_render_patched_3: RaveLightsApp):
     app = app_render_patched_3
-    settings_autopilot = app.settings.settings_autopilot
+    settings = app.settings
 
-    app.settings.enable_autopilot = True
+    settings.enable_autopilot = True
 
     # test triggers
-    assert "triggers" in settings_autopilot
+    assert hasattr(settings, "auto_triggers")
 
     with patch("ravelights.core.pattern_scheduler.PatternScheduler.load_timeline_by_index") as mock_load_timeline:
-        settings_autopilot["timeline_placement"] = False
-        settings_autopilot["p_timeline_placement"] = 0.9
+        settings.auto_timeline_placement = False
+        settings.auto_p_timeline_placement = 0.9
         for _ in range(200):
             app.render_frame()
         mock_load_timeline.assert_not_called()
 
-        settings_autopilot["timeline_placement"] = True
-        settings_autopilot["p_timeline_placement"] = 0.0
+        settings.auto_timeline_placement = True
+        settings.auto_p_timeline_placement = 0.0
         for _ in range(200):
             app.render_frame()
         mock_load_timeline.assert_not_called()
 
-        settings_autopilot["timeline_placement"] = True
-        settings_autopilot["p_timeline_placement"] = 0.9
+        settings.auto_timeline_placement = True
+        settings.auto_p_timeline_placement = 0.9
         for _ in range(1000):
             app.render_frame()
 

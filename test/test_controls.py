@@ -1,33 +1,44 @@
 from ravelights.core.autopilot import CONTROLS_AUTOPILOT
-from ravelights.core.meta_handler import CONTROLS_GLOBAL_SLIDERS
+from ravelights.core.custom_typing import Dropdown, Slider, Toggle, ToggleSlider
+from ravelights.core.meta_handler import CONROLS_AUDIO, CONTROLS_GLOBAL_SLIDERS
 
 
-def test_autopilot_controls(app_1):
-    # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings_autopilot
-    settings_autopilot = app_1.settings.settings_autopilot
-
-    for item in CONTROLS_AUTOPILOT:
-        if item.type == "toggle_slider":
-            assert item.name_toggle in settings_autopilot
-            assert isinstance(settings_autopilot[item.name_toggle], bool)
-            assert item.name_slider in settings_autopilot
-            assert isinstance(settings_autopilot[item.name_slider], float) or isinstance(
-                settings_autopilot[item.name_slider], int
-            )
-        if item.type == "slider":
-            assert item.name_slider in settings_autopilot
-            assert isinstance(settings_autopilot[item.name_slider], float) or isinstance(
-                settings_autopilot[item.name_slider], int
-            )
+def test_controls_autopilot(app_1):
+    # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings
+    settings = app_1.settings
+    check_if_controls_in_settings(CONTROLS_AUTOPILOT, settings)
 
 
 def test_controls_global_sliders(app_1):
-    # checks that all setting vars in CONTROLS_GLOBAL_SLIDERS are present in settings
+    # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings
     settings = app_1.settings
+    check_if_controls_in_settings(CONTROLS_GLOBAL_SLIDERS, settings)
 
-    for item in CONTROLS_GLOBAL_SLIDERS:
-        if item.type == "slider":
-            assert hasattr(settings, item.name_slider)
-            assert isinstance(getattr(settings, item.name_slider), float) or isinstance(
-                getattr(settings, item.name_slider), int
+
+def test_controls_audio(app_1):
+    # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings
+    settings = app_1.settings
+    check_if_controls_in_settings(CONROLS_AUDIO, settings)
+
+
+def check_if_controls_in_settings(controls: list[Dropdown | Toggle | Slider | ToggleSlider], settings):
+    for item in CONTROLS_AUTOPILOT:
+        if isinstance(item, Dropdown):
+            assert hasattr(settings, item.var_name)
+            assert isinstance(getattr(settings, item.var_name), str)
+        elif isinstance(item, Slider):
+            assert hasattr(settings, item.var_name)
+            assert isinstance(getattr(settings, item.var_name), float) or isinstance(
+                getattr(settings, item.var_name), int
+            )
+        elif isinstance(item, Toggle):
+            assert hasattr(settings, item.var_name)
+            assert isinstance(getattr(settings, item.var_name), bool)
+        elif isinstance(item, ToggleSlider):
+            assert hasattr(settings, item.var_name_toggle)
+            assert getattr(settings, item.var_name_toggle)
+            assert isinstance(getattr(settings, item.var_name_toggle), bool)
+            assert hasattr(settings, item.var_name_slider)
+            assert isinstance(getattr(settings, item.var_name_slider), float) or isinstance(
+                getattr(settings, item.var_name_slider), int
             )

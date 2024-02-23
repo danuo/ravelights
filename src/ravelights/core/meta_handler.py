@@ -29,12 +29,12 @@ CONROLS_AUDIO = [Dropdown(var_name="automate_chorus", options=[e.value for e in 
 
 
 CONTROLS_GLOBAL_SLIDERS = [
-    Slider(name_slider="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(name_slider="global_manual_chorus", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(name_slider="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(name_slider="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(name_slider="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
-    Slider(name_slider="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
+    Slider(var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(var_name="global_manual_chorus", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+    Slider(var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
+    Slider(var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
 ]
 
 
@@ -178,10 +178,10 @@ class MetaHandler:
     def get_color_palette(self) -> list[str]:
         # ─── Add Controls Color Palette ───────────────────────────────
         n_colors = 11
-        controls_color_palette = [
-            ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]
-        ] + [Color(1, 1, 1)]
-        return [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in controls_color_palette]
+        color_palette = [ColorHandler.get_color_from_hue(hue) for hue in np.linspace(0, 1, n_colors + 1)[:-1]] + [
+            Color(1, 1, 1)
+        ]
+        return [f"rgb({int(r*255)},{int(g*255)},{int(b*255)})" for (r, g, b) in color_palette]
 
     def get_device_meta(self) -> list[dict[str, Any]]:
         resource_fields_devices = {

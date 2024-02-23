@@ -160,7 +160,28 @@ class Settings:
     # ─── Autopilot ────────────────────────────────────────────────────────
 
     enable_autopilot: bool = False
-    settings_autopilot: dict[str, Any] = field(default_factory=dict)
+    auto_loop_length: int = 4
+    auto_renew_pattern: bool = True
+    auto_p_renew_pattern: float = 0.1  # use in timeline genselector
+    auto_renew_pattern_sec: bool = True
+    auto_p_renew_pattern_sec: float = 0.1  # use in timeline genselector
+    auto_renew_vfilter: bool = True
+    auto_p_renew_vfilter: float = 0.1  # use in timeline genselector
+    auto_renew_thinner: bool = True
+    auto_p_renew_thinner: float = 0.1  # use in timeline genselector
+    auto_renew_dimmer: bool = True
+    auto_p_renew_dimmer: float = 0.1  # use in timeline genselector
+    auto_color_primary: bool = True
+    auto_p_color_primary: float = 0.1
+    auto_timeline_placement: bool = True  # full timeline
+    auto_p_timeline_placement: float = 0.1
+    auto_timeline_selector: bool = True
+    auto_p_timeline_selector: float = 0.1
+    auto_p_timeline_selector_individual: float = 0.1
+    auto_alternate: bool = True
+    auto_p_alternate: float = 0.1  # run on every item in selected seperately
+    auto_triggers: bool = True
+    auto_p_triggers: float = 0.1  # run on every item in selected seperately
 
     def __post_init__(self, root_init: "RaveLightsApp") -> None:
         self.root = root_init
@@ -248,6 +269,8 @@ class Settings:
         self.root.refresh_ui(sse_event="triggers")
 
     def set_settings_autopilot(self, in_dict) -> None:
+        # todo: remove
+        assert False, "use set_settings"
         logger.debug(f"set_settings_autopilot with {in_dict=}")
         self.settings_autopilot.update(in_dict)
         self.root.refresh_ui(sse_event="settings")

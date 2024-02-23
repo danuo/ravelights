@@ -91,6 +91,7 @@ class EventHandler:
                     self.settings.update_from_dict(other_kwargs)
 
                 case {"action": "set_settings_autopilot", **other_kwargs}:
+                    assert False, "use normal set_settings"
                     logger.debug("api: set_settings_autopilot (...)")
                     self.settings.set_settings_autopilot(other_kwargs)
 

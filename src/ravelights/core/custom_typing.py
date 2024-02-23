@@ -82,7 +82,7 @@ class Timeline(TypedDict):  # todo: move to custom typing
 
 @dataclass
 class Toggle:
-    name_toggle: str
+    var_name: str
     type: str = "toggle"
     target: Literal["app", "device"] = "app"
     advanced: bool = False
@@ -90,13 +90,13 @@ class Toggle:
 
     def __post_init__(self):
         if self.label is None:
-            self.label = self.name_toggle
+            self.label = self.var_name
 
 
 @dataclass
 class ToggleSlider:
-    name_toggle: str
-    name_slider: str
+    var_name_toggle: str
+    var_name_slider: str
     range_min: float
     range_max: float
     step: float
@@ -108,12 +108,12 @@ class ToggleSlider:
 
     def __post_init__(self):
         if self.label is None:
-            self.label = self.name_toggle
+            self.label = self.var_name_toggle
 
 
 @dataclass
 class Slider:
-    name_slider: str
+    var_name: str
     range_min: float
     range_max: float
     step: float
@@ -125,7 +125,7 @@ class Slider:
 
     def __post_init__(self):
         if self.label is None:
-            self.label = self.name_slider
+            self.label = self.var_name
 
 
 @dataclass
