@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from loguru import logger
 from ravelights.configs.components import blueprint_timelines
 from ravelights.core.color_handler import ColorHandler
-from ravelights.core.custom_typing import Slider, ToggleSlider
+from ravelights.core.custom_typing import PaddedSlider, Slider, ToggleSlider
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
@@ -78,7 +78,7 @@ CONTROLS_AUTOPILOT: list[Slider | ToggleSlider] = [
         step=0.1,
         markers=True,
     ),
-    Slider(
+    PaddedSlider(
         var_name="auto_p_timeline_selector_individual",
         range_min=0.0,
         range_max=1.0,
@@ -101,7 +101,7 @@ CONTROLS_AUTOPILOT: list[Slider | ToggleSlider] = [
         step=0.1,
         markers=True,
     ),
-    Slider(
+    PaddedSlider(
         var_name="auto_loop_length",
         range_min=4,
         range_max=32,

@@ -129,6 +129,11 @@ class Slider:
 
 
 @dataclass
+class PaddedSlider(Slider):
+    type: str = "padded_slider"
+
+
+@dataclass
 class Dropdown:
     var_name: str
     options: list[str]

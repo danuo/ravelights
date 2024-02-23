@@ -1,5 +1,5 @@
 from ravelights.core.autopilot import CONTROLS_AUTOPILOT
-from ravelights.core.custom_typing import Dropdown, Slider, Toggle, ToggleSlider
+from ravelights.core.custom_typing import Dropdown, PaddedSlider, Slider, Toggle, ToggleSlider
 from ravelights.core.meta_handler import CONROLS_AUDIO, CONTROLS_GLOBAL_SLIDERS
 
 
@@ -21,12 +21,12 @@ def test_controls_audio(app_1):
     check_if_controls_in_settings(CONROLS_AUDIO, settings)
 
 
-def check_if_controls_in_settings(controls: list[Dropdown | Toggle | Slider | ToggleSlider], settings):
+def check_if_controls_in_settings(controls: list[Dropdown | Toggle | Slider | PaddedSlider | ToggleSlider], settings):
     for item in CONTROLS_AUTOPILOT:
         if isinstance(item, Dropdown):
             assert hasattr(settings, item.var_name)
             assert isinstance(getattr(settings, item.var_name), str)
-        elif isinstance(item, Slider):
+        elif isinstance(item, Slider):  # also includes PaddedSlider
             assert hasattr(settings, item.var_name)
             assert isinstance(getattr(settings, item.var_name), float) or isinstance(
                 getattr(settings, item.var_name), int
