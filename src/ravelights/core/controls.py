@@ -1,11 +1,13 @@
 from ravelights.core.custom_typing import Dropdown, PaddedSlider, Slider, Toggle, ToggleSlider
 from ravelights.core.settings import AutomateChorus
 
-CONTROLS_AUDIO = [Dropdown(var_name="automate_chorus", options=[e.value for e in AutomateChorus])]
+CONTROLS_AUDIO = [
+    Dropdown(var_name="automate_chorus", options=[e.value for e in AutomateChorus]),
+    Slider(var_name="global_manual_chorus", range_min=0.0, range_max=1.0, step=0.1, markers=True),
+]
 
 CONTROLS_GLOBAL_SLIDERS: list[Slider] = [
     Slider(var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(var_name="global_manual_chorus", range_min=0.0, range_max=1.0, step=0.1, markers=True),
     Slider(var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
     Slider(var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
     Slider(var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
