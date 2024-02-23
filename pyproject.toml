@@ -64,5 +64,6 @@ ignore_missing_imports = true
 testpaths = "test"
 markers = [
     "slow: marks tests as slow",
+    "playwright: marks tests that depend on playwright",
 ]
-addopts = "-m 'not slow'"
+addopts = "-m 'not slow not playwright'"

@@ -25,3 +25,20 @@ jobs:
 
       - name: Run pytest slow
         run: "pytest -m slow"
+
+  test-ui:
+    runs-on: container
+    container:
+      image: mcr.microsoft.com/playwright:latest
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            submodules: recursive
+
+        - name: Install dependencies
+          run: pip install -e .[dev]
+
+        - name: Run pytest playwright
+          run: "pytest -m playwright"
