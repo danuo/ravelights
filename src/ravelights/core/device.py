@@ -70,10 +70,10 @@ class Device:
     def update_from_dict(self, update_dict: dict[str, Any]):
         assert isinstance(update_dict, dict)
         for key, value in update_dict.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
+            if hasattr(self.device_settings, key):
+                setattr(self.device_settings, key, value)
             else:
-                logger.warning(f"key {key} does not exist in settings")
+                logger.warning(f"key {key} does not exist in device_settings")
         self.root.refresh_ui(sse_event="devices")
 
     def get_effective_timeline_level(self) -> int:
