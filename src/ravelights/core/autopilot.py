@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from loguru import logger
 from ravelights.configs.components import blueprint_timelines
 from ravelights.core.color_handler import ColorHandler
-from ravelights.core.custom_typing import PaddedSlider, Slider, ToggleSlider
+from ravelights.core.custom_typing import PaddedSlider, Toggle, ToggleSlider
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
@@ -13,7 +13,10 @@ if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
 
 
-CONTROLS_AUTOPILOT: list[Slider | ToggleSlider] = [
+CONTROLS_AUTOPILOT: list[Toggle | PaddedSlider | ToggleSlider] = [
+    Toggle(
+        var_name="enable_autopilot",
+    ),
     ToggleSlider(
         var_name_toggle="auto_renew_pattern",
         var_name_slider="auto_p_renew_pattern",
