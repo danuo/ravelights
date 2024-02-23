@@ -66,4 +66,4 @@ markers = [
     "slow: marks tests as slow",
     "playwright: marks tests that depend on playwright",
 ]
-addopts = "-m 'not slow not playwright'"
+addopts = "-m 'not slow and not playwright'"
