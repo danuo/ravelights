@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 from loguru import logger
 from ravelights.configs.components import blueprint_timelines
 from ravelights.core.color_handler import ColorHandler
-from ravelights.core.custom_typing import PaddedSlider, Toggle, ToggleSlider
 from ravelights.core.device import Device
 from ravelights.core.settings import Settings
 from ravelights.core.time_handler import BeatStatePattern, TimeHandler
@@ -11,107 +10,6 @@ from ravelights.core.utils import get_random_from_weights, p
 
 if TYPE_CHECKING:
     from ravelights.core.ravelights_app import RaveLightsApp
-
-
-CONTROLS_AUTOPILOT: list[Toggle | PaddedSlider | ToggleSlider] = [
-    Toggle(
-        var_name="enable_autopilot",
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_renew_pattern",
-        var_name_slider="auto_p_renew_pattern",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_renew_pattern_sec",
-        var_name_slider="auto_p_renew_pattern_sec",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_renew_vfilter",
-        var_name_slider="auto_p_renew_vfilter",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_renew_dimmer",
-        var_name_slider="auto_p_renew_dimmer",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_renew_thinner",
-        var_name_slider="auto_p_renew_thinner",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_color_primary",
-        var_name_slider="auto_p_color_primary",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_timeline_placement",
-        var_name_slider="auto_p_timeline_placement",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_timeline_selector",
-        var_name_slider="auto_p_timeline_selector",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    PaddedSlider(
-        var_name="auto_p_timeline_selector_individual",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_alternate",
-        var_name_slider="auto_p_alternate",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    ToggleSlider(
-        var_name_toggle="auto_triggers",
-        var_name_slider="auto_p_triggers",
-        range_min=0.0,
-        range_max=1.0,
-        step=0.1,
-        markers=True,
-    ),
-    PaddedSlider(
-        var_name="auto_loop_length",
-        range_min=4,
-        range_max=32,
-        step=4,
-        markers=True,
-    ),
-]
 
 
 class AutoPilot:

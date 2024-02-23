@@ -3,10 +3,9 @@ from typing import TYPE_CHECKING, Any, NamedTuple
 import numpy as np
 from flask_restful import fields, marshal
 from ravelights.configs.components import Keyword, blueprint_effects, blueprint_generators, blueprint_timelines
-from ravelights.core.autopilot import CONTROLS_AUTOPILOT
 from ravelights.core.color_handler import COLOR_TRANSITION_SPEEDS, Color, ColorHandler, SecondaryColorModes
-from ravelights.core.custom_typing import AvailableGenerators, Dropdown, Slider, Timeline
-from ravelights.core.settings import AutomateChorus
+from ravelights.core.controls import CONTROLS_AUDIO, CONTROLS_AUTOPILOT, CONTROLS_GLOBAL_SLIDERS
+from ravelights.core.custom_typing import AvailableGenerators, Timeline
 from ravelights.core.timeline import GenPlacing
 
 if TYPE_CHECKING:
@@ -23,19 +22,6 @@ TIMELINE_COLORS = {
     2: "rgb(55,30,95)",
     3: "rgb(81,255,0)",
 }
-
-
-CONROLS_AUDIO = [Dropdown(var_name="automate_chorus", options=[e.value for e in AutomateChorus])]
-
-
-CONTROLS_GLOBAL_SLIDERS = [
-    Slider(var_name="global_brightness", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(var_name="global_manual_chorus", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(var_name="global_energy", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(var_name="global_thinning_ratio", range_min=0.0, range_max=1.0, step=0.1, markers=True),
-    Slider(var_name="global_frameskip", range_min=1, range_max=8, step=1, markers=True),
-    Slider(var_name="global_triggerskip", range_min=1, range_max=8, step=1, markers=True),
-]
 
 
 class MetaHandler:
@@ -56,7 +42,7 @@ class MetaHandler:
         self.api_content["device_meta"] = self.get_device_meta()
         self.api_content["color_palette"] = self.get_color_palette()
         self.api_content["controls_global_sliders"] = CONTROLS_GLOBAL_SLIDERS
-        self.api_content["controls_audio"] = CONROLS_AUDIO
+        self.api_content["controls_audio"] = CONTROLS_AUDIO
         self.api_content["controls_autopilot"] = CONTROLS_AUTOPILOT
 
     def __getitem__(self, key: str):

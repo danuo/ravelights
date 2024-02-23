@@ -1,6 +1,5 @@
-from ravelights.core.autopilot import CONTROLS_AUTOPILOT
+from ravelights.core.controls import CONTROLS_AUDIO, CONTROLS_AUTOPILOT, CONTROLS_GLOBAL_SLIDERS
 from ravelights.core.custom_typing import Dropdown, PaddedSlider, Slider, Toggle, ToggleSlider
-from ravelights.core.meta_handler import CONROLS_AUDIO, CONTROLS_GLOBAL_SLIDERS
 
 
 def test_controls_autopilot(app_1):
@@ -18,7 +17,7 @@ def test_controls_global_sliders(app_1):
 def test_controls_audio(app_1):
     # checks that all controls in AUTOPILOT_CONTROLS have a valid setting in settings
     settings = app_1.settings
-    check_if_controls_in_settings(CONROLS_AUDIO, settings)
+    check_if_controls_in_settings(CONTROLS_AUDIO, settings)
 
 
 def check_if_controls_in_settings(controls: list[Dropdown | Toggle | Slider | PaddedSlider | ToggleSlider], settings):
