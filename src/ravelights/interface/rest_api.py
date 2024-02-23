@@ -82,6 +82,7 @@ class RestAPI:
             logger.info("disconnected - websocket client connected")
             logger.info(f"{self.websocket_num_clients} connected in total")
 
+    def start(self):
         self.start_threaded()
 
     def block_once(self):

@@ -73,6 +73,7 @@ class RaveLightsApp:
         return data_routers
 
     def start(self) -> None:
+        self.rest_api.start()
         connectivity_check.wait_until_connected_to_network()
         discovery_service.start()
 
