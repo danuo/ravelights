@@ -89,16 +89,18 @@ class DataRouterWebsocket(DataRouter):
     def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "rest_api"):
             if self.root.rest_api.websocket_num_clients > 0:
-                device_index = self.settings.target_device_index
-                if device_index is None:
-                    device_index = 0
-                matrix_int = matrices_int[device_index]
-                matrix_int = matrix_int.reshape((-1, 3), order="F")
+                if self.root.devices[0].rendermodule.counter_frame % 2 == 0:
+                    # only every 2nd frame
+                    device_index = self.settings.target_device_index
+                    if device_index is None:
+                        device_index = 0
+                    matrix_int = matrices_int[device_index]
+                    matrix_int = matrix_int.reshape((-1, 3), order="F")
 
-                # turn into rgba
-                matrix_int_padded = np.pad(matrix_int, pad_width=((0, 0), (0, 1)), constant_values=255)
-                data = matrix_int_padded.flatten().tobytes()
-                self.root.rest_api.socketio.send(data)
+                    # turn into rgba
+                    matrix_int_padded = np.pad(matrix_int, pad_width=((0, 0), (0, 1)), constant_values=255)
+                    data = matrix_int_padded.flatten().tobytes()
+                    self.root.rest_api.socketio.send(data)
 
 
 class DataRouterVisualizer(DataRouter):
