@@ -89,7 +89,11 @@ class DataRouterWebsocket(DataRouter):
     def transmit_matrix(self, matrices_processed_int: list[ArrayUInt8], matrices_int: list[ArrayUInt8]):
         if hasattr(self.root, "rest_api"):
             if self.root.rest_api.websocket_num_clients > 0:
-                if self.root.devices[0].rendermodule.counter_frame % 2 == 0:
+                show_frame = True
+                if self.settings.visualizer_half_framerate:
+                    show_frame = self.root.devices[0].rendermodule.counter_frame % 2 == 0
+
+                if show_frame:
                     # only every 2nd frame
                     device_index = self.settings.target_device_index
                     if device_index is None:

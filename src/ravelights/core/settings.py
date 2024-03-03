@@ -93,6 +93,7 @@ class Settings:
     use_visualizer: bool
     print_stats: bool
     serve_webui: bool
+    visualizer_half_framerate: bool = False
 
     # ─── Meta Information ─────────────────────────────────────────────────
     generator_classes_identifiers: tuple[str, ...] = (
