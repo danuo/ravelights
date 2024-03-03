@@ -35,6 +35,7 @@ gui = [
 ]
 audio = [
     "pyaudio == 0.2.14",
+    "aubio == 0.4.9",
 ]
 
 [build-system]

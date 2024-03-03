@@ -7,7 +7,6 @@ services:
     volumes:
       - .:/app
     network_mode: "host"
-    command: python3 main.py --artnet-wifi --no-visualizer
-    #command: python3 main.py --artnet-wifi --artnet-address 192.168.188.21 --no-visualizer
-    devices:
-      - "/dev/ttyAMA0:/dev/ttyAMA0"
+    command: python3 main.py --artnet-wifi --no-visualizer --no-audio --fps 30
+    # devices:
+    #   - "/dev/ttyAMA0:/dev/ttyAMA0" # Map serial port for artnet over serial
