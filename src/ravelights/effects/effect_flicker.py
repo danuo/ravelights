@@ -2,7 +2,7 @@ import random
 
 from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.effects.effect_super import Effect
+from ravelights.core.effect_super import Effect
 
 
 class EffectFlicker(Effect):
@@ -17,7 +17,7 @@ class EffectFlicker(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         """Called each render cycle"""
         return in_matrix * random.random()
 

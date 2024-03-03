@@ -1,3 +1,4 @@
+from ravelights.constants import __version__
 from ravelights.core.custom_typing import LightIdentifier, TransmitterConfig
 from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.ravelights_app import RaveLightsApp
@@ -20,5 +21,3 @@ __all__ = [
     "ArtnetSerialTransmitter",
     "ColorProfiles",
 ]
-
-__version__ = "0.5.0"

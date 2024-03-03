@@ -30,7 +30,7 @@ class VfilterRgbShift(Vfilter):
         self.shift = self.init_shift
         random.shuffle(self.order)
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         if self.timehandler.beat_state.is_beat:
             self.on_trigger()
         if self.shift > self.limit:

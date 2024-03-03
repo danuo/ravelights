@@ -82,6 +82,7 @@ class RestAPI:
             logger.info("disconnected - websocket client connected")
             logger.info(f"{self.websocket_num_clients} connected in total")
 
+    def start(self):
         self.start_threaded()
 
     def block_once(self):
@@ -127,9 +128,9 @@ class RestAPI:
 class SettingsAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.eventhandler = root.eventhandler
+        self.eventhandler = root.event_handler
         self.settings: Settings = root.settings
-        self.patternscheduler: PatternScheduler = root.patternscheduler
+        self.patternscheduler: PatternScheduler = root.pattern_scheduler
 
     def get(self):
         data = asdict(self.settings)
@@ -155,32 +156,19 @@ class TriggersAPIResource(Resource):
         return make_response(jsonify(data), 200)
 
 
-resource_fields_devices = {
-    "device_id": fields.Integer,
-    "n_leds": fields.Integer,
-    "n_lights": fields.Integer,
-    "is_prim": fields.Boolean,
-    "device_manual_timeline_level": fields.Integer,
-    "device_triggerskip": fields.Integer,
-    "device_frameskip": fields.Integer,
-    "device_brightness": fields.Float,
-}
-
-
 class DevicesAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
         self.devices: list["Device"] = root.devices
 
-    @marshal_with(resource_fields_devices)
     def get(self):
-        return self.devices, 200
+        return [asdict(device.device_settings) for device in self.devices], 200
 
 
 class MetaAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
-        self.metahandler: MetaHandler = root.metahandler
+        self.metahandler: MetaHandler = root.meta_handler
         self.data = None
 
     def get(self):
@@ -192,7 +180,6 @@ class MetaAPIResource(Resource):
 resource_fields_effect = {
     "name": fields.String,
     "mode": fields.String,
-    "draw_mode": fields.String,
     "limit_frames": fields.String,
     "loop_length": fields.String,
     "trigger": fields.String,
@@ -203,12 +190,12 @@ class EffectAPIResource(Resource):
     def __init__(self, root: "RaveLightsApp"):
         super().__init__()
         self.settings: Settings = root.settings
-        self.effecthandler = root.effecthandler
-        self.eventhandler: EventHandler = root.eventhandler
+        self.effecthandler = root.effect_handler
+        self.eventhandler: EventHandler = root.event_handler
 
     @marshal_with(resource_fields_effect)
     def get(self):
-        return self.effecthandler.effect_queues, 200
+        return self.effecthandler.effect_queue, 200
 
     def put(self):
         receive_data = request.get_json()

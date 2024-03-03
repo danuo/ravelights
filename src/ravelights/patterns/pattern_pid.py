@@ -40,7 +40,7 @@ class PatternPID(Pattern):
             pid.kd = lerp(self.settings.global_energy, 0.05, 0.15)
             pid.perform_pid_step()
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         self.perform_pid_steps()
         matrix = self.get_float_matrix_2d_mono()
         for index in range(self.n_lights):

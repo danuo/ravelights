@@ -30,5 +30,5 @@ class PatternDebugGradient(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         return self.matrix

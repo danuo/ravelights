@@ -21,7 +21,7 @@ class DimmerSideswipe(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         progress = self.timehandler.get_beat_progress_n(self.frequency)
 
         mask: ArrayFloat = self.get_float_matrix_2d_mono()

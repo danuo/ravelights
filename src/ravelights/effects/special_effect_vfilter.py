@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 
 from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import Array
+from ravelights.core.effect_super import Effect
 from ravelights.core.generator_super import Vfilter
-from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.core.device import Device
@@ -41,7 +41,7 @@ class SpecialEffectVfilter(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: tuple[Color, Color]) -> Array:
         return self.vfilter.render(in_matrix, colors)
 
     def on_delete(self):

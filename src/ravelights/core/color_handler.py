@@ -101,13 +101,13 @@ class ColorEngine:
         color_key_sec = self.settings.color_mapping[str(timeline_level)]["sec"]
         return color_key_prim, color_key_sec
 
-    def get_colors_rgb(self, timeline_level: int) -> list[Color]:
+    def get_colors_rgb(self, timeline_level: int) -> tuple[Color, Color]:
         """
         gives the tuple of colors (color_prim, color_sec) in the correct order.
         color_1 and color_2 may be interchanged depending on the level
         """
         if timeline_level == 0:
-            return [DefaultColors.BLACK.value, DefaultColors.BLACK.value]
+            return (DefaultColors.BLACK.value, DefaultColors.BLACK.value)
         color_key_prim, color_key_sec = self.get_color_keys(timeline_level=timeline_level)
         color_prim = self.color_overwrite[color_key_prim]
         if color_prim is None:
@@ -116,7 +116,7 @@ class ColorEngine:
         if color_sec is None:
             color_sec = self.color_pids[color_key_sec].get_rgb()
 
-        return [color_prim, color_sec]
+        return color_prim, color_sec
 
     def get_colors_rgb_target(self) -> dict[str, Color]:
         return {k: v.get_rgb_target() for k, v in self.color_pids.items()}

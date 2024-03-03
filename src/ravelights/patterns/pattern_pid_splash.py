@@ -46,7 +46,7 @@ class PatternPidSplash(Pattern):
         self.pid.target = end_pos
         self.pid._previous_error = (error) * 1.5
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         if self.counter_frames == 0:
             intensity = 0.2
         elif self.counter_frames == 1:

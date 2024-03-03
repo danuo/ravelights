@@ -3,7 +3,7 @@ from typing import Optional
 
 from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.effects.effect_super import Effect
+from ravelights.core.effect_super import Effect
 
 
 class EffectColorStrobe(Effect):
@@ -30,7 +30,7 @@ class EffectColorStrobe(Effect):
         for index in "ABC":
             self.settings.color_engine.color_overwrite[index] = None
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         """Called each render cycle"""
         return in_matrix
 

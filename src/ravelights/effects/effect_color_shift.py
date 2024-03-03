@@ -3,7 +3,7 @@ from typing import Optional
 
 from ravelights.core.color_handler import Color, ColorHandler
 from ravelights.core.custom_typing import Array
-from ravelights.effects.effect_super import Effect
+from ravelights.core.effect_super import Effect
 
 
 class EffectColorShift(Effect):
@@ -38,7 +38,7 @@ class EffectColorShift(Effect):
             color_key = "ABC"[index]
             self.settings.color_engine.color_overwrite[color_key] = None
 
-    def render_matrix(self, in_matrix: Array, colors: list[Color]) -> Array:
+    def render_matrix(self, in_matrix: Array, colors: tuple[Color, Color]) -> Array:
         """Called each render cycle"""
         return in_matrix
 

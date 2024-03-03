@@ -3,10 +3,12 @@ from dataclasses import asdict
 from typing import Literal
 
 from loguru import logger
-from ravelights import DeviceLightConfig, TransmitterConfig
 from ravelights.audio.audio_data import AudioDataProvider
+from ravelights.constants import __api_version__, logo
 from ravelights.core.autopilot import AutoPilot
+from ravelights.core.custom_typing import TransmitterConfig
 from ravelights.core.device import Device
+from ravelights.core.device_shared import DeviceLightConfig
 from ravelights.core.effect_handler import EffectHandler
 from ravelights.core.event_handler import EventHandler
 from ravelights.core.meta_handler import MetaHandler
@@ -21,14 +23,13 @@ from ravelights.interface.data_router import (
 )
 from ravelights.interface.discovery import connectivity_check, discovery_service
 from ravelights.interface.rest_api import RestAPI
-from ravelights.logo import logo
 
 
 class RaveLightsApp:
     def __init__(
         self,
         *,
-        fps: int = 20,
+        fps: int = 30,
         webui_port: int = 80,
         serve_webui: bool = True,
         device_config: list[DeviceLightConfig] = [DeviceLightConfig(n_lights=2, n_leds=100)],
@@ -37,6 +38,7 @@ class RaveLightsApp:
         use_visualizer: bool = False,
         print_stats: bool = False,
     ) -> None:
+        self.API_VERSION = __api_version__
         self.settings = Settings(
             root_init=self,
             device_config=device_config,
@@ -47,16 +49,18 @@ class RaveLightsApp:
             use_visualizer=use_visualizer,
             print_stats=print_stats,
         )
-        self.timehandler = TimeHandler(root=self)
-        self.devices = [Device(root=self, device_id=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
+        self.time_handler = TimeHandler(root=self)
+        self.devices = [Device(root=self, device_index=idx, **asdict(conf)) for idx, conf in enumerate(device_config)]
         self.autopilot = AutoPilot(root=self)
-        self.effecthandler = EffectHandler(root=self)
-        self.patternscheduler = PatternScheduler(root=self)
-        self.metahandler = MetaHandler(root=self)
-        self.eventhandler = EventHandler(root=self)
+        self.effect_handler = EffectHandler(root=self)
+        self.pattern_scheduler = PatternScheduler(root=self)
+        self.meta_handler = MetaHandler(root=self)
+        self.event_handler = EventHandler(root=self)
         self.data_routers = self.initiate_data_routers(transmitter_recipes)
         self.rest_api = RestAPI(root=self, serve_webui=serve_webui, port=webui_port)
         self.audio_data = AudioDataProvider(root=self)
+
+        self.pattern_scheduler.load_timeline_by_index(self.settings.active_timeline_index)
 
     def initiate_data_routers(self, transmitter_recipes: list[TransmitterConfig]) -> list[DataRouter]:
         data_routers: list[DataRouter] = [DataRouterVisualizer(root=self), DataRouterWebsocket(root=self)]
@@ -69,6 +73,7 @@ class RaveLightsApp:
         return data_routers
 
     def start(self) -> None:
+        self.rest_api.start()
         connectivity_check.wait_until_connected_to_network()
         discovery_service.start()
 
@@ -91,7 +96,7 @@ class RaveLightsApp:
 
         # load default timeline
         # self.patternscheduler.load_timeline_from_index(0)
-        self.patternscheduler.load_timeline_by_name("DEBUG_TIMELINE")
+        self.pattern_scheduler.load_timeline_by_name("DEBUG_TIMELINE")
         logger.info("Starting main loop...")
         logger.opt(raw=True, colors=True).info(f"<magenta>{logo}</magenta>\n")
 
@@ -104,41 +109,49 @@ class RaveLightsApp:
             self.render_frame()
 
     def sync_generators(
-        self, gen_type_list: list[Literal["pattern", "pattern_sec", "vfilter", "dimmer", "thinner"]]
+        self, gen_type_list: list[Literal["pattern", "pattern_sec", "pattern_break", "vfilter", "dimmer", "thinner"]]
     ) -> None:
+        """synchronizes the generators of given type across devices, if they are linked"""
         for gen_type in gen_type_list:
-            sync_dict = self.devices[0].rendermodule.get_selected_generator(gen_type).sync_send()
-            for device in self.devices[1:]:
+            for device in self.devices:
+                if device.device_settings.linked_to is None:
+                    continue
+
+                sync_dict = (
+                    self.devices[device.device_settings.linked_to]
+                    .rendermodule.get_selected_generator(gen_type)
+                    .sync_send()
+                )
                 device.rendermodule.get_selected_generator(gen_type).sync_load(in_dict=sync_dict)
 
     def render_frame(self) -> None:
-        self.timehandler.before()
+        self.time_handler.before()
         self.settings.color_engine.before()
         self.audio_data.collect_audio_data()
         # ─── Apply Inputs ─────────────────────────────────────────────
-        self.eventhandler.apply_settings_modifications_queue()
+        self.event_handler.apply_settings_modifications_queue()
         # ─── Prepare ──────────────────────────────────────────────────
         self.autopilot.randomize()
         for device in self.devices:
             device.instructionhandler.load_and_apply_instructions()
-        self.effecthandler.run_before()
+        self.effect_handler.run_before()
         # ─── Sync ─────────────────────────────────────────────────────
         self.sync_generators(["pattern", "vfilter"])
         # ─── Render ───────────────────────────────────────────────────
         for device in self.devices:
             device.render()
         # ─── Effect After ─────────────────────────────────────────────
-        self.effecthandler.run_after()
+        self.effect_handler.run_after()
         # ─── Output ───────────────────────────────────────────────────
         if self.settings.print_stats:  # this doesnt have to be frozen
-            self.timehandler.print_performance_stats()
+            self.time_handler.print_performance_stats()
         # ─── Send Data ────────────────────────────────────────────────
         matrices_processed_int = [device.get_matrix_processed_int() for device in self.devices]
         matrices_int = [device.get_matrix_int() for device in self.devices]
         for datarouter in self.data_routers:
             datarouter.transmit_matrix(matrices_processed_int, matrices_int)
         # ─── After ────────────────────────────────────────────────────
-        self.timehandler.after()
+        self.time_handler.after()
 
     def refresh_ui(self, sse_event: str) -> None:
         if hasattr(self, "rest_api"):

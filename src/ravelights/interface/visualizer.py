@@ -28,8 +28,8 @@ class Visualizer:
         self.root = root
         self.settings: Settings = self.root.settings
         self.devices: list[Device] = self.root.devices
-        self.eventhandler: EventHandler = self.root.eventhandler
-        self.timehandler: TimeHandler = self.root.timehandler
+        self.eventhandler: EventHandler = self.root.event_handler
+        self.timehandler: TimeHandler = self.root.time_handler
         self.visualizer_config = self.get_visualizer_config()
         pygame.init()
         pygame.display.set_caption("ravelights")
@@ -90,24 +90,24 @@ class Visualizer:
 
     def render(self, matrices_int) -> None:
         self.surface.fill(C_BLACK)
-        for device_id, matrix_int in enumerate(matrices_int):
-            device = self.root.devices[device_id]
+        for device_index, matrix_int in enumerate(matrices_int):
+            device = self.root.devices[device_index]
             # matrix_int = device.pixelmatrix.get_matrix_int()
             for light_id in range(device.pixelmatrix.n_lights):
                 matrix_int_view = matrix_int[:, light_id, :]
 
                 # RENDER AND SCALE
-                surf_small = self.surfaces_small[device_id][light_id]
-                surf_big = self.surfaces_big[device_id][light_id]
+                surf_small = self.surfaces_small[device_index][light_id]
+                surf_big = self.surfaces_big[device_index][light_id]
                 array = np.expand_dims(matrix_int_view, 0)
                 pygame.surfarray.blit_array(surf_small, array)  # type: ignore
                 pygame.transform.scale(surf_small, surf_big.get_size(), surf_big)
 
                 # GET POSITIONS FROM CONFIG
-                x_pos_rel = self.visualizer_config[device_id][light_id]["x"]
-                y_pos_rel = self.visualizer_config[device_id][light_id]["y"]
-                rot = self.visualizer_config[device_id][light_id]["rot"]
-                scale = self.visualizer_config[device_id][light_id]["scale"]
+                x_pos_rel = self.visualizer_config[device_index][light_id]["x"]
+                y_pos_rel = self.visualizer_config[device_index][light_id]["y"]
+                rot = self.visualizer_config[device_index][light_id]["rot"]
+                scale = self.visualizer_config[device_index][light_id]["scale"]
 
                 # ROTATE AND PLACE
                 new_surface = pygame.transform.rotozoom(surf_big, rot, scale * GUISCALE)

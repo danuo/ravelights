@@ -36,7 +36,7 @@ class PatternShadowBig(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         self.pos = self.pos + self.vel
         if self.pos > self.n_leds + self.max_dist:
             self.pos = -self.max_dist

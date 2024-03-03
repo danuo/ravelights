@@ -50,7 +50,7 @@ include = [
 packages = ["src/ravelights", "src/ravelights_ui"]
 
 [tool.hatch.version]
-path = "src/ravelights/__init__.py"
+path = "src/ravelights/constants.py"
 
 [tool.ruff]
 line-length = 120
@@ -59,3 +59,11 @@ target-version = "py311"
 [tool.mypy]
 files = "src/ravelights"
 ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = "test"
+markers = [
+    "slow: marks tests as slow",
+    "playwright: marks tests that depend on playwright",
+]
+addopts = "-m 'not slow and not playwright'"

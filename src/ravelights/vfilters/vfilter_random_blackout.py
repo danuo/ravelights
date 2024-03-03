@@ -31,14 +31,14 @@ class VfilterRandomBlackout(Vfilter):
         self.limit_frames = int(round(limit_quarters * self.timehandler.beat_time * self.timehandler.fps))
         self.source_index = None
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         out_matrix = self.get_float_matrix_rgb()
         if self.use_devices == "all":
             pass
         elif self.use_devices == "one":
             rng = random.Random(self.timehandler.time_0)
-            active_device_id = rng.randrange(0, self.n_devices)
-            if active_device_id != self.device.device_id:
+            active_device_index = rng.randrange(0, self.n_devices)
+            if active_device_index != self.device.device_index:
                 return out_matrix
 
         if self.source_index is None:

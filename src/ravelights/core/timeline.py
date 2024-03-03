@@ -6,7 +6,6 @@ from ravelights.core.custom_typing import GeneratorMeta
 from ravelights.core.generator_super import Dimmer, Pattern, Thinner, Vfilter
 from ravelights.core.settings import Settings
 from ravelights.core.utils import get_random_from_weights, p
-from ravelights.effects.effect_super import Effect
 
 if TYPE_CHECKING:
     from ravelights.configs.components import Keyword
@@ -150,14 +149,10 @@ class GenSelector:
         logger.warning(f"no generators of type {gen_type} found")
 
         # backup
-        return gen_type.get_identifier()[0] + "_none"
+        return gen_type.identifier[0] + "_none"
 
-    def get_gen_list(self, gen_type: type[Pattern | Vfilter | Thinner | Dimmer | Effect]) -> list[GeneratorMeta]:
-        identifier = gen_type.get_identifier()
-        if hasattr(self.root, "metahandler"):
-            return self.root.metahandler["available_generators"][identifier]
-        else:
-            return []
+    def get_gen_list(self, gen_type: type[Pattern | Vfilter | Thinner | Dimmer]) -> list[GeneratorMeta]:
+        return self.root.meta_handler["available_generators"][gen_type.identifier]
 
 
 @dataclass

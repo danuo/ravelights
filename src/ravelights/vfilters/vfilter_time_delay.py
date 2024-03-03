@@ -36,7 +36,7 @@ class VfilterTimeDelay(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         self.memory_matrix[..., self.zero_index] = in_matrix
 
         out_matrix = self.get_float_matrix_rgb()

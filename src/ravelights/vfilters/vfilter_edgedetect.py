@@ -25,7 +25,7 @@ class VfilterEdgedetect(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         # bw
         bw_matrix_mono = self.bw_matrix(in_matrix)
 

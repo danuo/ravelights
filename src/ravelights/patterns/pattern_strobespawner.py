@@ -28,7 +28,7 @@ class PatternStrobeSpawner(Pattern):
                 flashes = [x for _ in range(ran) for x in [True, False]]
                 self.queue_element(cls=SlideStrobe, flashes=flashes)
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         # ─── Render Queue ─────────────────────────────────────────────
         matrix = self.pixelmatrix.render_ele_to_matrix_mono(queues=self.queues, colors=colors)
         matrix_rgb = self.colorize_matrix(matrix, color=colors[0])

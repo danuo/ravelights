@@ -19,7 +19,7 @@ class PatternDebugLinearBlock(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         self.pos = (self.pos + self.vel) % self.n_leds
         matrix = self.get_float_matrix_2d_mono()
         matrix[self.pos : self.pos + self.size, :] = 1

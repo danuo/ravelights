@@ -18,7 +18,7 @@ class VfilterMirrorVer(Vfilter):
         ...
 
     @staticmethod
-    def render(in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         matrix: ArrayFloat = in_matrix
         if in_matrix.ndim == 1:
             # shape is (n_leds) == Nx1

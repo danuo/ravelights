@@ -16,7 +16,7 @@ class VfilterMapAllFirst(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         assert in_matrix.shape == (self.n_leds, self.n_lights, 3)
         for i in range(1, self.n_lights):
             in_matrix[:, i, :] = in_matrix[:, 0, :]

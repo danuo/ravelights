@@ -23,14 +23,19 @@ class PatternScheduler:
     def __init__(self, root: "RaveLightsApp") -> None:
         self.root = root
         self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.timehandler
-        self.effecthandler: EffectHandler = self.root.effecthandler
+        self.timehandler: TimeHandler = self.root.time_handler
+        self.effecthandler: EffectHandler = self.root.effect_handler
         self.devices: list[Device] = self.root.devices
         self.timeline_selectors: list[GenSelector] = []
         self.timeline_placements: list[GenPlacing] = []
 
-        # ─── GENERATORS ──────────────────────────────────────────────────
+        # ------------------------------ init timelines ------------------------------ #
         self.blueprint_timelines = blueprint_timelines
+        for timeline in self.blueprint_timelines:
+            for selector in timeline["selectors"]:
+                selector.set_root(self.root)
+
+        # ------------------------------ init generators ----------------------------- #
         for device in self.devices:
             kwargs = dict(root=self.root, device=device)
             generators: list[Pattern | Vfilter | Dimmer | Thinner] = [
@@ -38,30 +43,29 @@ class PatternScheduler:
             ]
             device.rendermodule.register_generators(generators=generators)
 
-        self.load_timeline_from_index(self.settings.active_timeline_index)
-
-    def load_timeline_from_index(self, index: int) -> None:
+    def load_timeline_by_index(self, index: int, placements: bool = True, selectors: bool = True) -> None:
         self.settings.active_timeline_index = index
-        self._load_timeline(self.blueprint_timelines[index])
+        timeline: Timeline = self.blueprint_timelines[index]
+        if selectors:
+            self._load_timeline_selectors(timeline)
+        if placements:
+            self._load_timeline_placements(timeline)
 
     def load_timeline_by_name(self, name: str) -> None:
         for index, timeline in enumerate(self.blueprint_timelines):
-            if timeline["meta"]["name"] == name:
-                self.settings.active_timeline_index = index
-                self._load_timeline(self.blueprint_timelines[index])
+            if timeline["meta"].name == name:
+                self.load_timeline_by_index(index)
                 logger.debug(f"loading timeline {name} at index {index}")
                 return
         logger.warning(f"could not find timeline with name {name}")
 
-    def _load_timeline(self, timeline: Timeline) -> None:
-        self.settings.clear_selected()
-        self.clear_instruction_queues()
-
+    def _load_timeline_selectors(self, timeline: Timeline) -> None:
+        self.settings.reset_selected()
         self.timeline_selectors = timeline["selectors"]
-        for selector in self.timeline_selectors:
-            selector.set_root(self.root)
         self.process_timeline_selectors(self.timeline_selectors)
 
+    def _load_timeline_placements(self, timeline: Timeline) -> None:
+        self.clear_instruction_queues()
         self.timeline_placements = timeline["placements"]
         self.process_timeline_placements(self.timeline_placements)
 
@@ -75,38 +79,50 @@ class PatternScheduler:
         # load each generator that is defined inside of the GenSelector Object
         renew_trigger = self.settings.renew_trigger_from_timeline
 
-        genset: GeneratorSet = generator_selector.create_generator_set()
-        if genset.pattern_name:
-            self.settings.set_generator(
-                gen_type="pattern",
-                timeline_level=generator_selector.level,
-                gen_name=genset.pattern_name,
-                renew_trigger=renew_trigger,
-            )
+        for device_index, device in enumerate(self.devices):
+            if not device.device_settings.refresh_from_timeline:
+                continue
 
-        if genset.vfilter_name:
-            self.settings.set_generator(
-                gen_type="vfilter",
-                timeline_level=generator_selector.level,
-                gen_name=genset.vfilter_name,
-                renew_trigger=renew_trigger,
-            )
+            if isinstance(device.device_settings.linked_to, int):
+                continue
 
-        if genset.dimmer_name:
-            self.settings.set_generator(
-                gen_type="dimmer",
-                timeline_level=generator_selector.level,
-                gen_name=genset.dimmer_name,
-                renew_trigger=renew_trigger,
-            )
+            genset: GeneratorSet = generator_selector.create_generator_set()
+            assert 1 <= generator_selector.level <= 3
+            if genset.pattern_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="pattern",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.pattern_name,
+                    renew_trigger=renew_trigger,
+                )
 
-        if genset.thinner_name:
-            self.settings.set_generator(
-                gen_type="thinner",
-                timeline_level=generator_selector.level,
-                gen_name=genset.thinner_name,
-                renew_trigger=renew_trigger,
-            )
+            if genset.vfilter_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="vfilter",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.vfilter_name,
+                    renew_trigger=renew_trigger,
+                )
+
+            if genset.dimmer_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="dimmer",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.dimmer_name,
+                    renew_trigger=renew_trigger,
+                )
+
+            if genset.thinner_name:
+                self.settings.set_generator(
+                    device_index=device_index,
+                    gen_type="thinner",
+                    timeline_level=generator_selector.level,
+                    gen_name=genset.thinner_name,
+                    renew_trigger=renew_trigger,
+                )
 
     def process_timeline_placements(self, timeline_placements: list[GenPlacing]) -> None:
         for placement in timeline_placements:
@@ -143,3 +159,9 @@ class PatternScheduler:
     def generate_instructions(self) -> None:
         logger.warning("function undefined")
         pass
+
+    # def get_effective_device_index(self) -> int:
+    # this doesnt make sense. if device_index = None -> apply to all
+
+    def get_effective_timeline_level(self, device_index: int) -> int:
+        return self.devices[device_index].get_effective_timeline_level()

@@ -17,6 +17,8 @@ if TYPE_CHECKING:
 
 
 class Generator(ABC):
+    identifier: Literal["pattern", "vfilter", "thinner", "dimmer"] = "pattern"
+
     def __init__(
         self,
         root: "RaveLightsApp",
@@ -32,7 +34,7 @@ class Generator(ABC):
     ):
         self.root = root
         self.settings: "Settings" = self.root.settings
-        self.timehandler: "TimeHandler" = self.root.timehandler
+        self.timehandler: "TimeHandler" = self.root.time_handler
         self.device: "Device" = device
         self.n_devices = len(self.root.devices)
         self.pixelmatrix = self.device.pixelmatrix
@@ -124,32 +126,22 @@ class Generator(ABC):
         matrix = np.full(shape=(self.n_leds, self.n_lights), fill_value=fill_value, dtype=float)
         return matrix
 
-    def colorize_matrix(self, matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
-        """
-        in:  Nx1
-        out: Nx3
-        function to colorize a matrix with a given color
-        for colorization, another dimension is added
-        special case: input matrix is 1d of size n:
-        (n) -> (n_leds, n_lights, 3)  /special case
-        (x) -> (x,3)
-        (x,y) -> (x,y,3)
-        """
+    def reshape_1d_to_2d(self, in_matrix: ArrayFloat) -> ArrayFloat:
+        assert in_matrix.ndim == 1
+        return in_matrix.reshape((self.n_leds, self.n_lights), order="F")
 
-        # prepare output matrix of correct size
-        if matrix_mono.ndim == 1:
-            if matrix_mono.shape == (self.n,):
-                matrix_mono = matrix_mono.reshape((self.n_leds, self.n_lights), order="F")
-                matrix_rgb = np.zeros((self.n_leds, self.n_lights, 3))
-            else:
-                matrix_rgb = np.zeros((matrix_mono.size, 3))
-        elif matrix_mono.ndim == 2:
-            matrix_rgb = np.zeros((*matrix_mono.shape, 3))
+    @staticmethod
+    def colorize_matrix(matrix_mono: ArrayFloat, color: Color) -> ArrayFloat:
+        """colorizes matrix, adds one dimension for 3 color channels"""
 
         shape = [1] * matrix_mono.ndim + [3]
         color_array: ArrayFloat = np.array(color).reshape(shape)
         matrix_rgb = matrix_mono[..., None] * color_array
         return matrix_rgb
+
+    @staticmethod
+    def clip_matrix_to_1(matrix: ArrayFloat) -> ArrayFloat:
+        return np.fmin(1.0, matrix)
 
     @staticmethod
     def bw_matrix(matrix_rgb: ArrayFloat) -> ArrayFloat:
@@ -188,24 +180,26 @@ class Generator(ABC):
         mask = np.repeat(mask[:, :, None], 3, axis=2)
         return np.multiply(in_matrix, mask)
 
+    @classmethod
+    def merge_matrices_with_weight(cls, matrices: list[ArrayFloat], weights: list[float]) -> ArrayFloat:
+        assert len(matrices) == len(weights)
+
+        out = np.zeros(shape=matrices[0].shape)
+        for index, matrix in enumerate(matrices):
+            out += weights[index] * matrix
+
+        return cls.clip_matrix_to_1(out / sum(weights))
+
     def __repr__(self):
         return f"<Generator {self.name}>"
 
-    @staticmethod
-    @abstractmethod
-    def get_identifier() -> Literal["pattern", "vfilter", "thinner", "dimmer", "effect"]:
-        """returns str identifier of generator type, for example 'pattern' for pattern objects"""
-        ...
-
 
 class Pattern(Generator):
-    @abstractmethod
-    def render(self, colors: list[Color]) -> ArrayFloat:
-        ...
+    identifier = "pattern"
 
-    @staticmethod
-    def get_identifier():
-        return "pattern"
+    @abstractmethod
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
+        ...
 
 
 class PatternNone(Pattern):
@@ -223,18 +217,16 @@ class PatternNone(Pattern):
     def on_trigger(self):
         ...
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         return self.get_float_matrix_rgb()
 
 
 class Vfilter(Generator):
-    @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
-        ...
+    identifier = "vfilter"
 
-    @staticmethod
-    def get_identifier():
-        return "vfilter"
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
+        ...
 
 
 class VfilterNone(Vfilter):
@@ -252,18 +244,16 @@ class VfilterNone(Vfilter):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix
 
 
 class Thinner(Generator):
-    @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
-        ...
+    identifier = "thinner"
 
-    @staticmethod
-    def get_identifier():
-        return "thinner"
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
+        ...
 
 
 class ThinnerNone(Thinner):
@@ -281,18 +271,16 @@ class ThinnerNone(Thinner):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix
 
 
 class Dimmer(Generator):
-    @abstractmethod
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
-        ...
+    identifier = "dimmer"
 
-    @staticmethod
-    def get_identifier():
-        return "dimmer"
+    @abstractmethod
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
+        ...
 
 
 class DimmerNone(Dimmer):
@@ -310,5 +298,5 @@ class DimmerNone(Dimmer):
     def on_trigger(self):
         ...
 
-    def render(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         return in_matrix

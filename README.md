@@ -42,8 +42,10 @@ Clone with `--recurse-submodules` flag for web interface submodule:
 
 ```
 git clone --recurse-submodules git@github.com:danuo/ravelights.git
-git submodule update --init    // add submodule after normal cloning
-git submodule update --remote  // update submodules
+// add submodule after normal cloning:
+git submodule update --init
+// update submodules:
+git submodule update --remote
 ```
 
 ### Setup virtual environment
@@ -66,6 +68,13 @@ pip install .[gui]         // normal installation with visualizer support
 pip install .              // normal installation without visualizer support
 pip install .[serial]      // normal installation without visualizer support but artnet-over-serial support
 pip install -e .[gui,dev]  // editable installation with dev packages and visualizer support
+```
+
+### Testing
+
+```
+pytest
+pytest -m slow
 ```
 
 ### Usage

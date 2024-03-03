@@ -55,10 +55,6 @@ class PixelMatrix:
         # return led_id, light_id
         return divmod(index, self.n_leds)
 
-    @staticmethod
-    def clip_matrix_to_1(matrix: ArrayFloat) -> ArrayFloat:
-        return np.fmin(1.0, matrix)
-
     def get_lights(self, light_selection: str = "") -> NDArray[np.int_]:
         if light_selection == "":
             light_selection = random.choice(["half", "random", "random_v2", "full"])
@@ -75,7 +71,7 @@ class PixelMatrix:
         else:  # full
             return np.arange(self.n_lights)
 
-    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: list[Color]) -> ArrayFloat:
+    def render_ele_to_matrix_mono(self, queues: list[list["LightObject"]], colors: tuple[Color, Color]) -> ArrayFloat:
         """Renders lists of LightObjects (one queue per light) to a blank matrix."""
 
         matrix = np.zeros(shape=(self.n_leds, self.n_lights))

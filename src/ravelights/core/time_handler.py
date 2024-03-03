@@ -98,15 +98,15 @@ class BeatStatePattern:
         # determine triggerskip from global and device settings
         triggerskip = other.root.settings.global_triggerskip
         if device:
-            triggerskip = max(triggerskip, device.device_triggerskip)
+            triggerskip = max(triggerskip, device.device_settings.device_triggerskip)
 
         if is_triggered:
-            if self.previous_triggered_time == other.root.timehandler.time_0:
+            if self.previous_triggered_time == other.root.time_handler.time_0:
                 # the BeatStatePattern was already triggered within the current frame
                 pass
             else:
                 self.trigger_counter += 1
-                self.previous_triggered_time = other.root.timehandler.time_0
+                self.previous_triggered_time = other.root.time_handler.time_0
 
             is_triggered = self.trigger_counter % triggerskip == 0
 

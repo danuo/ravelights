@@ -29,11 +29,11 @@ class ThinnerRandomPattern(Thinner):
         if self.settings.global_thinning_ratio >= 1.0:
             return
         n = pattern_length * 10 - int(pattern_length * self.settings.global_thinning_ratio)
-        assert 0 < n < pattern_length * 10
+        assert 0 < n <= pattern_length * 10
         items = random.choices(range(pattern_length * 10), k=n)
         for i in items:
             self.mask[i :: pattern_length * 10] = 0
 
-    def render(self, in_matrix: Array, colors: list[Color]):
+    def render(self, in_matrix: Array, colors: tuple[Color, Color]):
         matrix = self.apply_mask(in_matrix=in_matrix, mask=self.mask.reshape(self.n_leds, -1))
         return matrix

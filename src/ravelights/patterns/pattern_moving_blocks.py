@@ -98,7 +98,7 @@ class PatternMovingBlocks(Pattern):
     def on_trigger(self):
         self.reset()
 
-    def render(self, colors: list[Color]) -> ArrayFloat:
+    def render(self, colors: tuple[Color, Color]) -> ArrayFloat:
         matrix = self.get_float_matrix_2d_mono()
         matrix = np.zeros((self.n_leds))
         for state in self.states:
@@ -106,7 +106,7 @@ class PatternMovingBlocks(Pattern):
             rolled_view: ArrayFloat = np.roll(self.prerendered_matrices[item_id], shift=int(pos))
             matrix[:] = matrix + self.brightness * bright * rolled_view[: self.pixelmatrix.n_leds]
             state.pos = state.pos + speed
-        matrix = self.pixelmatrix.clip_matrix_to_1(matrix)
+        matrix = self.clip_matrix_to_1(matrix)
         matrix = np.repeat(matrix[..., None], repeats=self.n_lights, axis=-1)
 
         if self.enable_roll:

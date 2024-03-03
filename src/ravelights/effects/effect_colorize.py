@@ -3,7 +3,8 @@ import random
 import numpy as np
 from ravelights.core.color_handler import Color
 from ravelights.core.custom_typing import ArrayFloat
-from ravelights.effects.effect_super import Effect
+from ravelights.core.effect_super import Effect
+from ravelights.core.generator_super import Generator
 
 
 class EffectColorize(Effect):
@@ -33,12 +34,12 @@ class EffectColorize(Effect):
     def run_after(self):
         ...
 
-    def render_matrix(self, in_matrix: ArrayFloat, colors: list[Color]) -> ArrayFloat:
+    def render_matrix(self, in_matrix: ArrayFloat, colors: tuple[Color, Color]) -> ArrayFloat:
         # bw filter
         in_matrix_bw = np.max(in_matrix, axis=-1)
 
-        in_matrix_color1 = self.colorize_matrix(in_matrix_bw, color=colors[0])
-        in_matrix_color2 = self.colorize_matrix(in_matrix_bw, color=colors[1])
+        in_matrix_color1 = Generator.colorize_matrix(in_matrix_bw, color=colors[0])
+        in_matrix_color2 = Generator.colorize_matrix(in_matrix_bw, color=colors[1])
         self.roll += 1
 
         # get index

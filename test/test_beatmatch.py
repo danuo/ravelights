@@ -4,7 +4,7 @@ from ravelights import RaveLightsApp
 from ravelights.core.time_handler import BeatStatePattern
 
 app = RaveLightsApp()
-timehandler = app.timehandler
+timehandler = app.time_handler
 
 
 def test_beat_matchings():
@@ -25,8 +25,8 @@ def test_beat_matchings():
             trigger_counter += 1
 
         norm = random.normalvariate(0, 0.004)
-        assert abs(norm) < 1 / app.timehandler.fps
-        random_frame_time = 1 / app.timehandler.fps + norm
+        assert abs(norm) < 1 / app.time_handler.fps
+        random_frame_time = 1 / app.time_handler.fps + norm
         timehandler.time_0 += random_frame_time
 
         if beat_counter == BEAT_TARGET:

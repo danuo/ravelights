@@ -1,5 +1,6 @@
 # ruff: noqa: F811
-from typing import TYPE_CHECKING, Any, Callable, Optional, Protocol, TypedDict
+from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, Callable, Literal, NamedTuple, Optional, Protocol, TypedDict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -17,9 +18,16 @@ ArrayUInt8 = NDArray[np.uint8]
 DiscoveryUpdateCallback = Callable[[str, Optional[str]], None]
 
 
-def assert_dims(in_matrix: NDArray[Any], *dims: int):
-    """checks if shape is (n_leds, n_lights, 3). this is a debug function"""
-    assert in_matrix.shape == dims
+LightIndices = tuple[int, ...]
+LightSequence = list[LightIndices]
+
+
+class FramesPattern(NamedTuple):
+    length: int
+    pattern_indices: tuple[int, ...]
+
+
+FramesPatternBinary = list[bool]
 
 
 class Transmitter(Protocol):
@@ -59,7 +67,82 @@ class AvailableGenerators(TypedDict):
     effect: list[GeneratorMeta]
 
 
+@dataclass
+class TimelineMeta:
+    name: str
+    description: str = ""
+    weight: float | int = 1.0
+
+
 class Timeline(TypedDict):  # todo: move to custom typing
-    meta: dict[str, str]
+    meta: TimelineMeta
     selectors: list["GenSelector"]
     placements: list["GenPlacing"]
+
+
+@dataclass
+class Toggle:
+    var_name: str
+    type: str = "toggle"
+    target: Literal["app", "device"] = "app"
+    advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.var_name
+
+
+@dataclass
+class ToggleSlider:
+    var_name_toggle: str
+    var_name_slider: str
+    range_min: float
+    range_max: float
+    step: float
+    markers: bool
+    type: str = "toggle_slider"
+    target: Literal["app", "device"] = "app"
+    advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.var_name_toggle
+
+
+@dataclass
+class Slider:
+    var_name: str
+    range_min: float
+    range_max: float
+    step: float
+    markers: bool
+    type: str = "slider"
+    target: Literal["app", "device"] = "app"
+    advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.var_name
+
+
+@dataclass
+class PaddedSlider(Slider):
+    type: str = "padded_slider"
+
+
+@dataclass
+class Dropdown:
+    var_name: str
+    options: list[str]
+    type: str = "dropdown"
+    conditional_var_name: Optional[str] = None
+    target: Literal["app", "device"] = "app"
+    advanced: bool = False
+    label: Optional[str] = None
+
+    def __post_init__(self):
+        if self.label is None:
+            self.label = self.var_name
