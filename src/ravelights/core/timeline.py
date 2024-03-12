@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Optional, Sequence, cast
+from typing import TYPE_CHECKING, Literal, Optional, Sequence, cast
 
 from loguru import logger
 from ravelights.core.custom_typing import GeneratorMeta
@@ -59,7 +59,7 @@ class GenSelector:
     gen_type: type[Pattern | Vfilter | Dimmer | Thinner]
     name: Optional[str] = None
     keywords: list["Keyword"] = field(default_factory=list)
-    level: int = 1
+    level: Literal[1, 2, 3] = 1
     p: float = 1.0  # if chance is not met, set pattern to p_none (black)
     trigger_on_change: bool = True
 
