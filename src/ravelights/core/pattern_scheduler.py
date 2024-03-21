@@ -43,14 +43,6 @@ class PatternScheduler:
             ]
             device.rendermodule.register_generators(generators=generators)
 
-    def load_timeline_by_index(self, index: int, placements: bool = True, selectors: bool = True) -> None:
-        self.settings.active_timeline_index = index
-        timeline: Timeline = self.blueprint_timelines[index]
-        if selectors:
-            self._load_timeline_selectors(timeline)
-        if placements:
-            self._load_timeline_placements(timeline)
-
     def load_timeline_by_name(self, name: str) -> None:
         for index, timeline in enumerate(self.blueprint_timelines):
             if timeline["meta"].name == name:
@@ -58,6 +50,17 @@ class PatternScheduler:
                 logger.debug(f"loading timeline {name} at index {index}")
                 return
         logger.warning(f"could not find timeline with name {name}")
+
+    def load_timeline_by_index(self, index: int, placements: bool = True, selectors: bool = True) -> None:
+        self.settings.active_timeline_index = index
+        timeline: Timeline = self.blueprint_timelines[index]
+        self._load_timeline(timeline=timeline, placements=placements, selectors=selectors)
+
+    def _load_timeline(self, timeline: Timeline, placements: bool = True, selectors: bool = True) -> None:
+        if selectors:
+            self._load_timeline_selectors(timeline)
+        if placements:
+            self._load_timeline_placements(timeline)
 
     def _load_timeline_selectors(self, timeline: Timeline) -> None:
         self.settings.reset_selected()

@@ -155,7 +155,7 @@ class Settings:
     selected: list[dict[str, list[str]]] = field(init=False)
 
     active_timeline_index: int = 0
-    global_manual_timeline_level: Optional[int] = 1
+    global_manual_timeline_level: Optional[Literal[1, 2, 3]] = 1
     target_device_index: Optional[int] = 0
 
     # ─── Autopilot ────────────────────────────────────────────────────────
