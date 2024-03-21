@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 
 
 class RenderModule:
-    def __init__(self, root: "RaveLightsApp", device: "Device") -> None:
-        self.root = root
-        self.settings: Settings = self.root.settings
-        self.timehandler: TimeHandler = self.root.time_handler
+    def __init__(self, device: "Device") -> None:
         self.device: Device = device
         self.pixelmatrix: PixelMatrix = self.device.pixelmatrix
+        self.root: "RaveLightsApp" = self.device.root
+        self.settings: Settings = self.root.settings
+        self.timehandler: TimeHandler = self.root.time_handler
 
         self.counter_frame: int = 0  # for frameskip
         self.matrix_memory = self.pixelmatrix.matrix_float.copy()

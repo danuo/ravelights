@@ -42,12 +42,8 @@ class Device:
         self.settings: "Settings" = self.root.settings
         self.timehandler: "TimeHandler" = self.root.time_handler
         self.pixelmatrix: PixelMatrix = PixelMatrix(n_leds=n_leds, n_lights=n_lights, is_prim=self.is_prim)
-        self.rendermodule: RenderModule = RenderModule(root=root, device=self)
-        self.instructionhandler = InstructionHandler(
-            root=self.root,
-            pixelmatrix=self.pixelmatrix,
-            rendermodule=self.rendermodule,
-        )
+        self.rendermodule: RenderModule = RenderModule(device=self)
+        self.instructionhandler = InstructionHandler(device=self)
         self.device_automatic_timeline_level: int = 0
 
     def render(self):
@@ -89,4 +85,5 @@ class Device:
             return self.settings.global_manual_timeline_level
 
         # level is chosen by global timeline
+        print(self.device_automatic_timeline_level)
         return self.device_automatic_timeline_level
